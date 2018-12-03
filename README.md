@@ -1,2 +1,4 @@
 # insa-alamak
-Repository for NXP Cup Alamak car
+Repository for Insa NXP Cup Team 1
+
+Stable branche
