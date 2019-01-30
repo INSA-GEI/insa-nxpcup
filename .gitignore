@@ -1,3 +1,12 @@
+# DS_Store osx files
+*.DS_Store
+
+# MCUXpresso specific files
+/.settings/
+/debug/*
+/debug/!readme.txt
+
+
 # Prerequisites
 *.d
 
