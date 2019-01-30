@@ -30,18 +30,14 @@ int main(void) {
 
     int time;
     int ledverte = 19;
-    int ledrouge = 18;
     SIM_SCGC5 |= SIM_SCGC5_PORTB_MASK; //on active le PORT B
     PORTB_PCR19 = (PORT_PCR_MUX(1) | PORT_PCR_DSE_MASK); //broche 53 configuré sur bit 18 du PORT B avec DSE_MASK pour que la broche puisse sortir plus decourant
     GPIOB_PDDR = (1<<ledverte); //bit 18 du PORT B en sortie
-    GPIOB_PDDR = (1<<ledrouge); //bit 18 du PORT B en sortie
-	GPIOB_PTOR = (1<<ledrouge);
 
 
     for(;;) // boucle infinie
     {
     	GPIOB_PTOR = (1<<ledverte);
-    	GPIOB_PTOR = (1<<ledrouge);
 
     	time = 1000000/2;
     	while (time>=0)
