@@ -8,12 +8,14 @@
 
 #include "derivative.h" /* include peripheral declarations */
 
+#include "encoder.h"
+
 // Define threshold for Camera Black Line recognition
-#define THRESHOLD				100			// Difference between black and white
+#define THRESHOLD				150			// Difference between black and white
 
 // Defines for Direction PD Servo Control Loop
-#define KP						50			// Proportional coefficient
-#define KDP						25			// Differential coefficient
+#define KP						40			// Proportional coefficient
+#define KDP						45			// Differential coefficient
 
 // Defines for LineScan Camera
 #define TAOS_DELAY				asm ("nop")				// minimal delay time
@@ -21,6 +23,8 @@
 #define	TAOS_SI_LOW				GPIOB_PDOR &= ~(1<<8)	// SI on PTB8
 #define	TAOS_CLK_HIGH			GPIOB_PDOR |= (1<<9)	// CLK on PTB9
 #define	TAOS_CLK_LOW			GPIOB_PDOR &= ~(1<<9)	// CLK on PTB9
+
+#define SERVO_CENTER 8300
 
 // Function declaration
 void ImageCapture(void);
@@ -38,6 +42,8 @@ int diff = 0;								// actual difference from line middle position
 int diff_old = 0;							// previous difference from line middle position
 int servo_position = 0;						// actual position of the servo relative to middle
 int CompareData;							// set data for comparison to find max
+int servo_position_old=0;
+
 
 // Main program
 int main(void){
@@ -99,14 +105,21 @@ int main(void){
 	GPIOC_PDDR |= (1<<8);			// PTC9 Motor 2 In 1 (direction)
 	GPIOC_PDDR |= (1<<9);			// PTC9 Motor 2 In 2 
 	
+	/*
 	// all LEDs off
-	GPIOB_PDOR |= GPIO_PDOR_PDO(1<<18);   // red LED off
+	GPIOB_PDOR &= ~GPIO_PDOR_PDO(1<<18);  // red LED on
+	//GPIOB_PDOR |= GPIO_PDOR_PDO(1<<18);   // red LED off
 	GPIOB_PDOR |= GPIO_PDOR_PDO(1<<19);   // green LED off
 	GPIOD_PDOR |= GPIO_PDOR_PDO(1<<1);    // blue LED off	
 	
 	// GPIOB_PDOR &= ~GPIO_PDOR_PDO(1<<18);  // red LED on
 	// GPIOB_PDOR &= ~GPIO_PDOR_PDO(1<<19);  // green LED on
-	// GPIOD_PDOR &= ~GPIO_PDOR_PDO(1<<1);   // blue LED on	
+	// GPIOD_PDOR &= ~GPIO_PDOR_PDO(1<<1);   // blue LED on	*/
+	
+	
+	confSpeedEncoder();
+	
+	
 			
 	// set GPIO input to input
 	GPIOC_PDDR &= ~ (1<<0);			// PTC0 Push Button S2
@@ -136,11 +149,11 @@ int main(void){
 	TPM1_C0SC = 0x28;				// TPM1 channel0 Servo 1
 	
 	// TPM channel value registers, sets duty cycle
-	TPM1_C0V = 9000;				// TPM1 channel0 Servo 1 ca. 1.5 ms (middle)
+	TPM1_C0V = SERVO_CENTER;				// TPM1 channel0 Servo 1 ca. 1.5 ms (middle)
 	
     // initial configuration of motors
-	TPM0_C1V = 100;					// TPM0 channel1 left Motor 1 In 1 slow forward
-	TPM0_C5V = 100;					// TPM0 channel5 right Motor 2 In 2 slow forward
+	//TPM0_C1V = 10;					// TPM0 channel1 left Motor 1 In 1 slow forward
+	//TPM0_C5V = 10;					// TPM0 channel5 right Motor 2 In 2 slow forward
 	GPIOA_PDOR &= ~(1<<5);			// Set PTA5 left Motor 1 In 2 forward
 	GPIOC_PDOR &= ~(1<<8);			// Set PTC8 right Motor 2 In 1 forward
 	
@@ -160,21 +173,148 @@ int main(void){
     NVIC_ICPR |= (1 << 18);			// clear pending interrupt 18
     NVIC_ISER |= (1 << 18);			// enable interrupt 18
     
+    
+	TPM0_C1V = 400;					// TPM0 channel1 left Motor 112 In 1 slow forward
+	TPM0_C5V = 400;					
+
+	
     // enable interrupts globally
     asm (" CPSIE i ");				// enable interrupts on core level
     
+    setSpeed_M2(500);
+    setSpeed_M1(500);
     // Main loop
 	for(;;) {						// endless loop
-
-		// do nothing
+		adaptSpeed();
 		
+		if (getFrontTest() > 290) {
+			GPIOA_PDOR |= (1<<5);			// Set PTA5 left Motor 1 In 2 forward
+			GPIOC_PDOR |= (1<<8);
+			 setSpeed_M2(1000);
+			    setSpeed_M1(1000);
+		}
+				
 	}								// end of endless loop	
 	return 0;
 }
 
+
+
+
+
+
+void FTM1_IRQHandler()				// TPM1 ISR
+{
+	TPM1_SC |= 0x80;							// clear TPM1 ISR flag
+	/*
+	GPIOB_PDOR &= ~GPIO_PDOR_PDO(1<<18);  // red LED on
+	
+	// Capture Line Scan Image
+	ImageCapture();								// capture LineScan image
+	
+	// Find black line on the right side
+	for(i=64;i<127;i++)							// calculate difference between the pixels
+	{
+		ImageDataDifference[i] = abs (ImageData[i] - ImageData[i+1]);
+	}
+	CompareData = THRESHOLD;					// threshold
+	BlackLineRight = 126;
+	for(i=64;i<127;i++)
+	{
+	   	if (ImageDataDifference[i] > CompareData)
+	   	{
+	   		CompareData = ImageDataDifference[i];
+	   		BlackLineRight = i;
+	   	}
+	}
+	
+	// Find black line on the left side
+	for(i=64;i>0;i--)							// calculate difference between the pixels
+	{
+		ImageDataDifference[i] = abs (ImageData[i] - ImageData[i-1]);
+	}
+	CompareData = THRESHOLD;					// threshold
+	BlackLineLeft = 1;
+	for(i=64;i>2;i--)							// only down to pixel 3, not 1
+	{
+	   	if (ImageDataDifference[i] > CompareData)
+	   	{
+	   		CompareData = ImageDataDifference[i];
+	   		BlackLineLeft = i;
+	   	}
+	}
+	
+	// Find middle of the road, 64 for strait road
+	RoadMiddle = (BlackLineLeft + BlackLineRight)/2;
+	
+	// if a line is only on the the left side
+	if (BlackLineRight > 124)
+	{
+		RoadMiddle = BlackLineLeft + 50;
+	}
+	// if a line is only on the the right side
+	if (BlackLineLeft < 3)
+	{
+		RoadMiddle = BlackLineRight - 50;
+	}
+	// if no line on left and right side
+	if ((BlackLineRight > 124) && (BlackLineLeft < 3))
+	{
+		RoadMiddle = 64;
+	}
+	
+	// Store old value
+	diff_old = diff;							// store old difference
+	
+	// Find difference from real middle
+	diff = RoadMiddle - 64;						// calculate actual difference
+	
+	// plausibility check
+	if (abs (diff - diff_old) > 50)
+			{
+		diff = diff_old;
+			}
+
+	// Direction Control Loop: PD Controller
+	servo_position_old = servo_position;
+	servo_position = KP*diff + KDP*(diff-diff_old);
+
+	if(servo_position<-1000)
+		{
+			servo_position=-1000;
+		}
+		else if (servo_position>1000)
+		{
+			servo_position=1000;
+		}
+	
+	//prevent saturation of variation of servo
+		if((servo_position - servo_position_old) > 250)
+		{
+			servo_position = servo_position_old + 250;
+		}
+		else if ((servo_position - servo_position_old) < -250)
+		{
+			servo_position = servo_position_old - 250;
+		}
+		
+	// Set channel 0 PWM_Servo position
+	TPM1_C0V  = SERVO_CENTER - servo_position ; 		// set channel 0 PWM_Servo
+	
+	// red LED off
+	GPIOB_PDOR |= GPIO_PDOR_PDO(1<<18);   // red LED off
+	*/
+
+}
+	
+
+
+/*
+
 void FTM1_IRQHandler()				// TPM1 ISR
 {
 	TPM1_SC |= 0x80;							// clear TPM0 ISR flag
+	
 	
 	GPIOB_PDOR &= ~GPIO_PDOR_PDO(1<<18);  // red LED on
 	
@@ -248,7 +388,7 @@ void FTM1_IRQHandler()				// TPM1 ISR
 	servo_position = KP*diff + KDP*(diff-diff_old);
 
 	// Set channel 0 PWM_Servo position
-	TPM1_C0V  = 9000 - servo_position; 		// set channel 0 PWM_Servo
+	TPM1_C0V  = SERVO_CENTER - servo_position; 		// set channel 0 PWM_Servo
 		
 	// Set Motor Speed
 	TPM0_C1V = 100;					// TPM0 channel1 left Motor 1 In 1 slow forward
@@ -256,9 +396,10 @@ void FTM1_IRQHandler()				// TPM1 ISR
 	
 	// red LED off
 	GPIOB_PDOR |= GPIO_PDOR_PDO(1<<18);   // red LED off
-
-}
 	
+}
+*/
+
 // Capture LineScan Image
 void ImageCapture(void)
 	{
@@ -297,3 +438,4 @@ void ImageCapture(void)
     TAOS_DELAY;
     TAOS_CLK_LOW;
 }
+
