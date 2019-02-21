@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/dimercur/Documents/Travail/git/NXP_Cup/insa-nxpcup-1/pcb/Adaptateur_Camera/Adaptateur_Camera.sch)
-    (date "mer. 20 févr. 2019 12:16:01 CET")
+    (date "jeu. 21 févr. 2019 15:28:20 CET")
     (tool "Eeschema 5.0.2-bee76a0~70~ubuntu18.04.1")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
@@ -17,7 +17,7 @@
   (components
     (comp (ref CN1)
       (value FTR-105-03-G-D-P-TR)
-      (footprint Insa:FTR-10-1.27)
+      (footprint Insa:FTSH-10-1.27)
       (libsource (lib Insa) (part FTR-105-03-G-D-P-TR) (description "Connecteur 10 pins 1.27 mm"))
       (sheetpath (names /) (tstamps /))
       (tstamp 5C62E020))
