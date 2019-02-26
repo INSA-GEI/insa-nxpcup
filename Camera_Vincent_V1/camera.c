@@ -24,7 +24,7 @@
  */
 
 #include "camera.h"	/* include camera functions definition */
-
+#include "math.h"	/* used for different calculations, including the difference of Gaussian with roots, exponential and PI */
 
 
 
@@ -35,12 +35,16 @@ int ImageDataDifference [128];				// array to store the PineScan pixel differenc
 int BlackLineRight;							// position of the black line on the right side
 int BlackLineLeft;							// position of the black line on the left side
 int RoadMiddle = 0;							// calculated middle of the road
-int diff = 0;								// actual difference from line middle position
-int diff_old = 0;							// previous difference from line middle position
+// int diff = 0;								// actual difference from line middle position
+// int diff_old = 0;							// previous difference from line middle position
 int CompareData_classic;					// set data for comparison to find max IN BASE ALGORITHM
 int CompareData_low;						// set data for comparison to find max with low threshold
-int validate_gradient;						// used in image processing to validate some parameters
 int CompareData_high;						// set data for comparison to find max with high threshold
+int validate_gradient;						// used in image processing to validate some parameters
+	
+float gaussian1;								// gaussian filters used in gaussian differences method
+float gaussian2;
+
 
 
 /*
@@ -57,17 +61,53 @@ int CompareData_high;						// set data for comparison to find max with high thre
 */
 
 
-	GPIOB_PDOR &= ~GPIO_PDOR_PDO(1<<18);  // red LED on
-
-	void image_processing (functionning_mod, *diff, *diff_old)
+	void fill_ImageDataDifference (functionning_mode)
 	{
-		if (functionning_mod == 1)
+		if (functionning_mode == 1)
 		{
-			// Find black line on the right side
-			for(i=126;i>=64;i--)							// calculate difference between the pixels
+			for(i=0;i<=126;i++)							// classic algorithm (same as the NXP_minimal) 
 			{
 				ImageDataDifference[i] = abs (ImageData[i] - ImageData[i+1]);
 			}
+			ImageDataDifference[127] = ImageData[127];	// last value doesnt have "gradient" for this method
+		}
+		else if (functionning_mode == 2)
+		{
+			for(i=1;i<=126;i++)							// using a gradient by direct differences (application of the filter : [-1 , 0 , 1] -> P(x) = -1*P(x-1)+0*P(x)+1*P(x+1))
+			{
+				ImageDataDifference[i] = abs (-ImageData[i-1] + ImageData[i+1]);
+			}
+			ImageDataDifference[0] = ImageData[0];	// first value doesnt have "gradient" for this method
+			ImageDataDifference[127] = ImageData[127];	// last value doesnt have "gradient" for this method
+		}
+		else if (functionning_mode == 3)
+		{
+			for(i=1;i<=126;i++)							// using a gradient by centered differences (application of the filter :[-1/2 , 0 , 1/2] -> P(x) = (-1/2)*P(x-1)+0*P(x)+(1/2)*P(x+1))
+			{
+				ImageDataDifference[i] = abs (-(ImageData[i-1])/2 + (ImageData[i+1])/2);
+			}
+			ImageDataDifference[0] = ImageData[0];	// first value doesnt have "gradient" for this method
+			ImageDataDifference[127] = ImageData[127];	// last value doesnt have "gradient" for this method
+		}
+		else if (functionning_mode == 4)
+		{
+			for(i=0;i<=127;i++)							// using the Gaussian difference method
+			{
+				gaussian1 = (1/(SIGMA_1 * sqrt(2*M_PI))) * exp(-(i^2)/(2*(SIGMA_1^2)));
+				gaussian2 = (1/(SIGMA_2 * sqrt(2*M_PI))) * exp(-(i^2)/(2*(SIGMA_2^2)));
+
+				ImageDataDifference[i] = abs ( (int) (round ( (ImageData[i] * gaussian1 - ImageData[i] * gaussian2) ) ) );
+			}
+
+		}
+	}	/*	End of function "Fill_ImageDataDifference"	*/
+
+
+	void image_processing (functionning_mode, *diff, *diff_old)
+	{
+		if (functionning_mode == 1)
+		{
+			// Find black line on the right side
 			CompareData = THRESHOLD_classic;					// threshold
 			BlackLineRight = 126;
 			for(i=126;i>=64;i--)
@@ -80,10 +120,6 @@ int CompareData_high;						// set data for comparison to find max with high thre
 			}
 	
 			// Find black line on the left side
-			for(i=0;i<=64;i++)							// calculate difference between the pixels
-			{
-				ImageDataDifference[i] = abs (ImageData[i] - ImageData[i-1]);
-			}
 			CompareData = THRESHOLD_classic;					// threshold
 			BlackLineLeft = 1;
 			for(i=3;i<=64;i++)							// only down to pixel 3, not 1
@@ -94,64 +130,147 @@ int CompareData_high;						// set data for comparison to find max with high thre
 	 		  		BlackLineLeft = i;
 	 	  		}
 			}
+
+		}	/* END of "(IF mfunctionning_mod == 1)" */
 	
-			// Find middle of the road, 64 for strait road
-			RoadMiddle = (BlackLineLeft + BlackLineRight)/2;
-	
-			// if a line is only on the the left side
-			if (BlackLineRight > 124)
-			{
-				RoadMiddle = BlackLineLeft + 50;
-			}
-			// if a line is only on the the right side
-			if (BlackLineLeft < 3)
-			{
-				RoadMiddle = BlackLineRight - 50;
-			}
-			// if no line on left and right side
-			if ((BlackLineRight > 124) && (BlackLineLeft < 3))
-			{
-				RoadMiddle = 64;
-			}
-	
-			// Store old value
-			diff_old = diff;							// store old difference
-		
-			// Find difference from real middle
-			diff = RoadMiddle - 64;						// calculate actual difference
-	
-			// plausibility check
-			if (abs (diff - diff_old) > 50)
-			{
-				diff = diff_old;
-			}
+/****************************************************************************************************************************************************
 
-		}	/* end IF mfunctionning_mod == 1 */
-	
-/**********************************************************************************
+		Mode number 2 or 3 : same type of operation (gradient differences)
+		mode 2 : using a gradient by direct differences (application of the filter : [-1 , 0 , 1] -> P(x) = -1*P(x-1)+0*P(x)+1*P(x+1))
+		mode 3 : using a gradient by centered differences (application of the filter :[-1/2 , 0 , 1/2] -> P(x) = (-1/2)*P(x-1)+0*P(x)+(1/2)*P(x+1))
+			
+*****************************************************************************************************************************************************/
 
-
-		Mode number 2 : direct differences. (filter : [-1 ; 0 ; 1])
-		one of two heavy algorithms to measure local maximums while reducing noise. 
-
-
-**********************************************************************************/
-
-		else if (functionning_mod == 2)			// Gradient by direct differences ( [-1 ; 0 ; 1] )
+		else if (functionning_mode == 2 || functionning_mode == 3 || functionning_mode == 4)	
 		{
 			// Find black line on the right side
-			for(i=126;i>=64;i--)							// calculate difference between the pixels
+
+			CompareData_low = THRESHOLD_low;					// threshold_low
+			CompareData_high = THRESHOLD_high;					// threshold_high
+
+			BlackLineRight = 126;
+			for(i=126;i>=64;i--)
 			{
-				ImageDataDifference[i] = abs (-ImageData[i-1] + ImageData[i+1]);
-			}
-			ImageDataDifference[127] = ImageData[127];	// last value doesnt have "gradient" for this method
+	   			if (ImageDataDifference[i] > CompareData_high)
+	   			{
+	   				//CompareData_high = ImageDataDifference[i];
+	   				BlackLineRight = i;
+	   			}
+	   			else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high )
+	   			{
+	   				if (i >= 67 && i < 124)
+	   				{
+	   					j = 1;
+	   					validate_gradient = 0;
+						while (j <= 3)
+	   					{
+	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high)
+	   						{
+	   							BlackLineRight = i;
+	   							//CompareData_high = ImageDataDifference[i+j];	
+	   							validate_gradient = 1;				
+	   						}
+	   						j++;
+	   					}
+	   				}
+
+	   				if (validate_gradient != 1)
+	   				{
+	   					if (i >= 69 && i < 122)
+	   					{
+	   						j=1;
+	   						while (j <= 5)
+	   						{
+	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high))
+	   							{
+	   								BlackLineRight = i;
+	   								//CompareData_low = ImageDataDifference[i];	 
+	   							}
+	   							j++;
+
+	   						}
+
+	   					}
+	   				
+	   				}
+	   			}		/* END else if ... */
+			}	/* END for (i=126;i>=64;i--) */
+
+
+	   		// Find black line on the left side
 
 			CompareData_low = THRESHOLD_low;					// threshold_low
 			CompareData_high = THRESHOLD_high;					// threshold_high
 
 			// image processing with the algorithm seen at the beginning. 
+			BlackLineLeft = 1;
+			for(i=1;i<=64;i++)
+			{
+	   			if (ImageDataDifference[i] > CompareData_high)
+	   			{
+	   				//CompareData_high = ImageDataDifference[i];
+	   				BlackLineLeft = i;
+	   			}
+	   			else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high )
+	   			{
+	   				if (i > 3 && i <= 61)
+	   				{
+	   					j = 1;
+	   					validate_gradient = 0;
+						while (j <= 3)
+	   					{
+	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high)
+	   						{
+	   							BlackLineLeft = i;
+	   							//CompareData_high = ImageDataDifference[i+j];
+	   							//CompareData_low = ImageDataDifference[i];	   		
+	   							validate_gradient = 1;				
+	   						}
+	   						j++;
+	   					}
+	   				}
+
+	   				if (validate_gradient != 1)
+	   				{
+	   					if (i > 5 && i <= 59)
+	   					{
+	   						j=1;
+	   						while (j <= 5)
+	   						{
+	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high))
+	   							{
+	   								BlackLineLeft = i;
+	   								//CompareData_high = ImageDataDifference[i+j];
+	   								//CompareData_low = ImageDataDifference[i];	 
+	   							}
+	   							j++;
+	   						}
+
+	   					}
+	   				
+	   				}
+	   			}		/* END else if ... */
+	   		}	/* END for (i=64;i>=1;i--) */
+
+		}	/* END of "(IF mfunctionning_mod == 2 || functionning_mode == 3)" */
+
+
+/****************************************************************************************************************************************************
+
+		Mode number 4 : about the same as mode 2 and 3, but the calculation is made on two additional indices (0 and 127)
+		mode 4 : using the Gaussian difference method
+			
+*****************************************************************************************************************************************************/
+
+		else if (functionning_mode == 4)
+		{
+			// Find black line on the right side
+
+			CompareData_low = THRESHOLD_low;					// threshold_low
+			CompareData_high = THRESHOLD_high;					// threshold_high
+
 			BlackLineRight = 126;
-			for(i=126;i>=64;i--)
+			for(i=127;i>=64;i--)
 			{
 	   			if (ImageDataDifference[i] > CompareData_high)
 	   			{
@@ -169,8 +288,7 @@ int CompareData_high;						// set data for comparison to find max with high thre
 	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high)
 	   						{
 	   							BlackLineRight = i;
-	   							//CompareData_high = ImageDataDifference[i+j];
-	   							//CompareData_low = ImageDataDifference[i];	   		
+	   							//CompareData_high = ImageDataDifference[i+j];	
 	   							validate_gradient = 1;				
 	   						}
 	   						j++;
@@ -187,7 +305,6 @@ int CompareData_high;						// set data for comparison to find max with high thre
 	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high))
 	   							{
 	   								BlackLineRight = i;
-	   								//CompareData_high = ImageDataDifference[i+j];
 	   								//CompareData_low = ImageDataDifference[i];	 
 	   							}
 	   							j++;
@@ -202,11 +319,6 @@ int CompareData_high;						// set data for comparison to find max with high thre
 
 
 	   		// Find black line on the left side
-			for(i=1;i<=64;i++)							// calculate difference between the pixels
-			{
-				ImageDataDifference[i] = abs (-ImageData[i-1] + ImageData[i+1]);
-			}
-			ImageDataDifference[0] = ImageData[0];	// first value doesnt have "gradient" for this method
 
 			CompareData_low = THRESHOLD_low;					// threshold_low
 			CompareData_high = THRESHOLD_high;					// threshold_high
@@ -262,219 +374,110 @@ int CompareData_high;						// set data for comparison to find max with high thre
 	   		}	/* END for (i=64;i>=1;i--) */
 
 
-			// Find middle of the road, 64 for strait road
-			RoadMiddle = (BlackLineLeft + BlackLineRight)/2;
+		} /* END of "if (functionning_mode == 4)"  */
+			
+
+	   	/***************************************************************************
+		*
+	   	*	Processing of the found maximums: calculation of the middle of the track. 
+		*
+	   	****************************************************************************/
+
+		// Find middle of the road, 64 for strait road
+		RoadMiddle = (BlackLineLeft + BlackLineRight)/2;
 	
-			// if a line is only on the the left side
-			if (BlackLineRight > 124)
-			{
-				RoadMiddle = BlackLineLeft + 50;
-			}
-			// if a line is only on the the right side
-			if (BlackLineLeft < 3)
-			{
-				RoadMiddle = BlackLineRight - 50;
-			}
-			// if no line on left and right side
-			if ((BlackLineRight > 124) && (BlackLineLeft < 3))
-			{
-				RoadMiddle = 64;
-			}
-	
-			// Store old value
-			diff_old = diff;							// store old difference
-		
-			// Find difference from real middle
-			diff = RoadMiddle - 64;						// calculate actual difference
-	
-			// plausibility check
-			if (abs (diff - diff_old) > 50)
-			{
-				diff = diff_old;
-			}
-
-		}	/* end IF mfunctionning_mod == 2 */
-
-
-/**********************************************************************************
-
-
-		Mode number 3 : Centered differences. (filter : [-1/2 ; 0 ; 1/2])
-		one of two heavy algorithms to measure local maximums while reducing noise. 
-
-
-**********************************************************************************/
-
-		else if (functionning_mod == 3)			// Gradient by centered differences ( [-1/2 ; 0 ; 1/2] )
+		// if a line is only on the the left side
+		if (BlackLineRight > 124)
 		{
-			// Find black line on the right side
-			for(i=126;i>=64;i--)							// calculate difference between the pixels
-			{
-				ImageDataDifference[i] = abs (-(ImageData[i-1])/2 + (ImageData[i+1])/2);
-			}
-			ImageDataDifference[127] = ImageData[127];	// last value doesnt have "gradient" for this method
-
-			CompareData_low = THRESHOLD_low;					// threshold_low
-			CompareData_high = THRESHOLD_high;					// threshold_high
-
-			// image processing with the algorithm seen at the beginning. 
-			BlackLineRight = 126;
-			for(i=126;i>=64;i--)
-			{
-	   			if (ImageDataDifference[i] > CompareData_high)
-	   			{
-	   				//CompareData_high = ImageDataDifference[i];
-	   				BlackLineRight = i;
-	   			}
-	   			else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high )
-	   			{
-	   				if (i >= 67 && i <= 124)
-	   				{
-	   					j = 1;
-	   					validate_gradient = 0;
-						while (j <= 3)
-	   					{
-	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high)
-	   						{
-	   							BlackLineRight = i;
-	   							//CompareData_high = ImageDataDifference[i+j];
-	   							//CompareData_low = ImageDataDifference[i];	   		
-	   							validate_gradient = 1;				
-	   						}
-	   						j++;
-	   					}
-	   				}
-
-	   				if (validate_gradient != 1)
-	   				{
-	   					if (i >= 69 && i <= 122)
-	   					{
-	   						j=1;
-	   						while (j <= 5)
-	   						{
-	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high))
-	   							{
-	   								BlackLineRight = i;
-	   								//CompareData_high = ImageDataDifference[i+j];
-	   								//CompareData_low = ImageDataDifference[i];	 
-	   							}
-	   							j++;
-
-	   						}
-
-	   					}
-	   				
-	   				}
-	   			}		/* END else if ... */
-			}	/* END for (i=126;i>=64;i--) */
-
-
-	   		// Find black line on the left side
-			for(i=1;i<=64;i++)							// calculate difference between the pixels
-			{
-				ImageDataDifference[i] = abs (-ImageData[i-1] + ImageData[i+1]);
-			}
-			ImageDataDifference[0] = ImageData[0];	// first value doesnt have "gradient" for this method
-
-			CompareData_low = THRESHOLD_low;					// threshold_low
-			CompareData_high = THRESHOLD_high;					// threshold_high
-
-			// image processing with the algorithm seen at the beginning. 
-			BlackLineLeft = 1;
-			for(i=0;i<=64;i++)
-			{
-	   			if (ImageDataDifference[i] > CompareData_high)
-	   			{
-	   				//CompareData_high = ImageDataDifference[i];
-	   				BlackLineLeft = i;
-	   			}
-	   			else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high )
-	   			{
-	   				if (i >= 3 && i <= 61)
-	   				{
-	   					j = 1;
-	   					validate_gradient = 0;
-						while (j <= 3)
-	   					{
-	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high)
-	   						{
-	   							BlackLineLeft = i;
-	   							//CompareData_high = ImageDataDifference[i+j];
-	   							//CompareData_low = ImageDataDifference[i];	   		
-	   							validate_gradient = 1;				
-	   						}
-	   						j++;
-	   					}
-	   				}
-
-	   				if (validate_gradient != 1)
-	   				{
-	   					if (i >= 5 && i <= 59)
-	   					{
-	   						j=1;
-	   						while (j <= 5)
-	   						{
-	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high))
-	   							{
-	   								BlackLineLeft = i;
-	   								//CompareData_high = ImageDataDifference[i+j];
-	   								//CompareData_low = ImageDataDifference[i];	 
-	   							}
-	   							j++;
-	   						}
-
-	   					}
-	   				
-	   				}
-	   			}		/* END else if ... */
-	   		}	/* END for (i=64;i>=1;i--) */
-
-
-			// Find middle of the road, 64 for strait road
-			RoadMiddle = (BlackLineLeft + BlackLineRight)/2;
+			RoadMiddle = BlackLineLeft + 50;
+		}
+		// if a line is only on the the right side
+		if (BlackLineLeft < 3)
+		{
+			RoadMiddle = BlackLineRight - 50;
+		}
+		// if no line on left and right side
+		if ((BlackLineRight > 124) && (BlackLineLeft < 3))
+		{
+			RoadMiddle = 64;
+		}
 	
-			// if a line is only on the the left side
-			if (BlackLineRight > 124)
-			{
-				RoadMiddle = BlackLineLeft + 50;
-			}
-			// if a line is only on the the right side
-			if (BlackLineLeft < 3)
-			{
-				RoadMiddle = BlackLineRight - 50;
-			}
-			// if no line on left and right side
-			if ((BlackLineRight > 124) && (BlackLineLeft < 3))
-			{
-				RoadMiddle = 64;
-			}
-	
-			// Store old value
-			diff_old = diff;							// store old difference
+		// Store old value
+		*diff_old = *diff;							// store old difference
 		
-			// Find difference from real middle
-			diff = RoadMiddle - 64;						// calculate actual difference
+		// Find difference from real middle
+		*diff = RoadMiddle - 64;						// calculate actual difference
 	
-			// plausibility check
-			if (abs (diff - diff_old) > 50)
-			{
-				diff = diff_old;
-			}
+		// plausibility check
+		if (abs (*diff - *diff_old) > 50)
+		{
+			*diff = *diff_old;
+		}
 
-		}	/* end IF mfunctionning_mod == 3 */
-
-
+	}	/*	END of the function "Image_Processing"	*/
 
 
 
-
-
-
-
-
-
-
+void plot_ImageData (void)
+{
+	for (i=0;i<=127;i++)
+	{
+		if (i==0)
+		{
+			printf("ImageData (0 to 127) : %d ",ImageData[i]);
+		}
+		else if (i == 127)
+		{
+			printf("%d \n", ImageData[i]);
+		}
+		else 
+		{
+			printf("%d ",ImageData[i]);
+		}
 	}
+}	/*	END of function "plot_ImageData"	*/
+
+
+void plot_ImageDataDifference (void)
+{
+	for (i=0;i<=127;i++)
+	{
+		if (i==0)
+		{
+			printf("ImageDataDifference (0 to 127) : %d ",ImageDataDifference[i]);
+		}
+		else if (i == 127)
+		{
+			printf("%d \n", ImageDataDifference[i]);
+		}
+		else 
+		{
+			printf("%d ",ImageDataDifference[i]);
+		}
+	}
+}	/*	END of function "plot_ImageDataDifference"	*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // Capture LineScan Image
