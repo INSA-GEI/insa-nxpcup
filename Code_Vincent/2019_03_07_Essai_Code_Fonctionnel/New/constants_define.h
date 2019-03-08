@@ -8,10 +8,30 @@
 #include "math.h"	/* used for different calculations, including the difference of Gaussian with roots, exponential and PI */
 
 
+
+/*	MAIN DEFINITIONS */
+
+/* Initialisations (beginning of the code) */
+#define PRESCALER_TPM0			3						// prescaler for TPM0 (Motor)
+#define PRESCALER_TPM1			3						// prescaler for TPM1 (Servo)
+
+#define MODULO_TPM0				600						// modulo TPM0 (Motor)
+#define MODULO_TPM1				6000					// modulo TPM1 (Servo)
+
+#define TPM0_SPEED_INIT			150						//	TPM0 channel1 left Motor 1 In 1 slow forward
+#define TPM1_SPEED_INIT			150						//	TPM0 channel5 right Motor 2 In 2 slow forward
+
+
+// Defines for Direction PD Servo Control Loop
+#define KP						50			// Proportional coefficient
+#define KDP						25			// Differential coefficient
+
+#define SERVO_BASE 				7800		// initial position for the servo (center)
+
+
 /* 
 *
-*	DEFINES : Can be in "main.c",
-*	"camera.c" or "camera.h".
+*	CAMERA DEFINITIONS
 *
 */
 
@@ -24,17 +44,23 @@
 
 
 // Define thresholds for Camera Black Line recognition
-#define THRESHOLD_high				140			// Higher threshold : does not capture noise but may not capture all maximums.
-#define THRESHOLD_low				50			// Lower threshold : May capture more maximums than High threshold but can capture noise too.
+#define THRESHOLD_HIGH				140			// Higher threshold : does not capture noise but may not capture all maximums.
+#define THRESHOLD_LOW				50			// Lower threshold : May capture more maximums than High threshold but can capture noise too.
 
-#define THRESHOLD_classic			120			// standard threshold : used in the basic image processing function
+#define THRESHOLD_CLASSIC			120			// standard threshold : used in the basic image processing function
 
-#define functionning_mode			2			// operating mode: from 1 to 3: algorithm more and more precise but heavy
+#define FUNCTIONNING_MODE			2			// operating mode: from 1 to 3: algorithm more and more precise but heavy
 
 #define SIGMA_1	 					2			// square root of the variance for the first gaussian filter
 #define SIGMA_2 					2.5			// square root of the variance for the second gaussian filter. 
 
-#define PI							3.14159265358979323846	// value of PI
+#define PI							3.14159265358979323846		// value of PI
+
+
+
+
+
+
 
 
 
