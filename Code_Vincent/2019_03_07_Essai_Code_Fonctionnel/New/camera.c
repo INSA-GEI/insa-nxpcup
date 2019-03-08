@@ -25,6 +25,7 @@
 
 #include "camera.h"	/* include camera functions definition */
 #include "math.h"	/* used for different calculations, including the difference of Gaussian with roots, exponential and PI */
+#include "constants_define.h"
 #include "stdio.h"
 #include "stdlib.h"
 
@@ -53,10 +54,10 @@ float gaussian2;
 
 	Two threshold functionning : 
 		For a pixel P(x), having gradient magnitude G, following conditions exists to detect a pixel as edge :
-			- if G < threshold_low then discard the edge
-			- if G > threshold_high then keep the edge
-			- if threshold_low < G < threshold_high and if any neighbour three units away have gradient magnitude greater than threshold_high, keep the edge
-			- if no neighbour in this regions have gradient > threshold_high, search the 5 units away for threshold_low < gradient < threshold_high. 
+			- if G < THRESHOLD_LOW then discard the edge
+			- if G > THRESHOLD_HIGH then keep the edge
+			- if THRESHOLD_LOW < G < THRESHOLD_HIGH and if any neighbour three units away have gradient magnitude greater than THRESHOLD_HIGH, keep the edge
+			- if no neighbour in this regions have gradient > THRESHOLD_HIGH, search the 5 units away for THRESHOLD_LOW < gradient < THRESHOLD_HIGH. 
 				If so, keep the edge
 			- else : discard the edge. 
 
@@ -64,7 +65,7 @@ float gaussian2;
 
 	void fill_ImageDataDifference(int funtionning_mode)
 	{
-		if (functionning_mode == 1)
+		if (FUNCTIONNING_MODE == 1)
 		{
 			for(i=0;i<=126;i++)							// classic algorithm (same as the NXP_minimal) 
 			{
@@ -72,7 +73,7 @@ float gaussian2;
 			}
 			ImageDataDifference[127] = ImageData[127];	// last value doesnt have "gradient" for this method
 		}
-		else if (functionning_mode == 2)
+		else if (FUNCTIONNING_MODE == 2)
 		{
 			for(i=1;i<=126;i++)							// using a gradient by direct differences (application of the filter : [-1 , 0 , 1] -> P(x) = -1*P(x-1)+0*P(x)+1*P(x+1))
 			{
@@ -81,7 +82,7 @@ float gaussian2;
 			ImageDataDifference[0] = ImageData[0];	// first value doesnt have "gradient" for this method
 			ImageDataDifference[127] = ImageData[127];	// last value doesnt have "gradient" for this method
 		}
-		else if (functionning_mode == 3)
+		else if (FUNCTIONNING_MODE == 3)
 		{
 			for(i=1;i<=126;i++)							// using a gradient by centered differences (application of the filter :[-1/2 , 0 , 1/2] -> P(x) = (-1/2)*P(x-1)+0*P(x)+(1/2)*P(x+1))
 			{
@@ -90,7 +91,7 @@ float gaussian2;
 			ImageDataDifference[0] = ImageData[0];	// first value doesnt have "gradient" for this method
 			ImageDataDifference[127] = ImageData[127];	// last value doesnt have "gradient" for this method
 		}
-		else if (functionning_mode == 4)
+		else if (FUNCTIONNING_MODE == 4)
 		{
 			for(i=0;i<=127;i++)							// using the Gaussian difference method
 			{
@@ -106,10 +107,10 @@ float gaussian2;
 
 	void image_processing (int * diff, int * diff_old, int * BlackLineLeft, int * BlackLineRight, int * RoadMiddle)
 	{
-		if (functionning_mode == 1)
+		if (FUNCTIONNING_MODE == 1)
 		{
 			// Find black line on the right side
-			CompareData_classic = THRESHOLD_classic;					// threshold
+			CompareData_classic = THRESHOLD_CLASSIC;					// threshold
 			*BlackLineRight = 126;
 			for(i=126;i>=64;i--)
 			{
@@ -121,7 +122,7 @@ float gaussian2;
 			}
 	
 			// Find black line on the left side
-			CompareData_classic = THRESHOLD_classic;					// threshold
+			CompareData_classic = THRESHOLD_CLASSIC;					// threshold
 			*BlackLineLeft = 1;
 			for(i=3;i<=64;i++)							// only down to pixel 3, not 1
 			{
@@ -142,12 +143,12 @@ float gaussian2;
 			
 *****************************************************************************************************************************************************/
 
-		else if (functionning_mode == 2 || functionning_mode == 3)	
+		else if (FUNCTIONNING_MODE == 2 || FUNCTIONNING_MODE == 3)	
 		{
 			// Find black line on the right side
 
-			CompareData_low = THRESHOLD_low;					// threshold_low
-			CompareData_high = THRESHOLD_high;					// threshold_high
+			CompareData_low = THRESHOLD_LOW;					// THRESHOLD_LOW
+			CompareData_high = THRESHOLD_HIGH;					// THRESHOLD_HIGH
 
 			*BlackLineRight = 126;
 			for(i=126;i>=64;i--)
@@ -200,8 +201,8 @@ float gaussian2;
 
 	   		// Find black line on the left side
 
-			CompareData_low = THRESHOLD_low;					// threshold_low
-			CompareData_high = THRESHOLD_high;					// threshold_high
+			CompareData_low = THRESHOLD_LOW;					// THRESHOLD_LOW
+			CompareData_high = THRESHOLD_HIGH;					// THRESHOLD_HIGH
 
 			// image processing with the algorithm seen at the beginning. 
 			*BlackLineLeft = 1;
@@ -257,7 +258,7 @@ float gaussian2;
 			GPIOD_PDOR |= GPIO_PDOR_PDO(1<<1);    // blue LED off	
 			GPIOB_PDOR &= ~GPIO_PDOR_PDO(1<<18);	// red led on
 			
-		}	/* END of "(IF mfunctionning_mod == 2 || functionning_mode == 3)" */
+		}	/* END of "(IF mfunctionning_mod == 2 || FUNCTIONNING_MODE == 3)" */
 
 
 /****************************************************************************************************************************************************
@@ -267,12 +268,12 @@ float gaussian2;
 			
 *****************************************************************************************************************************************************/
 
-		else if (functionning_mode == 4)
+		else if (FUNCTIONNING_MODE == 4)
 		{
 			// Find black line on the right side
 
-			CompareData_low = THRESHOLD_low;					// threshold_low
-			CompareData_high = THRESHOLD_high;					// threshold_high
+			CompareData_low = THRESHOLD_LOW;					// THRESHOLD_LOW
+			CompareData_high = THRESHOLD_HIGH;					// THRESHOLD_HIGH
 
 			*BlackLineRight = 126;
 			for(i=127;i>=64;i--)
@@ -325,8 +326,8 @@ float gaussian2;
 
 	   		// Find black line on the left side
 
-			CompareData_low = THRESHOLD_low;					// threshold_low
-			CompareData_high = THRESHOLD_high;					// threshold_high
+			CompareData_low = THRESHOLD_LOW;					// THRESHOLD_LOW
+			CompareData_high = THRESHOLD_HIGH;					// THRESHOLD_HIGH
 
 			// image processing with the algorithm seen at the beginning. 
 			*BlackLineLeft = 1;
@@ -384,7 +385,7 @@ float gaussian2;
 			GPIOD_PDOR &= ~GPIO_PDOR_PDO(1<<1);   // blue LED on	
 			
 			
-		} /* END of "if (functionning_mode == 4)"  */
+		} /* END of "if (FUNCTIONNING_MODE == 4)"  */
 			
 	}	/*	END of the function "Image_Processing"	*/
 

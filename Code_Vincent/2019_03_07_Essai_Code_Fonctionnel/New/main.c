@@ -18,12 +18,10 @@
 
 #include "derivative.h" /* include peripheral declarations */
 #include "camera.h"
+#include "constants_define.h"
 #include "movement.h"
-#include "stdlib.h"
 
-// Defines for Direction PD Servo Control Loop
-#define KP						50			// Proportional coefficient
-#define KDP						25			// Differential coefficient
+
 
 
 // Function declaration
@@ -49,8 +47,6 @@ int servo_position = 0;														// actual position of the servo relative to
 int RoadMiddle = 0;					// used in "camera.c"					// calculated middle of the road
 int RoadMiddle_old = 0;				// used in "movement.c"					// save the last "Middle of the road" position
 
-
-int servo_base = 7800;														// initial servo position (center)
 unsigned long count_time = 0;												// counter to regulate the display of data 
 
 int BlackLineRight = 127			// used in "camera.c"					// position of the black line on the right side
@@ -143,7 +139,7 @@ int main(void){
 	
 	// TPM modulo register, set frequency
 	TPM0_MOD = 600;					// modulo TPM0 (Motor), periode = 0.10 ms (10000 Hz)
-	TPM1_MOD = 60000;				// modulo TPM0 (Servo), periode = 10 ms (100 Hz)
+	TPM1_MOD = 60000;				// modulo TPM1 (Servo), periode = 10 ms (100 Hz)
 	
 	// set TPM clock mode to enable timer
 	TPM0_SC |= TPM_SC_CMOD(1);		// enable TPM0 (Motor)
@@ -155,7 +151,7 @@ int main(void){
 	TPM1_C0SC = 0x28;				// TPM1 channel0 Servo 1
 	
 	// TPM channel value registers, sets duty cycle
-	TPM1_C0V = servo_base;				// TPM1 channel0 Servo 1 ca. 1.5 ms (middle)
+	TPM1_C0V = SERVO_BASE;				// TPM1 channel0 Servo 1 ca. 1.5 ms (middle)
 	
     // initial configuration of motors
     TPM0_C1V = 150;					// TPM0 channel1 left Motor 1 In 1 slow forward
@@ -183,22 +179,11 @@ int main(void){
     asm (" CPSIE i ");				// enable interrupts on core level
     
     // Main loop
-/*	for(;;) {						// endless loop
+	for(;;) {						// endless loop
 
-		if (count_time == 1000000)
-		{
-			plot_ImageData();
-			printf("\n");			
-			plot_ImageDataDifference();	// plot the 128 pixels data. 
-			count_time = 0;
-		}
-		count_time ++;
-		
-		// do nothing
 		
 	}								// end of endless loop	
-*/
-	return 0;
+
 }
 
 void FTM1_IRQHandler()				// TPM1 ISR
@@ -220,7 +205,7 @@ void FTM1_IRQHandler()				// TPM1 ISR
 	servo_position = KP*diff + KDP*(diff-diff_old);
 
 	// Set channel 0 PWM_Servo position
-	TPM1_C0V  = servo_base - servo_position; 		// set channel 0 PWM_Servo
+	TPM1_C0V  = SERVO_BASE - servo_position; 		// set channel 0 PWM_Servo
 	
 	
 	// differential
