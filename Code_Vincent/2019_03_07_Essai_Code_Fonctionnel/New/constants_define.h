@@ -36,4 +36,22 @@
 
 #define PI							3.14159265358979323846	// value of PI
 
+
+
+// Defines for speed coefficients (differential)
+#define L_TURN_R_LANE_THRESHOLD		70
+#define L_TURN_L_LANE_THRESHOLD		10
+#define R_TURN_R_LANE_THRESHOLD		120
+#define R_TURN_L_LANE_THRESHOLD		35
+#define END_L_LANE_THRESHOLD		30
+#define END_R_LANE_THRESHOLD		100
+
+#define L_TURN_L_MOTOR_SPEED		80
+#define L_TURN_R_MOTOR_SPEED		80
+#define R_TURN_L_MOTOR_SPEED		80
+#define R_TURN_R_MOTOR_SPEED		80
+
+#define FORWARD_MOTOR_SPEED			150
+
+
 #endif /* CONSTANTS_DEFINE_H */

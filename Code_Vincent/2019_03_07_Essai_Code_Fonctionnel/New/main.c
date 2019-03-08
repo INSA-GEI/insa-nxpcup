@@ -224,17 +224,17 @@ void FTM1_IRQHandler()				// TPM1 ISR
 	
 	
 	// differential
-	if (BlackLineRight >= 70 && BlackLineLeft <= 10) 	// Left turn case
+	if (BlackLineRight >= L_TURN_R_LANE_THRESHOLD && BlackLineLeft <= L_TURN_L_LANE_THRESHOLD) 	// Left turn case
 	{
-		TPM0_C1V = 80;					// TPM0 channel1 left Motor 1 In 1 slow forward
-		TPM0_C5V = 80;					// TPM0 channel5 right Motor 2 In 2 slow forward
+		TPM0_C1V = L_TURN_L_MOTOR_SPEED;					// TPM0 channel1 left Motor 1 In 1 slow forward
+		TPM0_C5V = L_TURN_R_MOTOR_SPEED;					// TPM0 channel5 right Motor 2 In 2 slow forward
 	}
-	else if (BlackLineRight >= 120 && BlackLineLeft >= 35)	// right turn case
+	else if (BlackLineRight >= R_TURN_R_LANE_THRESHOLD && BlackLineLeft >= R_TURN_L_LANE_THRESHOLD)	// right turn case
 	{
-		TPM0_C1V = 80;					// TPM0 channel1 left Motor 1 In 1 slow forward
-		TPM0_C5V = 80;					// TPM0 channel5 right Motor 2 In 2 slow forward
+		TPM0_C1V = R_TURN_L_MOTOR_SPEED;					// TPM0 channel1 left Motor 1 In 1 slow forward
+		TPM0_C5V = R_TURN_R_MOTOR_SPEED;					// TPM0 channel5 right Motor 2 In 2 slow forward
 	}
-	else if (BlackLineLeft >= 30 && BlackLineRight <= 100)	// try to see the end of the race
+	else if (BlackLineLeft >= END_L_LANE_THRESHOLD && BlackLineRight <= END_R_LANE_THRESHOLD)	// try to see the end of the race
 	{
 		for (i = 0 ; i < 1000000 ; i++);
 		TPM0_C1V = 0;					// TPM0 channel1 left Motor 1 In 1 fast forward
@@ -243,8 +243,8 @@ void FTM1_IRQHandler()				// TPM1 ISR
 	}
 	else 
 	{
-		TPM0_C1V = 150;					// TPM0 channel1 left Motor 1 In 1 fast forward
-		TPM0_C5V = 150;					// TPM0 channel5 right Motor 2 In 2 fast forward
+		TPM0_C1V = FORWARD_MOTOR_SPEED;					// TPM0 channel1 left Motor 1 In 1 fast forward
+		TPM0_C5V = FORWARD_MOTOR_SPEED;					// TPM0 channel5 right Motor 2 In 2 fast forward
 	}
 	
 	
