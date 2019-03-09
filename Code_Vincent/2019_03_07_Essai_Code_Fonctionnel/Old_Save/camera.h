@@ -6,37 +6,6 @@
 
 #include "derivative.h" /* include peripheral declarations */
 #include "math.h"	/* used for different calculations, including the difference of Gaussian with roots, exponential and PI */
-#include "stdio.h"
-#include "stdlib.h"
-
-/* 
-*
-*	DEFINES : Can be in "main.c",
-*	"camera.c" or "camera.h".
-*
-*/
-
-// Defines for LineScan Camera
-#define TAOS_DELAY				asm ("nop")				// minimal delay time
-#define	TAOS_SI_HIGH			GPIOB_PDOR |= (1<<8)	// SI on PTB8
-#define	TAOS_SI_LOW				GPIOB_PDOR &= ~(1<<8)	// SI on PTB8
-#define	TAOS_CLK_HIGH			GPIOB_PDOR |= (1<<9)	// CLK on PTB9
-#define	TAOS_CLK_LOW			GPIOB_PDOR &= ~(1<<9)	// CLK on PTB9
-
-
-// Define thresholds for Camera Black Line recognition
-#define THRESHOLD_high				140			// Higher threshold : does not capture noise but may not capture all maximums.
-#define THRESHOLD_low				50			// Lower threshold : May capture more maximums than High threshold but can capture noise too.
-
-#define THRESHOLD_classic			120			// standard threshold : used in the basic image processing function
-
-#define functionning_mode			2			// operating mode: from 1 to 3: algorithm more and more precise but heavy
-
-#define SIGMA_1	 					2			// square root of the variance for the first gaussian filter
-#define SIGMA_2 					2.5			// square root of the variance for the second gaussian filter. 
-
-#define PI							3.14159265358979323846	// value of PI
-
 
 
 
@@ -46,8 +15,7 @@ void ImageCapture(void); // capture linescan image
 *	The image is stored in the form of a 128 pixel table, whose value varies from 0 to 255 depending on the intensity
 *
 */
-
-void fill_ImageDataDifference(int funtionning_mode);
+void fill_ImageDataDifference(void);
 /*
 *	Fills in the "ImageDataDifference" table according to the selected operating mode (see below)
 *
@@ -80,8 +48,7 @@ void plot_ImageDataDifference (void);
 *
 */
 
-
-void image_processing (int mode , int * diff, int * diff_old, int * BlackLineLeft, int * BlackLineRight);
+void image_processing (int * diff, int * diff_old, int * BlackLineLeft, int * BlackLineRight, int * RoadMiddle);
 /*
 *	Retrieves the image, applies algorithms to find local maximums and thus define the position of black lines. 
 *	PARAMETERS : operating mode : 1 = classic algorithm (same as the NXP_minimal) 

@@ -18,29 +18,39 @@
 
 #include "derivative.h" /* include peripheral declarations */
 #include "camera.h"
+#include "constants_define.h"
+#include "movement.h"
 
 
-// Defines for Direction PD Servo Control Loop
-#define KP						50			// Proportional coefficient
-#define KDP						25			// Differential coefficient
 
 
 // Function declaration
 void ImageCapture(void);
 int abs (int);
 
-// Variable declaration
-int i;										// counter for loops
-int temp_reg;								// temporary register
-int diff = 0;								// actual difference from line middle position
-int diff_old = 0;							// previous difference from line middle position
-int servo_position = 0;						// actual position of the servo relative to middle
 
-int servo_base = 7800;						// initial servo position (center)
-unsigned long count_time = 0;				// counter to regulate the display of data 
+/* 	ALL variable declaration : all variables are defined here and used with pointers to simplify their reading. 
+*
+*	Each function integrates in its parameters all the variables defined in the "main" that they need. 
+*	Each function has its memory assigned precisely with the help of a Malloc and is destroyed at the end of the program. Nothing should be left to chance. 
+*
+*/
 
-int BlackLineRight = 127;							// position of the black line on the right side
-int BlackLineLeft = 0;							// position of the black line on the left side
+/*------------------------------- MAIN VARIABLES (used in main or Multiple Functions) ------------------------------------------*/
+
+int i;																		// counter for loops
+int temp_reg;																// temporary register
+int diff = 0;						// used in "camera.c"					// actual difference from line middle position
+int diff_old = 0;					// used in "camera.c"					// previous difference from line middle position
+int servo_position = 0;														// actual position of the servo relative to middle
+
+int RoadMiddle = 0;					// used in "camera.c"					// calculated middle of the road
+int RoadMiddle_old = 0;				// used in "movement.c"					// save the last "Middle of the road" position
+
+int BlackLineRight = 127;			// used in "camera.c"					// position of the black line on the right side
+int BlackLineLeft = 0;				// used in "camera.c"					// position of the black line on the left side
+
+
 
 // Main program
 int main(void){
@@ -48,7 +58,7 @@ int main(void){
 	// configure clock to 48 MHz from a 8 MHz crystal
 	MCG_C2 = (MCG_C2_RANGE0(1) | MCG_C2_EREFS0_MASK); 	// configure the oscillator settings
 	MCG_C1 = (MCG_C1_CLKS(2) | MCG_C1_FRDIV(3));		// divider for 8 MHz clock	
-	for (i = 0 ; i < 24000 ; i++)						// wait for OSCINIT to set
+	for (i = 0 ; i < 24000 ; i++);						// wait for OSCINIT to set
 	// now in FBE mode
 	MCG_C6 |= MCG_C6_CME0_MASK;		// enable the clock monitor
 	MCG_C5 |= MCG_C5_PRDIV0(1); 	// set PLL ref divider to divide by 2
@@ -122,12 +132,12 @@ int main(void){
 	SIM_SOPT2 |= SIM_SOPT2_PLLFLLSEL_MASK;	// use MCGPLLCLK/2 clock when running from 8 MHz and PLL
 		
 	// set TPM prescaler before enabling the timer
-	TPM0_SC |= 3;					// prescaler for TPM0 (Motor) is 8
-	TPM1_SC |= 3;					// prescaler for TPM1 (Servo) is 8
+	TPM0_SC |= PRESCALER_TPM0;					// prescaler for TPM0 (Motor) is 8
+	TPM1_SC |= PRESCALER_TPM1;					// prescaler for TPM1 (Servo) is 8
 	
 	// TPM modulo register, set frequency
-	TPM0_MOD = 600;					// modulo TPM0 (Motor), periode = 0.10 ms (10000 Hz)
-	TPM1_MOD = 60000;				// modulo TPM0 (Servo), periode = 10 ms (100 Hz)
+	TPM0_MOD = MODULO_TPM0;					// modulo TPM0 (Motor), periode = 0.10 ms (10000 Hz)
+	TPM1_MOD = MODULO_TPM1;					// modulo TPM1 (Servo), periode = 10 ms (100 Hz)
 	
 	// set TPM clock mode to enable timer
 	TPM0_SC |= TPM_SC_CMOD(1);		// enable TPM0 (Motor)
@@ -139,11 +149,11 @@ int main(void){
 	TPM1_C0SC = 0x28;				// TPM1 channel0 Servo 1
 	
 	// TPM channel value registers, sets duty cycle
-	TPM1_C0V = servo_base;				// TPM1 channel0 Servo 1 ca. 1.5 ms (middle)
+	TPM1_C0V = SERVO_BASE;				// TPM1 channel0 Servo 1 ca. 1.5 ms (middle)
 	
     // initial configuration of motors
-    TPM0_C1V = 150;					// TPM0 channel1 left Motor 1 In 1 slow forward
-	TPM0_C5V = 150;					// TPM0 channel5 right Motor 2 In 2 slow forward
+    TPM0_C1V = L_MOTOR_SPEED_INIT;					// TPM0 channel1 left Motor 1 In 1 slow forward
+	TPM0_C5V = R_MOTOR_SPEED_INIT;					// TPM0 channel5 right Motor 2 In 2 slow forward
 	GPIOA_PDOR &= ~(1<<5);			// Set PTA5 left Motor 1 In 2 forward
 	GPIOC_PDOR &= ~(1<<8);			// Set PTC8 right Motor 2 In 1 forward
 	
@@ -167,22 +177,11 @@ int main(void){
     asm (" CPSIE i ");				// enable interrupts on core level
     
     // Main loop
-/*	for(;;) {						// endless loop
+	for(;;) {						// endless loop
 
-		if (count_time == 1000000)
-		{
-			plot_ImageData();
-			printf("\n");			
-			plot_ImageDataDifference();	// plot the 128 pixels data. 
-			count_time = 0;
-		}
-		count_time ++;
-		
-		// do nothing
 		
 	}								// end of endless loop	
-*/
-	return 0;
+
 }
 
 void FTM1_IRQHandler()				// TPM1 ISR
@@ -195,33 +194,41 @@ void FTM1_IRQHandler()				// TPM1 ISR
 	// Capture Line Scan Image
 	ImageCapture();								// capture LineScan image
 	
-	fill_ImageDataDifference (functionning_mode);			// fill the table "ImageDataDifference" with specified method (1/2/3/4)
-	image_processing(functionning_mode, &diff, &diff_old, &BlackLineLeft, &BlackLineRight);	// image processing : finds the black lines on the left and right, and finds the middle of the track
+	fill_ImageDataDifference();			// fill the table "ImageDataDifference" with specified method (1/2/3/4) (see "Camera.h")
+	int * DummyRoadMiddle = 0;		// dummy and unused variable to let the code compile (image_processing needs this variable even if it doesn't actually use it in mode 1).
+	image_processing(&diff, &diff_old, &BlackLineLeft, &BlackLineRight, DummyRoadMiddle);	// image processing : finds the black lines on the left and right, and finds the middle of the track
 
-	
+	middlecalculate(&RoadMiddle, &RoadMiddle_old, &BlackLineLeft, &BlackLineRight, &diff, &diff_old);	// calculate the middle of the road
 	
 	// Direction Control Loop: PD Controller
 	servo_position = KP*diff + KDP*(diff-diff_old);
 
 	// Set channel 0 PWM_Servo position
-	TPM1_C0V  = servo_base - servo_position; 		// set channel 0 PWM_Servo
+	TPM1_C0V  = SERVO_BASE - servo_position; 		// set channel 0 PWM_Servo
 	
 	
 	// differential
-	if (BlackLineRight >= 70 && BlackLineLeft <= 10) 	// Left turn case
+	if (BlackLineRight >= L_TURN_R_LANE_THRESHOLD && BlackLineLeft <= L_TURN_L_LANE_THRESHOLD) 	// Left turn case
 	{
-		TPM0_C1V = 80;					// TPM0 channel1 left Motor 1 In 1 slow forward
-		TPM0_C5V = 80;					// TPM0 channel5 right Motor 2 In 2 slow forward
+		TPM0_C1V = L_TURN_L_MOTOR_SPEED;					// TPM0 channel1 left Motor 1 In 1 slow forward
+		TPM0_C5V = L_TURN_R_MOTOR_SPEED;					// TPM0 channel5 right Motor 2 In 2 slow forward
 	}
-	else if (BlackLineRight >= 120 && BlackLineLeft >= 35)	// right turn case
+	else if (BlackLineRight >= R_TURN_R_LANE_THRESHOLD && BlackLineLeft >= R_TURN_L_LANE_THRESHOLD)	// right turn case
 	{
-		TPM0_C1V = 80;					// TPM0 channel1 left Motor 1 In 1 slow forward
-		TPM0_C5V = 80;					// TPM0 channel5 right Motor 2 In 2 slow forward
+		TPM0_C1V = R_TURN_L_MOTOR_SPEED;					// TPM0 channel1 left Motor 1 In 1 slow forward
+		TPM0_C5V = R_TURN_R_MOTOR_SPEED;					// TPM0 channel5 right Motor 2 In 2 slow forward
+	}
+	else if (BlackLineLeft >= END_L_LANE_THRESHOLD && BlackLineRight <= END_R_LANE_THRESHOLD)	// try to see the end of the race
+	{
+		for (i = 0 ; i < 1000000 ; i++);
+		TPM0_C1V = 0;					// TPM0 channel1 left Motor 1 In 1 fast forward
+		TPM0_C5V = 0;					// TPM0 channel5 right Motor 2 In 2 fast forward
+
 	}
 	else 
 	{
-		TPM0_C1V = 150;					// TPM0 channel1 left Motor 1 In 1 fast forward
-		TPM0_C5V = 150;					// TPM0 channel5 right Motor 2 In 2 fast forward
+		TPM0_C1V = FORWARD_MOTOR_SPEED;					// TPM0 channel1 left Motor 1 In 1 fast forward
+		TPM0_C5V = FORWARD_MOTOR_SPEED;					// TPM0 channel5 right Motor 2 In 2 fast forward
 	}
 	
 	
