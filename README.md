@@ -38,10 +38,12 @@ git push #Sends the previous commit on this repo
 **NB :** While commiting, use `Esc :wq Enter`. A good commit message is brief, and completes the following statement : *This commit will ...*.
 
 
-
+# Branches management
+**Do not use branches yet !**
 Your are in branch master, nothing should be done here
 Select a valid branch:
 
 	git checkout stable    : stable branch
 	git checkout dev       : work in progress
+	
 
