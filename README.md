@@ -5,11 +5,13 @@ As of today, this repo is used by INSA's three teams.
 
 # Where do I find/place the source code ?
 Every folder titled `source_[...]` is a version of the code. One should only put the \*.c and the \*.h of the project, not the entire folder !
+
 [...] Is a keyword or a_small_sentence describing this version in particular (e.g. "`source_dangerously_fast`" or "`source_safest`").
 
 # Quick HowTo
 Small survival kit for everyone : 
 ## Installing git (the clean way)
+[Get here](https://git-scm.com/downloads) and follow the installer's instructions. One should avoid using github desktop client ;)
 
 ## Downloading the code
 ```bash
