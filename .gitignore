@@ -1,29 +1,2 @@
 # DS_Store osx files
 *.DS_Store
-
-# MCUXpresso specific files
-/.settings/
-/debug/*
-/debug/!readme.txt
-
-
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
-
-# Linker output
-*.ilk
-*.map
-*.exp
-
-
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
-
