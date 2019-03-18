@@ -1,0 +1,827 @@
+Archive member included because of file (symbol)
+
+D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(exit.o)
+                              ./Project_Settings/Startup_Code/__arm_start.o (exit)
+D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memset.o)
+                              ./Project_Settings/Startup_Code/__arm_start.o (memset)
+D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__filll_mem.o)
+                              D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memset.o) (__fill_mem)
+D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o)
+                              (__pformatter_)
+D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(scanformat_.o)
+                              (__sformatter)
+D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+                              D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(scanformat_.o) (isspace)
+D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__strtoul.o)
+                              D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(scanformat_.o) (__strtoul)
+D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strchr.o)
+                              D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o) (strchr)
+D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memcpy.o)
+                              D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(scanformat_.o) (memcpy)
+D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strlen.o)
+                              D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o) (strlen)
+D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memchr.o)
+                              D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o) (memchr)
+d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_thumb1_case_sqi.o)
+                              D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__strtoul.o) (__gnu_thumb1_case_sqi)
+d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_thumb1_case_uqi.o)
+                              D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(scanformat_.o) (__gnu_thumb1_case_uqi)
+d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_udivsi3.o)
+                              D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o) (__aeabi_uidiv)
+d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_dvmd_tls.o)
+                              d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_udivsi3.o) (__aeabi_idiv0)
+D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(gcc_ctor_dtor.o)
+                              ./Project_Settings/Startup_Code/__arm_start.o (__init_cpp)
+D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+                              D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(exit.o) (__destroy_global_chain)
+D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(ROMCopy.o)
+                              ./Project_Settings/Startup_Code/__arm_start.o (__copy_rom_sections_to_ram)
+
+Allocating common symbols
+Common symbol       size              file
+
+CompareData_classic
+                    0x4               ./Sources/camera.o
+j                   0x4               ./Sources/camera.o
+gaussian1           0x4               ./Sources/camera.o
+ckbk                0x4               ./Sources/camera.o
+ImageDataDifference
+                    0x200             ./Sources/camera.o
+CompareData_low     0x4               ./Sources/camera.o
+validate_gradient   0x4               ./Sources/camera.o
+CompareData_high    0x4               ./Sources/camera.o
+temp_reg            0x4               ./Sources/main.o
+gaussian2           0x4               ./Sources/camera.o
+ImageData           0x200             ./Sources/camera.o
+
+Discarded input sections
+
+ .text          0x00000000        0x0 ./Project_Settings/Startup_Code/kinetis_sysinit.o
+ .data          0x00000000        0x0 ./Project_Settings/Startup_Code/kinetis_sysinit.o
+ .bss           0x00000000        0x0 ./Project_Settings/Startup_Code/kinetis_sysinit.o
+ .text          0x00000000        0x0 ./Project_Settings/Startup_Code/__arm_start.o
+ .data          0x00000000        0x0 ./Project_Settings/Startup_Code/__arm_start.o
+ .bss           0x00000000        0x0 ./Project_Settings/Startup_Code/__arm_start.o
+ .text.__iar_program_start
+                0x00000000        0x4 ./Project_Settings/Startup_Code/__arm_start.o
+ .text          0x00000000        0x0 ./Project_Settings/Startup_Code/__arm_end.o
+ .data          0x00000000        0x0 ./Project_Settings/Startup_Code/__arm_end.o
+ .bss           0x00000000        0x0 ./Project_Settings/Startup_Code/__arm_end.o
+ .text          0x00000000        0x0 ./Sources/sa_mtb.o
+ .data          0x00000000        0x0 ./Sources/sa_mtb.o
+ .bss           0x00000000        0x0 ./Sources/sa_mtb.o
+ .debug_info    0x00000000       0x21 ./Sources/sa_mtb.o
+ .debug_abbrev  0x00000000       0x12 ./Sources/sa_mtb.o
+ .debug_aranges
+                0x00000000       0x18 ./Sources/sa_mtb.o
+ .debug_macinfo
+                0x00000000     0x24d8 ./Sources/sa_mtb.o
+ .debug_line    0x00000000       0xbb ./Sources/sa_mtb.o
+ .debug_str     0x00000000       0xb2 ./Sources/sa_mtb.o
+ .comment       0x00000000       0x7a ./Sources/sa_mtb.o
+ .ARM.attributes
+                0x00000000       0x31 ./Sources/sa_mtb.o
+ .text          0x00000000        0x0 ./Sources/movement.o
+ .data          0x00000000        0x0 ./Sources/movement.o
+ .bss           0x00000000        0x0 ./Sources/movement.o
+ .text.middlecalculate
+                0x00000000       0xb4 ./Sources/movement.o
+ .text          0x00000000        0x0 ./Sources/main.o
+ .data          0x00000000        0x0 ./Sources/main.o
+ .bss           0x00000000        0x0 ./Sources/main.o
+ .bss.RoadMiddle_old
+                0x00000000        0x4 ./Sources/main.o
+ .bss.count_time
+                0x00000000        0x4 ./Sources/main.o
+ .text          0x00000000        0x0 ./Sources/camera.o
+ .data          0x00000000        0x0 ./Sources/camera.o
+ .bss           0x00000000        0x0 ./Sources/camera.o
+ .text          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(exit.o)
+ .data          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(exit.o)
+ .bss           0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(exit.o)
+ .text          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memset.o)
+ .data          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memset.o)
+ .bss           0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memset.o)
+ .text          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__filll_mem.o)
+ .data          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__filll_mem.o)
+ .bss           0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__filll_mem.o)
+ .text          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o)
+ .data          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o)
+ .bss           0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o)
+ .text          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(scanformat_.o)
+ .data          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(scanformat_.o)
+ .bss           0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(scanformat_.o)
+ .text          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .data          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .bss           0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .text.isalnum  0x00000000       0x1c D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .text.iscntrl  0x00000000       0x20 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .text.isdigit  0x00000000        0xe D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .text.isgraph  0x00000000       0x1c D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .text.islower  0x00000000       0x20 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .text.isprint  0x00000000       0x1c D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .text.ispunct  0x00000000       0x20 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .text.isupper  0x00000000       0x20 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .text.isxdigit
+                0x00000000       0x20 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .text.isblank  0x00000000       0x28 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .text.tolower  0x00000000        0xe D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .text          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__strtoul.o)
+ .data          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__strtoul.o)
+ .bss           0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__strtoul.o)
+ .text          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strchr.o)
+ .data          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strchr.o)
+ .bss           0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strchr.o)
+ .text          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memcpy.o)
+ .data          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memcpy.o)
+ .bss           0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memcpy.o)
+ .text          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strlen.o)
+ .data          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strlen.o)
+ .bss           0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strlen.o)
+ .text          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memchr.o)
+ .data          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memchr.o)
+ .bss           0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memchr.o)
+ .data          0x00000000        0x0 d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_thumb1_case_sqi.o)
+ .bss           0x00000000        0x0 d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_thumb1_case_sqi.o)
+ .data          0x00000000        0x0 d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_thumb1_case_uqi.o)
+ .bss           0x00000000        0x0 d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_thumb1_case_uqi.o)
+ .data          0x00000000        0x0 d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_udivsi3.o)
+ .bss           0x00000000        0x0 d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_udivsi3.o)
+ .data          0x00000000        0x0 d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_dvmd_tls.o)
+ .bss           0x00000000        0x0 d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_dvmd_tls.o)
+ .text          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(gcc_ctor_dtor.o)
+ .data          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(gcc_ctor_dtor.o)
+ .bss           0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(gcc_ctor_dtor.o)
+ .bss.__dso_handle
+                0x00000000        0x4 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(gcc_ctor_dtor.o)
+ .text          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+ .data          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+ .bss           0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+ .text.__register_global_object
+                0x00000000       0x14 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+ .text.__cxa_atexit
+                0x00000000       0x38 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+ .text.__aeabi_atexit
+                0x00000000        0xe D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+ .text.__register_atexit
+                0x00000000        0xc D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+ .text.__init_hardware
+                0x00000000        0x4 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+ .bss.atexit_curr_func
+                0x00000000        0x4 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+ .bss.atexit_funcs
+                0x00000000      0x300 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+ .text          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(ROMCopy.o)
+ .data          0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(ROMCopy.o)
+ .bss           0x00000000        0x0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(ROMCopy.o)
+ .text.__flush_cache
+                0x00000000        0x2 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(ROMCopy.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+m_interrupts     0x00000000         0x000000c0         xr
+m_cfmprotrom     0x00000400         0x00000010         xr
+m_text           0x00000800         0x0000f800         xr
+m_data           0x1ffff800         0x00002000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD ./Project_Settings/Startup_Code/kinetis_sysinit.o
+LOAD ./Project_Settings/Startup_Code/__arm_start.o
+LOAD ./Project_Settings/Startup_Code/__arm_end.o
+LOAD ./Sources/sa_mtb.o
+LOAD ./Sources/movement.o
+LOAD ./Sources/main.o
+LOAD ./Sources/camera.o
+                0x000015a0                __pformatter = __pformatter_
+                [0x000019c8]                __sformatter = __sformatter
+START GROUP
+LOAD D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a
+LOAD D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libm.a
+LOAD d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a
+LOAD D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a
+LOAD D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libuart.a
+END GROUP
+                0x20001800                _estack = 0x20001800
+                0x20001800                __SP_INIT = _estack
+                0x00000100                __heap_size = 0x100
+                0x00000100                __stack_size = 0x100
+
+.interrupts     0x00000000       0xc0
+                0x00000000                __vector_table = .
+                0x00000000                . = ALIGN (0x4)
+ *(.vectortable)
+ .vectortable   0x00000000       0xc0 ./Project_Settings/Startup_Code/kinetis_sysinit.o
+                0x00000000                InterruptVector
+                0x000000c0                . = ALIGN (0x4)
+
+.cfmprotect     0x00000400        0x0
+                0x00000400                . = ALIGN (0x4)
+ *(.cfmconfig)
+                0x00000400                . = ALIGN (0x4)
+
+.text           0x00000800     0x1d18
+                0x00000800                . = ALIGN (0x4)
+ *(.text)
+ .text          0x00000800       0x14 d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_thumb1_case_sqi.o)
+                0x00000800                __gnu_thumb1_case_sqi
+ .text          0x00000814       0x14 d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_thumb1_case_uqi.o)
+                0x00000814                __gnu_thumb1_case_uqi
+ .text          0x00000828       0x9c d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_udivsi3.o)
+                0x00000828                __aeabi_uidiv
+                0x00000828                __udivsi3
+                0x000008b0                __aeabi_uidivmod
+ .text          0x000008c4        0x4 d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_dvmd_tls.o)
+                0x000008c4                __aeabi_idiv0
+                0x000008c4                __aeabi_ldiv0
+ *(.text*)
+ .text.Default_Handler
+                0x000008c8        0xc ./Project_Settings/Startup_Code/kinetis_sysinit.o
+                0x000008c8                RTC_Alarm_IRQHandler
+                0x000008c8                I2C0_IRQHandler
+                0x000008c8                HardFault_Handler
+                0x000008c8                SysTick_Handler
+                0x000008c8                PendSV_Handler
+                0x000008c8                NMI_Handler
+                0x000008c8                I2C1_IRQHandler
+                0x000008c8                UART1_IRQHandler
+                0x000008c8                DMA2_IRQHandler
+                0x000008c8                TSI0_IRQHandler
+                0x000008c8                UART0_IRQHandler
+                0x000008c8                ADC0_IRQHandler
+                0x000008c8                SPI1_IRQHandler
+                0x000008c8                PORTD_IRQHandler
+                0x000008c8                LPTimer_IRQHandler
+                0x000008c8                RTC_Seconds_IRQHandler
+                0x000008c8                MCG_IRQHandler
+                0x000008c8                UART2_IRQHandler
+                0x000008c8                Default_Handler
+                0x000008c8                LLW_IRQHandler
+                0x000008c8                PIT_IRQHandler
+                0x000008c8                SVC_Handler
+                0x000008c8                USBOTG_IRQHandler
+                0x000008c8                DMA3_IRQHandler
+                0x000008c8                DMA0_IRQHandler
+                0x000008c8                DAC0_IRQHandler
+                0x000008c8                PMC_IRQHandler
+                0x000008c8                SPI0_IRQHandler
+                0x000008c8                FTM0_IRQHandler
+                0x000008c8                PORTA_IRQHandler
+                0x000008c8                MCM_IRQHandler
+                0x000008c8                FTFL_IRQHandler
+                0x000008c8                FTM2_IRQHandler
+                0x000008c8                CMP0_IRQHandler
+                0x000008c8                DMA1_IRQHandler
+ .text.__init_hardware
+                0x000008d4       0x2c ./Project_Settings/Startup_Code/kinetis_sysinit.o
+                0x000008d4                __init_hardware
+ .text.zero_fill_bss
+                0x00000900       0x24 ./Project_Settings/Startup_Code/__arm_start.o
+ .text.__thumb_startup
+                0x00000924       0x30 ./Project_Settings/Startup_Code/__arm_start.o
+                0x00000924                __thumb_startup
+ .text._ExitProcess
+                0x00000954        0xc ./Project_Settings/Startup_Code/__arm_end.o
+                0x00000954                _ExitProcess
+ .text.main     0x00000960      0x3c0 ./Sources/main.o
+                0x00000960                main
+ .text.FTM1_IRQHandler
+                0x00000d20      0x138 ./Sources/main.o
+                0x00000d20                FTM1_IRQHandler
+ .text.switchLed
+                0x00000e58       0x80 ./Sources/camera.o
+                0x00000e58                switchLed
+ .text.fill_ImageDataDifference
+                0x00000ed8       0x70 ./Sources/camera.o
+                0x00000ed8                fill_ImageDataDifference
+ .text.image_processing
+                0x00000f48      0x2f4 ./Sources/camera.o
+                0x00000f48                image_processing
+ .text.ImageCapture
+                0x0000123c      0x104 ./Sources/camera.o
+                0x0000123c                ImageCapture
+ .text.exit     0x00001340       0x38 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(exit.o)
+                0x00001340                exit
+ .text.memset   0x00001378        0xc D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memset.o)
+                0x00001378                memset
+ .text.__fill_mem
+                0x00001384       0x7e D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__filll_mem.o)
+                0x00001384                __fill_mem
+ *fill*         0x00001402        0x2 00
+ .text.long2str.isra.0
+                0x00001404      0x19c D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o)
+ .text.__pformatter_
+                0x000015a0      0x428 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o)
+                0x000015a0                __pformatter_
+ .text.__sformatter
+                0x000019c8      0x698 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(scanformat_.o)
+                0x000019c8                __sformatter
+ .text.isalpha  0x00002060       0x20 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+                0x00002060                isalpha
+ .text.isspace  0x00002080       0x20 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+                0x00002080                isspace
+ .text.toupper  0x000020a0        0xe D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+                0x000020a0                toupper
+ .text.__strtoul
+                0x000020ae      0x1ce D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__strtoul.o)
+                0x000020ae                __strtoul
+ .text.strchr   0x0000227c       0x1e D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strchr.o)
+                0x0000227c                strchr
+ .text.memcpy   0x0000229a       0x12 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memcpy.o)
+                0x0000229a                memcpy
+ .text.strlen   0x000022ac       0x10 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strlen.o)
+                0x000022ac                strlen
+ .text.memchr   0x000022bc       0x1a D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memchr.o)
+                0x000022bc                memchr
+ *fill*         0x000022d6        0x2 00
+ .text.__init_cpp
+                0x000022d8       0x48 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(gcc_ctor_dtor.o)
+                0x000022d8                __init_cpp
+ .text.__fini_cpp
+                0x00002320       0x34 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(gcc_ctor_dtor.o)
+                0x00002320                __fini_cpp
+ .text.__destroy_global_chain
+                0x00002354       0x1c D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+                0x00002354                __destroy_global_chain
+ .text.__init_registers
+                0x00002370       0x1c D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+                0x00002370                __init_registers
+ .text.__init_user
+                0x0000238c        0x4 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+                0x0000238c                __init_user
+ .text.__copy_rom_section
+                0x00002390       0x48 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(ROMCopy.o)
+                0x00002390                __copy_rom_section
+ .text.__copy_rom_sections_to_ram
+                0x000023d8       0x34 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(ROMCopy.o)
+                0x000023d8                __copy_rom_sections_to_ram
+ *(.rodata)
+ *(.rodata*)
+ .rodata.str1.1
+                0x0000240c        0x1 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o)
+ .rodata.CSWTCH.20
+                0x0000240d        0x5 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o)
+ .rodata.CSWTCH.21
+                0x00002412        0x5 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o)
+ .rodata.__aeabi_ctype_table_C
+                0x00002417      0x101 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+                0x00002417                __aeabi_ctype_table_C
+ *(.glue_7)
+ .glue_7        0x00000000        0x0 linker stubs
+ *(.glue_7t)
+ .glue_7t       0x00000000        0x0 linker stubs
+ *(.eh_frame)
+ *(.init)
+ *(.fini)
+                0x00002518                . = ALIGN (0x4)
+                0x00002518                _etext = .
+
+.vfp11_veneer   0x00002518        0x0
+ .vfp11_veneer  0x00000000        0x0 linker stubs
+
+.v4_bx          0x00002518        0x0
+ .v4_bx         0x00000000        0x0 linker stubs
+
+.iplt           0x00002518        0x0
+ .iplt          0x00000000        0x0 ./Project_Settings/Startup_Code/kinetis_sysinit.o
+
+.rel.dyn        0x00002518        0x0
+ .rel.iplt      0x00000000        0x0 ./Project_Settings/Startup_Code/kinetis_sysinit.o
+
+.ARM.extab
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+
+.ARM            0x00002518        0x0
+                0x00002518                __exidx_start = .
+ *(.ARM.exidx*)
+                0x00002518                __exidx_end = .
+
+.ctors          0x00002518        0x0
+                0x00002518                __CTOR_LIST__ = .
+ *crtbegin.o(.ctors)
+ *(EXCLUDE_FILE(*crtend.o) .ctors)
+ *(SORT(.ctors.*))
+ *(.ctors)
+                0x00002518                __CTOR_END__ = .
+
+.dtors          0x00002518        0x0
+                0x00002518                __DTOR_LIST__ = .
+ *crtbegin.o(.dtors)
+ *(EXCLUDE_FILE(*crtend.o) .dtors)
+ *(SORT(.dtors.*))
+ *(.dtors)
+                0x00002518                __DTOR_END__ = .
+
+.preinit_array  0x00002518        0x0
+                0x00002518                PROVIDE (__preinit_array_start, .)
+ *(.preinit_array*)
+                0x00002518                PROVIDE (__preinit_array_end, .)
+
+.init_array     0x00002518        0x0
+                0x00002518                PROVIDE (__init_array_start, .)
+ *(SORT(.init_array.*))
+ *(.init_array*)
+                0x00002518                PROVIDE (__init_array_end, .)
+
+.fini_array     0x00002518        0x0
+                0x00002518                PROVIDE (__fini_array_start, .)
+ *(SORT(.fini_array.*))
+ *(.fini_array*)
+                0x00002518                PROVIDE (__fini_array_end, .)
+                0x00002518                ___ROM_AT = .
+
+.mtb            0x1ffff800        0x0
+                0x1ffff800                . = ALIGN (0x8)
+                0x1ffff800                _mtb_start = .
+ *(.mtb_buf)
+                0x1ffff800                . = ALIGN (0x8)
+                0x1ffff800                _mtb_end = .
+
+.data           0x1ffff800        0x8 load address 0x00002518
+                0x1ffff800                . = ALIGN (0x4)
+                0x1ffff800                _sdata = .
+ *(.data)
+ *(.data*)
+ .data.servo_base
+                0x1ffff800        0x4 ./Sources/main.o
+                0x1ffff800                servo_base
+ .data.BlackLineRight
+                0x1ffff804        0x4 ./Sources/main.o
+                0x1ffff804                BlackLineRight
+                0x1ffff808                . = ALIGN (0x4)
+                0x1ffff808                _edata = .
+                0x00000008                ___data_size = (_edata - _sdata)
+
+.igot.plt       0x1ffff808        0x0 load address 0x00002520
+ .igot.plt      0x00000000        0x0 ./Project_Settings/Startup_Code/kinetis_sysinit.o
+                0x1ffff808                . = ALIGN (0x4)
+
+.bss            0x1ffff808      0x468 load address 0x00002520
+                0x1ffff808                __START_BSS = .
+                0x1ffff808                PROVIDE (__bss_start__, __START_BSS)
+ *(.bss)
+ *(.bss*)
+ .bss.argv      0x1ffff808        0x4 ./Project_Settings/Startup_Code/__arm_start.o
+ .bss.i         0x1ffff80c        0x4 ./Sources/movement.o
+                0x1ffff80c                i
+ .bss.diff      0x1ffff810        0x4 ./Sources/main.o
+                0x1ffff810                diff
+ .bss.diff_old  0x1ffff814        0x4 ./Sources/main.o
+                0x1ffff814                diff_old
+ .bss.servo_position
+                0x1ffff818        0x4 ./Sources/main.o
+                0x1ffff818                servo_position
+ .bss.RoadMiddle
+                0x1ffff81c        0x4 ./Sources/main.o
+                0x1ffff81c                RoadMiddle
+ .bss.BlackLineLeft
+                0x1ffff820        0x4 ./Sources/main.o
+                0x1ffff820                BlackLineLeft
+ .bss.OldLineRight
+                0x1ffff824        0x4 ./Sources/main.o
+                0x1ffff824                OldLineRight
+ .bss.OldLineLeft
+                0x1ffff828        0x4 ./Sources/main.o
+                0x1ffff828                OldLineLeft
+ .bss.number_edges
+                0x1ffff82c        0x4 ./Sources/main.o
+                0x1ffff82c                number_edges
+ .bss.blind_counter
+                0x1ffff830        0x4 ./Sources/main.o
+                0x1ffff830                blind_counter
+ .bss.__stdio_exit
+                0x1ffff834        0x4 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(exit.o)
+                0x1ffff834                __stdio_exit
+ .bss.__console_exit
+                0x1ffff838        0x4 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(exit.o)
+                0x1ffff838                __console_exit
+ .bss.__global_destructor_chain
+                0x1ffff83c        0x4 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+                0x1ffff83c                __global_destructor_chain
+ .bss.__S_romp  0x1ffff840        0xc D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(ROMCopy.o)
+ *(COMMON)
+ COMMON         0x1ffff84c        0x4 ./Sources/main.o
+                0x1ffff84c                temp_reg
+ COMMON         0x1ffff850      0x420 ./Sources/camera.o
+                0x1ffff850                CompareData_classic
+                0x1ffff854                j
+                0x1ffff858                gaussian1
+                0x1ffff85c                ckbk
+                0x1ffff860                ImageDataDifference
+                0x1ffffa60                CompareData_low
+                0x1ffffa64                validate_gradient
+                0x1ffffa68                CompareData_high
+                0x1ffffa6c                gaussian2
+                0x1ffffa70                ImageData
+                0x1ffffc70                . = ALIGN (0x4)
+                0x1ffffc70                __END_BSS = .
+                0x1ffffc70                PROVIDE (__bss_end__, __END_BSS)
+                0x00002520                _romp_at = (___ROM_AT + SIZEOF (.data))
+
+.romp           0x1ffffc70       0x18 load address 0x00002520
+                0x00002520                __S_romp = _romp_at
+                0x1ffffc70        0x4 LONG 0x2518 ___ROM_AT
+                0x1ffffc74        0x4 LONG 0x1ffff800 _sdata
+                0x1ffffc78        0x4 LONG 0x8 ___data_size
+                0x1ffffc7c        0x4 LONG 0x0
+                0x1ffffc80        0x4 LONG 0x0
+                0x1ffffc84        0x4 LONG 0x0
+
+._user_heap_stack
+                0x1ffffc88      0x200 load address 0x00002538
+                0x1ffffc88                . = ALIGN (0x4)
+                0x1ffffc88                PROVIDE (end, .)
+                0x1ffffc88                PROVIDE (_end, .)
+                0x1ffffc88                __heap_addr = .
+                0x1ffffd88                . = (. + __heap_size)
+ *fill*         0x1ffffc88      0x100 00
+                0x1ffffe88                . = (. + __stack_size)
+ *fill*         0x1ffffd88      0x100 00
+                0x1ffffe88                . = ALIGN (0x4)
+
+.ARM.attributes
+                0x00000000       0x31
+ *(.ARM.attributes)
+ .ARM.attributes
+                0x00000000       0x31 ./Project_Settings/Startup_Code/kinetis_sysinit.o
+ .ARM.attributes
+                0x00000031       0x31 ./Project_Settings/Startup_Code/__arm_start.o
+ .ARM.attributes
+                0x00000062       0x31 ./Project_Settings/Startup_Code/__arm_end.o
+ .ARM.attributes
+                0x00000093       0x31 ./Sources/movement.o
+ .ARM.attributes
+                0x000000c4       0x31 ./Sources/main.o
+ .ARM.attributes
+                0x000000f5       0x31 ./Sources/camera.o
+ .ARM.attributes
+                0x00000126       0x31 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(exit.o)
+ .ARM.attributes
+                0x00000157       0x31 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memset.o)
+ .ARM.attributes
+                0x00000188       0x31 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__filll_mem.o)
+ .ARM.attributes
+                0x000001b9       0x31 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o)
+ .ARM.attributes
+                0x000001ea       0x31 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(scanformat_.o)
+ .ARM.attributes
+                0x0000021b       0x31 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .ARM.attributes
+                0x0000024c       0x31 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__strtoul.o)
+ .ARM.attributes
+                0x0000027d       0x31 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strchr.o)
+ .ARM.attributes
+                0x000002ae       0x31 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memcpy.o)
+ .ARM.attributes
+                0x000002df       0x31 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strlen.o)
+ .ARM.attributes
+                0x00000310       0x31 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memchr.o)
+ .ARM.attributes
+                0x00000341       0x1e d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_thumb1_case_sqi.o)
+ .ARM.attributes
+                0x0000035f       0x1e d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_thumb1_case_uqi.o)
+ .ARM.attributes
+                0x0000037d       0x1e d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_udivsi3.o)
+ .ARM.attributes
+                0x0000039b       0x1e d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_dvmd_tls.o)
+ .ARM.attributes
+                0x000003b9       0x31 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(gcc_ctor_dtor.o)
+ .ARM.attributes
+                0x000003ea       0x31 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+ .ARM.attributes
+                0x0000041b       0x31 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(ROMCopy.o)
+OUTPUT(NXP_CUP_ckbk.elf elf32-littlearm)
+
+.debug_info     0x00000000     0x319a
+ .debug_info    0x00000000      0x447 ./Project_Settings/Startup_Code/kinetis_sysinit.o
+ .debug_info    0x00000447      0x12a ./Project_Settings/Startup_Code/__arm_start.o
+ .debug_info    0x00000571       0x54 ./Project_Settings/Startup_Code/__arm_end.o
+ .debug_info    0x000005c5      0x11d ./Sources/movement.o
+ .debug_info    0x000006e2      0x99e ./Sources/main.o
+ .debug_info    0x00001080      0x502 ./Sources/camera.o
+ .debug_info    0x00001582       0xe8 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(exit.o)
+ .debug_info    0x0000166a       0xec D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memset.o)
+ .debug_info    0x00001756      0x137 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__filll_mem.o)
+ .debug_info    0x0000188d      0x50d D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o)
+ .debug_info    0x00001d9a      0x568 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(scanformat_.o)
+ .debug_info    0x00002302      0x313 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .debug_info    0x00002615      0x1d6 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__strtoul.o)
+ .debug_info    0x000027eb      0x10b D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strchr.o)
+ .debug_info    0x000028f6      0x10f D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memcpy.o)
+ .debug_info    0x00002a05       0xea D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strlen.o)
+ .debug_info    0x00002aef      0x121 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memchr.o)
+ .debug_info    0x00002c10      0x136 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(gcc_ctor_dtor.o)
+ .debug_info    0x00002d46      0x2b9 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+ .debug_info    0x00002fff      0x19b D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(ROMCopy.o)
+
+.debug_abbrev   0x00000000     0x10cc
+ .debug_abbrev  0x00000000       0xe7 ./Project_Settings/Startup_Code/kinetis_sysinit.o
+ .debug_abbrev  0x000000e7       0x92 ./Project_Settings/Startup_Code/__arm_start.o
+ .debug_abbrev  0x00000179       0x4c ./Project_Settings/Startup_Code/__arm_end.o
+ .debug_abbrev  0x000001c5       0x68 ./Sources/movement.o
+ .debug_abbrev  0x0000022d      0x12f ./Sources/main.o
+ .debug_abbrev  0x0000035c      0x142 ./Sources/camera.o
+ .debug_abbrev  0x0000049e       0x7a D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(exit.o)
+ .debug_abbrev  0x00000518       0x62 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memset.o)
+ .debug_abbrev  0x0000057a       0x78 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__filll_mem.o)
+ .debug_abbrev  0x000005f2      0x200 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o)
+ .debug_abbrev  0x000007f2      0x1f0 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(scanformat_.o)
+ .debug_abbrev  0x000009e2       0x9e D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .debug_abbrev  0x00000a80       0xc2 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__strtoul.o)
+ .debug_abbrev  0x00000b42       0x7a D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strchr.o)
+ .debug_abbrev  0x00000bbc       0x95 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memcpy.o)
+ .debug_abbrev  0x00000c51       0x7a D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strlen.o)
+ .debug_abbrev  0x00000ccb       0x95 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memchr.o)
+ .debug_abbrev  0x00000d60       0x99 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(gcc_ctor_dtor.o)
+ .debug_abbrev  0x00000df9      0x1b3 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+ .debug_abbrev  0x00000fac      0x120 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(ROMCopy.o)
+
+.debug_loc      0x00000000     0x2919
+ .debug_loc     0x00000000       0x58 ./Project_Settings/Startup_Code/kinetis_sysinit.o
+ .debug_loc     0x00000058       0x2c ./Project_Settings/Startup_Code/__arm_start.o
+ .debug_loc     0x00000084       0x38 ./Project_Settings/Startup_Code/__arm_end.o
+ .debug_loc     0x000000bc       0x38 ./Sources/movement.o
+ .debug_loc     0x000000f4       0x64 ./Sources/main.o
+ .debug_loc     0x00000158       0xd6 ./Sources/camera.o
+ .debug_loc     0x0000022e       0x3e D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(exit.o)
+ .debug_loc     0x0000026c       0x6f D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memset.o)
+ .debug_loc     0x000002db      0x14a D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__filll_mem.o)
+ .debug_loc     0x00000425     0x104b D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o)
+ .debug_loc     0x00001470      0x9d8 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(scanformat_.o)
+ .debug_loc     0x00001e48      0x30d D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .debug_loc     0x00002155      0x305 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__strtoul.o)
+ .debug_loc     0x0000245a       0xaf D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strchr.o)
+ .debug_loc     0x00002509       0x59 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memcpy.o)
+ .debug_loc     0x00002562       0x33 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strlen.o)
+ .debug_loc     0x00002595       0x77 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memchr.o)
+ .debug_loc     0x0000260c       0x9d D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(gcc_ctor_dtor.o)
+ .debug_loc     0x000026a9      0x197 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+ .debug_loc     0x00002840       0xd9 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(ROMCopy.o)
+
+.debug_aranges  0x00000000      0x378
+ .debug_aranges
+                0x00000000       0x28 ./Project_Settings/Startup_Code/kinetis_sysinit.o
+ .debug_aranges
+                0x00000028       0x30 ./Project_Settings/Startup_Code/__arm_start.o
+ .debug_aranges
+                0x00000058       0x20 ./Project_Settings/Startup_Code/__arm_end.o
+ .debug_aranges
+                0x00000078       0x20 ./Sources/movement.o
+ .debug_aranges
+                0x00000098       0x28 ./Sources/main.o
+ .debug_aranges
+                0x000000c0       0x38 ./Sources/camera.o
+ .debug_aranges
+                0x000000f8       0x20 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(exit.o)
+ .debug_aranges
+                0x00000118       0x20 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memset.o)
+ .debug_aranges
+                0x00000138       0x20 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__filll_mem.o)
+ .debug_aranges
+                0x00000158       0x28 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o)
+ .debug_aranges
+                0x00000180       0x20 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(scanformat_.o)
+ .debug_aranges
+                0x000001a0       0x88 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .debug_aranges
+                0x00000228       0x20 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__strtoul.o)
+ .debug_aranges
+                0x00000248       0x20 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strchr.o)
+ .debug_aranges
+                0x00000268       0x20 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memcpy.o)
+ .debug_aranges
+                0x00000288       0x20 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strlen.o)
+ .debug_aranges
+                0x000002a8       0x20 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memchr.o)
+ .debug_aranges
+                0x000002c8       0x28 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(gcc_ctor_dtor.o)
+ .debug_aranges
+                0x000002f0       0x58 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+ .debug_aranges
+                0x00000348       0x30 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(ROMCopy.o)
+
+.debug_macinfo  0x00000000    0xa69e2
+ .debug_macinfo
+                0x00000000    0x264f0 ./Project_Settings/Startup_Code/kinetis_sysinit.o
+ .debug_macinfo
+                0x000264f0     0x3e6d ./Project_Settings/Startup_Code/__arm_start.o
+ .debug_macinfo
+                0x0002a35d     0x3456 ./Project_Settings/Startup_Code/__arm_end.o
+ .debug_macinfo
+                0x0002d7b3    0x28076 ./Sources/movement.o
+ .debug_macinfo
+                0x00055829    0x28903 ./Sources/main.o
+ .debug_macinfo
+                0x0007e12c    0x288b6 ./Sources/camera.o
+
+.debug_line     0x00000000     0x21d8
+ .debug_line    0x00000000      0x255 ./Project_Settings/Startup_Code/kinetis_sysinit.o
+ .debug_line    0x00000255      0x2d8 ./Project_Settings/Startup_Code/__arm_start.o
+ .debug_line    0x0000052d      0x2a9 ./Project_Settings/Startup_Code/__arm_end.o
+ .debug_line    0x000007d6      0x2c4 ./Sources/movement.o
+ .debug_line    0x00000a9a      0x40d ./Sources/main.o
+ .debug_line    0x00000ea7      0x455 ./Sources/camera.o
+ .debug_line    0x000012fc       0x8d D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(exit.o)
+ .debug_line    0x00001389       0x90 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memset.o)
+ .debug_line    0x00001419       0xf6 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__filll_mem.o)
+ .debug_line    0x0000150f      0x2c3 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o)
+ .debug_line    0x000017d2      0x2be D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(scanformat_.o)
+ .debug_line    0x00001a90      0x1be D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .debug_line    0x00001c4e      0x11e D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__strtoul.o)
+ .debug_line    0x00001d6c       0x7d D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strchr.o)
+ .debug_line    0x00001de9       0x8b D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memcpy.o)
+ .debug_line    0x00001e74       0x85 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strlen.o)
+ .debug_line    0x00001ef9       0x9f D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memchr.o)
+ .debug_line    0x00001f98       0x6c D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(gcc_ctor_dtor.o)
+ .debug_line    0x00002004      0x117 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+ .debug_line    0x0000211b       0xbd D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(ROMCopy.o)
+
+.debug_str      0x00000000      0xf2f
+ .debug_str     0x00000000      0x2b4 ./Project_Settings/Startup_Code/kinetis_sysinit.o
+                                0x2db (size before relaxing)
+ .debug_str     0x000002b4       0x85 ./Project_Settings/Startup_Code/__arm_start.o
+                                0x1b5 (size before relaxing)
+ .debug_str     0x00000339       0x41 ./Project_Settings/Startup_Code/__arm_end.o
+                                 0xec (size before relaxing)
+ .debug_str     0x0000037a       0x8a ./Sources/movement.o
+                                0x1c1 (size before relaxing)
+ .debug_str     0x00000404      0x1c7 ./Sources/main.o
+                                0x463 (size before relaxing)
+ .debug_str     0x000005cb       0xe4 ./Sources/camera.o
+                                0x361 (size before relaxing)
+ .debug_str     0x000006af       0x48 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(exit.o)
+                                0x157 (size before relaxing)
+ .debug_str     0x000006f7       0x23 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memset.o)
+                                0x140 (size before relaxing)
+ .debug_str     0x0000071a       0x2d D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__filll_mem.o)
+                                0x152 (size before relaxing)
+ .debug_str     0x00000747      0x237 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o)
+                                0x3b3 (size before relaxing)
+ .debug_str     0x0000097e      0x184 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(scanformat_.o)
+                                0x3f9 (size before relaxing)
+ .debug_str     0x00000b02       0x9d D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+                                0x1bc (size before relaxing)
+ .debug_str     0x00000b9f       0x61 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__strtoul.o)
+                                0x1fb (size before relaxing)
+ .debug_str     0x00000c00       0x1c D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strchr.o)
+                                0x137 (size before relaxing)
+ .debug_str     0x00000c1c       0x1c D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memcpy.o)
+                                0x138 (size before relaxing)
+ .debug_str     0x00000c38       0x1c D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strlen.o)
+                                0x140 (size before relaxing)
+ .debug_str     0x00000c54       0x1c D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memchr.o)
+                                0x148 (size before relaxing)
+ .debug_str     0x00000c70      0x126 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(gcc_ctor_dtor.o)
+                                0x181 (size before relaxing)
+ .debug_str     0x00000d96       0xf8 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+                                0x1b5 (size before relaxing)
+ .debug_str     0x00000e8e       0xa1 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(ROMCopy.o)
+                                0x13c (size before relaxing)
+
+.comment        0x00000000       0x79
+ .comment       0x00000000       0x79 ./Project_Settings/Startup_Code/kinetis_sysinit.o
+                                 0x7a (size before relaxing)
+ .comment       0x00000000       0x7a ./Project_Settings/Startup_Code/__arm_start.o
+ .comment       0x00000000       0x7a ./Project_Settings/Startup_Code/__arm_end.o
+ .comment       0x00000000       0x7a ./Sources/movement.o
+ .comment       0x00000000       0x7a ./Sources/main.o
+ .comment       0x00000000       0x7a ./Sources/camera.o
+ .comment       0x00000000       0x7a D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(exit.o)
+ .comment       0x00000000       0x7a D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memset.o)
+ .comment       0x00000000       0x7a D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__filll_mem.o)
+ .comment       0x00000000       0x7a D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o)
+ .comment       0x00000000       0x7a D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(scanformat_.o)
+ .comment       0x00000000       0x7a D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .comment       0x00000000       0x7a D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__strtoul.o)
+ .comment       0x00000000       0x7a D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strchr.o)
+ .comment       0x00000000       0x7a D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memcpy.o)
+ .comment       0x00000000       0x7a D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strlen.o)
+ .comment       0x00000000       0x7a D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memchr.o)
+ .comment       0x00000000       0x7a D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(gcc_ctor_dtor.o)
+ .comment       0x00000000       0x7a D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+ .comment       0x00000000       0x7a D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(ROMCopy.o)
+
+.debug_frame    0x00000000      0x66c
+ .debug_frame   0x00000000       0x48 ./Project_Settings/Startup_Code/kinetis_sysinit.o
+ .debug_frame   0x00000048       0x4c ./Project_Settings/Startup_Code/__arm_start.o
+ .debug_frame   0x00000094       0x30 ./Project_Settings/Startup_Code/__arm_end.o
+ .debug_frame   0x000000c4       0x30 ./Sources/movement.o
+ .debug_frame   0x000000f4       0x4c ./Sources/main.o
+ .debug_frame   0x00000140       0x8c ./Sources/camera.o
+ .debug_frame   0x000001cc       0x2c D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(exit.o)
+ .debug_frame   0x000001f8       0x28 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memset.o)
+ .debug_frame   0x00000220       0x2c D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__filll_mem.o)
+ .debug_frame   0x0000024c       0x54 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(printformat_.o)
+ .debug_frame   0x000002a0       0x34 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(scanformat_.o)
+ .debug_frame   0x000002d4      0x158 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(ctype_aeabi.o)
+ .debug_frame   0x0000042c       0x30 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(__strtoul.o)
+ .debug_frame   0x0000045c       0x28 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strchr.o)
+ .debug_frame   0x00000484       0x28 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memcpy.o)
+ .debug_frame   0x000004ac       0x28 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(strlen.o)
+ .debug_frame   0x000004d4       0x28 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\libc.a(memchr.o)
+ .debug_frame   0x000004fc       0x20 d:/ckbk_headquarters/code dev/cw mcu v11.1/cross_tools/arm-none-eabi-gcc-4_7_3/bin/../lib/gcc/arm-none-eabi/4.7.3/armv6-m\libgcc.a(_udivsi3.o)
+ .debug_frame   0x0000051c       0x40 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(gcc_ctor_dtor.o)
+ .debug_frame   0x0000055c       0xbc D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(__arm_eabi_init.o)
+ .debug_frame   0x00000618       0x54 D:/CKBK_Headquarters/Code Dev/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m\librt.a(ROMCopy.o)
