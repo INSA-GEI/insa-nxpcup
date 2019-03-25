@@ -16,20 +16,14 @@
 */
 
 
-#include "derivative.h" /* include peripheral declarations */
+/* include peripheral declarations */
 #include "camera.h"
-#include "movement.h"
 #include "stdlib.h"
-
-// Defines for Direction PD Servo Control Loop
-#define KP_S						40			// Proportional coefficient
-#define KDP_S						15			// Differential coefficient
-
-#define KP_V						46		// Proportional coefficient
-#define KDP_V						60			// Differential coefficient
-
+#include "detection.h"
+#include "derivative.h"
 // Function declaration
 int abs (int);
+extern int type_detection;
 
 
 /* 	ALL variable declaration : all variables are defined here and used with pointers to simplify their reading. 
@@ -59,8 +53,12 @@ int BlackLineLeft = 0;				// used in "camera.c"					// position of the black lin
 int OldLineRight = 0;
 int OldLineLeft = 0;
 int number_edges = 0;				// used in "camera.c"					// number of edges found per line
-
+int start_up_counter = 0;
 int blind_counter = 0;
+
+// for the configuration buttons
+int buttons = 0;
+int counter = 0;
 
 // Main program
 int main(void){
@@ -99,7 +97,7 @@ int main(void){
 	PORTC_PCR2  |= PORT_PCR_MUX(0);		// Camera 1 PTC2 ADC0_SE11
 	
 	// set GPIOs to GPIO function
-	PORTC_PCR0  |= PORT_PCR_MUX(1);	// PTC0 Push Button S2
+	PORTC_PCR0  |= PORT_PCR_MUX(0);	// PTC0 Push Button S2, channel into ADC0_SE14
 	PORTB_PCR18 |= PORT_PCR_MUX(1);	// PTB18 LED red
 	PORTB_PCR19 |= PORT_PCR_MUX(1);	// PTB19 LED green
 	PORTD_PCR1  |= PORT_PCR_MUX(1);	// PTD1  LED blue
@@ -144,14 +142,18 @@ int main(void){
 	// set TPM prescaler before enabling the timer
 	TPM0_SC |= 3;					// prescaler for TPM0 (Motor) is 8
 	TPM1_SC |= 3;					// prescaler for TPM1 (Servo) is 8
+	TPM2_SC |= 3; 					// Prescale Factor Selection
 	
 	// TPM modulo register, set frequency
 	TPM0_MOD = 600;					// modulo TPM0 (Motor), periode = 0.10 ms (10000 Hz)
-	TPM1_MOD = 60000;				// modulo TPM0 (Servo), periode = 10 ms (100 Hz)
+	TPM1_MOD = 60000;				// modulo TPM1 (Servo), periode = 10 ms (100 Hz)
+	TPM2_MOD = 20000;				// modulo TPM2
 	
 	// set TPM clock mode to enable timer
 	TPM0_SC |= TPM_SC_CMOD(1);		// enable TPM0 (Motor)
 	TPM1_SC |= TPM_SC_CMOD(1);		// enable TPM1 (Servo)
+	TPM2_SC |= TPM_SC_CMOD(1);		// enable TPM2
+	
 	
 	// configure TPM channel outputs high-true pulses
 	TPM0_C1SC = 0x28;				// TPM0 channel1 Motor 1 In 1 speed left
@@ -169,6 +171,7 @@ int main(void){
 	
     // configure interrupts in TPM1
 	TPM1_SC |= TPM_SC_TOIE_MASK;	// enable overflow interrupt in TPM1 (10 ms rate)
+	TPM2_SC |= TPM_SC_TOIE_MASK;	//Enable interrupt when overflow
 	
 	// ADC0 clock configuration
 	ADC0_CFG1 |= 0x01;				// clock is bus clock divided by 2 = 12 MHz
@@ -179,6 +182,12 @@ int main(void){
 	// ADC0 conversion mode
 	ADC0_SC3 = 0x00;				// single conversion mode
 	    
+	// start timer 2 and enables interrupt 
+	
+	
+	// TPM2_SC &= ~TPM_SC_CPWMS_MASK;	//Up-counting mode
+	
+	
     // enable interrupts 18 (TPM = FTM1)  in NVIC, no interrupt levels
     NVIC_ICPR |= (1 << 18);			// clear pending interrupt 18
     NVIC_ISER |= (1 << 18);			// enable interrupt 18
@@ -188,71 +197,83 @@ int main(void){
     
     // Main loop
     for(;;) {						// endless loop
-		
-		// do nothing
-		
 	}								// end of endless loop	
 }
 
 void FTM1_IRQHandler()				// TPM1 ISR
 {
-	TPM1_SC |= 0x80;							// clear TPM0 ISR flag
+	TPM1_SC |= 0x80;							// clear TPM1 ISR flag
 	
-//	PIOB_PDOR |= GPIO_PDOR_PDO(1<<19);   // green LED off
-//	PIOB_PDOR &= ~GPIO_PDOR_PDO(1<<18);  // red LED on
+	/* ici un méchanisme avec des boutons pour du changement d'état
+	if (counter == 50) {
+		// acquire data from ADC0 input channel 14
+		ADC0_SC1A  =  14;							// set ADC0 channel 11
+		while((ADC0_SC1A & ADC_SC1_COCO_MASK) == 0);// wait until ADC is ready
+		buttons = ADC0_RA;	
+		counter = 0;
+	}else {
+		counter++;
+	}
+	
+	if (buttons >= 900 ) { // par defaut
+		switchLed(1,0,0);  // red
+	}else if (buttons < 900 && buttons >= 800) {   // 
+		switchLed(0,1,0);  // green S6
+	}else if (buttons < 800 && buttons >= 750) {
+		switchLed(0,0,1);  // blue S5
+	}else if (buttons < 750 && buttons >= 650) {  /
+		switchLed(0,1,1);  // cyan S4
+	}else if (buttons < 650 && buttons >= 200) {
+		switchLed(1,1,0);  // yellow S2
+	}else if (buttons < 200) {
+		switchLed(1,0,1);  // violet S3
+	}
+	*/
+	
 	// Capture Line Scan Image
 	ImageCapture();								// capture LineScan image
 	
 	fill_ImageDataDifference ();			// fill the table "ImageDataDifference" with specified method (1/2/3/4) (see "Camera.h")
 	image_processing(&diff, &diff_old, &BlackLineLeft, &BlackLineRight, &RoadMiddle, &number_edges, &OldLineLeft, &OldLineRight);	// image processing : finds the black lines on the left and right, and finds the middle of the track
 	
-	// Direction Control Loop: PD Controller
-
-	// si on voit plus rien dans 0.5s
+	// if we are blind for about 0.5s, some s*** must have gone wrong
+	
 	if (number_edges == 0) {
 		blind_counter++;
-	}
-	else {
+	}else {
 		blind_counter = 0;
-			
 	}
-	if (blind_counter > 50)  {
-		TPM0_C1V = 0;					
+	if (blind_counter == 50) {
+		TPM0_C1V = 0;					// TPM0 channel1 left Motor 1 In 1 fast forward
 		TPM0_C5V = 0;
-		exit(1);
+		exit(1);// TPM0 channel5 right Motor 2 In 2 fast forward		
 	}
 	
 	servo_position = KP_S*diff + KDP_S*(diff-diff_old);
-		// differential for speed
-	if (BlackLineRight <= 95 && BlackLineLeft <= 15) 	// Left turn case
+	
+	
+	if (BlackLineRight <= LEFT_TURN_MARGIN+TRACK_WIDTH_ESTIMATE && BlackLineLeft <= LEFT_TURN_MARGIN) 	// Left turn case
 	{
-		//servo_position = KP_V*diff + KDP_V*(diff-diff_old);
-		TPM0_C1V = 70;					// TPM0 channel1 left Motor 1 In 1 slow forward
-		TPM0_C5V = 140;					// TPM0 channel5 right Motor 2 In 2 slow forward
+		TPM0_C1V = DIFF_LOW;					// TPM0 channel1 left Motor 1 In 1 slow forward
+		TPM0_C5V = DIFF_HIGH;					// TPM0 channel5 right Motor 2 In 2 slow forward
 	}
-	else if (BlackLineRight >= 100 && BlackLineLeft >= 20)	// right turn case
+	else if (BlackLineRight >= RIGHT_TURN_MARGIN+TRACK_WIDTH_ESTIMATE && BlackLineLeft >= RIGHT_TURN_MARGIN)	// right turn case
 	{
-		//servo_position = KP_V*diff + KDP_V*(diff-diff_old);
-		TPM0_C1V = 140;					// TPM0 channel1 left Motor 1 In 1 slow forward
-		TPM0_C5V = 70;					// TPM0 channel5 right Motor 2 In 2 slow forward
+		TPM0_C1V = DIFF_HIGH;					// TPM0 channel1 left Motor 1 In 1 slow forward
+		TPM0_C5V = DIFF_LOW;					// TPM0 channel5 right Motor 2 In 2 slow forward
 	}
-	else if (number_edges >= 4)	// try to see the end of the race
+	else
 	{
-		TPM0_C1V = 0;					// TPM0 channel1 left Motor 1 In 1 fast forward
-		TPM0_C5V = 0;					// TPM0 channel5 right Motor 2 In 2 fast forward
-		exit(1);
-	}
-	else 
-	{
-		//servo_position = KP_S*diff + KDP_S*(diff-diff_old);
-		TPM0_C1V = 140;					// TPM0 channel1 left Motor 1 In 1 fast forward
-		TPM0_C5V = 140;					// TPM0 channel5 right Motor 2 In 2 fast forward
+		TPM0_C1V = STANDARD_SPEED;					// TPM0 channel1 left Motor 1 In 1 fast forward
+		TPM0_C5V = STANDARD_SPEED;	
 	}
 	
 	// Set channel 0 PWM_Servo position
 	TPM1_C0V  = servo_base - servo_position; 		// set channel 0 PWM_Servo
-	// red LED off
-	//GPIOB_PDOR |= GPIO_PDOR_PDO(1<<18);   // red LED off
+		// red LED off
+		//GPIOB_PDOR |= GPIO_PDOR_PDO(1<<18);   // red LED off
+	
 }
+
 
 

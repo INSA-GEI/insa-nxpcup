@@ -24,6 +24,7 @@
  */
 
 #include "camera.h"	/* include camera functions definition */
+#include "derivative.h"
 #include "math.h"	/* used for different calculations, including the difference of Gaussian with roots, exponential and PI */
 #include "stdio.h"
 #include "stdlib.h"
@@ -41,8 +42,6 @@ int validate_gradient;						// used in image processing to validate some paramet
 	
 float gaussian1;								// gaussian filters used in gaussian differences method
 float gaussian2;
-
-int ckbk; 
 
 /*  variables from pointers (main) used in this file   */ 
 // diff -> int			 actual difference from line middle position
@@ -161,10 +160,10 @@ void image_processing (int *diff, int * diff_old, int * BlackLineLeft, int * Bla
 		}
 	}
 	
-	/* then depending on how many edges we detect, let's do sum shit */
-	if (*number_edges == 0) { /* can't see s*** => just assume a straight line*/
-		*BlackLineLeft = *OldLineLeft;
-		*BlackLineRight = *OldLineRight;
+	/* then depending on how many edges we detect that we can decide the best course of action */
+	if (*number_edges == 0) { /* can't see anything => just assume a straight line*/
+		*BlackLineLeft = 0;
+		*BlackLineRight = 128;
 		switchLed(1,0,0); // red
 	}else if (*number_edges == 1) { /* see one line, probably a turn to make */
 		int diff_left = peak[0] - *OldLineLeft; 
@@ -187,7 +186,7 @@ void image_processing (int *diff, int * diff_old, int * BlackLineLeft, int * Bla
 			switchLed(0,0,1); // blue
 		}
 	}else if (*number_edges == 2) { /* the first one is the left line and the second one is the right line */
-		if (peak[0] < 64 && peak[1] >= 64) { /* make sure that s*** doesn't diverge */
+		if (peak[0] < 64 && peak[1] >= 64) { /* make sure that things doesn't diverge */
 			*BlackLineLeft = peak[0];
 			*BlackLineRight = peak[1];
 			switchLed(1,1,1); // white
