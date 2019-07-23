@@ -1,3 +1,6 @@
+# DS_Store osx files
+*.DS_Store
+
 # Prerequisites
 *.d
 
@@ -35,6 +38,9 @@
 *.i*86
 *.x86_64
 *.hex
+*.bin
+*.binary
+*.s19
 
 # Debug files
 *.dSYM/
@@ -50,3 +56,38 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# ADA
+*.ali
+
+# Altium
+__Previews/
+History/
+Project Logs for*/
+
+# Miscelaneous
+*.zip
+*.tgz
+*.msi
+*.cab
+*.tar.*
+*.7z
+
+# documentations
+*.pdf
+*.chm
+
+# kicad
+*.bak
+*.kicad_pcb-bak
+
+# images
+*.png
+*.jpg
+*.jpeg
+*.bmp
+*.ico
+*.tiff
+*.svg
+
+
