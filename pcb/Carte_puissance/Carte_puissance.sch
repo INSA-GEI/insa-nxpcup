@@ -363,12 +363,12 @@ $EndComp
 $Comp
 L power:GND #PWR0113
 U 1 1 5D391944
-P 10200 2150
-F 0 "#PWR0113" H 10200 1900 50  0001 C CNN
-F 1 "GND" H 10205 1977 50  0000 C CNN
-F 2 "" H 10200 2150 50  0001 C CNN
-F 3 "" H 10200 2150 50  0001 C CNN
-	1    10200 2150
+P 9400 2100
+F 0 "#PWR0113" H 9400 1850 50  0001 C CNN
+F 1 "GND" H 9405 1927 50  0000 C CNN
+F 2 "" H 9400 2100 50  0001 C CNN
+F 3 "" H 9400 2100 50  0001 C CNN
+	1    9400 2100
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -393,8 +393,6 @@ F 3 "" H 9500 1150 50  0001 C CNN
 	1    9500 1150
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	10000 1700 10200 1700
 Wire Wire Line
 	7250 1900 6700 1900
 Wire Wire Line
@@ -436,8 +434,6 @@ OUT_2_MOT_R
 Text Label 1300 6250 0    50   ~ 0
 OUT_1_MOT_R
 Wire Wire Line
-	10200 1700 10200 1800
-Wire Wire Line
 	9500 1500 9500 1150
 $Comp
 L power:+3.3V #PWR0116
@@ -450,25 +446,6 @@ F 3 "" H 9300 1150 50  0001 C CNN
 	1    9300 1150
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	10000 1500 10200 1500
-Wire Wire Line
-	10200 1500 10200 1600
-Connection ~ 10200 1700
-Wire Wire Line
-	10000 1600 10200 1600
-Connection ~ 10200 1600
-Wire Wire Line
-	10200 1600 10200 1700
-Wire Wire Line
-	9300 1150 9300 1600
-Wire Wire Line
-	9300 1700 9500 1700
-Wire Wire Line
-	9500 1600 9300 1600
-Connection ~ 9300 1600
-Wire Wire Line
-	9300 1600 9300 1700
 $Comp
 L Insa:MIC29500-3.3WT U2
 U 1 1 5D38A168
@@ -491,27 +468,6 @@ F 3 "" H 9100 3650 50  0001 C CNN
 	1    9100 3700
 	1    0    0    -1  
 $EndComp
-$Comp
-L Connector_Generic:Conn_02x04_Odd_Even J3
-U 1 1 5D38A3E4
-P 9700 1600
-F 0 "J3" H 9750 1825 50  0000 C CNN
-F 1 "Conn_02x04_Odd_Even" H 9750 1826 50  0001 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_2x04_P2.54mm_Vertical" H 9700 1600 50  0001 C CNN
-F 3 "~" H 9700 1600 50  0001 C CNN
-	1    9700 1600
-	1    0    0    -1  
-$EndComp
-Connection ~ 10200 1800
-Wire Wire Line
-	10200 1800 10200 2150
-Wire Wire Line
-	9500 1800 9300 1800
-Wire Wire Line
-	9300 1800 9300 1700
-Connection ~ 9300 1700
-Wire Wire Line
-	10000 1800 10200 1800
 Wire Wire Line
 	6750 3300 6500 3300
 Wire Wire Line
@@ -1008,7 +964,7 @@ U 1 1 5D573F88
 P 3850 1500
 F 0 "FB1" V 3668 1500 50  0000 C CNN
 F 1 "Ferrite_Bead" V 3667 1500 50  0001 C CNN
-F 2 "Capacitor_SMD:C_2220_5650Metric_Pad1.97x5.40mm_HandSolder" V 3780 1500 50  0001 C CNN
+F 2 "Capacitor_SMD:C_1812_4532Metric_Pad1.30x3.40mm_HandSolder" V 3780 1500 50  0001 C CNN
 F 3 "~" H 3850 1500 50  0001 C CNN
 	1    3850 1500
 	0    1    1    0   
@@ -1021,7 +977,7 @@ U 1 1 5D579C60
 P 8250 3300
 F 0 "FB2" V 8068 3300 50  0000 C CNN
 F 1 "Ferrite_Bead" V 8067 3300 50  0001 C CNN
-F 2 "Capacitor_SMD:C_2220_5650Metric_Pad1.97x5.40mm_HandSolder" V 8180 3300 50  0001 C CNN
+F 2 "Capacitor_SMD:C_1812_4532Metric_Pad1.30x3.40mm_HandSolder" V 8180 3300 50  0001 C CNN
 F 3 "~" H 8250 3300 50  0001 C CNN
 	1    8250 3300
 	0    1    1    0   
@@ -1224,4 +1180,38 @@ Wire Wire Line
 Wire Wire Line
 	7850 6050 7850 6150
 Connection ~ 7850 6050
+$Comp
+L Connector_Generic:Conn_01x04 J3
+U 1 1 5D41F135
+P 9800 1600
+F 0 "J3" H 9880 1592 50  0000 L CNN
+F 1 "Molex KK 254" H 9880 1501 50  0000 L CNN
+F 2 "Connector_Molex:Molex_KK-254_AE-6410-04A_1x04_P2.54mm_Vertical" H 9800 1600 50  0001 C CNN
+F 3 "~" H 9800 1600 50  0001 C CNN
+	1    9800 1600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9300 1150 9300 1700
+Wire Wire Line
+	9600 1600 9400 1600
+Wire Wire Line
+	9400 1600 9400 1800
+Wire Wire Line
+	9600 1800 9400 1800
+Connection ~ 9400 1800
+Wire Wire Line
+	9400 1800 9400 2100
+Wire Wire Line
+	9300 1700 9600 1700
+Wire Wire Line
+	9500 1500 9600 1500
+Text Notes 750  2900 0    50   ~ 0
+Moteur type mabuchi 280
+Text Notes 750  3000 0    50   ~ 0
+Courant a vide (8.4V): 0.48A
+Text Notes 750  3250 0    50   ~ 0
+Courant de court circuit: >5A\nCourant en forte charge: Env 3A\nCourant en charge (sur voiture): Env 1.5A à 2A
+Text Notes 750  3550 0    50   ~ 0
+IC candidat: TI DRV8873 (Pont en H, 10A)\n              ST VNH5050A-E (Demi pont, 30A)\n              Infineon IFX9202ED (Double pont H, 6A chaque)
 $EndSCHEMATC
