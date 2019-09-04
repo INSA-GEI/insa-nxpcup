@@ -1,4 +1,4 @@
-(kicad_pcb (version 20171130) (host pcbnew 5.0.2-bee76a0~70~ubuntu18.04.1)
+(kicad_pcb (version 20171130) (host pcbnew 5.1.4-e60b266~84~ubuntu18.04.1)
 
   (general
     (thickness 1.6)
@@ -34,7 +34,7 @@
   )
 
   (setup
-    (last_trace_width 2)
+    (last_trace_width 0.25)
     (user_trace_width 0.25)
     (user_trace_width 0.3)
     (user_trace_width 0.35)
@@ -49,8 +49,6 @@
     (zone_clearance 0.508)
     (zone_45_only no)
     (trace_min 0.2)
-    (segment_width 0.2)
-    (edge_width 0.15)
     (via_size 0.8)
     (via_drill 0.4)
     (via_min_size 0.4)
@@ -65,6 +63,8 @@
     (uvias_allowed no)
     (uvia_min_size 0.2)
     (uvia_min_drill 0.1)
+    (edge_width 0.15)
+    (segment_width 0.2)
     (pcb_text_width 0.3)
     (pcb_text_size 1.5 1.5)
     (mod_edge_width 0.15)
@@ -247,9 +247,14 @@
     (pad "" thru_hole oval (at -2.1 0) (size 2.2 3.5) (drill 1.5) (layers *.Cu *.Mask))
     (pad "" thru_hole oval (at 6.1 0) (size 2.2 3.5) (drill 1.5) (layers *.Cu *.Mask))
     (model ${KISYS3DMOD}/Button_Switch_THT.3dshapes/SW_Slide_1P2T_CK_OS102011MS2Q.wrl
-      (at (xyz 0 0 0))
+      (offset (xyz 1 1 0))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
+      (rotate (xyz 10 10 90))
+    )
+    (model ${KIPRJMOD}/OS102011MA1QN1.stp
+      (offset (xyz 2 0 4))
+      (scale (xyz 1 1 1))
+      (rotate (xyz -90 0 0))
     )
   )
 
@@ -555,10 +560,10 @@
       (net 7 /OUT_1_MOT_L))
     (pad 2 thru_hole circle (at 3.96 0 180) (size 2.7 2.7) (drill 1.7) (layers *.Cu *.Mask)
       (net 6 /OUT_2_MOT_L))
-    (model ${KISYS3DMOD}/Connector_JST.3dshapes/JST_VH_B2PS-VH_1x02_P3.96mm_Horizontal.wrl
-      (at (xyz 0 0 0))
+    (model ${KIPRJMOD}/c-647676-2-b-3d.stp
+      (offset (xyz 2 -12.6 5))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
+      (rotate (xyz -90 0 0))
     )
   )
 
@@ -624,10 +629,10 @@
       (net 8 /OUT_2_MOT_R))
     (pad 1 thru_hole roundrect (at 0 0 180) (size 2.7 2.7) (drill 1.7) (layers *.Cu *.Mask) (roundrect_rratio 0.09259299999999999)
       (net 9 /OUT_1_MOT_R))
-    (model ${KISYS3DMOD}/Connector_JST.3dshapes/JST_VH_B2PS-VH_1x02_P3.96mm_Horizontal.wrl
-      (at (xyz 0 0 0))
+    (model ${KIPRJMOD}/c-647676-2-b-3d.stp
+      (offset (xyz 2 -12.6 5))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
+      (rotate (xyz -90 0 0))
     )
   )
 
