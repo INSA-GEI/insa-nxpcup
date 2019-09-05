@@ -386,7 +386,7 @@ ENDDEF
 #
 # insa-sym_LOGO
 #
-DEF ~insa-sym_LOGO #G 0 40 Y Y 1 F N
+DEF insa-sym_LOGO #G 0 40 Y Y 1 F N
 F0 "#G" 0 -452 60 H I C CNN
 F1 "insa-sym_LOGO" 0 452 60 H I C CNN
 F2 "" 0 0 50 H I C CNN

@@ -1,6 +1,6 @@
 EESchema Schematic File Version 4
 LIBS:Carte_puissance-cache
-EELAYER 26 0
+EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
@@ -453,7 +453,7 @@ Wire Wire Line
 Wire Wire Line
 	10050 4900 9800 4900
 Wire Wire Line
-	9800 4900 9800 5150
+	9800 4900 9800 5100
 Wire Wire Line
 	10050 4700 9100 4700
 $Comp
@@ -795,10 +795,10 @@ F 3 "~" H 2650 1600 50  0001 C CNN
 	0    1    -1   0   
 $EndComp
 $Comp
-L Mechanical:MountingHole H1
+L Mechanical:MountingHole H4
 U 1 1 5D5DDCC8
 P 850 7450
-F 0 "H1" H 950 7450 50  0000 L CNN
+F 0 "H4" H 950 7450 50  0000 L CNN
 F 1 "MountingHole" H 950 7405 50  0001 L CNN
 F 2 "MountingHole:MountingHole_3.2mm_M3" H 850 7450 50  0001 C CNN
 F 3 "~" H 850 7450 50  0001 C CNN
@@ -1771,4 +1771,23 @@ F 3 "" H 9800 5150 50  0001 C CNN
 	1    9800 5150
 	1    0    0    -1  
 $EndComp
+$Comp
+L Device:C C6
+U 1 1 5D71DB77
+P 9600 4950
+F 0 "C6" H 9715 4996 50  0000 L CNN
+F 1 "100nF" H 9715 4905 50  0000 L CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 9638 4800 50  0001 C CNN
+F 3 "~" H 9600 4950 50  0001 C CNN
+	1    9600 4950
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	9800 4800 9600 4800
+Connection ~ 9800 4800
+Wire Wire Line
+	9600 5100 9800 5100
+Connection ~ 9800 5100
+Wire Wire Line
+	9800 5100 9800 5150
 $EndSCHEMATC
