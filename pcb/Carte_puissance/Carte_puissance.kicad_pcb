@@ -2,7 +2,7 @@
 
   (general
     (thickness 1.6)
-    (drawings 24)
+    (drawings 28)
     (tracks 534)
     (zones 0)
     (modules 64)
@@ -1052,7 +1052,7 @@
     (tags connector)
     (path /5D371EBD)
     (attr virtual)
-    (fp_text reference J1 (at -4.445 0.254 180) (layer F.SilkS)
+    (fp_text reference J1 (at -3.81 -3.175 180) (layer F.SilkS)
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (fp_text value Conn_01x02 (at 3.175 3.81 180) (layer F.Fab)
@@ -3970,6 +3970,14 @@
       (xy 1.747822 -3.017822)) (layer B.SilkS) (width 0.01))
   )
 
+  (gr_text - (at 166.146666 84.081) (layer F.SilkS)
+    (effects (font (size 2 2) (thickness 0.2)))
+  )
+  (gr_text + (at 151.541666 84.081) (layer F.SilkS)
+    (effects (font (size 2 2) (thickness 0.2)))
+  )
+  (gr_poly (pts (xy 122.204666 124.086) (xy 122.966666 123.578) (xy 122.966666 124.594)) (layer F.SilkS) (width 0.1) (tstamp 5D717339))
+  (gr_poly (pts (xy 182.021666 117.228) (xy 181.513666 116.466) (xy 182.529666 116.466)) (layer F.SilkS) (width 0.1))
   (gr_line (start 144.302666 100.464) (end 139.222666 101.48) (layer F.SilkS) (width 0.2))
   (gr_line (start 144.302666 97.924) (end 144.302666 100.464) (layer F.SilkS) (width 0.2))
   (gr_text 1 (at 101.630666 83.192) (layer F.Cu)
