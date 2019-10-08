@@ -1,6 +1,6 @@
-# insa-alamak
+# insa-nxpcup
 
-Repository for INSA NXP cup Team 1 : C0R3 DUMP. Its current members are Alex, Valentin and Vincent
+Repository for INSA NXP cup : C0R3 DUMP. Its current members are Alex, Valentin and Vincent
 As of today, this repo is used by INSA's three teams.
 
 # Where do I find/place the source code ?
