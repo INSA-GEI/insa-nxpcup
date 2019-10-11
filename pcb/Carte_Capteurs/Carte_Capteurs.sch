@@ -6,8 +6,8 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "Carte_Capteurs"
-Date "2019-07-31"
-Rev "1.0"
+Date "2019-10-09"
+Rev "1.1"
 Comp "INSA Toulouse (GEI)"
 Comment1 ""
 Comment2 ""
@@ -701,7 +701,7 @@ U 1 1 5D706927
 P 7750 3000
 F 0 "RN3" H 7938 3046 50  0000 L CNN
 F 1 "10K" H 7938 2955 50  0000 L CNN
-F 2 "Resistor_SMD:R_Array_Convex_4x1206" V 8025 3000 50  0001 C CNN
+F 2 "Resistor_SMD:R_Array_Convex_4x0603" V 8025 3000 50  0001 C CNN
 F 3 "~" H 7750 3000 50  0001 C CNN
 	1    7750 3000
 	1    0    0    -1  
@@ -892,8 +892,8 @@ L Device:R_Pack04 RN1
 U 1 1 5D7AD3C5
 P 5350 2500
 F 0 "RN1" V 5675 2500 50  0000 C CNN
-F 1 "100R" V 5584 2500 50  0000 C CNN
-F 2 "Resistor_SMD:R_Array_Convex_4x1206" V 5625 2500 50  0001 C CNN
+F 1 "220R" V 5584 2500 50  0000 C CNN
+F 2 "Resistor_SMD:R_Array_Convex_4x0603" V 5625 2500 50  0001 C CNN
 F 3 "~" H 5350 2500 50  0001 C CNN
 	1    5350 2500
 	0    -1   -1   0   
@@ -903,8 +903,8 @@ L Device:R_Pack04 RN2
 U 1 1 5D7B23A8
 P 5350 3000
 F 0 "RN2" V 5050 3000 50  0000 C CNN
-F 1 "100R" V 4950 3000 50  0000 C CNN
-F 2 "Resistor_SMD:R_Array_Convex_4x1206" V 5625 3000 50  0001 C CNN
+F 1 "220R" V 4950 3000 50  0000 C CNN
+F 2 "Resistor_SMD:R_Array_Convex_4x0603" V 5625 3000 50  0001 C CNN
 F 3 "~" H 5350 3000 50  0001 C CNN
 	1    5350 3000
 	0    -1   -1   0   
@@ -1858,4 +1858,6 @@ Wire Wire Line
 	5700 5400 5850 5400
 Text Notes 3950 7650 0    50   ~ 0
 DNP R8 and R9: Already soldered into FRDM board
+Text Notes 850  4200 0    50   ~ 0
+TODO: Rajouter une mesure de VBAT sur une entrée ADC
 $EndSCHEMATC
