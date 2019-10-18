@@ -1,4 +1,4 @@
-# insa-alamak
+# insa-nxpcup
 
 Repository for INSA NXP cup 
 
