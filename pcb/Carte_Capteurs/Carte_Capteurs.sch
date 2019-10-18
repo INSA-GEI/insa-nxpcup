@@ -140,7 +140,7 @@ L Device:R R1
 U 1 1 5DFFD4F4
 P 5150 1200
 F 0 "R1" H 5220 1246 50  0000 L CNN
-F 1 "R" H 5220 1155 50  0000 L CNN
+F 1 "100R" H 5220 1155 50  0000 L CNN
 F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 5080 1200 50  0001 C CNN
 F 3 "~" H 5150 1200 50  0001 C CNN
 	1    5150 1200
@@ -481,41 +481,41 @@ F 3 "" H 1400 3300 50  0001 C CNN
 	1    1400 3300
 	1    0    0    -1  
 $EndComp
-Text Label 950  2450 0    50   ~ 0
+Text Label 950  2550 0    50   ~ 0
 DISABLE_MOT_R
 Wire Wire Line
-	950  2450 1550 2450
-Wire Wire Line
 	950  2550 1550 2550
-Text Label 950  2550 0    50   ~ 0
+Wire Wire Line
+	950  2450 1550 2450
+Text Label 950  2450 0    50   ~ 0
 DISABLE_MOT_L
 Text Label 2750 2450 2    50   ~ 0
 SERVO_PWM
-Text Label 2750 2550 2    50   ~ 0
+Text Label 2750 2850 2    50   ~ 0
 FEEDBACK_MOT_R
 Wire Wire Line
 	2050 2450 2750 2450
 Wire Wire Line
-	2050 2550 2750 2550
-Wire Wire Line
-	2050 2650 2750 2650
-Wire Wire Line
-	2050 2750 2750 2750
-Wire Wire Line
 	2050 2850 2750 2850
+Wire Wire Line
+	2050 2550 2750 2550
 Wire Wire Line
 	2050 2950 2750 2950
 Wire Wire Line
 	2050 3050 2750 3050
-Text Label 2750 2650 2    50   ~ 0
+Wire Wire Line
+	2050 2650 2750 2650
+Wire Wire Line
+	2050 2750 2750 2750
+Text Label 2750 2550 2    50   ~ 0
 FEEDBACK_MOT_L
-Text Label 2750 2750 2    50   ~ 0
-PWM_MOT_R_1
-Text Label 2750 2850 2    50   ~ 0
-PWM_MOT_R_2
 Text Label 2750 2950 2    50   ~ 0
-PWM_MOT_L_1
+PWM_MOT_R_1
 Text Label 2750 3050 2    50   ~ 0
+PWM_MOT_R_2
+Text Label 2750 2650 2    50   ~ 0
+PWM_MOT_L_1
+Text Label 2750 2750 2    50   ~ 0
 PWM_MOT_L_2
 Text Label 3050 6400 2    50   ~ 0
 PWR_LED
@@ -1495,12 +1495,12 @@ Wire Wire Line
 Wire Wire Line
 	2600 5600 3150 5600
 Wire Wire Line
-	3700 6500 3200 6500
+	3700 6400 3200 6400
 Wire Wire Line
-	3700 6600 3200 6600
-Text Label 3200 6500 0    50   ~ 0
+	3700 6300 3200 6300
+Text Label 3200 6300 0    50   ~ 0
 USART_TX
-Text Label 3200 6600 0    50   ~ 0
+Text Label 3200 6400 0    50   ~ 0
 USART_RX
 Text Label 5450 6700 2    50   ~ 0
 CCD_AD0
@@ -1657,8 +1657,7 @@ NoConn ~ 3700 5300
 NoConn ~ 3700 5400
 NoConn ~ 3700 5500
 NoConn ~ 3700 5800
-NoConn ~ 3700 6300
-NoConn ~ 3700 6400
+NoConn ~ 3700 6600
 NoConn ~ 3700 6700
 NoConn ~ 3700 6800
 NoConn ~ 2600 6700
@@ -1858,6 +1857,73 @@ Wire Wire Line
 	5700 5400 5850 5400
 Text Notes 3950 7650 0    50   ~ 0
 DNP R8 and R9: Already soldered into FRDM board
-Text Notes 850  4200 0    50   ~ 0
-TODO: Rajouter une mesure de VBAT sur une entrée ADC
+Text Notes 700  4300 0    50   ~ 0
+VBAT_ADC->ADC0_SE3\nUART->UART0 (PTE20 et PTE21)\nSENS2 I2C ->I2C0\nSENS1 I2C ->I2C1
+$Comp
+L Device:R R10
+U 1 1 5DB8E05D
+P 6150 7000
+F 0 "R10" H 6220 7046 50  0000 L CNN
+F 1 "4.7K" H 6220 6955 50  0000 L CNN
+F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 6080 7000 50  0001 C CNN
+F 3 "~" H 6150 7000 50  0001 C CNN
+	1    6150 7000
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R11
+U 1 1 5DBA7271
+P 6150 7400
+F 0 "R11" H 6220 7446 50  0000 L CNN
+F 1 "2.2K" H 6220 7355 50  0000 L CNN
+F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 6080 7400 50  0001 C CNN
+F 3 "~" H 6150 7400 50  0001 C CNN
+	1    6150 7400
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+BATT #PWR0146
+U 1 1 5DBD9FAA
+P 6150 6800
+F 0 "#PWR0146" H 6150 6650 50  0001 C CNN
+F 1 "+BATT" H 6165 6973 50  0000 C CNN
+F 2 "" H 6150 6800 50  0001 C CNN
+F 3 "" H 6150 6800 50  0001 C CNN
+	1    6150 6800
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0147
+U 1 1 5DC25B77
+P 6150 7550
+F 0 "#PWR0147" H 6150 7300 50  0001 C CNN
+F 1 "GND" H 6155 7377 50  0000 C CNN
+F 2 "" H 6150 7550 50  0001 C CNN
+F 3 "" H 6150 7550 50  0001 C CNN
+	1    6150 7550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6150 6800 6150 6850
+Wire Wire Line
+	6150 7150 6150 7200
+Wire Wire Line
+	6150 7200 6850 7200
+Connection ~ 6150 7200
+Wire Wire Line
+	6150 7200 6150 7250
+Wire Wire Line
+	3700 6500 3200 6500
+Text Label 3200 6500 0    50   ~ 0
+VBAT_ADC
+Text Label 6850 7200 2    50   ~ 0
+VBAT_ADC
+Text Notes 2100 4300 0    50   ~ 0
+FEEDBACK_L ->ADC_SE6\nFEEDBACK_R ->ADC_SE7\nENC_SIG_A1 ->FTM2_CH0\nENC_SIG_A2 ->FTM2_CH1
+Text Notes 3200 4200 0    50   ~ 0
+SERVO_PWM ->FTM1_CH0\nPWM_MOT_Rx ->FTM0_CH1 et CH2\nPWM_MOT_Lx ->FTM0_CH4 et CH5
+Text Notes 4700 4300 0    50   ~ 0
+ENC_INDEX_1 ->PTD4 (INT)\nENC_INDEX_2 ->PTA13(INT)\nCCD_AD0 ->ADC0_SE11\nCCD_AD1 ->ADC0_SE15
+Text Notes 700  4650 0    50   ~ 0
+SW_USER1 et 2 -> PTD1 et PTD3 (INT)\nENC_SIG_B1 et B2 -> PTA1 et PTA2 (INT)\nDISP_CLK et DISP_SIN ->SPI0 \n\n
 $EndSCHEMATC
