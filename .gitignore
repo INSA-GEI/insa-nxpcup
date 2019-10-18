@@ -90,4 +90,8 @@ Project Logs for*/
 *.tiff
 *.svg
 
+# Inventor
+OldVersions/
+*.lck
+
 

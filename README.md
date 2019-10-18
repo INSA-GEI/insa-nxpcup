@@ -1,7 +1,6 @@
 # insa-alamak
 
-Repository for INSA NXP cup Team 1 : C0R3 DUMP. Its current members are Alex, Valentin and Vincent
-As of today, this repo is used by INSA's three teams.
+Repository for INSA NXP cup 
 
 # Where do I find/place the source code ?
 Every folder titled `source_[...]` is a version of the code. One should only put the \*.c and the \*.h of the project, not the entire folder !
@@ -37,13 +36,21 @@ git push #Sends the previous commit on this repo
 ```
 **NB :** While commiting, use `Esc :wq Enter`. A good commit message is brief, and completes the following statement : *This commit will ...*.
 
-
 # Branches management
 **Do not use branches yet !**
 Your are in branch master, nothing should be done here
 Select a valid branch:
 
-	git checkout stable    : stable branch
-	git checkout dev       : work in progress
+	git checkout int_team_1: Integration branch for team 1
+	git checkout int_team_2: Integration branch for team 2
+
+team work should use int_team_x branch as their main branch and integrate inside every stable work. Use development branch for your work in progress.
+
+Old branchs:
+	git checkout stable    : stable branch (Obsolete)
+	git checkout dev       : work in progress (Obsolete)
+
+
 	
+
 
