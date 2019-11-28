@@ -74,7 +74,7 @@ Project Logs for*/
 *.7z
 
 # documentations
-*.pdf
+#*.pdf
 *.chm
 
 # kicad
