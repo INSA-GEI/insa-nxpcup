@@ -47,11 +47,14 @@
 *.su
 *.idb
 *.pdb
+
+# CodeWarrior (eclipse) specific
 *.metadata/
 *RemoteLaunch/
 *RemoteSystemsTempFiles/
 *.ttf
-
+*.settings
+*FLASH/
 
 # Kernel Module Compile Results
 *.mod*
