@@ -50,6 +50,7 @@
 *.metadata/
 *RemoteLaunch/
 *RemoteSystemsTempFiles/
+*.ttf
 
 
 # Kernel Module Compile Results
