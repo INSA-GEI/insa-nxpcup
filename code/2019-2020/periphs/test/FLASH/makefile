@@ -2,7 +2,7 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-#Progress monitor hint: 8
+#Progress monitor hint: 7
 first : all
 -include ../makefile.init
 
@@ -68,14 +68,14 @@ all: warning-messages explicit-dependencies FRDM_Blink_TriLED.elf secondary-outp
 # Tool invocations
 FRDM_Blink_TriLED.elf: $(OBJS) $(USER_OBJS) ../Project_Settings/Linker_Files/MKL25Z128_flash.ld
 	@echo 'Building target: $@'
-	@echo 'Executing target #9 $@'
+	@echo 'Executing target #8 $@'
 	@echo 'Invoking: ARM Ltd Windows GCC C Linker'
 	"$(ARMSourceryDirEnv)/arm-none-eabi-gcc"  $(USER_OBJS_QUOTED) $(LIBS_QUOTED) @"FRDM_Blink_TriLED.args" -o"FRDM_Blink_TriLED.elf"
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 FRDM_Blink_TriLED.siz: FRDM_Blink_TriLED.elf
-	@echo 'Executing target #10 $@'
+	@echo 'Executing target #9 $@'
 	@echo 'Invoking: ARM Ltd Windows GNU Print Size'
 	"$(ARMSourceryDirEnv)/arm-none-eabi-size"  --format=berkeley FRDM_Blink_TriLED.elf
 	@echo 'Finished building: $@'

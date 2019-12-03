@@ -47,6 +47,10 @@
 *.su
 *.idb
 *.pdb
+*.metadata/
+*RemoteLaunch/
+*RemoteSystemsTempFiles/
+
 
 # Kernel Module Compile Results
 *.mod*

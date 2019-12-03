@@ -4,7 +4,6 @@
 "./Project_Settings/Startup_Code/__arm_end.o"
 "./Sources/sa_mtb.o"
 "./Sources/main.o"
-"./Sources/afficheur7.o"
 "./Sources/Debug.o"
 -mcpu=cortex-m0
 -mthumb
@@ -12,10 +11,10 @@
 -g3
 -gdwarf-2
 -gstrict-dwarf
--T"D:/UtilisateurTZ/NXP_CUP/insa-nxpcup/code/2019-2020/periphs/test/Project_Settings/Linker_Files/MKL25Z128_flash.ld"
+-T"D:/Documents/ecole/insa/4A/NXPCUP/insa-nxpcup/code/2019-2020/periphs/test/Project_Settings/Linker_Files/MKL25Z128_flash.ld"
 -Xlinker
 --gc-sections
--L"D:/UtilisateurTZ/Program Files (x86)/CodeWarrior/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m"
+-L"C:/Freescale/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/lib/armv6-m"
 -Wl,-Map,FRDM_Blink_TriLED.map
 -n
 -specs=ewl_c.specs
