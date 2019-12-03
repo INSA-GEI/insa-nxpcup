@@ -34,7 +34,7 @@
   10:../Sources/main.c **** 
   11:../Sources/main.c **** #include <MKL25Z4.h>
   12:../Sources/main.c **** #include "Debug.h"
-  13:../Sources/main.c **** 
+  13:../Sources/main.c **** #include "afficheur7.h"
   14:../Sources/main.c **** 
   15:../Sources/main.c **** #define SLOW_BLINK      (10000000)
   16:../Sources/main.c **** #define FAST_BLINK      (500000)
@@ -69,327 +69,289 @@
   45 000e FFF7FEFF 		bl	debug_init
   26:../Sources/main.c **** 	DEBUG_GREEN_OFF;
   46              		.loc 1 26 0
-  47 0012 184B     		ldr	r3, .L7
-  48 0014 174A     		ldr	r2, .L7
+  47 0012 0E4B     		ldr	r3, .L3
+  48 0014 0D4A     		ldr	r2, .L3
   49 0016 5268     		ldr	r2, [r2, #4]
   50 0018 8021     		mov	r1, #128
   51 001a 0903     		lsl	r1, r1, #12
   52 001c 0A43     		orr	r2, r1
   53 001e 5A60     		str	r2, [r3, #4]
-  54              	.L6:
+  54              	.L2:
   27:../Sources/main.c **** 	while(1){
-  28:../Sources/main.c **** 		//DEBUG_RED_ON;
-  29:../Sources/main.c **** 		//delay_time(BLINK_DELAY);
-  30:../Sources/main.c **** 		//DEBUG_RED_OFF;
-  31:../Sources/main.c **** 		//delay_time(BLINK_DELAY);
-  32:../Sources/main.c **** 		i=debug_getRotarySW();
-  55              		.loc 1 32 0
-  56 0020 FFF7FEFF 		bl	debug_getRotarySW
-  57 0024 031C     		mov	r3, r0
-  58 0026 7B60     		str	r3, [r7, #4]
-  33:../Sources/main.c **** 		if(i&(1<<2)){
-  59              		.loc 1 33 0
-  60 0028 7A68     		ldr	r2, [r7, #4]
-  61 002a 0423     		mov	r3, #4
-  62 002c 1340     		and	r3, r2
-  63 002e 06D0     		beq	.L2
-  34:../Sources/main.c **** 		//if(GPIOD_PDIR & (1<<1)){
-  35:../Sources/main.c **** 			DEBUG_BLUE_ON;
-  64              		.loc 1 35 0
-  65 0030 114B     		ldr	r3, .L7+4
-  66 0032 114A     		ldr	r2, .L7+4
-  67 0034 9268     		ldr	r2, [r2, #8]
-  68 0036 0221     		mov	r1, #2
-  69 0038 0A43     		orr	r2, r1
-  70 003a 9A60     		str	r2, [r3, #8]
-  71 003c 05E0     		b	.L3
-  72              	.L2:
-  36:../Sources/main.c **** 		}else{
-  37:../Sources/main.c **** 			DEBUG_BLUE_OFF;
-  73              		.loc 1 37 0
-  74 003e 0E4B     		ldr	r3, .L7+4
-  75 0040 0D4A     		ldr	r2, .L7+4
-  76 0042 5268     		ldr	r2, [r2, #4]
-  77 0044 0221     		mov	r1, #2
-  78 0046 0A43     		orr	r2, r1
-  79 0048 5A60     		str	r2, [r3, #4]
+  28:../Sources/main.c **** 		
+  29:../Sources/main.c **** 		
+  30:../Sources/main.c **** 		/* ########## TEST AFFICHEUR LCD ########## */
+  31:../Sources/main.c **** 		send_data(1);
+  55              		.loc 1 31 0
+  56 0020 0120     		mov	r0, #1
+  57 0022 FFF7FEFF 		bl	send_data
+  32:../Sources/main.c **** 		delay_time(SLOW_BLINK);
+  58              		.loc 1 32 0
+  59 0026 0A4B     		ldr	r3, .L3+4
+  60 0028 181C     		mov	r0, r3
+  61 002a FFF7FEFF 		bl	delay_time
+  33:../Sources/main.c **** 		send_data(2);
+  62              		.loc 1 33 0
+  63 002e 0220     		mov	r0, #2
+  64 0030 FFF7FEFF 		bl	send_data
+  34:../Sources/main.c **** 		delay_time(SLOW_BLINK);
+  65              		.loc 1 34 0
+  66 0034 064B     		ldr	r3, .L3+4
+  67 0036 181C     		mov	r0, r3
+  68 0038 FFF7FEFF 		bl	delay_time
+  35:../Sources/main.c **** 		send_data(3);
+  69              		.loc 1 35 0
+  70 003c 0320     		mov	r0, #3
+  71 003e FFF7FEFF 		bl	send_data
+  36:../Sources/main.c **** 		delay_time(SLOW_BLINK);
+  72              		.loc 1 36 0
+  73 0042 034B     		ldr	r3, .L3+4
+  74 0044 181C     		mov	r0, r3
+  75 0046 FFF7FEFF 		bl	delay_time
+  37:../Sources/main.c **** 	}
+  76              		.loc 1 37 0
+  77 004a E9E7     		b	.L2
+  78              	.L4:
+  79              		.align	2
   80              	.L3:
-  38:../Sources/main.c **** 		}
-  39:../Sources/main.c **** 		if(i&(1<<1)){
-  81              		.loc 1 39 0
-  82 004a 7A68     		ldr	r2, [r7, #4]
-  83 004c 0223     		mov	r3, #2
-  84 004e 1340     		and	r3, r2
-  85 0050 07D0     		beq	.L4
-  40:../Sources/main.c **** 		//if(GPIOD_PDIR & (1<<3)){
-  41:../Sources/main.c **** 			DEBUG_GREEN_ON;
-  86              		.loc 1 41 0
-  87 0052 084B     		ldr	r3, .L7
-  88 0054 074A     		ldr	r2, .L7
-  89 0056 9268     		ldr	r2, [r2, #8]
-  90 0058 8021     		mov	r1, #128
-  91 005a 0903     		lsl	r1, r1, #12
-  92 005c 0A43     		orr	r2, r1
-  93 005e 9A60     		str	r2, [r3, #8]
-  42:../Sources/main.c **** 		}else{
-  43:../Sources/main.c **** 			DEBUG_GREEN_OFF;
-  44:../Sources/main.c **** 		}
-  45:../Sources/main.c **** 	}
-  94              		.loc 1 45 0
-  95 0060 DEE7     		b	.L6
-  96              	.L4:
-  43:../Sources/main.c **** 			DEBUG_GREEN_OFF;
-  97              		.loc 1 43 0
-  98 0062 044B     		ldr	r3, .L7
-  99 0064 034A     		ldr	r2, .L7
- 100 0066 5268     		ldr	r2, [r2, #4]
- 101 0068 8021     		mov	r1, #128
- 102 006a 0903     		lsl	r1, r1, #12
- 103 006c 0A43     		orr	r2, r1
- 104 006e 5A60     		str	r2, [r3, #4]
- 105              		.loc 1 45 0
- 106 0070 D6E7     		b	.L6
- 107              	.L8:
- 108 0072 C046     		.align	2
- 109              	.L7:
- 110 0074 40F00F40 		.word	1074786368
- 111 0078 C0F00F40 		.word	1074786496
- 112              		.cfi_endproc
- 113              	.LFE0:
- 115              		.section	.text.delay_time,"ax",%progbits
- 116              		.align	2
- 117              		.global	delay_time
- 118              		.code	16
- 119              		.thumb_func
- 121              	delay_time:
- 122              	.LFB1:
-  46:../Sources/main.c **** }
-  47:../Sources/main.c **** 
-  48:../Sources/main.c **** void delay_time(int number){
- 123              		.loc 1 48 0
- 124              		.cfi_startproc
- 125 0000 80B5     		push	{r7, lr}
- 126              	.LCFI3:
- 127              		.cfi_def_cfa_offset 8
- 128              		.cfi_offset 7, -8
- 129              		.cfi_offset 14, -4
- 130 0002 84B0     		sub	sp, sp, #16
- 131              	.LCFI4:
- 132              		.cfi_def_cfa_offset 24
- 133 0004 00AF     		add	r7, sp, #0
- 134              	.LCFI5:
- 135              		.cfi_def_cfa_register 7
- 136 0006 7860     		str	r0, [r7, #4]
-  49:../Sources/main.c **** 	int cnt;
-  50:../Sources/main.c **** 	for(cnt=0;cnt<number;cnt++);
- 137              		.loc 1 50 0
- 138 0008 0023     		mov	r3, #0
- 139 000a FB60     		str	r3, [r7, #12]
- 140 000c 02E0     		b	.L10
- 141              	.L11:
- 142              		.loc 1 50 0 is_stmt 0
- 143 000e FB68     		ldr	r3, [r7, #12]
- 144 0010 0133     		add	r3, r3, #1
- 145 0012 FB60     		str	r3, [r7, #12]
- 146              	.L10:
- 147              		.loc 1 50 0
- 148 0014 FA68     		ldr	r2, [r7, #12]
- 149 0016 7B68     		ldr	r3, [r7, #4]
- 150 0018 9A42     		cmp	r2, r3
- 151 001a F8DB     		blt	.L11
-  51:../Sources/main.c **** }
- 152              		.loc 1 51 0 is_stmt 1
- 153 001c BD46     		mov	sp, r7
- 154 001e 04B0     		add	sp, sp, #16
- 155              		@ sp needed for prologue
- 156 0020 80BD     		pop	{r7, pc}
- 157              		.cfi_endproc
- 158              	.LFE1:
- 160 0022 C046     		.section	.text.clock_init,"ax",%progbits
- 161              		.align	2
- 162              		.global	clock_init
- 163              		.code	16
- 164              		.thumb_func
- 166              	clock_init:
- 167              	.LFB2:
-  52:../Sources/main.c **** 
-  53:../Sources/main.c **** 
-  54:../Sources/main.c **** void clock_init(){
- 168              		.loc 1 54 0
- 169              		.cfi_startproc
- 170 0000 80B5     		push	{r7, lr}
- 171              	.LCFI6:
- 172              		.cfi_def_cfa_offset 8
- 173              		.cfi_offset 7, -8
- 174              		.cfi_offset 14, -4
- 175 0002 84B0     		sub	sp, sp, #16
- 176              	.LCFI7:
- 177              		.cfi_def_cfa_offset 24
- 178 0004 00AF     		add	r7, sp, #0
- 179              	.LCFI8:
- 180              		.cfi_def_cfa_register 7
-  55:../Sources/main.c **** 	MCG_C2 = (MCG_C2_RANGE0(1) | MCG_C2_EREFS0_MASK); 	// configure the oscillator settings
- 181              		.loc 1 55 0
- 182 0006 294B     		ldr	r3, .L19
- 183 0008 1422     		mov	r2, #20
- 184 000a 5A70     		strb	r2, [r3, #1]
-  56:../Sources/main.c **** 	MCG_C1 = (MCG_C1_CLKS(2) | MCG_C1_FRDIV(3));		// divider for 8 MHz clock	
- 185              		.loc 1 56 0
- 186 000c 274B     		ldr	r3, .L19
- 187 000e 9822     		mov	r2, #152
- 188 0010 1A70     		strb	r2, [r3]
- 189              	.LBB2:
-  57:../Sources/main.c **** 	for (int i = 0 ; i < 24000 ; i++);						// wait for OSCINIT to set
- 190              		.loc 1 57 0
- 191 0012 0023     		mov	r3, #0
- 192 0014 FB60     		str	r3, [r7, #12]
- 193 0016 02E0     		b	.L13
- 194              	.L14:
- 195              		.loc 1 57 0 is_stmt 0
- 196 0018 FB68     		ldr	r3, [r7, #12]
- 197 001a 0133     		add	r3, r3, #1
- 198 001c FB60     		str	r3, [r7, #12]
- 199              	.L13:
- 200              		.loc 1 57 0
- 201 001e FA68     		ldr	r2, [r7, #12]
- 202 0020 234B     		ldr	r3, .L19+4
- 203 0022 9A42     		cmp	r2, r3
- 204 0024 F8DD     		ble	.L14
- 205              	.LBE2:
-  58:../Sources/main.c **** 		// now in FBE mode
-  59:../Sources/main.c **** 		MCG_C6 |= MCG_C6_CME0_MASK;		// enable the clock monitor
- 206              		.loc 1 59 0 is_stmt 1
- 207 0026 214B     		ldr	r3, .L19
- 208 0028 204A     		ldr	r2, .L19
- 209 002a 5279     		ldrb	r2, [r2, #5]
- 210 002c D2B2     		uxtb	r2, r2
- 211 002e 2021     		mov	r1, #32
- 212 0030 0A43     		orr	r2, r1
- 213 0032 D2B2     		uxtb	r2, r2
- 214 0034 5A71     		strb	r2, [r3, #5]
-  60:../Sources/main.c **** 	MCG_C5 |= MCG_C5_PRDIV0(1); 	// set PLL ref divider to divide by 2
- 215              		.loc 1 60 0
- 216 0036 1D4B     		ldr	r3, .L19
- 217 0038 1C4A     		ldr	r2, .L19
- 218 003a 1279     		ldrb	r2, [r2, #4]
- 219 003c D2B2     		uxtb	r2, r2
- 220 003e 0121     		mov	r1, #1
- 221 0040 0A43     		orr	r2, r1
- 222 0042 D2B2     		uxtb	r2, r2
- 223 0044 1A71     		strb	r2, [r3, #4]
-  61:../Sources/main.c **** 	int temp_reg = MCG_C6; 				// store present C6 value (as CME0 bit was previously set)
- 224              		.loc 1 61 0
- 225 0046 194B     		ldr	r3, .L19
- 226 0048 5B79     		ldrb	r3, [r3, #5]
- 227 004a DBB2     		uxtb	r3, r3
- 228 004c 3B60     		str	r3, [r7]
-  62:../Sources/main.c **** 	temp_reg &= ~MCG_C6_VDIV0_MASK; // clear VDIV settings
- 229              		.loc 1 62 0
- 230 004e 3B68     		ldr	r3, [r7]
- 231 0050 1F22     		mov	r2, #31
- 232 0052 9343     		bic	r3, r2
- 233 0054 3B60     		str	r3, [r7]
-  63:../Sources/main.c **** 	temp_reg |= MCG_C6_PLLS_MASK | MCG_C6_VDIV0(0); 	// write new VDIV and enable PLL
- 234              		.loc 1 63 0
- 235 0056 3B68     		ldr	r3, [r7]
- 236 0058 4022     		mov	r2, #64
- 237 005a 1343     		orr	r3, r2
- 238 005c 3B60     		str	r3, [r7]
-  64:../Sources/main.c **** 	MCG_C6 = temp_reg; 				// update MCG_C6		
- 239              		.loc 1 64 0
- 240 005e 134B     		ldr	r3, .L19
- 241 0060 3A68     		ldr	r2, [r7]
- 242 0062 D2B2     		uxtb	r2, r2
- 243 0064 5A71     		strb	r2, [r3, #5]
- 244              	.LBB3:
-  65:../Sources/main.c **** 	for (int i = 0 ; i < 4000 ; i++); 	// wait for PLLST status bit to set
- 245              		.loc 1 65 0
- 246 0066 0023     		mov	r3, #0
- 247 0068 BB60     		str	r3, [r7, #8]
- 248 006a 02E0     		b	.L15
- 249              	.L16:
- 250              		.loc 1 65 0 is_stmt 0
- 251 006c BB68     		ldr	r3, [r7, #8]
- 252 006e 0133     		add	r3, r3, #1
- 253 0070 BB60     		str	r3, [r7, #8]
- 254              	.L15:
- 255              		.loc 1 65 0
- 256 0072 BA68     		ldr	r2, [r7, #8]
- 257 0074 0F4B     		ldr	r3, .L19+8
- 258 0076 9A42     		cmp	r2, r3
- 259 0078 F8DD     		ble	.L16
- 260              	.LBE3:
-  66:../Sources/main.c **** 		// now in PBE mode
-  67:../Sources/main.c **** 		SIM_CLKDIV1 = (SIM_CLKDIV1_OUTDIV1(1) | SIM_CLKDIV1_OUTDIV4(1));	// core clock, bus clock div by 
- 261              		.loc 1 67 0 is_stmt 1
- 262 007a 0F4A     		ldr	r2, .L19+12
- 263 007c 0F4B     		ldr	r3, .L19+16
- 264 007e 1049     		ldr	r1, .L19+20
- 265 0080 D150     		str	r1, [r2, r3]
-  68:../Sources/main.c **** 	MCG_C1 &= ~MCG_C1_CLKS_MASK;	// switch CLKS mux to select the PLL as MCGCLKOUT	
- 266              		.loc 1 68 0
- 267 0082 0A4B     		ldr	r3, .L19
- 268 0084 094A     		ldr	r2, .L19
- 269 0086 1278     		ldrb	r2, [r2]
- 270 0088 D1B2     		uxtb	r1, r2
- 271 008a 3F22     		mov	r2, #63
- 272 008c 0A40     		and	r2, r1
- 273 008e D2B2     		uxtb	r2, r2
- 274 0090 1A70     		strb	r2, [r3]
- 275              	.LBB4:
-  69:../Sources/main.c **** 	for (int i = 0 ; i < 2000 ; i++);	// Wait for clock status bits to update
- 276              		.loc 1 69 0
- 277 0092 0023     		mov	r3, #0
- 278 0094 7B60     		str	r3, [r7, #4]
- 279 0096 02E0     		b	.L17
- 280              	.L18:
- 281              		.loc 1 69 0 is_stmt 0
- 282 0098 7B68     		ldr	r3, [r7, #4]
- 283 009a 0133     		add	r3, r3, #1
- 284 009c 7B60     		str	r3, [r7, #4]
- 285              	.L17:
- 286              		.loc 1 69 0
- 287 009e 7A68     		ldr	r2, [r7, #4]
- 288 00a0 084B     		ldr	r3, .L19+24
- 289 00a2 9A42     		cmp	r2, r3
- 290 00a4 F8DD     		ble	.L18
- 291              	.LBE4:
-  70:../Sources/main.c **** 	// now in PEE mode, core and system clock 48 MHz, bus and flash clock 24 MHz
-  71:../Sources/main.c **** 
-  72:../Sources/main.c **** }
- 292              		.loc 1 72 0 is_stmt 1
- 293 00a6 BD46     		mov	sp, r7
- 294 00a8 04B0     		add	sp, sp, #16
- 295              		@ sp needed for prologue
- 296 00aa 80BD     		pop	{r7, pc}
- 297              	.L20:
- 298              		.align	2
- 299              	.L19:
- 300 00ac 00400640 		.word	1074151424
- 301 00b0 BF5D0000 		.word	23999
- 302 00b4 9F0F0000 		.word	3999
- 303 00b8 00700440 		.word	1074032640
- 304 00bc 44100000 		.word	4164
- 305 00c0 00000110 		.word	268500992
- 306 00c4 CF070000 		.word	1999
- 307              		.cfi_endproc
- 308              	.LFE2:
- 310              		.text
- 311              	.Letext0:
- 312              		.file 2 "C:/Freescale/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/EWL_C/include/cstdint"
- 313              		.file 3 "D:/Documents/Freescale/test/Project_Headers/MKL25Z4.h"
+  81 004c 40F00F40 		.word	1074786368
+  82 0050 80969800 		.word	10000000
+  83              		.cfi_endproc
+  84              	.LFE0:
+  86              		.section	.text.delay_time,"ax",%progbits
+  87              		.align	2
+  88              		.global	delay_time
+  89              		.code	16
+  90              		.thumb_func
+  92              	delay_time:
+  93              	.LFB1:
+  38:../Sources/main.c **** }
+  39:../Sources/main.c **** 
+  40:../Sources/main.c **** void delay_time(int number){
+  94              		.loc 1 40 0
+  95              		.cfi_startproc
+  96 0000 80B5     		push	{r7, lr}
+  97              	.LCFI3:
+  98              		.cfi_def_cfa_offset 8
+  99              		.cfi_offset 7, -8
+ 100              		.cfi_offset 14, -4
+ 101 0002 84B0     		sub	sp, sp, #16
+ 102              	.LCFI4:
+ 103              		.cfi_def_cfa_offset 24
+ 104 0004 00AF     		add	r7, sp, #0
+ 105              	.LCFI5:
+ 106              		.cfi_def_cfa_register 7
+ 107 0006 7860     		str	r0, [r7, #4]
+  41:../Sources/main.c **** 	int cnt;
+  42:../Sources/main.c **** 	for(cnt=0;cnt<number;cnt++);
+ 108              		.loc 1 42 0
+ 109 0008 0023     		mov	r3, #0
+ 110 000a FB60     		str	r3, [r7, #12]
+ 111 000c 02E0     		b	.L6
+ 112              	.L7:
+ 113              		.loc 1 42 0 is_stmt 0
+ 114 000e FB68     		ldr	r3, [r7, #12]
+ 115 0010 0133     		add	r3, r3, #1
+ 116 0012 FB60     		str	r3, [r7, #12]
+ 117              	.L6:
+ 118              		.loc 1 42 0
+ 119 0014 FA68     		ldr	r2, [r7, #12]
+ 120 0016 7B68     		ldr	r3, [r7, #4]
+ 121 0018 9A42     		cmp	r2, r3
+ 122 001a F8DB     		blt	.L7
+  43:../Sources/main.c **** }
+ 123              		.loc 1 43 0 is_stmt 1
+ 124 001c BD46     		mov	sp, r7
+ 125 001e 04B0     		add	sp, sp, #16
+ 126              		@ sp needed for prologue
+ 127 0020 80BD     		pop	{r7, pc}
+ 128              		.cfi_endproc
+ 129              	.LFE1:
+ 131 0022 C046     		.section	.text.clock_init,"ax",%progbits
+ 132              		.align	2
+ 133              		.global	clock_init
+ 134              		.code	16
+ 135              		.thumb_func
+ 137              	clock_init:
+ 138              	.LFB2:
+  44:../Sources/main.c **** 
+  45:../Sources/main.c **** 
+  46:../Sources/main.c **** void clock_init(){
+ 139              		.loc 1 46 0
+ 140              		.cfi_startproc
+ 141 0000 80B5     		push	{r7, lr}
+ 142              	.LCFI6:
+ 143              		.cfi_def_cfa_offset 8
+ 144              		.cfi_offset 7, -8
+ 145              		.cfi_offset 14, -4
+ 146 0002 84B0     		sub	sp, sp, #16
+ 147              	.LCFI7:
+ 148              		.cfi_def_cfa_offset 24
+ 149 0004 00AF     		add	r7, sp, #0
+ 150              	.LCFI8:
+ 151              		.cfi_def_cfa_register 7
+  47:../Sources/main.c **** 	MCG_C2 = (MCG_C2_RANGE0(1) | MCG_C2_EREFS0_MASK); 	// configure the oscillator settings
+ 152              		.loc 1 47 0
+ 153 0006 294B     		ldr	r3, .L15
+ 154 0008 1422     		mov	r2, #20
+ 155 000a 5A70     		strb	r2, [r3, #1]
+  48:../Sources/main.c **** 	MCG_C1 = (MCG_C1_CLKS(2) | MCG_C1_FRDIV(3));		// divider for 8 MHz clock	
+ 156              		.loc 1 48 0
+ 157 000c 274B     		ldr	r3, .L15
+ 158 000e 9822     		mov	r2, #152
+ 159 0010 1A70     		strb	r2, [r3]
+ 160              	.LBB2:
+  49:../Sources/main.c **** 	for (int i = 0 ; i < 24000 ; i++);						// wait for OSCINIT to set
+ 161              		.loc 1 49 0
+ 162 0012 0023     		mov	r3, #0
+ 163 0014 FB60     		str	r3, [r7, #12]
+ 164 0016 02E0     		b	.L9
+ 165              	.L10:
+ 166              		.loc 1 49 0 is_stmt 0
+ 167 0018 FB68     		ldr	r3, [r7, #12]
+ 168 001a 0133     		add	r3, r3, #1
+ 169 001c FB60     		str	r3, [r7, #12]
+ 170              	.L9:
+ 171              		.loc 1 49 0
+ 172 001e FA68     		ldr	r2, [r7, #12]
+ 173 0020 234B     		ldr	r3, .L15+4
+ 174 0022 9A42     		cmp	r2, r3
+ 175 0024 F8DD     		ble	.L10
+ 176              	.LBE2:
+  50:../Sources/main.c **** 		// now in FBE mode
+  51:../Sources/main.c **** 		MCG_C6 |= MCG_C6_CME0_MASK;		// enable the clock monitor
+ 177              		.loc 1 51 0 is_stmt 1
+ 178 0026 214B     		ldr	r3, .L15
+ 179 0028 204A     		ldr	r2, .L15
+ 180 002a 5279     		ldrb	r2, [r2, #5]
+ 181 002c D2B2     		uxtb	r2, r2
+ 182 002e 2021     		mov	r1, #32
+ 183 0030 0A43     		orr	r2, r1
+ 184 0032 D2B2     		uxtb	r2, r2
+ 185 0034 5A71     		strb	r2, [r3, #5]
+  52:../Sources/main.c **** 	MCG_C5 |= MCG_C5_PRDIV0(1); 	// set PLL ref divider to divide by 2
+ 186              		.loc 1 52 0
+ 187 0036 1D4B     		ldr	r3, .L15
+ 188 0038 1C4A     		ldr	r2, .L15
+ 189 003a 1279     		ldrb	r2, [r2, #4]
+ 190 003c D2B2     		uxtb	r2, r2
+ 191 003e 0121     		mov	r1, #1
+ 192 0040 0A43     		orr	r2, r1
+ 193 0042 D2B2     		uxtb	r2, r2
+ 194 0044 1A71     		strb	r2, [r3, #4]
+  53:../Sources/main.c **** 	int temp_reg = MCG_C6; 				// store present C6 value (as CME0 bit was previously set)
+ 195              		.loc 1 53 0
+ 196 0046 194B     		ldr	r3, .L15
+ 197 0048 5B79     		ldrb	r3, [r3, #5]
+ 198 004a DBB2     		uxtb	r3, r3
+ 199 004c 3B60     		str	r3, [r7]
+  54:../Sources/main.c **** 	temp_reg &= ~MCG_C6_VDIV0_MASK; // clear VDIV settings
+ 200              		.loc 1 54 0
+ 201 004e 3B68     		ldr	r3, [r7]
+ 202 0050 1F22     		mov	r2, #31
+ 203 0052 9343     		bic	r3, r2
+ 204 0054 3B60     		str	r3, [r7]
+  55:../Sources/main.c **** 	temp_reg |= MCG_C6_PLLS_MASK | MCG_C6_VDIV0(0); 	// write new VDIV and enable PLL
+ 205              		.loc 1 55 0
+ 206 0056 3B68     		ldr	r3, [r7]
+ 207 0058 4022     		mov	r2, #64
+ 208 005a 1343     		orr	r3, r2
+ 209 005c 3B60     		str	r3, [r7]
+  56:../Sources/main.c **** 	MCG_C6 = temp_reg; 				// update MCG_C6		
+ 210              		.loc 1 56 0
+ 211 005e 134B     		ldr	r3, .L15
+ 212 0060 3A68     		ldr	r2, [r7]
+ 213 0062 D2B2     		uxtb	r2, r2
+ 214 0064 5A71     		strb	r2, [r3, #5]
+ 215              	.LBB3:
+  57:../Sources/main.c **** 	for (int i = 0 ; i < 4000 ; i++); 	// wait for PLLST status bit to set
+ 216              		.loc 1 57 0
+ 217 0066 0023     		mov	r3, #0
+ 218 0068 BB60     		str	r3, [r7, #8]
+ 219 006a 02E0     		b	.L11
+ 220              	.L12:
+ 221              		.loc 1 57 0 is_stmt 0
+ 222 006c BB68     		ldr	r3, [r7, #8]
+ 223 006e 0133     		add	r3, r3, #1
+ 224 0070 BB60     		str	r3, [r7, #8]
+ 225              	.L11:
+ 226              		.loc 1 57 0
+ 227 0072 BA68     		ldr	r2, [r7, #8]
+ 228 0074 0F4B     		ldr	r3, .L15+8
+ 229 0076 9A42     		cmp	r2, r3
+ 230 0078 F8DD     		ble	.L12
+ 231              	.LBE3:
+  58:../Sources/main.c **** 		// now in PBE mode
+  59:../Sources/main.c **** 		SIM_CLKDIV1 = (SIM_CLKDIV1_OUTDIV1(1) | SIM_CLKDIV1_OUTDIV4(1));	// core clock, bus clock div by 
+ 232              		.loc 1 59 0 is_stmt 1
+ 233 007a 0F4A     		ldr	r2, .L15+12
+ 234 007c 0F4B     		ldr	r3, .L15+16
+ 235 007e 1049     		ldr	r1, .L15+20
+ 236 0080 D150     		str	r1, [r2, r3]
+  60:../Sources/main.c **** 	MCG_C1 &= ~MCG_C1_CLKS_MASK;	// switch CLKS mux to select the PLL as MCGCLKOUT	
+ 237              		.loc 1 60 0
+ 238 0082 0A4B     		ldr	r3, .L15
+ 239 0084 094A     		ldr	r2, .L15
+ 240 0086 1278     		ldrb	r2, [r2]
+ 241 0088 D1B2     		uxtb	r1, r2
+ 242 008a 3F22     		mov	r2, #63
+ 243 008c 0A40     		and	r2, r1
+ 244 008e D2B2     		uxtb	r2, r2
+ 245 0090 1A70     		strb	r2, [r3]
+ 246              	.LBB4:
+  61:../Sources/main.c **** 	for (int i = 0 ; i < 2000 ; i++);	// Wait for clock status bits to update
+ 247              		.loc 1 61 0
+ 248 0092 0023     		mov	r3, #0
+ 249 0094 7B60     		str	r3, [r7, #4]
+ 250 0096 02E0     		b	.L13
+ 251              	.L14:
+ 252              		.loc 1 61 0 is_stmt 0
+ 253 0098 7B68     		ldr	r3, [r7, #4]
+ 254 009a 0133     		add	r3, r3, #1
+ 255 009c 7B60     		str	r3, [r7, #4]
+ 256              	.L13:
+ 257              		.loc 1 61 0
+ 258 009e 7A68     		ldr	r2, [r7, #4]
+ 259 00a0 084B     		ldr	r3, .L15+24
+ 260 00a2 9A42     		cmp	r2, r3
+ 261 00a4 F8DD     		ble	.L14
+ 262              	.LBE4:
+  62:../Sources/main.c **** 	// now in PEE mode, core and system clock 48 MHz, bus and flash clock 24 MHz
+  63:../Sources/main.c **** 
+  64:../Sources/main.c **** }
+ 263              		.loc 1 64 0 is_stmt 1
+ 264 00a6 BD46     		mov	sp, r7
+ 265 00a8 04B0     		add	sp, sp, #16
+ 266              		@ sp needed for prologue
+ 267 00aa 80BD     		pop	{r7, pc}
+ 268              	.L16:
+ 269              		.align	2
+ 270              	.L15:
+ 271 00ac 00400640 		.word	1074151424
+ 272 00b0 BF5D0000 		.word	23999
+ 273 00b4 9F0F0000 		.word	3999
+ 274 00b8 00700440 		.word	1074032640
+ 275 00bc 44100000 		.word	4164
+ 276 00c0 00000110 		.word	268500992
+ 277 00c4 CF070000 		.word	1999
+ 278              		.cfi_endproc
+ 279              	.LFE2:
+ 281              		.text
+ 282              	.Letext0:
+ 283              		.file 2 "D:/UtilisateurTZ/Program Files (x86)/CodeWarrior/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/EWL
+ 284              		.file 3 "D:/T\351l\351chargements/NXP_CUP/insa-nxpcup/code/2019-2020/periphs/test/Project_Headers/
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\User\AppData\Local\Temp\cck4TaTt.s:18     .text.main:00000000 $t
-C:\Users\User\AppData\Local\Temp\cck4TaTt.s:23     .text.main:00000000 main
-C:\Users\User\AppData\Local\Temp\cck4TaTt.s:166    .text.clock_init:00000000 clock_init
-C:\Users\User\AppData\Local\Temp\cck4TaTt.s:110    .text.main:00000074 $d
-C:\Users\User\AppData\Local\Temp\cck4TaTt.s:116    .text.delay_time:00000000 $t
-C:\Users\User\AppData\Local\Temp\cck4TaTt.s:121    .text.delay_time:00000000 delay_time
-C:\Users\User\AppData\Local\Temp\cck4TaTt.s:161    .text.clock_init:00000000 $t
-C:\Users\User\AppData\Local\Temp\cck4TaTt.s:300    .text.clock_init:000000ac $d
+C:\Users\thoma\AppData\Local\Temp\ccThkN3c.s:18     .text.main:00000000 $t
+C:\Users\thoma\AppData\Local\Temp\ccThkN3c.s:23     .text.main:00000000 main
+C:\Users\thoma\AppData\Local\Temp\ccThkN3c.s:137    .text.clock_init:00000000 clock_init
+C:\Users\thoma\AppData\Local\Temp\ccThkN3c.s:92     .text.delay_time:00000000 delay_time
+C:\Users\thoma\AppData\Local\Temp\ccThkN3c.s:81     .text.main:0000004c $d
+C:\Users\thoma\AppData\Local\Temp\ccThkN3c.s:87     .text.delay_time:00000000 $t
+C:\Users\thoma\AppData\Local\Temp\ccThkN3c.s:132    .text.clock_init:00000000 $t
+C:\Users\thoma\AppData\Local\Temp\ccThkN3c.s:271    .text.clock_init:000000ac $d
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS
 debug_init
-debug_getRotarySW
+send_data

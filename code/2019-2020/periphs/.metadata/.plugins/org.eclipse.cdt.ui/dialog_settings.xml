@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="completion_proposal_size">
+	</section>
+	<section name="SIMPLE_FLASH_DIALOG_SETTINGS_SECTION">
+		<item value="true" key="SIMPLE_FLASH_DIALOG_SETTINGS_SAVE_TARGET_TASK_OPTION"/>
+		<item value="0" key="SIMPLE_FLASH_DIALOG_SETTINGS_FILE_OFFSET"/>
+		<item value="false" key="SIMPLE_FLASH_DIALOG_SETTINGS_UNPROTECT_OPTION"/>
+		<item value="KL25Z128M4" key="SIMPLE_FLASH_DIALOG_SETTINGS_PROCESSOR"/>
+		<item value="${workspace_loc:/test/FLASH/FRDM_Blink_TriLED.elf}" key="SIMPLE_FLASH_DIALOG_SETTINGS_FILENAME"/>
+		<item value="FRDM_Blink_TriLED_FLASH_OpenSDA" key="SIMPLE_FLASH_DIALOG_SETTINGS_SYSTEM"/>
+		<item value="0" key="SIMPLE_FLASH_DIALOG_SETTINGS_FLASH_CONFIGURATION_INDEX"/>
+		<item value="" key="SIMPLE_FLASH_FLASH_CONFIG_FOLDER"/>
+		<list key="QUICK_FLASH_DIALOG_SETTINGS_FLASH_CONFIGURATIONS">
+			<item value="D:\UtilisateurTZ\Program Files (x86)\CodeWarrior\CW MCU v11.1\MCU\bin\plugins\support\TargetTask\Flash_Programmer\ARM\KL25Z128M4.xml"/>
+		</list>
+	</section>
+	<section name="org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration">
+	</section>
+</section>

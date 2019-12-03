@@ -10,7 +10,7 @@
 
 #include <MKL25Z4.h>
 #include "Debug.h"
-
+#include "afficheur7.h"
 
 #define SLOW_BLINK      (10000000)
 #define FAST_BLINK      (500000)
@@ -25,23 +25,15 @@ int main (void)
 	debug_init();
 	DEBUG_GREEN_OFF;
 	while(1){
-		//DEBUG_RED_ON;
-		//delay_time(BLINK_DELAY);
-		//DEBUG_RED_OFF;
-		//delay_time(BLINK_DELAY);
-		i=debug_getRotarySW();
-		if(i&(1<<2)){
-		//if(GPIOD_PDIR & (1<<1)){
-			DEBUG_BLUE_ON;
-		}else{
-			DEBUG_BLUE_OFF;
-		}
-		if(i&(1<<1)){
-		//if(GPIOD_PDIR & (1<<3)){
-			DEBUG_GREEN_ON;
-		}else{
-			DEBUG_GREEN_OFF;
-		}
+		
+		
+		/* ########## TEST AFFICHEUR LCD ########## */
+		send_data(1);
+		delay_time(SLOW_BLINK);
+		send_data(2);
+		delay_time(SLOW_BLINK);
+		send_data(3);
+		delay_time(SLOW_BLINK);
 	}
 }
 

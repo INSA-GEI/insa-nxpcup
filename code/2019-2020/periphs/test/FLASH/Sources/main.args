@@ -4,10 +4,10 @@
 -g3
 -gdwarf-2
 -gstrict-dwarf
--I"D:/Documents/Freescale/test/Project_Headers"
--I"D:/Documents/Freescale/test/Project_Settings/Startup_Code"
--I"C:/Freescale/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/EWL_C/include"
--I"C:/Freescale/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/EWL_Runtime/include"
+-I"D:/UtilisateurTZ/NXP_CUP/insa-nxpcup/code/2019-2020/periphs/test/Project_Headers"
+-I"D:/UtilisateurTZ/NXP_CUP/insa-nxpcup/code/2019-2020/periphs/test/Project_Settings/Startup_Code"
+-I"D:/UtilisateurTZ/Program Files (x86)/CodeWarrior/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/EWL_C/include"
+-I"D:/UtilisateurTZ/Program Files (x86)/CodeWarrior/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/EWL_Runtime/include"
 -O0
 -ffunction-sections
 -fdata-sections

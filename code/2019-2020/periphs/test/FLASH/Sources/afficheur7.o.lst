@@ -1,0 +1,245 @@
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 6
+  10              		.eabi_attribute 34, 0
+  11              		.eabi_attribute 18, 4
+  12              		.code	16
+  13              		.file	"afficheur7.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.send_data,"ax",%progbits
+  18              		.align	2
+  19              		.global	send_data
+  20              		.code	16
+  21              		.thumb_func
+  23              	send_data:
+  24              	.LFB0:
+  25              		.file 1 "../Sources/afficheur7.c"
+   1:../Sources/afficheur7.c **** /*
+   2:../Sources/afficheur7.c ****  * afficheur7.c
+   3:../Sources/afficheur7.c ****  *
+   4:../Sources/afficheur7.c ****  *  Created on: Dec 3, 2019
+   5:../Sources/afficheur7.c ****  *      Author: thoma
+   6:../Sources/afficheur7.c ****  */
+   7:../Sources/afficheur7.c **** 
+   8:../Sources/afficheur7.c **** #include "afficheur7.h"
+   9:../Sources/afficheur7.c **** #include <MKL25Z4.h>
+  10:../Sources/afficheur7.c **** 
+  11:../Sources/afficheur7.c **** void send_data(int data){
+  26              		.loc 1 11 0
+  27              		.cfi_startproc
+  28 0000 80B5     		push	{r7, lr}
+  29              	.LCFI0:
+  30              		.cfi_def_cfa_offset 8
+  31              		.cfi_offset 7, -8
+  32              		.cfi_offset 14, -4
+  33 0002 84B0     		sub	sp, sp, #16
+  34              	.LCFI1:
+  35              		.cfi_def_cfa_offset 24
+  36 0004 00AF     		add	r7, sp, #0
+  37              	.LCFI2:
+  38              		.cfi_def_cfa_register 7
+  39 0006 7860     		str	r0, [r7, #4]
+  12:../Sources/afficheur7.c **** 	
+  13:../Sources/afficheur7.c **** 		//Initialisation de la CLK
+  14:../Sources/afficheur7.c **** 		PORTC_PCR5 = PORT_PCR_MUX(1);
+  40              		.loc 1 14 0
+  41 0008 364B     		ldr	r3, .L6
+  42 000a 8022     		mov	r2, #128
+  43 000c 5200     		lsl	r2, r2, #1
+  44 000e 5A61     		str	r2, [r3, #20]
+  15:../Sources/afficheur7.c **** 		GPIOC_PSOR |= DISP_CLK_PIN;
+  45              		.loc 1 15 0
+  46 0010 354B     		ldr	r3, .L6+4
+  47 0012 354A     		ldr	r2, .L6+4
+  48 0014 5268     		ldr	r2, [r2, #4]
+  49 0016 2021     		mov	r1, #32
+  50 0018 0A43     		orr	r2, r1
+  51 001a 5A60     		str	r2, [r3, #4]
+  16:../Sources/afficheur7.c **** 		GPIOC_PDDR |= DISP_CLK_PIN;		//Configuration en output
+  52              		.loc 1 16 0
+  53 001c 324B     		ldr	r3, .L6+4
+  54 001e 324A     		ldr	r2, .L6+4
+  55 0020 5269     		ldr	r2, [r2, #20]
+  56 0022 2021     		mov	r1, #32
+  57 0024 0A43     		orr	r2, r1
+  58 0026 5A61     		str	r2, [r3, #20]
+  17:../Sources/afficheur7.c **** 		
+  18:../Sources/afficheur7.c **** 		//Initialisation de SIN (pour la data)
+  19:../Sources/afficheur7.c **** 		PORTC_PCR6 = PORT_PCR_MUX(1);
+  59              		.loc 1 19 0
+  60 0028 2E4B     		ldr	r3, .L6
+  61 002a 8022     		mov	r2, #128
+  62 002c 5200     		lsl	r2, r2, #1
+  63 002e 9A61     		str	r2, [r3, #24]
+  20:../Sources/afficheur7.c **** 		GPIOC_PSOR |= DISP_SIN_PIN;
+  64              		.loc 1 20 0
+  65 0030 2D4B     		ldr	r3, .L6+4
+  66 0032 2D4A     		ldr	r2, .L6+4
+  67 0034 5268     		ldr	r2, [r2, #4]
+  68 0036 4021     		mov	r1, #64
+  69 0038 0A43     		orr	r2, r1
+  70 003a 5A60     		str	r2, [r3, #4]
+  21:../Sources/afficheur7.c **** 		GPIOC_PDDR |= DISP_SIN_PIN;		//Configuration en output
+  71              		.loc 1 21 0
+  72 003c 2A4B     		ldr	r3, .L6+4
+  73 003e 2A4A     		ldr	r2, .L6+4
+  74 0040 5269     		ldr	r2, [r2, #20]
+  75 0042 4021     		mov	r1, #64
+  76 0044 0A43     		orr	r2, r1
+  77 0046 5A61     		str	r2, [r3, #20]
+  22:../Sources/afficheur7.c **** 		
+  23:../Sources/afficheur7.c **** 		//Initialisation du latch
+  24:../Sources/afficheur7.c **** 		PORTC_PCR10 = PORT_PCR_MUX(1);
+  78              		.loc 1 24 0
+  79 0048 264B     		ldr	r3, .L6
+  80 004a 8022     		mov	r2, #128
+  81 004c 5200     		lsl	r2, r2, #1
+  82 004e 9A62     		str	r2, [r3, #40]
+  25:../Sources/afficheur7.c **** 		GPIOC_PSOR = DISP_LATCH_PIN;
+  83              		.loc 1 25 0
+  84 0050 254B     		ldr	r3, .L6+4
+  85 0052 8022     		mov	r2, #128
+  86 0054 D200     		lsl	r2, r2, #3
+  87 0056 5A60     		str	r2, [r3, #4]
+  26:../Sources/afficheur7.c **** 		GPIOC_PDDR |= DISP_LATCH_PIN;	//Configuration en output
+  88              		.loc 1 26 0
+  89 0058 234B     		ldr	r3, .L6+4
+  90 005a 234A     		ldr	r2, .L6+4
+  91 005c 5269     		ldr	r2, [r2, #20]
+  92 005e 8021     		mov	r1, #128
+  93 0060 C900     		lsl	r1, r1, #3
+  94 0062 0A43     		orr	r2, r1
+  95 0064 5A61     		str	r2, [r3, #20]
+  27:../Sources/afficheur7.c **** 		
+  28:../Sources/afficheur7.c **** 		DISP_LATCH_OFF;
+  96              		.loc 1 28 0
+  97 0066 204B     		ldr	r3, .L6+4
+  98 0068 1F4A     		ldr	r2, .L6+4
+  99 006a 5268     		ldr	r2, [r2, #4]
+ 100 006c 8021     		mov	r1, #128
+ 101 006e C900     		lsl	r1, r1, #3
+ 102 0070 0A43     		orr	r2, r1
+ 103 0072 5A60     		str	r2, [r3, #4]
+  29:../Sources/afficheur7.c **** 		DISP_CLK_OFF;
+ 104              		.loc 1 29 0
+ 105 0074 1C4B     		ldr	r3, .L6+4
+ 106 0076 1C4A     		ldr	r2, .L6+4
+ 107 0078 5268     		ldr	r2, [r2, #4]
+ 108 007a 2021     		mov	r1, #32
+ 109 007c 0A43     		orr	r2, r1
+ 110 007e 5A60     		str	r2, [r3, #4]
+ 111              	.LBB2:
+  30:../Sources/afficheur7.c **** 		
+  31:../Sources/afficheur7.c **** 		for (int i=0; i<7;i++){
+ 112              		.loc 1 31 0
+ 113 0080 0023     		mov	r3, #0
+ 114 0082 FB60     		str	r3, [r7, #12]
+ 115 0084 21E0     		b	.L2
+ 116              	.L5:
+  32:../Sources/afficheur7.c **** 			
+  33:../Sources/afficheur7.c **** 			
+  34:../Sources/afficheur7.c **** 			if(data & (1<<i))		//On check si le bit est à 1
+ 117              		.loc 1 34 0
+ 118 0086 7A68     		ldr	r2, [r7, #4]
+ 119 0088 FB68     		ldr	r3, [r7, #12]
+ 120 008a 1A41     		asr	r2, r2, r3
+ 121 008c 0123     		mov	r3, #1
+ 122 008e 1340     		and	r3, r2
+ 123 0090 06D0     		beq	.L3
+  35:../Sources/afficheur7.c **** 			{
+  36:../Sources/afficheur7.c **** 				DISP_SIN_ON;
+ 124              		.loc 1 36 0
+ 125 0092 154B     		ldr	r3, .L6+4
+ 126 0094 144A     		ldr	r2, .L6+4
+ 127 0096 9268     		ldr	r2, [r2, #8]
+ 128 0098 4021     		mov	r1, #64
+ 129 009a 0A43     		orr	r2, r1
+ 130 009c 9A60     		str	r2, [r3, #8]
+ 131 009e 05E0     		b	.L4
+ 132              	.L3:
+  37:../Sources/afficheur7.c **** 				
+  38:../Sources/afficheur7.c **** 			}else {
+  39:../Sources/afficheur7.c **** 				DISP_SIN_OFF;
+ 133              		.loc 1 39 0
+ 134 00a0 114B     		ldr	r3, .L6+4
+ 135 00a2 114A     		ldr	r2, .L6+4
+ 136 00a4 5268     		ldr	r2, [r2, #4]
+ 137 00a6 4021     		mov	r1, #64
+ 138 00a8 0A43     		orr	r2, r1
+ 139 00aa 5A60     		str	r2, [r3, #4]
+ 140              	.L4:
+  40:../Sources/afficheur7.c **** 			}			
+  41:../Sources/afficheur7.c **** 			DISP_CLK_ON;
+ 141              		.loc 1 41 0
+ 142 00ac 0E4B     		ldr	r3, .L6+4
+ 143 00ae 0E4A     		ldr	r2, .L6+4
+ 144 00b0 9268     		ldr	r2, [r2, #8]
+ 145 00b2 2021     		mov	r1, #32
+ 146 00b4 0A43     		orr	r2, r1
+ 147 00b6 9A60     		str	r2, [r3, #8]
+  42:../Sources/afficheur7.c **** 			//délai?
+  43:../Sources/afficheur7.c **** 			DISP_CLK_OFF;
+ 148              		.loc 1 43 0
+ 149 00b8 0B4B     		ldr	r3, .L6+4
+ 150 00ba 0B4A     		ldr	r2, .L6+4
+ 151 00bc 5268     		ldr	r2, [r2, #4]
+ 152 00be 2021     		mov	r1, #32
+ 153 00c0 0A43     		orr	r2, r1
+ 154 00c2 5A60     		str	r2, [r3, #4]
+  31:../Sources/afficheur7.c **** 		for (int i=0; i<7;i++){
+ 155              		.loc 1 31 0
+ 156 00c4 FB68     		ldr	r3, [r7, #12]
+ 157 00c6 0133     		add	r3, r3, #1
+ 158 00c8 FB60     		str	r3, [r7, #12]
+ 159              	.L2:
+  31:../Sources/afficheur7.c **** 		for (int i=0; i<7;i++){
+ 160              		.loc 1 31 0 is_stmt 0
+ 161 00ca FB68     		ldr	r3, [r7, #12]
+ 162 00cc 062B     		cmp	r3, #6
+ 163 00ce DADD     		ble	.L5
+ 164              	.LBE2:
+  44:../Sources/afficheur7.c **** 		}
+  45:../Sources/afficheur7.c **** 		DISP_LATCH_ON;
+ 165              		.loc 1 45 0 is_stmt 1
+ 166 00d0 054B     		ldr	r3, .L6+4
+ 167 00d2 054A     		ldr	r2, .L6+4
+ 168 00d4 9268     		ldr	r2, [r2, #8]
+ 169 00d6 8021     		mov	r1, #128
+ 170 00d8 C900     		lsl	r1, r1, #3
+ 171 00da 0A43     		orr	r2, r1
+ 172 00dc 9A60     		str	r2, [r3, #8]
+  46:../Sources/afficheur7.c **** 		
+  47:../Sources/afficheur7.c **** 
+  48:../Sources/afficheur7.c **** }
+ 173              		.loc 1 48 0
+ 174 00de BD46     		mov	sp, r7
+ 175 00e0 04B0     		add	sp, sp, #16
+ 176              		@ sp needed for prologue
+ 177 00e2 80BD     		pop	{r7, pc}
+ 178              	.L7:
+ 179              		.align	2
+ 180              	.L6:
+ 181 00e4 00B00440 		.word	1074049024
+ 182 00e8 80F00F40 		.word	1074786432
+ 183              		.cfi_endproc
+ 184              	.LFE0:
+ 186              		.text
+ 187              	.Letext0:
+ 188              		.file 2 "D:/UtilisateurTZ/Program Files (x86)/CodeWarrior/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/EWL
+ 189              		.file 3 "D:/UtilisateurTZ/NXP_CUP/insa-nxpcup/code/2019-2020/periphs/test/Project_Headers/MKL25Z4.
+DEFINED SYMBOLS
+                            *ABS*:00000000 afficheur7.c
+C:\Users\thoma\AppData\Local\Temp\ccYuDili.s:18     .text.send_data:00000000 $t
+C:\Users\thoma\AppData\Local\Temp\ccYuDili.s:23     .text.send_data:00000000 send_data
+C:\Users\thoma\AppData\Local\Temp\ccYuDili.s:181    .text.send_data:000000e4 $d
+                     .debug_frame:00000010 $d
+
+NO UNDEFINED SYMBOLS

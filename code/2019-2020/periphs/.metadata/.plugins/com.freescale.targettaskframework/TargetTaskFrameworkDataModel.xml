@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TargetTaskFramework>
+<Element Type="TaskGroup">
+<TaskGroup GroupName="Root" NumberOfElements="1">
+<Element Type="TargetTask">
+<TargetTask TaskStoringFile="D:\UtilisateurTZ\NXP_CUP\insa-nxpcup\code\2019-2020\periphs\test\FLASH\ .ttf"/>
+</Element>
+</TaskGroup>
+</Element>
+</TargetTaskFramework>
