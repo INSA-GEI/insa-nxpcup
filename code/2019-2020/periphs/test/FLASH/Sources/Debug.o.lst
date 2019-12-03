@@ -1,0 +1,324 @@
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 6
+  10              		.eabi_attribute 34, 0
+  11              		.eabi_attribute 18, 4
+  12              		.code	16
+  13              		.file	"Debug.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.debug_init,"ax",%progbits
+  18              		.align	2
+  19              		.global	debug_init
+  20              		.code	16
+  21              		.thumb_func
+  23              	debug_init:
+  24              	.LFB0:
+  25              		.file 1 "../Sources/Debug.c"
+   1:../Sources/Debug.c **** /*
+   2:../Sources/Debug.c ****  * Debug.c
+   3:../Sources/Debug.c ****  *
+   4:../Sources/Debug.c ****  *  Created on: Nov 30, 2019
+   5:../Sources/Debug.c ****  *      Author: User
+   6:../Sources/Debug.c ****  */
+   7:../Sources/Debug.c **** 
+   8:../Sources/Debug.c **** 
+   9:../Sources/Debug.c **** #include "Debug.h"
+  10:../Sources/Debug.c **** 
+  11:../Sources/Debug.c **** void debug_init(){
+  26              		.loc 1 11 0
+  27              		.cfi_startproc
+  28 0000 80B5     		push	{r7, lr}
+  29              	.LCFI0:
+  30              		.cfi_def_cfa_offset 8
+  31              		.cfi_offset 7, -8
+  32              		.cfi_offset 14, -4
+  33 0002 00AF     		add	r7, sp, #0
+  34              	.LCFI1:
+  35              		.cfi_def_cfa_register 7
+  12:../Sources/Debug.c **** 	SIM_SCGC5 |= SIM_SCGC5_PORTB_MASK;
+  36              		.loc 1 12 0
+  37 0004 484A     		ldr	r2, .L2
+  38 0006 4849     		ldr	r1, .L2
+  39 0008 484B     		ldr	r3, .L2+4
+  40 000a CB58     		ldr	r3, [r1, r3]
+  41 000c 8021     		mov	r1, #128
+  42 000e C900     		lsl	r1, r1, #3
+  43 0010 1943     		orr	r1, r3
+  44 0012 464B     		ldr	r3, .L2+4
+  45 0014 D150     		str	r1, [r2, r3]
+  13:../Sources/Debug.c **** 	SIM_SCGC5 |= SIM_SCGC5_PORTD_MASK;
+  46              		.loc 1 13 0
+  47 0016 444A     		ldr	r2, .L2
+  48 0018 4349     		ldr	r1, .L2
+  49 001a 444B     		ldr	r3, .L2+4
+  50 001c CB58     		ldr	r3, [r1, r3]
+  51 001e 8021     		mov	r1, #128
+  52 0020 4901     		lsl	r1, r1, #5
+  53 0022 1943     		orr	r1, r3
+  54 0024 414B     		ldr	r3, .L2+4
+  55 0026 D150     		str	r1, [r2, r3]
+  14:../Sources/Debug.c **** 	SIM_SCGC5 |= SIM_SCGC5_PORTE_MASK;
+  56              		.loc 1 14 0
+  57 0028 3F4A     		ldr	r2, .L2
+  58 002a 3F49     		ldr	r1, .L2
+  59 002c 3F4B     		ldr	r3, .L2+4
+  60 002e CB58     		ldr	r3, [r1, r3]
+  61 0030 8021     		mov	r1, #128
+  62 0032 8901     		lsl	r1, r1, #6
+  63 0034 1943     		orr	r1, r3
+  64 0036 3D4B     		ldr	r3, .L2+4
+  65 0038 D150     		str	r1, [r2, r3]
+  15:../Sources/Debug.c **** 	SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK;
+  66              		.loc 1 15 0
+  67 003a 3B4A     		ldr	r2, .L2
+  68 003c 3A49     		ldr	r1, .L2
+  69 003e 3B4B     		ldr	r3, .L2+4
+  70 0040 CB58     		ldr	r3, [r1, r3]
+  71 0042 8021     		mov	r1, #128
+  72 0044 8900     		lsl	r1, r1, #2
+  73 0046 1943     		orr	r1, r3
+  74 0048 384B     		ldr	r3, .L2+4
+  75 004a D150     		str	r1, [r2, r3]
+  16:../Sources/Debug.c **** 	SIM_SCGC4 |= SIM_SCGC4_UART0_MASK;
+  76              		.loc 1 16 0
+  77 004c 364A     		ldr	r2, .L2
+  78 004e 3649     		ldr	r1, .L2
+  79 0050 374B     		ldr	r3, .L2+8
+  80 0052 CB58     		ldr	r3, [r1, r3]
+  81 0054 8021     		mov	r1, #128
+  82 0056 C900     		lsl	r1, r1, #3
+  83 0058 1943     		orr	r1, r3
+  84 005a 354B     		ldr	r3, .L2+8
+  85 005c D150     		str	r1, [r2, r3]
+  17:../Sources/Debug.c **** 	
+  18:../Sources/Debug.c **** 	//Initialize the Red LED (PTB18)
+  19:../Sources/Debug.c **** 	PORTB_PCR18 = PORT_PCR_MUX(1);
+  86              		.loc 1 19 0
+  87 005e 354B     		ldr	r3, .L2+12
+  88 0060 8022     		mov	r2, #128
+  89 0062 5200     		lsl	r2, r2, #1
+  90 0064 9A64     		str	r2, [r3, #72]
+  20:../Sources/Debug.c **** 	GPIOB_PSOR |= DEBUG_RED_Pin;
+  91              		.loc 1 20 0
+  92 0066 344B     		ldr	r3, .L2+16
+  93 0068 334A     		ldr	r2, .L2+16
+  94 006a 5268     		ldr	r2, [r2, #4]
+  95 006c 8021     		mov	r1, #128
+  96 006e C902     		lsl	r1, r1, #11
+  97 0070 0A43     		orr	r2, r1
+  98 0072 5A60     		str	r2, [r3, #4]
+  21:../Sources/Debug.c **** 	GPIOB_PDDR |= DEBUG_RED_Pin;
+  99              		.loc 1 21 0
+ 100 0074 304B     		ldr	r3, .L2+16
+ 101 0076 304A     		ldr	r2, .L2+16
+ 102 0078 5269     		ldr	r2, [r2, #20]
+ 103 007a 8021     		mov	r1, #128
+ 104 007c C902     		lsl	r1, r1, #11
+ 105 007e 0A43     		orr	r2, r1
+ 106 0080 5A61     		str	r2, [r3, #20]
+  22:../Sources/Debug.c **** 	//Initialize the Green LED (PTB19)
+  23:../Sources/Debug.c **** 	PORTB_PCR19 = PORT_PCR_MUX(1);
+ 107              		.loc 1 23 0
+ 108 0082 2C4B     		ldr	r3, .L2+12
+ 109 0084 8022     		mov	r2, #128
+ 110 0086 5200     		lsl	r2, r2, #1
+ 111 0088 DA64     		str	r2, [r3, #76]
+  24:../Sources/Debug.c **** 	GPIOB_PSOR |= DEBUG_GREEN_Pin;
+ 112              		.loc 1 24 0
+ 113 008a 2B4B     		ldr	r3, .L2+16
+ 114 008c 2A4A     		ldr	r2, .L2+16
+ 115 008e 5268     		ldr	r2, [r2, #4]
+ 116 0090 8021     		mov	r1, #128
+ 117 0092 0903     		lsl	r1, r1, #12
+ 118 0094 0A43     		orr	r2, r1
+ 119 0096 5A60     		str	r2, [r3, #4]
+  25:../Sources/Debug.c **** 	GPIOB_PDDR |= DEBUG_GREEN_Pin;
+ 120              		.loc 1 25 0
+ 121 0098 274B     		ldr	r3, .L2+16
+ 122 009a 274A     		ldr	r2, .L2+16
+ 123 009c 5269     		ldr	r2, [r2, #20]
+ 124 009e 8021     		mov	r1, #128
+ 125 00a0 0903     		lsl	r1, r1, #12
+ 126 00a2 0A43     		orr	r2, r1
+ 127 00a4 5A61     		str	r2, [r3, #20]
+  26:../Sources/Debug.c **** 	//Initialize the Blue LED (PTD1)
+  27:../Sources/Debug.c **** 	PORTD_PCR1 = PORT_PCR_MUX(1);
+ 128              		.loc 1 27 0
+ 129 00a6 254B     		ldr	r3, .L2+20
+ 130 00a8 8022     		mov	r2, #128
+ 131 00aa 5200     		lsl	r2, r2, #1
+ 132 00ac 5A60     		str	r2, [r3, #4]
+  28:../Sources/Debug.c **** 	GPIOD_PSOR = DEBUG_BLUE_Pin;
+ 133              		.loc 1 28 0
+ 134 00ae 244B     		ldr	r3, .L2+24
+ 135 00b0 0222     		mov	r2, #2
+ 136 00b2 5A60     		str	r2, [r3, #4]
+  29:../Sources/Debug.c **** 	GPIOD_PDDR |= DEBUG_BLUE_Pin;
+ 137              		.loc 1 29 0
+ 138 00b4 224B     		ldr	r3, .L2+24
+ 139 00b6 224A     		ldr	r2, .L2+24
+ 140 00b8 5269     		ldr	r2, [r2, #20]
+ 141 00ba 0221     		mov	r1, #2
+ 142 00bc 0A43     		orr	r2, r1
+ 143 00be 5A61     		str	r2, [r3, #20]
+  30:../Sources/Debug.c **** 	
+  31:../Sources/Debug.c **** 	//Initialize Debugging UART pins (PTA1 : RX and PTA2 : TX)
+  32:../Sources/Debug.c **** 	PORTA_PCR1 = PORT_PCR_MUX(2);
+ 144              		.loc 1 32 0
+ 145 00c0 204B     		ldr	r3, .L2+28
+ 146 00c2 8022     		mov	r2, #128
+ 147 00c4 9200     		lsl	r2, r2, #2
+ 148 00c6 5A60     		str	r2, [r3, #4]
+  33:../Sources/Debug.c **** 	GPIOA_PDDR |= (1<<1);	//output
+ 149              		.loc 1 33 0
+ 150 00c8 1F4B     		ldr	r3, .L2+32
+ 151 00ca 1F4A     		ldr	r2, .L2+32
+ 152 00cc 5269     		ldr	r2, [r2, #20]
+ 153 00ce 0221     		mov	r1, #2
+ 154 00d0 0A43     		orr	r2, r1
+ 155 00d2 5A61     		str	r2, [r3, #20]
+  34:../Sources/Debug.c **** 	PORTA_PCR2 = PORT_PCR_MUX(2);
+ 156              		.loc 1 34 0
+ 157 00d4 1B4B     		ldr	r3, .L2+28
+ 158 00d6 8022     		mov	r2, #128
+ 159 00d8 9200     		lsl	r2, r2, #2
+ 160 00da 9A60     		str	r2, [r3, #8]
+  35:../Sources/Debug.c **** 	
+  36:../Sources/Debug.c **** 	//PTD1 (SW_USER_2) & PTD3 (SW_USER_1)
+  37:../Sources/Debug.c **** 	PORTD_PCR1 = PORT_PCR_MUX(1);
+ 161              		.loc 1 37 0
+ 162 00dc 174B     		ldr	r3, .L2+20
+ 163 00de 8022     		mov	r2, #128
+ 164 00e0 5200     		lsl	r2, r2, #1
+ 165 00e2 5A60     		str	r2, [r3, #4]
+  38:../Sources/Debug.c **** 	PORTD_PCR3 = PORT_PCR_MUX(1);
+ 166              		.loc 1 38 0
+ 167 00e4 154B     		ldr	r3, .L2+20
+ 168 00e6 8022     		mov	r2, #128
+ 169 00e8 5200     		lsl	r2, r2, #1
+ 170 00ea DA60     		str	r2, [r3, #12]
+  39:../Sources/Debug.c **** 	GPIOD_PDDR &=~ (1<<1)|(1<<3);
+ 171              		.loc 1 39 0
+ 172 00ec 144B     		ldr	r3, .L2+24
+ 173 00ee 144A     		ldr	r2, .L2+24
+ 174 00f0 5269     		ldr	r2, [r2, #20]
+ 175 00f2 0221     		mov	r1, #2
+ 176 00f4 8A43     		bic	r2, r1
+ 177 00f6 5A61     		str	r2, [r3, #20]
+  40:../Sources/Debug.c **** 	
+  41:../Sources/Debug.c **** 	//PTE2-5 : Rotary switch (2:LSB, 5:MSB);
+  42:../Sources/Debug.c **** 	PORTE_PCR2 = PORT_PCR_MUX(1);
+ 178              		.loc 1 42 0
+ 179 00f8 144B     		ldr	r3, .L2+36
+ 180 00fa 8022     		mov	r2, #128
+ 181 00fc 5200     		lsl	r2, r2, #1
+ 182 00fe 9A60     		str	r2, [r3, #8]
+  43:../Sources/Debug.c **** 	PORTE_PCR3 = PORT_PCR_MUX(1);
+ 183              		.loc 1 43 0
+ 184 0100 124B     		ldr	r3, .L2+36
+ 185 0102 8022     		mov	r2, #128
+ 186 0104 5200     		lsl	r2, r2, #1
+ 187 0106 DA60     		str	r2, [r3, #12]
+  44:../Sources/Debug.c **** 	PORTE_PCR4 = PORT_PCR_MUX(1);
+ 188              		.loc 1 44 0
+ 189 0108 104B     		ldr	r3, .L2+36
+ 190 010a 8022     		mov	r2, #128
+ 191 010c 5200     		lsl	r2, r2, #1
+ 192 010e 1A61     		str	r2, [r3, #16]
+  45:../Sources/Debug.c **** 	PORTE_PCR5 = PORT_PCR_MUX(1);
+ 193              		.loc 1 45 0
+ 194 0110 0E4B     		ldr	r3, .L2+36
+ 195 0112 8022     		mov	r2, #128
+ 196 0114 5200     		lsl	r2, r2, #1
+ 197 0116 5A61     		str	r2, [r3, #20]
+  46:../Sources/Debug.c **** 	GPIOE_PDDR &=~ ((1<<2)|(1<<3)|(1<<4)|(1<<5));
+ 198              		.loc 1 46 0
+ 199 0118 0D4B     		ldr	r3, .L2+40
+ 200 011a 0D4A     		ldr	r2, .L2+40
+ 201 011c 5269     		ldr	r2, [r2, #20]
+ 202 011e 3C21     		mov	r1, #60
+ 203 0120 8A43     		bic	r2, r1
+ 204 0122 5A61     		str	r2, [r3, #20]
+  47:../Sources/Debug.c **** }
+ 205              		.loc 1 47 0
+ 206 0124 BD46     		mov	sp, r7
+ 207              		@ sp needed for prologue
+ 208 0126 80BD     		pop	{r7, pc}
+ 209              	.L3:
+ 210              		.align	2
+ 211              	.L2:
+ 212 0128 00700440 		.word	1074032640
+ 213 012c 38100000 		.word	4152
+ 214 0130 34100000 		.word	4148
+ 215 0134 00A00440 		.word	1074044928
+ 216 0138 40F00F40 		.word	1074786368
+ 217 013c 00C00440 		.word	1074053120
+ 218 0140 C0F00F40 		.word	1074786496
+ 219 0144 00900440 		.word	1074040832
+ 220 0148 00F00F40 		.word	1074786304
+ 221 014c 00D00440 		.word	1074057216
+ 222 0150 00F10F40 		.word	1074786560
+ 223              		.cfi_endproc
+ 224              	.LFE0:
+ 226              		.section	.text.debug_getRotarySW,"ax",%progbits
+ 227              		.align	2
+ 228              		.global	debug_getRotarySW
+ 229              		.code	16
+ 230              		.thumb_func
+ 232              	debug_getRotarySW:
+ 233              	.LFB1:
+  48:../Sources/Debug.c **** unsigned char debug_getRotarySW(){
+ 234              		.loc 1 48 0
+ 235              		.cfi_startproc
+ 236 0000 80B5     		push	{r7, lr}
+ 237              	.LCFI2:
+ 238              		.cfi_def_cfa_offset 8
+ 239              		.cfi_offset 7, -8
+ 240              		.cfi_offset 14, -4
+ 241 0002 00AF     		add	r7, sp, #0
+ 242              	.LCFI3:
+ 243              		.cfi_def_cfa_register 7
+  49:../Sources/Debug.c **** 	return (GPIOE_PDIR & 0x003C)>>2;
+ 244              		.loc 1 49 0
+ 245 0004 044B     		ldr	r3, .L6
+ 246 0006 1A69     		ldr	r2, [r3, #16]
+ 247 0008 3C23     		mov	r3, #60
+ 248 000a 1340     		and	r3, r2
+ 249 000c 9B08     		lsr	r3, r3, #2
+ 250 000e DBB2     		uxtb	r3, r3
+  50:../Sources/Debug.c **** 	//return GPIOE_PDIR;
+  51:../Sources/Debug.c **** }
+ 251              		.loc 1 51 0
+ 252 0010 181C     		mov	r0, r3
+ 253 0012 BD46     		mov	sp, r7
+ 254              		@ sp needed for prologue
+ 255 0014 80BD     		pop	{r7, pc}
+ 256              	.L7:
+ 257 0016 C046     		.align	2
+ 258              	.L6:
+ 259 0018 00F10F40 		.word	1074786560
+ 260              		.cfi_endproc
+ 261              	.LFE1:
+ 263              		.text
+ 264              	.Letext0:
+ 265              		.file 2 "C:/Freescale/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/EWL_C/include/cstdint"
+ 266              		.file 3 "D:/Documents/Freescale/test/Project_Headers/MKL25Z4.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 Debug.c
+C:\Users\User\AppData\Local\Temp\cchSix4l.s:18     .text.debug_init:00000000 $t
+C:\Users\User\AppData\Local\Temp\cchSix4l.s:23     .text.debug_init:00000000 debug_init
+C:\Users\User\AppData\Local\Temp\cchSix4l.s:212    .text.debug_init:00000128 $d
+C:\Users\User\AppData\Local\Temp\cchSix4l.s:227    .text.debug_getRotarySW:00000000 $t
+C:\Users\User\AppData\Local\Temp\cchSix4l.s:232    .text.debug_getRotarySW:00000000 debug_getRotarySW
+C:\Users\User\AppData\Local\Temp\cchSix4l.s:259    .text.debug_getRotarySW:00000018 $d
+                     .debug_frame:00000010 $d
+
+NO UNDEFINED SYMBOLS

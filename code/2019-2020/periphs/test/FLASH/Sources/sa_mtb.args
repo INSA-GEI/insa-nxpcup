@@ -1,0 +1,18 @@
+-mcpu=cortex-m0
+-mthumb
+-mfloat-abi=soft
+-g3
+-gdwarf-2
+-gstrict-dwarf
+-I"D:/Documents/Freescale/test/Project_Headers"
+-I"D:/Documents/Freescale/test/Project_Settings/Startup_Code"
+-I"C:/Freescale/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/EWL_C/include"
+-I"C:/Freescale/CW MCU v11.1/MCU/ARM_GCC_Support/ewl/EWL_Runtime/include"
+-O0
+-ffunction-sections
+-fdata-sections
+-Wall
+-std=gnu99
+-c
+-fmessage-length=0
+-specs=ewl_c.specs
