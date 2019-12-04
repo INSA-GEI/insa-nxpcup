@@ -14,7 +14,6 @@ const unsigned int debugDisplayNbMap[17]={0b10000001, 0b11110011, 0b01001001, 0b
 
 void debug_init(){
 	SIM_SCGC5 |= SIM_SCGC5_PORTB_MASK | SIM_SCGC5_PORTC_MASK | SIM_SCGC5_PORTD_MASK | SIM_SCGC5_PORTE_MASK | SIM_SCGC5_PORTA_MASK;
-	SIM_SCGC4 |= SIM_SCGC4_UART0_MASK;
 
 	//Initialize the Red LED (PTB18)
 	PORTB_PCR18 = PORT_PCR_MUX(1);
@@ -29,11 +28,6 @@ void debug_init(){
 	GPIOD_PSOR = DEBUG_BLUE_Pin;
 	GPIOD_PDDR |= DEBUG_BLUE_Pin;
 
-	//Initialize Debugging UART pins (PTA1 : RX and PTA2 : TX)
-	PORTA_PCR1 = PORT_PCR_MUX(2);
-	GPIOA_PDDR |= (1<<1);	//output
-	PORTA_PCR2 = PORT_PCR_MUX(2);
-	GPIOA_PDDR &=~ (1<<2);
 
 	//PTD1 (SW_USER_2) & PTD3 (SW_USER_1)//WARNING : BLUE LED attached to same pin as SW_USER2
 	PORTD_PCR1 = PORT_PCR_MUX(1);
@@ -61,6 +55,9 @@ void debug_init(){
 	DISP_CLK_OFF;
 	DISP_SIN_OFF;
 	DISP_LATCH_ON;
+	
+	//UART init
+	uart_init(115200);
 }
 unsigned char debug_getRotarySW(){
 	//return (GPIOE_PDIR & 0x003C)>>2;
@@ -88,4 +85,142 @@ void debug_displaySendRaw(unsigned int data){
 }
 void debug_displaySendNb(unsigned int nb){
 	debug_displaySendRaw(debugDisplayNbMap[nb>16 ? 16 : nb]);
+}
+
+#define BUFLEN 128
+
+static uint8_t _tx_buffer[sizeof(RingBuffer) + BUFLEN] __attribute__ ((aligned(4)));
+static uint8_t _rx_buffer[sizeof(RingBuffer) + BUFLEN] __attribute__ ((aligned(4)));
+
+static RingBuffer *const tx_buffer = (RingBuffer *) &_tx_buffer;
+static RingBuffer *const rx_buffer = (RingBuffer *) &_rx_buffer;
+
+void UART0_IRQHandler(){
+    int status;
+    
+    status = UART0_S1;
+    
+    // If transmit data register empty, and data in the transmit buffer,
+    // send it.  If it leaves the buffer empty, disable the transmit interrupt.
+    if ((status & UART_S1_TDRE_MASK) && !buf_isempty(tx_buffer)) {
+        UART0_D = buf_get_byte(tx_buffer);
+        if(buf_isempty(tx_buffer))
+            UART0_C2 &= ~UART_C2_TIE_MASK;
+    }
+    
+    // If there is received data, read it into the receive buffer.  If the
+    // buffer is full, disable the receive interrupt.
+    if ((status & UART_S1_RDRF_MASK) && !buf_isfull(rx_buffer)) {
+        buf_put_byte(rx_buffer, UART0_D);
+        if(buf_isfull(rx_buffer))
+            UART0_C2 &= ~UART_C2_RIE_MASK;
+    }
+}
+
+int uart_write(char *p, int len){
+    for(int i=0; i<len; i++) {
+        while(buf_isfull(tx_buffer));
+        buf_put_byte(tx_buffer, *p++);
+        UART0_C2 |= UART_C2_TIE_MASK;
+    }
+    return len;
+}
+void uart_writeNb(int n,int digits){
+	int d=1;
+	if(digits>0){
+	d=digits;
+	}else{
+		while((10*d)<=n)d*=10;
+	}
+	while(d>0){
+        while(buf_isfull(tx_buffer));
+        buf_put_byte(tx_buffer,((n/d)%10)+0x30);
+		d/=10;
+	}
+}
+int uart_write_err(char *p, int len){
+    int i;
+    __disable_irq();
+    for(i=0; i<len; i++) {
+        while((UART0_S1 & UART_S1_TDRE_MASK) == 0);
+        UART0_D = *p++;
+    }
+    __enable_irq();
+    return len;
+}
+
+int uart_read(char *p, int len){
+    int i = len;
+    while(i > 0) {
+        while(buf_isempty(rx_buffer));
+        *p++ = buf_get_byte(rx_buffer);
+        UART0_C2 |= UART_C2_RIE_MASK;
+        i--;
+    }
+    return len - i;
+}
+
+void uart_init(int baudrate){
+    SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK;
+        
+    SIM_SCGC4 |= SIM_SCGC4_UART0_MASK;
+    SIM_SOPT2 &= ~SIM_SOPT2_UART0SRC_MASK;
+    SIM_SOPT2 |= SIM_SOPT2_UART0SRC(1);
+
+    PORTA_PCR1 = PORT_PCR_MUX(2);
+    PORTA_PCR2 = PORT_PCR_MUX(2);
+
+    UART0_C2 = 0;
+    UART0_C1 = 0;
+    UART0_C3 = 0;
+    UART0_S2 = 0;     
+
+    #define OVER_SAMPLE 16
+    uint16_t divisor = (CORE_CLOCK / OVER_SAMPLE) / baudrate;
+    UART0_C4 = UARTLP_C4_OSR(OVER_SAMPLE - 1);
+    UART0_BDH = (divisor >> 8) & UARTLP_BDH_SBR_MASK;
+    UART0_BDL = (divisor & UARTLP_BDL_SBR_MASK);
+
+    // Initialize transmit and receive circular buffers
+    buf_reset(tx_buffer, BUFLEN);
+    buf_reset(rx_buffer, BUFLEN);
+
+    // Enable the transmitter, receiver, and receive interrupts
+    UART0_C2 = UARTLP_C2_RE_MASK | UARTLP_C2_TE_MASK | UART_C2_RIE_MASK;
+    enable_irq(INT_UART0);
+}
+
+void buf_reset(RingBuffer *buf, int size){
+    buf->head = buf->tail = 0;
+    buf->size = size;
+}
+
+int buf_len(const RingBuffer *buf){
+    int len = buf->tail - buf->head;
+    if (len < 0)len += buf->size;
+    return len;
+}
+
+int buf_isfull(const RingBuffer *buf){
+    return buf_len(buf) == (buf->size-1);
+}
+
+int buf_isempty(const RingBuffer *buf){
+    return buf->head == buf->tail;
+}
+
+int advance(uint16_t i, uint16_t size){
+    if (++i >= size)i=0;
+    return i;
+}
+
+uint8_t buf_get_byte(RingBuffer *buf){
+    const uint8_t item = buf->data[buf->head];
+    buf->head = advance(buf->head, buf->size);
+    return item;
+}
+
+void buf_put_byte(RingBuffer *buf, uint8_t val){
+    buf->data[buf->tail] = val;
+    buf->tail = advance(buf->tail, buf->size);
 }

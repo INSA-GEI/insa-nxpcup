@@ -4,7 +4,6 @@
 #define SLOW_BLINK      (10000000)
 #define FAST_BLINK      (1000000)
 #define BLINK_DELAY     FAST_BLINK
-
 void clock_init();
 void delay_time(int);
 int main (void){
@@ -12,9 +11,12 @@ int main (void){
 	int i=0;
 	debug_init();
 	while(1){
-		debug_displaySendNb(i);
 		GPIOB_PTOR = DEBUG_RED_Pin;
 		delay_time(FAST_BLINK);
+		debug_displaySendNb(i);
+		uart_write("hello ! ",8);
+		uart_writeNb(i,0);
+		uart_write(" was i\r\n",8);
 		if(++i>16){
 			i=0;
 			GPIOB_PTOR = DEBUG_GREEN_Pin;
@@ -29,21 +31,57 @@ void delay_time(int number){
 
 
 void clock_init(){
-	MCG_C2 = (MCG_C2_RANGE0(1) | MCG_C2_EREFS0_MASK); 	// configure the oscillator settings
-	MCG_C1 = (MCG_C1_CLKS(2) | MCG_C1_FRDIV(3));		// divider for 8 MHz clock	
-	for (int i = 0 ; i < 24000 ; i++);						// wait for OSCINIT to set
-	// now in FBE mode
-	MCG_C6 |= MCG_C6_CME0_MASK;		// enable the clock monitor
-	MCG_C5 |= MCG_C5_PRDIV0(1); 	// set PLL ref divider to divide by 2
-	int temp_reg = MCG_C6; 				// store present C6 value (as CME0 bit was previously set)
-	temp_reg &= ~MCG_C6_VDIV0_MASK; // clear VDIV settings
-	temp_reg |= MCG_C6_PLLS_MASK | MCG_C6_VDIV0(0); 	// write new VDIV and enable PLL
-	MCG_C6 = temp_reg; 				// update MCG_C6		
-	for (int i = 0 ; i < 4000 ; i++); 	// wait for PLLST status bit to set
-	// now in PBE mode
-	SIM_CLKDIV1 = (SIM_CLKDIV1_OUTDIV1(1) | SIM_CLKDIV1_OUTDIV4(1));	// core clock, bus clock div by 2	
-	MCG_C1 &= ~MCG_C1_CLKS_MASK;	// switch CLKS mux to select the PLL as MCGCLKOUT	
-	for (int i = 0 ; i < 2000 ; i++);	// Wait for clock status bits to update
-	// now in PEE mode, core and system clock 48 MHz, bus and flash clock 24 MHz
+    // Enable clock gate to Port A module to enable pin routing (PORTA=1)
+    SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK;
+    
+    // Divide-by-2 for clock 1 and clock 4 (OUTDIV1=1, OUTDIV4=1)   
+    SIM_CLKDIV1 = SIM_CLKDIV1_OUTDIV1(0x01) | SIM_CLKDIV1_OUTDIV4(0x01);
 
+    // System oscillator drives 32 kHz clock for various peripherals (OSC32KSEL=0)
+    SIM_SOPT1 &= ~SIM_SOPT1_OSC32KSEL(0x03);
+
+    // Select PLL as a clock source for various peripherals (PLLFLLSEL=1)
+    // Clock source for TPM counter clock is MCGFLLCLK or MCGPLLCLK/2
+    SIM_SOPT2 |= SIM_SOPT2_PLLFLLSEL_MASK;
+    SIM_SOPT2 = (SIM_SOPT2 & ~(SIM_SOPT2_TPMSRC(0x02))) | SIM_SOPT2_TPMSRC(0x01);
+                  
+    // PORTA_PCR18: ISF=0,MUX=0 
+    // PORTA_PCR19: ISF=0,MUX=0 *           
+    PORTA_PCR18 &= ~((PORT_PCR_ISF_MASK | PORT_PCR_MUX(0x07)));
+    PORTA_PCR19 &= ~((PORT_PCR_ISF_MASK | PORT_PCR_MUX(0x07)));                                                   
+    // Switch to FBE Mode 
+    
+    // OSC0_CR: ERCLKEN=0,??=0,EREFSTEN=0,??=0,SC2P=0,SC4P=0,SC8P=0,SC16P=0 
+    OSC0_CR = 0;                                                   
+    // MCG_C2: LOCRE0=0,??=0,RANGE0=2,HGO0=0,EREFS0=1,LP=0,IRCS=0 
+    MCG_C2 = (MCG_C2_RANGE0(0x02) | MCG_C2_EREFS0_MASK);
+    // MCG_C1: CLKS=2,FRDIV=3,IREFS=0,IRCLKEN=0,IREFSTEN=0 
+    MCG_C1 = (MCG_C1_CLKS(0x02) | MCG_C1_FRDIV(0x03));
+    // MCG_C4: DMX32=0,DRST_DRS=0 
+    MCG_C4 &= ~((MCG_C4_DMX32_MASK | MCG_C4_DRST_DRS(0x03)));
+    // MCG_C5: ??=0,PLLCLKEN0=0,PLLSTEN0=0,PRDIV0=1 
+    MCG_C5 = MCG_C5_PRDIV0(0x01);                                                   
+    // MCG_C6: LOLIE0=0,PLLS=0,CME0=0,VDIV0=0 
+    MCG_C6 = 0;
+    
+    // Check that the source of the FLL reference clock is 
+    // the external reference clock.
+    while((MCG_S & MCG_S_IREFST_MASK) != 0)
+        ;
+
+    while((MCG_S & MCG_S_CLKST_MASK) != 8)      // Wait until external reference
+        ;
+    
+    // Switch to PBE mode
+    //   Select PLL as MCG source (PLLS=1)
+    MCG_C6 = MCG_C6_PLLS_MASK;
+    while((MCG_S & MCG_S_LOCK0_MASK) == 0)      // Wait until PLL locked
+        ;
+    
+    // Switch to PEE mode
+    //    Select PLL output (CLKS=0)
+    //    FLL external reference divider (FRDIV=3)
+    //    External reference clock for FLL (IREFS=0)
+    MCG_C1 = MCG_C1_FRDIV(0x03);
+    while((MCG_S & MCG_S_CLKST_MASK) != 0x0CU);  // Wait until PLL output
 }
