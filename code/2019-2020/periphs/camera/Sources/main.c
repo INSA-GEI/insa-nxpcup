@@ -10,17 +10,16 @@ int main (void){
 	clock_init();
 	int i=0;
 	debug_init();
-	char str[10];
 	while(1){
 		GPIOB_PTOR = DEBUG_RED_Pin;
 		delay_time(FAST_BLINK);
-		i=debug_getRotarySW();
 		debug_displaySendNb(i);
-		int l=uart_read(str,10);
-		if(l>0){
-			uart_write(str,l);
-			uart_writeNb(l,0);
-			uart_write("\r\n",2);
+		uart_write("hello ! ",8);
+		uart_writeNb(i,0);
+		uart_write(" was i\r\n",8);
+		if(++i>16){
+			i=0;
+			GPIOB_PTOR = DEBUG_GREEN_Pin;
 		}
 	}
 }
