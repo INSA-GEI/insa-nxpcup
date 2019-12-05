@@ -57,7 +57,7 @@ void debug_init(){
 	DISP_LATCH_ON;
 	
 	//UART init
-	uart_init(115200);
+	uart_init(9600);
 }
 unsigned char debug_getRotarySW(){
 	//return (GPIOE_PDIR & 0x003C)>>2;
@@ -70,7 +70,7 @@ unsigned char debug_getUserSW2(void){
 	return !(GPIOD_PDIR & (1<<1));
 }
 
-void debug_displaySendRaw(unsigned int data){
+void debug_displaySendRaw(uint8_t data){
 	DISP_LATCH_OFF;
 	for (int i=0; i<8;i++){
 		if(data & (1<<i)){
@@ -83,7 +83,7 @@ void debug_displaySendRaw(unsigned int data){
 	}
 	DISP_LATCH_ON;
 }
-void debug_displaySendNb(unsigned int nb){
+void debug_displaySendNb(uint8_t nb){
 	debug_displaySendRaw(debugDisplayNbMap[nb>16 ? 16 : nb]);
 }
 
@@ -161,14 +161,14 @@ int uart_read(char *p, int len){
 }
 
 void uart_init(int baudrate){
-    SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK;
+    SIM_SCGC5 |= SIM_SCGC5_PORTE_MASK;
         
     SIM_SCGC4 |= SIM_SCGC4_UART0_MASK;
     SIM_SOPT2 &= ~SIM_SOPT2_UART0SRC_MASK;
     SIM_SOPT2 |= SIM_SOPT2_UART0SRC(1);
 
-    PORTA_PCR1 = PORT_PCR_MUX(2);
-    PORTA_PCR2 = PORT_PCR_MUX(2);
+    PORTE_PCR20 = PORT_PCR_MUX(4);
+    PORTE_PCR21 = PORT_PCR_MUX(4);
 
     UART0_C2 = 0;
     UART0_C1 = 0;
