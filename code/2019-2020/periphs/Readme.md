@@ -10,7 +10,7 @@ Implémente un buffer circulaire et envoi par interruption.
 
 * Solve issue with rotary encoder missing counts
 * Test 7 segment display (maybe delays are needed)
-* Test uart receive
+* Test uart receive & transmit with xbee module
 
 ---
 ---
