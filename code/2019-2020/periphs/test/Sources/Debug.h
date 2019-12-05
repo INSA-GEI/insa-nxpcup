@@ -44,8 +44,8 @@ unsigned char debug_getUserSW1(void);
 unsigned char debug_getUserSW2(void);
 
 //7segment dsplay stuff
-void debug_displaySendRaw(unsigned int data);
-void debug_displaySendNb(unsigned int nb);
+void debug_displaySendRaw(uint8_t data);
+void debug_displaySendNb(uint8_t nb);
 
 
 static inline void enable_irq(int n) {
