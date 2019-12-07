@@ -16,7 +16,7 @@ int main (void){
 	motor_init();
 	char str[10];
 	while(1){
-		GPIOB_PTOR = DEBUG_RED_Pin;
+		/*GPIOB_PTOR = DEBUG_RED_Pin;
 		delay_time(FAST_BLINK);
 		i=debug_getRotarySW();
 		debug_displaySendNb(i);
@@ -25,7 +25,7 @@ int main (void){
 			uart_write(str,l);
 			uart_writeNb(l,0);
 			uart_write("\r\n",2);
-		}
+		}*/
 	}
 }
 
