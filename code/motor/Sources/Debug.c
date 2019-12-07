@@ -96,20 +96,14 @@ static RingBuffer *const tx_buffer = (RingBuffer *) &_tx_buffer;
 static RingBuffer *const rx_buffer = (RingBuffer *) &_rx_buffer;
 
 void UART0_IRQHandler(){
-	int status;
+	int status = UART0_S1;
 
-	status = UART0_S1;
-
-	// If transmit data register empty, and data in the transmit buffer,
-	// send it.  If it leaves the buffer empty, disable the transmit interrupt.
 	if ((status & UART_S1_TDRE_MASK) && !buf_isempty(tx_buffer)) {
 		UART0_D = buf_get_byte(tx_buffer);
 		if(buf_isempty(tx_buffer))
 			UART0_C2 &= ~UART_C2_TIE_MASK;
 	}
 
-	// If there is received data, read it into the receive buffer.  If the
-	// buffer is full, disable the receive interrupt.
 	if ((status & UART_S1_RDRF_MASK) && !buf_isfull(rx_buffer)) {
 		buf_put_byte(rx_buffer, UART0_D);
 		if(buf_isfull(rx_buffer))
@@ -160,7 +154,7 @@ int uart_read(char *p, int len){
 }
 
 void uart_init(int baudrate){
-	
+
 #ifdef UARTXBEE
 	SIM_SCGC5 |= SIM_SCGC5_PORTE_MASK;
 	PORTE_PCR20 = PORT_PCR_MUX(4);
@@ -168,7 +162,7 @@ void uart_init(int baudrate){
 #else
 	SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK;
 	PORTA_PCR1 = PORT_PCR_MUX(2);
-    PORTA_PCR2 = PORT_PCR_MUX(2);
+	PORTA_PCR2 = PORT_PCR_MUX(2);
 #endif
 	SIM_SCGC4 |= SIM_SCGC4_UART0_MASK;
 	SIM_SOPT2 &= ~SIM_SOPT2_UART0SRC_MASK;
