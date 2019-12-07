@@ -4,8 +4,10 @@
 #define SLOW_BLINK      (10000000)
 #define FAST_BLINK      (1000000)
 #define BLINK_DELAY     FAST_BLINK
+
 void clock_init();
 void delay_time(int);
+
 int main (void){
 	clock_init();
 	int i=0;
