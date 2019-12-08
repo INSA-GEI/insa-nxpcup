@@ -2,7 +2,7 @@
  * servo.h
  *
  *  Created on: Dec 8, 2019
- *      Author: thoma
+ *      Author: thomas
  */
 
 #ifndef SERVO_H_
