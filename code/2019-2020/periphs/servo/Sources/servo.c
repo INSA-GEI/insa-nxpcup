@@ -2,7 +2,7 @@
  * servo.c
  *
  *  Created on: Dec 8, 2019
- *      Author: thoma
+ *      Author: thomas
  */
 
 #include "servo.h"
