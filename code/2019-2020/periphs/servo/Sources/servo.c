@@ -26,6 +26,21 @@ void servo_init(void){
 	TPM1_MOD = TPM1_ARR;				// value of auto-reload (called here modulo) TPM1 (Servo), period = 10 ms (100 Hz)
 	
 	TPM1_C0SC = SET_CHANNEL_0;				// Configuration of TPM1 channel_0 for the Servo (p555)
+
+	TPM1_C0V = servo_base;				// TPM1 channel_0 value matches to 1.5 ms (middle)
+
+	TPM1_SC |= TPM_SC_TOIE_MASK;	// enable overflow interrupt in TPM1 (10 ms rate)
+
+	   // enable interrupts 18 (TPM = FTM1)  in NVIC, no interrupt levels
+	NVIC_ICPR |= (1 << 18);			// clear pending interrupt 18
+	NVIC_ISER |= (1 << 18);			// enable interrupt 18
 	
 }
 
+
+void FTM1_IRQHandler() {
+
+	//Clears the bits for the interrupts TOIE and TOF of TPM1
+	TPM1_SC ~= (TPM_SC_TOIE_MASK | TPM_SC_TOF_MASK);
+
+}
