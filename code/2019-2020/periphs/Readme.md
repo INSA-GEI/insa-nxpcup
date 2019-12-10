@@ -8,7 +8,7 @@ Implémente un buffer circulaire et envoi par interruption.
 
 ##### TODO
 
-* Solve issue with rotary encoder missing counts
+* Solve issue with rotary switch missing counts
 
 ---
 ## Motor
