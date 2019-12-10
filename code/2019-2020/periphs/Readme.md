@@ -9,8 +9,25 @@ Implémente un buffer circulaire et envoi par interruption.
 ##### TODO
 
 * Solve issue with rotary encoder missing counts
-* Test 7 segment display (maybe delays are needed)
-* Test uart receive & transmit with xbee module
+
+---
+## Motor
+
+Controle pwm des moteurs gauche et droit.
+
+##### TODO
+
+* Issue with no PWM output on right motor
+
+---
+## Servo
+
+Controle du servo avec limites d'angle.
+
+##### TODO
+
+* Test PWM output
+* Calibrate zero and max angle values
 
 ---
 ---
