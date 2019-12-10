@@ -1,5 +1,4 @@
 #include <MKL25Z4.h>
-#include "Debug.h"
 
 #define SLOW_BLINK      (10000000)
 #define FAST_BLINK      (1000000)
@@ -10,20 +9,9 @@ void delay_time(int);
 
 int main (void){
 	clock_init();
-	int i=0;
-	debug_init();
-	char str[10];
 	while(1){
 		GPIOB_PTOR = DEBUG_RED_Pin;
 		delay_time(FAST_BLINK);
-		i=debug_getRotarySW();
-		debug_displaySendNb(i);
-		int l=uart_read(str,10);
-		if(l>0){
-			uart_write(str,l);
-			uart_writeNb(l,0);
-			uart_write("\r\n",2);
-		}
 	}
 }
 
