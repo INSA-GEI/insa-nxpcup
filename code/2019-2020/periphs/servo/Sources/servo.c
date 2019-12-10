@@ -9,7 +9,6 @@
 
 
 int servo_position = 0;		// actual position of the servo relative to middle
-int servo_base = 7800;		// initial servo position (center)
 
 
 void servo_init(void){
@@ -27,7 +26,7 @@ void servo_init(void){
 	
 	TPM1_C0SC = SET_CHANNEL_0;				// Configuration of TPM1 channel_0 for the Servo (p555)
 
-	TPM1_C0V = servo_base;				// TPM1 channel_0 value matches to 1.5 ms (middle)
+	TPM1_C0V = INIT_POS_SERVO;				// TPM1 channel_0 value matches to 1.5 ms (middle)
 
 	TPM1_SC |= TPM_SC_TOIE_MASK;	// enable overflow interrupt in TPM1 (10 ms rate)
 
@@ -40,7 +39,9 @@ void servo_init(void){
 
 void FTM1_IRQHandler() {
 
-	//Clears the bits for the interrupts TOIE and TOF of TPM1
-	TPM1_SC ~= (TPM_SC_TOIE_MASK | TPM_SC_TOF_MASK);
+	//Clear the bit of the interrupt FTM1
+	TPM1_SC |= TPM_SC_TOF_MASK;
+	
+	
 
 }

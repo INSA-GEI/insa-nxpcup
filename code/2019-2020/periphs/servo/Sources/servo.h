@@ -16,6 +16,8 @@
 
 #define SET_CHANNEL_0 0x28 		//Set these bits to configure channel 0 on "Edge-aligned PWM" with "high true pulses" configuration
 
+#define INIT_POS_SERVO 9000		// initial servo position (center)
+
 
 //Configuration of the pins/clock
 void servo_init(void);
