@@ -13,7 +13,7 @@ int main (void){
 	int i=0;
 	debug_init();
 	char str[10];
-	while(1){
+	while(1){                
 		GPIOB_PTOR = DEBUG_RED_Pin;
 		delay_time(FAST_BLINK);
 		i=debug_getRotarySW();
