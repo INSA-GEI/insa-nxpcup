@@ -2,7 +2,7 @@
 #include "Debug.h"
 #include "Motor.h"
 
-#define SLOW_BLINK      (10000000)
+#define SLOW_BLINK      (1000000)
 #define FAST_BLINK      (1000000)
 #define BLINK_DELAY     FAST_BLINK
 
@@ -14,8 +14,16 @@ int main (void){
 	int i=0;
 	debug_init();
 	motor_init();
+	MOTOR_RIGHT_ENABLE;
+	MOTOR_RIGHT_FORWARD;
+	MOTOR_RIGHT_FSPEED(50);
+	MOTOR_LEFT_ENABLE;
+	MOTOR_LEFT_FORWARD;
+	MOTOR_LEFT_FSPEED(550);
+
 	while(1){
-		/*MOTOR_LEFT_ENABLE;
+		delay_time(10);
+		MOTOR_LEFT_ENABLE;
 		MOTOR_LEFT_FORWARD;
 		MOTOR_LEFT_FSPEED(0);
 		debug_displaySendNb(10);
@@ -36,10 +44,11 @@ int main (void){
 			delay_time(SLOW_BLINK);
 		}
 		MOTOR_LEFT_DISABLE;
-*/
+		
 		MOTOR_RIGHT_ENABLE;
 		MOTOR_RIGHT_FORWARD;
 		MOTOR_RIGHT_FSPEED(0);
+		
 		debug_displaySendNb(12);
 		delay_time(SLOW_BLINK);
 		for(i=0;i<300;i+=50){

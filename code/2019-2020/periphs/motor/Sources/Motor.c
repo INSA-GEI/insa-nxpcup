@@ -23,6 +23,7 @@ void motor_init(void){
 	TPM0_C1SC = 0x28;				// CH1 (right  motor)
 	TPM0_C5SC = 0x28;				// CH2 (left motor)
 
+	PORTA_PCR4   = 0;				
 	PORTA_PCR4  |= PORT_PCR_MUX(3);	// PTA4 Motor Right In 1 (speed) PTA4 TPM0_CH1
 	PORTA_PCR5  |= PORT_PCR_MUX(1);	// PTA5 Motor Right In 2 (direction)
 	PORTC_PCR8  |= PORT_PCR_MUX(1);	// PTC8 Motor Left  In 1 (direction)

@@ -24,9 +24,9 @@
 #define MOTOR_RIGHT_BACKWARD 	(GPIOA_PCOR =(1<<5))
 
 //set forward speed
-#define MOTOR_LEFT_FSPEED(s) (TPM0_C5V=(600-s))
+#define MOTOR_LEFT_FSPEED(s) (TPM0_C5V=(600-(s)))
 
-#define MOTOR_RIGHT_FSPEED(s) (TPM0_C1V=(600-s))
+#define MOTOR_RIGHT_FSPEED(s) (TPM0_C1V=(600-(s)))
 
 //set backward speed
 #define MOTOR_LEFT_BSPEED(s) (TPM0_C5V=(s))
