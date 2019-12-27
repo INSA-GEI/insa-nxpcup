@@ -1,14 +1,14 @@
 <Analysispoints>
 	<Name>AnalysispointsManager</Name>
-	<ProjectPath>D:/Documents/ecole/insa/4A/NXPCUP/insa-nxpcup/code/2019-2020/periphs/motor/SaAnalysispointsManager.apconfig</ProjectPath>
-	<MaxNumberOfCores>1</MaxNumberOfCores>
+    <ProjectPath></ProjectPath>
+    <MaxNumberOfCores>1</MaxNumberOfCores>
 	<Comments>Analysispoints Manager</Comments>
 	<IgnoreAll>false</IgnoreAll>
 	<SpecializedManager>
 		<Name>MtbTracepointsManager</Name>
 		<Comments>MTB Tracepoints Manager</Comments>
 	</SpecializedManager>
-	<Core>
+    <Core>
 		<Name>0</Name>
-	</Core>
+    </Core>
 </Analysispoints>
