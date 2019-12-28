@@ -10,13 +10,11 @@ void delay_time(int);
 int main (void){
 	clock_init();
 	servo_init();
-	servo_setPos(45);
-	servo_setPos(-45);
-	servo_setPos(22.5);
-	servo_setPos(-22.5);
 	while(1){
-	
-		delay_time(FAST_BLINK);
+		for(int a=-45;a<=45;a+=22){
+				delay_time(SLOW_BLINK);
+				servo_setPos(a);
+			}
 	}
 }
 

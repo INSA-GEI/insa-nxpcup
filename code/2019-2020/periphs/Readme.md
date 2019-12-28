@@ -17,7 +17,8 @@ Controle pwm des moteurs gauche et droit.
 
 ##### TODO
 
-* Issue with no PWM output on right motor
+* Tester fonctionnement des 2 moteurs et polarité
+* Implémenter différentiel numérique en fonction d'un angle
 
 ---
 ## Servo
@@ -26,8 +27,17 @@ Controle du servo avec limites d'angle.
 
 ##### TODO
 
-* Test PWM output
 * Calibrate zero and max angle values
+
+---
+
+## Encoder
+
+Régulation de vitesse des roues pas retour encodeur
+
+##### TODO
+
+* Tout
 
 ---
 ---
