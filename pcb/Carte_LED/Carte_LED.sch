@@ -1,0 +1,273 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title "Carte_LED"
+Date "2019-10-24"
+Rev "1.0"
+Comp "INSA GEI"
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Device:LED D2
+U 1 1 5DB2484C
+P 4800 3100
+F 0 "D2" V 4839 2982 50  0000 R CNN
+F 1 "L1SP-FRD00035R0000" V 4748 2982 50  0000 R CNN
+F 2 "LED_SMD:LED_PLCC_2835_Handsoldering" H 4800 3100 50  0001 C CNN
+F 3 "https://www.mouser.fr/datasheet/2/602/DS237-luxeon-sunplus-2835-line-datasheet-1534355.pdf" H 4800 3100 50  0001 C CNN
+	1    4800 3100
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:+BATT #PWR0101
+U 1 1 5DB254E3
+P 2150 1200
+F 0 "#PWR0101" H 2150 1050 50  0001 C CNN
+F 1 "+BATT" H 2165 1373 50  0000 C CNN
+F 2 "" H 2150 1200 50  0001 C CNN
+F 3 "" H 2150 1200 50  0001 C CNN
+	1    2150 1200
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0102
+U 1 1 5DB263A8
+P 2150 1350
+F 0 "#PWR0102" H 2150 1100 50  0001 C CNN
+F 1 "GND" H 2155 1177 50  0000 C CNN
+F 2 "" H 2150 1350 50  0001 C CNN
+F 3 "" H 2150 1350 50  0001 C CNN
+	1    2150 1350
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:PWR_FLAG #FLG0101
+U 1 1 5DB28080
+P 2650 1150
+F 0 "#FLG0101" H 2650 1225 50  0001 C CNN
+F 1 "PWR_FLAG" H 2650 1323 50  0000 C CNN
+F 2 "" H 2650 1150 50  0001 C CNN
+F 3 "~" H 2650 1150 50  0001 C CNN
+	1    2650 1150
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:PWR_FLAG #FLG0102
+U 1 1 5DB283CA
+P 2650 1350
+F 0 "#FLG0102" H 2650 1425 50  0001 C CNN
+F 1 "PWR_FLAG" H 2650 1523 50  0000 C CNN
+F 2 "" H 2650 1350 50  0001 C CNN
+F 3 "~" H 2650 1350 50  0001 C CNN
+	1    2650 1350
+	-1   0    0    1   
+$EndComp
+$Comp
+L Connector_Generic:Conn_01x02 J1
+U 1 1 5DB286DE
+P 1650 1300
+F 0 "J1" H 1568 1067 50  0000 C CNN
+F 1 "Conn_01x02" H 1568 1066 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 1650 1300 50  0001 C CNN
+F 3 "~" H 1650 1300 50  0001 C CNN
+	1    1650 1300
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	1850 1200 2150 1200
+Wire Wire Line
+	1850 1300 2150 1300
+Wire Wire Line
+	2150 1300 2150 1350
+Wire Wire Line
+	2150 1200 2650 1200
+Wire Wire Line
+	2650 1200 2650 1150
+Connection ~ 2150 1200
+Wire Wire Line
+	2150 1300 2650 1300
+Wire Wire Line
+	2650 1300 2650 1350
+Connection ~ 2150 1300
+$Comp
+L Device:LED D1
+U 1 1 5DB2F5A0
+P 4800 2000
+F 0 "D1" V 4839 1882 50  0000 R CNN
+F 1 "L1SP-FRD00035R0000" V 4748 1882 50  0000 R CNN
+F 2 "LED_SMD:LED_PLCC_2835_Handsoldering" H 4800 2000 50  0001 C CNN
+F 3 "https://www.mouser.fr/datasheet/2/602/DS237-luxeon-sunplus-2835-line-datasheet-1534355.pdf" H 4800 2000 50  0001 C CNN
+	1    4800 2000
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:LED D4
+U 1 1 5DB306F6
+P 4800 5250
+F 0 "D4" V 4793 5466 50  0000 C CNN
+F 1 "L1SP-FRD00035R0000" H 4793 5375 50  0000 C CNN
+F 2 "LED_SMD:LED_PLCC_2835_Handsoldering" H 4800 5250 50  0001 C CNN
+F 3 "https://www.mouser.fr/datasheet/2/602/DS237-luxeon-sunplus-2835-line-datasheet-1534355.pdf" H 4800 5250 50  0001 C CNN
+	1    4800 5250
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:LED D6
+U 1 1 5DB3D832
+P 5700 3100
+F 0 "D6" V 5739 2982 50  0000 R CNN
+F 1 "L1SP-FRD00035R0000" V 5648 2982 50  0000 R CNN
+F 2 "LED_SMD:LED_PLCC_2835_Handsoldering" H 5700 3100 50  0001 C CNN
+F 3 "https://www.mouser.fr/datasheet/2/602/DS237-luxeon-sunplus-2835-line-datasheet-1534355.pdf" H 5700 3100 50  0001 C CNN
+	1    5700 3100
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:LED D5
+U 1 1 5DB3D838
+P 5700 2000
+F 0 "D5" V 5739 1882 50  0000 R CNN
+F 1 "L1SP-FRD00035R0000" V 5648 1882 50  0000 R CNN
+F 2 "LED_SMD:LED_PLCC_2835_Handsoldering" H 5700 2000 50  0001 C CNN
+F 3 "https://www.mouser.fr/datasheet/2/602/DS237-luxeon-sunplus-2835-line-datasheet-1534355.pdf" H 5700 2000 50  0001 C CNN
+	1    5700 2000
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:LED D7
+U 1 1 5DB3D83E
+P 5700 4200
+F 0 "D7" V 5739 4082 50  0000 R CNN
+F 1 "L1SP-FRD00035R0000" V 5648 4082 50  0000 R CNN
+F 2 "LED_SMD:LED_PLCC_2835_Handsoldering" H 5700 4200 50  0001 C CNN
+F 3 "https://www.mouser.fr/datasheet/2/602/DS237-luxeon-sunplus-2835-line-datasheet-1534355.pdf" H 5700 4200 50  0001 C CNN
+	1    5700 4200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:LED D8
+U 1 1 5DB3D844
+P 5700 5250
+F 0 "D8" V 5739 5132 50  0000 R CNN
+F 1 "L1SP-FRD00035R0000" V 5648 5132 50  0000 R CNN
+F 2 "LED_SMD:LED_PLCC_2835_Handsoldering" H 5700 5250 50  0001 C CNN
+F 3 "https://www.mouser.fr/datasheet/2/602/DS237-luxeon-sunplus-2835-line-datasheet-1534355.pdf" H 5700 5250 50  0001 C CNN
+	1    5700 5250
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:R R1
+U 1 1 5DB3D9FC
+P 4800 6200
+F 0 "R1" H 4870 6246 50  0000 L CNN
+F 1 "R" H 4870 6155 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 4730 6200 50  0001 C CNN
+F 3 "~" H 4800 6200 50  0001 C CNN
+	1    4800 6200
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R2
+U 1 1 5DB3DF7E
+P 5700 6200
+F 0 "R2" H 5770 6246 50  0000 L CNN
+F 1 "R" H 5770 6155 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 5630 6200 50  0001 C CNN
+F 3 "~" H 5700 6200 50  0001 C CNN
+	1    5700 6200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4800 6350 5250 6350
+Wire Wire Line
+	4800 5400 4800 6050
+Wire Wire Line
+	4800 5100 4800 4350
+Wire Wire Line
+	4800 4050 4800 3250
+Wire Wire Line
+	4800 2950 4800 2150
+Wire Wire Line
+	4800 1850 4800 1150
+Wire Wire Line
+	4800 1150 5200 1150
+Wire Wire Line
+	5700 1150 5700 1850
+Wire Wire Line
+	5700 2150 5700 2950
+Wire Wire Line
+	5700 3250 5700 4050
+Wire Wire Line
+	5700 4350 5700 5100
+Wire Wire Line
+	5700 5400 5700 6050
+$Comp
+L power:+BATT #PWR0103
+U 1 1 5DB41AB0
+P 5200 1150
+F 0 "#PWR0103" H 5200 1000 50  0001 C CNN
+F 1 "+BATT" H 5215 1323 50  0000 C CNN
+F 2 "" H 5200 1150 50  0001 C CNN
+F 3 "" H 5200 1150 50  0001 C CNN
+	1    5200 1150
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0104
+U 1 1 5DB41E88
+P 5250 6400
+F 0 "#PWR0104" H 5250 6150 50  0001 C CNN
+F 1 "GND" H 5255 6227 50  0000 C CNN
+F 2 "" H 5250 6400 50  0001 C CNN
+F 3 "" H 5250 6400 50  0001 C CNN
+	1    5250 6400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5250 6350 5250 6400
+$Comp
+L Device:LED D3
+U 1 1 5DB2FD91
+P 4800 4200
+F 0 "D3" H 4800 4550 50  0000 C CNN
+F 1 "L1SP-FRD00035R0000" H 4750 4350 50  0000 C CNN
+F 2 "LED_SMD:LED_PLCC_2835_Handsoldering" H 4800 4200 50  0001 C CNN
+F 3 "https://www.mouser.fr/datasheet/2/602/DS237-luxeon-sunplus-2835-line-datasheet-1534355.pdf" H 4800 4200 50  0001 C CNN
+	1    4800 4200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Mechanical:MountingHole H1
+U 1 1 5DB43E65
+P 1700 2000
+F 0 "H1" H 1800 2000 50  0000 L CNN
+F 1 "MountingHole" H 1800 1955 50  0001 L CNN
+F 2 "MountingHole:MountingHole_2.7mm_M2.5" H 1700 2000 50  0001 C CNN
+F 3 "~" H 1700 2000 50  0001 C CNN
+	1    1700 2000
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H2
+U 1 1 5DB44B5D
+P 2250 2000
+F 0 "H2" H 2350 2000 50  0000 L CNN
+F 1 "MountingHole" H 2350 1955 50  0001 L CNN
+F 2 "MountingHole:MountingHole_2.7mm_M2.5" H 2250 2000 50  0001 C CNN
+F 3 "~" H 2250 2000 50  0001 C CNN
+	1    2250 2000
+	1    0    0    -1  
+$EndComp
+Connection ~ 5200 1150
+Wire Wire Line
+	5200 1150 5700 1150
+Connection ~ 5250 6350
+Wire Wire Line
+	5250 6350 5700 6350
+$EndSCHEMATC

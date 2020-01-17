@@ -1,5 +1,4 @@
 EESchema Schematic File Version 4
-LIBS:Carte_Capteurs-cache
 EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
@@ -1926,4 +1925,8 @@ Text Notes 4700 4300 0    50   ~ 0
 ENC_INDEX_1 ->PTD4 (INT)\nENC_INDEX_2 ->PTA13(INT)\nCCD_AD0 ->ADC0_SE11\nCCD_AD1 ->ADC0_SE15
 Text Notes 700  4650 0    50   ~ 0
 SW_USER1 et 2 -> PTD1 et PTD3 (INT)\nENC_SIG_B1 et B2 -> PTA1 et PTA2 (INT)\nDISP_CLK et DISP_SIN ->SPI0 \n\n
+Text Notes 600  5100 0    39   ~ 0
+RFU Pixy2 TX (UART1_RX)->
+Text Notes 600  5200 0    39   ~ 0
+RFU Pixy2 RX (UART1_TX)->
 $EndSCHEMATC
