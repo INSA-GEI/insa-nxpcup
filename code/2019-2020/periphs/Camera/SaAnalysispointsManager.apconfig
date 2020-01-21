@@ -1,6 +1,6 @@
 <Analysispoints>
 	<Name>AnalysispointsManager</Name>
-	<ProjectPath>D:/Documents/ecole/insa/4A/NXPCUP/insa-nxpcup/code/Camera/SaAnalysispointsManager.apconfig</ProjectPath>
+	<ProjectPath>D:/Documents/ecole/insa/4A/NXPCUP/insa-nxpcup/code/2019-2020/periphs/Camera/SaAnalysispointsManager.apconfig</ProjectPath>
 	<MaxNumberOfCores>1</MaxNumberOfCores>
 	<Comments>Analysispoints Manager</Comments>
 	<IgnoreAll>false</IgnoreAll>

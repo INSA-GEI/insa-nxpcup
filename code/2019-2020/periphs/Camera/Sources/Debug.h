@@ -12,7 +12,8 @@
 
 #define CORE_CLOCK 48000000UL
 
-//#define UARTXBEE //uncomment this line to enable uart on xbee module. By default uart is on opensda debugger
+#define UARTXBEE //uncomment this line to enable uart on xbee module. By default uart is on opensda debugger
+#define BAUDRATE 9600
 
 #define DEBUG_RED_Pin		(1 << 18)
 #define DEBUG_GREEN_Pin		(1 << 19)

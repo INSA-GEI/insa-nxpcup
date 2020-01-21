@@ -15,26 +15,30 @@ int main (void){
 	debug_init();
 	camera_init();
 	while(1){                
-		delay_time(FAST_BLINK);
+		delay_time(50000);
 		//DEBUG_GREEN_ON;
 		DEBUG_RED_ON;
 		camera_capture();
 		camera_processData();
-		int *edges = camera_getEdges();
-		for(i=0;i<128;i++){	
-			uart_write("$",1);
-			uart_writeNb(camera_getRawData(i),0);
-			/*uart_write(" ",1);
-			uart_writeNb(camera_getDataDiff(i),0);
-			uart_write(" ",1);
-			if(i==edges[0] || i==edges[1]){
-				uart_writeNb(50,0);
-			}else{
-				uart_writeNb(0,0);
-			}*/
-			uart_write(";",1);
+		//int *edges = camera_getEdges();
+		i++;
+		if(i>100){
+			for(i=0;i<128;i++){	
+				uart_write("$",1);
+				uart_writeNb(camera_getRawData(i),0);
+				uart_write(" ",1);
+				uart_writeNb(camera_getDataDiff(i),0);
+				uart_write(" ",1);
+				if(i==camera_getEdges(0) || i==camera_getEdges(1)){//|| i==camera_getEdges(2) || i==camera_getEdges(3)){
+					uart_writeNb(1000,0);
+				}else{
+					uart_writeNb(0,0);
+				}
+				uart_write(";",1);
+			}
+			uart_write("\r\n",2);
+			i=0;
 		}
-		uart_write("\r\n",2);
 		DEBUG_RED_OFF;
 		//delay_time(FAST_BLINK);
 		//DEBUG_GREEN_OFF;

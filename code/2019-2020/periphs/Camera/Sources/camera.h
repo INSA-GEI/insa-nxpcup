@@ -12,7 +12,7 @@
 #define	CAM_CLK_LOW				GPIOB_PDOR &= ~(1<<9)	// CLK on PTB9
 
 
-#define THRESHOLD 25
+#define THRESHOLD 400
 
 void camera_init();
 
@@ -20,7 +20,7 @@ void camera_capture(void);
 
 int camera_getRawData(int index);
 int camera_getDataDiff(int index);
-int *camera_getEdges();
+int camera_getEdges(int index);
 
 void camera_processData(void);
 

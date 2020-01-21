@@ -13,16 +13,16 @@ int main (void){
 	debug_init();
 	movement_init();
 	delay_time(SLOW_BLINK);  // Il faut mettre un delay entre les enable et les forward pour l'initialisation des vitesses
-	movement_set(-150,35.0); // Pour speed = 100 >> 3m en 3sec 
+	movement_set(150,35.0); // Pour speed = 100 >> 3m en 3sec 
 						   // Pour speed = 150 >> 3m en 1.8sec
-	/*delay_time(4000000);
+	delay_time(4000000);
 	movement_set(100,15);
 	delay_time(4000000);
 	movement_set(100,-15);
 	delay_time(4000000);
 	movement_set(100,0.0);
 	delay_time(4000000);
-	movement_stop();*/
+	movement_stop();
 	
 	while(1){
 		

@@ -1,5 +1,5 @@
 #include "camera.h"
-uint8_t ImageData[128];
+int ImageData[128];
 int ImageDataDiff[128];
 int nbEdges;
 int edgesLoc[4];
@@ -18,7 +18,7 @@ void camera_init(){
 	
 	
 	// ADC0 clock configuration : 													WARNING : maybe not compatible with 48MHz system clock ! to check
-	ADC0_CFG1 |= 0x41;				// clock is bus clock divided by 4 = 12 MHz
+	ADC0_CFG1 |= 0x01;				// clock is bus clock divided by 2 = 24 MHz
 	
 	// ADC0 resolution    
 	ADC0_CFG1 |= 0x08;				// resolution 10 bit, max. value is 1023
@@ -65,7 +65,7 @@ void camera_capture(void)
 		CAM_DELAY;
 		CAM_DELAY;
 		CAM_CLK_LOW;
-		
+		/*
 		//generating dummy data here
 		for(i=0;i<128;i++){
 			int data;
@@ -76,6 +76,7 @@ void camera_capture(void)
 			}
 			ImageData[i]=data;
 		}
+		*/
 }
 
 int camera_getRawData(int index){
@@ -85,29 +86,30 @@ return ImageData[index];
 int camera_getDataDiff(int index){
 return ImageDataDiff[index];
 }
-int *camera_getEdges(){
-return edgesLoc;
+int camera_getEdges(int index){
+return edgesLoc[index];
 }
 void camera_processData(void){
 
-	for(int i=1;i<=126;i++){
-		ImageDataDiff[i] = abs (-(ImageData[i-1])/2 + (ImageData[i+1])/2);
-	}
-	ImageDataDiff[0] = ImageData[0];
-	ImageDataDiff[127] = ImageData[127];
-	nbEdges=0;
-	for(int i=1;i<=126;i++){
-		if(ImageDataDiff[i]>THRESHOLD){
-			edgesLoc[nbEdges]=i;
-			nbEdges++;
-			if(nbEdges>=4){
-				//panic
-				nbEdges=3;
-			}
+	for(int i=0;i<=127;i++){
+		if(i<5 || i>120){
+			ImageDataDiff[i] =0;
+		}else{
+		ImageDataDiff[i] = 10*abs (-(ImageData[i-1])/2 + (ImageData[i+1])/2);
 		}
 	}
-	if(nbEdges==3){
-		edgesLoc[0]=(edgesLoc[0]+edgesLoc[1])/2;
-		edgesLoc[1]=(edgesLoc[2]+edgesLoc[3])/2;
+	nbEdges=0;
+	int over=0;
+	for(int i=1;i<=126;i++){
+		if(ImageDataDiff[i]>THRESHOLD ){
+			over=1;
+			edgesLoc[nbEdges]=i;
+		}else{
+			if(over==1)nbEdges++;
+			if(nbEdges>3)nbEdges=3;
+			over=0;
+		}
 	}
+	edgesLoc[0]=(edgesLoc[0]+edgesLoc[1])/2;
+	edgesLoc[0]=(edgesLoc[2]+edgesLoc[3])/2;
 }
