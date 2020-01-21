@@ -22,7 +22,7 @@ void servo_init(void){
 	   // enable interrupts 18 (TPM = FTM1)  in NVIC, no interrupt levels
 	NVIC_ICPR |= (1 << 18);			// clear pending interrupt 18
 	NVIC_ISER |= (1 << 18);			// enable interrupt 18
-	
+	servo_setPos(0);
 }
 
 void servo_setPos(int angle){

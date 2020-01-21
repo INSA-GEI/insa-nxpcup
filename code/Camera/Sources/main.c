@@ -1,5 +1,6 @@
 #include <MKL25Z4.h>
 #include "Debug.h"
+#include "camera.h"
 
 #define SLOW_BLINK      (10000000)
 #define FAST_BLINK      (1000000)
@@ -10,16 +11,33 @@ void delay_time(int);
 
 int main (void){
 	clock_init();
+	int i=0;
 	debug_init();
+	camera_init();
 	while(1){                
 		delay_time(FAST_BLINK);
-		DEBUG_RED_ON;       
-		delay_time(FAST_BLINK);
-		DEBUG_RED_OFF;        
-		delay_time(FAST_BLINK);
-		DEBUG_GREEN_ON;       
-		delay_time(FAST_BLINK);
-		DEBUG_GREEN_OFF;
+		//DEBUG_GREEN_ON;
+		DEBUG_RED_ON;
+		camera_capture();
+		camera_processData();
+		int *edges = camera_getEdges();
+		for(i=0;i<128;i++){	
+			uart_write("$",1);
+			uart_writeNb(camera_getRawData(i),0);
+			/*uart_write(" ",1);
+			uart_writeNb(camera_getDataDiff(i),0);
+			uart_write(" ",1);
+			if(i==edges[0] || i==edges[1]){
+				uart_writeNb(50,0);
+			}else{
+				uart_writeNb(0,0);
+			}*/
+			uart_write(";",1);
+		}
+		uart_write("\r\n",2);
+		DEBUG_RED_OFF;
+		//delay_time(FAST_BLINK);
+		//DEBUG_GREEN_OFF;
 	}
 }
 

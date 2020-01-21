@@ -1,5 +1,6 @@
 #include <MKL25Z4.h>
 #include "servo.h"
+#include "Debug.h"
 #define SLOW_BLINK      (10000000)
 #define FAST_BLINK      (1000000)
 #define BLINK_DELAY     FAST_BLINK
@@ -9,12 +10,21 @@ void delay_time(int);
 
 int main (void){
 	clock_init();
+	debug_init();
 	servo_init();
+	debug_displaySendNb(0);
+	delay_time(SLOW_BLINK);
 	while(1){
-		for(int a=-45;a<=45;a+=22){
-				delay_time(SLOW_BLINK);
+		for(int a=SERVO_MAX_LEFT_ANGLE;a<=SERVO_MAX_RIGHT_ANGLE;a++){
+						debug_displaySendNb((a+35)*8/35);
+						servo_setPos(a);
+						delay_time(FAST_BLINK/8);
+		}
+		for(int a=SERVO_MAX_RIGHT_ANGLE;a>SERVO_MAX_LEFT_ANGLE;a--){
+				debug_displaySendNb((a+35)*8/35);
 				servo_setPos(a);
-			}
+				delay_time(FAST_BLINK/8);
+		}
 	}
 }
 
