@@ -6,9 +6,17 @@
 #define FAST_BLINK      (1000000)
 #define BLINK_DELAY     FAST_BLINK
 
+int diff = 0;						// used in "camera.c"					// actual difference from line middle position
+int diff_old = 0;												// actual position of the servo relative to middle
+int RoadMiddle = 0;					// used in "camera.c"					// calculated middle of the road
+int RoadMiddle_old = 0;				// used in "movement.c"					// save the last "Middle of the road" position
+int BlackLineRight = 127;			// used in "camera.c"					// position of the black line on the right side
+int BlackLineLeft = 0;				// used in "camera.c"					// position of the black line on the left side
+int number_edges = 0;		
+
+
 void clock_init();
 void delay_time(int);
-
 int main (void){
 	clock_init();
 	int i=0;
@@ -16,28 +24,35 @@ int main (void){
 	camera_init();
 	while(1){                
 		delay_time(50000);
-		//DEBUG_GREEN_ON;
 		DEBUG_RED_ON;
-		camera_capture();
-		img_differentiate(0);
-		img_process(0);
+		img_differentiate();
+		img_process(&diff,&diff_old,&BlackLineLeft,&BlackLineRight,&RoadMiddle,&number_edges);
+		debug_displaySendNb(number_edges);
 		DEBUG_RED_OFF;
 		i++;
 		if(i>100){
+
+			DEBUG_GREEN_ON;
 			for(i=0;i<128;i++){	
 				uart_write("$",1);
 				uart_writeNb(camera_getRawData(i),0);
 				uart_write(" ",1);
 				uart_writeNb(img_getDiffData(i),0);
-				uart_write(" ",1);
-				uart_writeNb(img_getProcData(i),0);
+				
 				uart_write(";",1);
 			}
+			/*uart_writeNb(number_edges,0);
+			uart_write(", L=",2);
+			uart_writeNb(BlackLineLeft,0);
+			uart_write(", R=",2);
+			uart_writeNb(BlackLineRight,0);
+			uart_write(", M=",2);
+			uart_writeNb(RoadMiddle,0);*/
+			debug_displaySendNb(number_edges);
 			uart_write("\r\n",2);
 			i=0;
+			DEBUG_GREEN_OFF;
 		}
-		//delay_time(FAST_BLINK);
-		//DEBUG_GREEN_OFF;
 	}
 }
 
