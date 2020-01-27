@@ -57,7 +57,7 @@ void debug_init(){
 	DISP_LATCH_ON;
 
 	//UART init
-	uart_init(BAUDRATE);
+	uart_init(9600);
 }
 unsigned char debug_getRotarySW(){
 	//return (GPIOE_PDIR & 0x003C)>>2;
@@ -83,8 +83,13 @@ void debug_displaySendRaw(uint8_t data){
 	}
 	DISP_LATCH_ON;
 }
-void debug_displaySendNb(uint8_t nb){
-	debug_displaySendRaw(debugDisplayNbMap[nb>16 ? 16 : nb]);
+void debug_displaySendNb(int8_t nb){
+	if(nb<0){
+		nb=-nb;
+		debug_displaySendRaw(debugDisplayNbMap[nb>16 ? 16 : nb]|0b00000001);
+	}else{
+		debug_displaySendRaw(debugDisplayNbMap[nb>16 ? 16 : nb]);
+	}
 }
 
 #define BUFLEN 128
@@ -121,10 +126,6 @@ int uart_write(char *p, int len){
 }
 void uart_writeNb(int n,int digits){
 	int d=1;
-	if(n<0){
-		n=-n;
-		buf_put_byte(tx_buffer,'-');
-	}
 	if(digits>0){
 		d=digits;
 	}else{

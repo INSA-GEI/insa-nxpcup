@@ -60,8 +60,7 @@ void middlecalculate (int * RoadMiddle, int * RoadMiddle_old, int * BlackLineLef
 		*RoadMiddle = *RoadMiddle_old;
 		for (i = 0 ; i < 1000000 ; i++);
 	}
-	if ((*BlackLineRight > 124) && (*BlackLineLeft < 3))
-	{
+	if ((*BlackLineRight > 124) && (*BlackLineLeft < 3)){
 		*RoadMiddle = *RoadMiddle_old;		// we continue on the same trajectory as before 
 	}
 
@@ -72,8 +71,7 @@ void middlecalculate (int * RoadMiddle, int * RoadMiddle_old, int * BlackLineLef
 	*diff = *RoadMiddle - 64;						// calculate actual difference
 
 	// plausibility check
-	if (abs (*diff - *diff_old) > 50)
-	{
+	if (abs (*diff - *diff_old) > 50){
 		*diff = *diff_old;
 	}
 }

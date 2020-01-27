@@ -27,11 +27,11 @@ int main (void){
 		DEBUG_RED_ON;
 		img_differentiate();
 		img_process(&diff,&diff_old,&BlackLineLeft,&BlackLineRight,&RoadMiddle,&number_edges);
+		img_calculateMiddle(&RoadMiddle,&RoadMiddle_old,&BlackLineLeft,&BlackLineRight,&diff,&diff_old,&number_edges);
 		debug_displaySendNb(number_edges);
 		DEBUG_RED_OFF;
 		i++;
 		if(i>100){
-
 			DEBUG_GREEN_ON;
 			for(i=0;i<128;i++){	
 				uart_write("$",1);
@@ -39,21 +39,13 @@ int main (void){
 				uart_write(" ",1);
 				uart_writeNb(img_getDiffData(i),0);
 				uart_write(" ",1);
-				if(BlackLineLeft==i || BlackLineRight==i){
+				if(BlackLineLeft==i || BlackLineRight==i || RoadMiddle==i){
 					uart_writeNb(1000,0);	
 				}else{
 					uart_writeNb(0,0);	
 				}
 				uart_write(";",1);
 			}
-			/*uart_writeNb(number_edges,0);
-			uart_write(", L=",2);
-			uart_writeNb(BlackLineLeft,0);
-			uart_write(", R=",2);
-			uart_writeNb(BlackLineRight,0);
-			uart_write(", M=",2);
-			uart_writeNb(RoadMiddle,0);*/
-			debug_displaySendNb(number_edges);
 			uart_write("\r\n",2);
 			i=0;
 			DEBUG_GREEN_OFF;

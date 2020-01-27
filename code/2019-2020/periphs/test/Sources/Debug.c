@@ -83,8 +83,13 @@ void debug_displaySendRaw(uint8_t data){
 	}
 	DISP_LATCH_ON;
 }
-void debug_displaySendNb(uint8_t nb){
-	debug_displaySendRaw(debugDisplayNbMap[nb>16 ? 16 : nb]);
+void debug_displaySendNb(int8_t nb){
+	if(nb<0){
+		nb=-nb;
+		debug_displaySendRaw(debugDisplayNbMap[nb>16 ? 16 : nb]|0b00000001);
+	}else{
+		debug_displaySendRaw(debugDisplayNbMap[nb>16 ? 16 : nb]);
+	}
 }
 
 #define BUFLEN 128
