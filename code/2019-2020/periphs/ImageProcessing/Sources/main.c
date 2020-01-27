@@ -38,7 +38,12 @@ int main (void){
 				uart_writeNb(camera_getRawData(i),0);
 				uart_write(" ",1);
 				uart_writeNb(img_getDiffData(i),0);
-				
+				uart_write(" ",1);
+				if(BlackLineLeft==i || BlackLineRight==i){
+					uart_writeNb(1000,0);	
+				}else{
+					uart_writeNb(0,0);	
+				}
 				uart_write(";",1);
 			}
 			/*uart_writeNb(number_edges,0);

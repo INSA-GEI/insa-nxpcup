@@ -46,8 +46,8 @@ void img_differentiate(void){
 			for(i=1;i<=126;i++){							// using a gradient by centered differences (application of the filter :[-1/2 , 0 , 1/2] -> P(x) = (-1/2)*P(x-1)+0*P(x)+(1/2)*P(x+1))
 				ImageDataDifference[i] = abs (-(ImageData[i-1])/2 + (ImageData[i+1])/2);
 			}
-			ImageDataDifference[0] = ImageData[0];	// first value doesnt have "gradient" for this method
-			ImageDataDifference[127] = ImageData[127];	// last value doesnt have "gradient" for this method
+			ImageDataDifference[0] =0;	// first value doesnt have "gradient" for this method
+			ImageDataDifference[127] = 0;	// last value doesnt have "gradient" for this method
 		}else if (functionning_mode == 4){
 			for(i=0;i<=127;i++){							// using the Gaussian difference method
 				gaussian1 = (1/(SIGMA_1 * sqrt(2*PI))) * exp(-(pow(i,2))/(2*pow(SIGMA_1,2)));
