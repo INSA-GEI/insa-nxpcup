@@ -20,6 +20,9 @@ int main (void){
 		DEBUG_GREEN_ON;       
 		delay_time(FAST_BLINK);
 		DEBUG_GREEN_OFF;
+		
+		encoder_config();
+		
 	}
 }
 
