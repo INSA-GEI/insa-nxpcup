@@ -70,7 +70,7 @@ void img_differentiate(void){
 	   			if (ImageDataDifference[i] > CompareData_classic){
 	   				CompareData_classic = ImageDataDifference[i];
 	   				*BlackLineRight = i;
-	   				*number_edges++;
+	   				(*number_edges)++;
 	   			}
 			}
 			// Find black line on the left side
@@ -80,7 +80,7 @@ void img_differentiate(void){
 			   	if (ImageDataDifference[i] > CompareData_classic){
 	 	 	 		CompareData_classic = ImageDataDifference[i];
 	 		  		*BlackLineLeft = i;
-	 		  		*number_edges++;
+	 		  		(*number_edges)++;
 	 	  		}
 			}
 		}	/* END of "(IF mfunctionning_mod == 1)" */
@@ -104,7 +104,7 @@ void img_differentiate(void){
 	   			if (ImageDataDifference[i] > CompareData_high){
 	   				//CompareData_high = ImageDataDifference[i];
 	   				*BlackLineRight = i;
-	   				*number_edges ++;
+	   				(*number_edges) ++;
 	   			}else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high ){
 	   				if (i >= 67 && i < 124){
 	   					j = 1;
@@ -112,7 +112,7 @@ void img_differentiate(void){
 						while (j <= 3){
 	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high){
 	   							*BlackLineRight = i;
-	   							*number_edges ++;
+	   							(*number_edges) ++;
 	   							//CompareData_high = ImageDataDifference[i+j];	
 	   							validate_gradient = 1;
 	   						}
@@ -125,7 +125,7 @@ void img_differentiate(void){
 	   						while (j <= 5){
 	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high)){
 	   								*BlackLineRight = i;
-	   								*number_edges ++;
+	   								(*number_edges) ++;
 	   								//CompareData_low = ImageDataDifference[i];	 
 	   							}
 	   							j++;
@@ -141,12 +141,11 @@ void img_differentiate(void){
 
 			// image processing with the algorithm seen at the beginning. 
 			*BlackLineLeft = 1;
-			for(i=1;i<=64;i++)
-			{
+			for(i=1;i<=64;i++){
 	   			if (ImageDataDifference[i] > CompareData_high){
 	   				//CompareData_high = ImageDataDifference[i];
 	   				*BlackLineLeft = i;
-	   				*number_edges ++;
+	   				(*number_edges) ++;
 	   			}else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high ){
 	   				if (i > 3 && i <= 61){
 	   					j = 1;
@@ -154,7 +153,7 @@ void img_differentiate(void){
 						while (j <= 3){
 	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high){
 	   							*BlackLineLeft = i;
-	   							*number_edges ++;
+	   							(*number_edges) ++;
 	   							//CompareData_high = ImageDataDifference[i+j];
 	   							//CompareData_low = ImageDataDifference[i];	   		
 	   							validate_gradient = 1;				
@@ -168,7 +167,7 @@ void img_differentiate(void){
 	   						while (j <= 5){
 	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high)){
 	   								*BlackLineLeft = i;
-	   								*number_edges ++;
+	   								(*number_edges) ++;
 	   								//CompareData_high = ImageDataDifference[i+j];
 	   								//CompareData_low = ImageDataDifference[i];	 
 	   							}
@@ -268,5 +267,43 @@ void img_differentiate(void){
 	   		}	/* END for (i=64;i>=1;i--) */
 		} /* END of "if (functionning_mode == 4)"  */			
 	}	/*	END of the function "Image_Processing"	*/
+
+
+void img_calculateMiddle (int * RoadMiddle, int * RoadMiddle_old, int * BlackLineLeft, int * BlackLineRight, int * diff, int * diff_old, int * number_edges){
+
+	// Store old RoadMiddle value
+	*RoadMiddle_old = *RoadMiddle;
+
+	// Find middle of the road, 64 for strait road
+	*RoadMiddle = (*BlackLineLeft + *BlackLineRight)/2;
+
+	// if a line is only on the the right side
+	if (*BlackLineLeft < 3){
+		*RoadMiddle = *BlackLineRight - 50;
+	}
+	// if a line is only on the the left side
+	if (*BlackLineRight > 124){
+		*RoadMiddle = *BlackLineLeft + 50;
+	}
+	// if no line on left and right side
+	if (number_edges == 0){
+		*RoadMiddle = *RoadMiddle_old;
+		for (i = 0 ; i < 1000000 ; i++);
+	}
+	if ((*BlackLineRight > 124) && (*BlackLineLeft < 3)){
+		*RoadMiddle = *RoadMiddle_old;		// we continue on the same trajectory as before 
+	}
+
+	// Store old value
+	*diff_old = *diff;							// store old difference
+	
+	// Find difference from real middle
+	*diff = *RoadMiddle - 64;						// calculate actual difference
+
+	// plausibility check
+	if (abs (*diff - *diff_old) > 50){
+		*diff = *diff_old;
+	}
+}
 
 

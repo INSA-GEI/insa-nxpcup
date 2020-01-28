@@ -44,24 +44,24 @@ unsigned char debug_getRotarySW();
 unsigned char debug_getUserSW1(void);
 unsigned char debug_getUserSW2(void);
 
-//7segment display stuff
+//7segment dsplay stuff
 void debug_displaySendRaw(uint8_t data);
-void debug_displaySendNb(uint8_t nb);
+void debug_displaySendNb(int8_t nb);
 
 
 static inline void enable_irq(int n) {
-	NVIC_ICPR |= 1 << (n - 16);
-	NVIC_ISER |= 1 << (n - 16);			
+    NVIC_ICPR |= 1 << (n - 16);
+    NVIC_ISER |= 1 << (n - 16);			
 }
 static inline void __enable_irq(void)	{ asm volatile ("cpsie i"); }
 static inline void __disable_irq(void)  { asm volatile ("cpsid i"); }
 
 //uart stuff
 typedef struct {
-	volatile uint16_t head;
-	volatile uint16_t tail;
-	volatile uint16_t size;
-	volatile uint8_t data[];
+    volatile uint16_t head;
+    volatile uint16_t tail;
+    volatile uint16_t size;
+    volatile uint8_t data[];
 } RingBuffer;
 
 

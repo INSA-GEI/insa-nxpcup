@@ -16,8 +16,9 @@ int main (void){
 	while(1){                
 		GPIOB_PTOR = DEBUG_RED_Pin;
 		delay_time(FAST_BLINK);
-		i=debug_getRotarySW();
+		i++;//=debug_getRotarySW();
 		debug_displaySendNb(i);
+		if(i>14)i=-16;
 		int l=uart_read(str,10);
 		if(l>0){
 			uart_write(str,l);
