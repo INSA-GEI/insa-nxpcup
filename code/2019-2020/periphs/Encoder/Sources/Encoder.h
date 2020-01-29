@@ -22,15 +22,30 @@
 // Res @ PSC=128 : Cnt=Fcpu/(PSC*3526)=53 pulses @ 2m/s
 
 #define ENCODER_MASK_TPM2_PRESCALER 7 	//Divides the clock by 128
-#define ENCODER_ARR 65535
-
-#define SET_CHANNEL	0x04			//Set these bits to configure channel 0 on "Input Capture" 
-										//with "Capture on Rising Edge Only" configuration
+#define ENCODER_PRECALER 128
+#define ENCODER_MOD 65535
 
 
+#define ENCODER_CAL_SPEED (100*FCPU*IMPULSE_TIME/ENCODER_PRECALER) //coeff conversion delta -> speed(cm/s) (approx. = 10635)
 
-/* This function initialises both encoders*/
-void encoder_init(void);
+
+
+
+
+class Encoder{
+    public:
+        /* This function initialises both encoders*/
+        void encoder_init(void);
+        int getLeftSpeed(void);//in cm/s
+        int getRightSpeed(void);//in cm/s
+    private:
+        
+	    int prev_ccr1 = 0;//Left ?
+	    int prev_ccr2 = 0;//Right ?
+	    int delta1 = 0;
+	    int deltaR2 = 0;
+}
+
 
 
 

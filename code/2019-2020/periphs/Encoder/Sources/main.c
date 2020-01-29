@@ -11,6 +11,7 @@ void delay_time(int);
 int main (void){
 	clock_init();
 	debug_init();
+	encoder_init();
 	while(1){                
 		delay_time(FAST_BLINK);
 		DEBUG_RED_ON;       
@@ -21,7 +22,6 @@ int main (void){
 		delay_time(FAST_BLINK);
 		DEBUG_GREEN_OFF;
 		
-		encoder_config();
 		
 	}
 }
