@@ -10,7 +10,13 @@
 
 int state=0;
 
-void Encoder::encoder_init(void){
+Encoder::Encoder(void){
+    prev_ccr1=0;
+    prev_ccr2=0;
+    delta1=0;
+    delta2=0;
+}
+void Encoder::init(void){
 	SIM_SCGC5 = SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK | SIM_SCGC5_PORTD_MASK; //Enable the clock of PORTA, PORTB, PORTD
 	SIM_SCGC6 |= SIM_SCGC6_TPM2_MASK; //Enable the clock of TPM2 
 	
@@ -45,36 +51,26 @@ int Encoder::getRightSpeed(void){
     return ENCODER_CAL_SPEED/delta2;
 }
 
-void FTM2_IRQHandler() {
-	
-	
-	//Clear the bit flag of the overflow interrupt FTM2
-	if (!(TPM2_SC & TPM_SC_TOF_MASK)) {
-			TPM2_SC |= TPM_SC_TOF_MASK;
-			prev_ccr1 = prev_ccr1 - ENCODER_MOD;
-			prev_ccr2 = prev_ccr2 - ENCODER_MOD;
-			
-			state=1-state;
-			if(state){
-				DEBUG_RED_OFF;
-			}else{
-				DEBUG_RED_ON;
-			}
-	}else
-	
-	//Clear the bit flag of the capture1 FTM2
-	if (!(TPM2_C0SC & TPM_CnSC_CHF_MASK)) {
+
+void Encoder::interruptHandler(void){
+	if (!(TPM2_SC & TPM_SC_TOF_MASK)) {//Clear the bit flag of the overflow interrupt FTM2
+		TPM2_SC |= TPM_SC_TOF_MASK;
+		prev_ccr1 = prev_ccr1 - ENCODER_MOD;
+		prev_ccr2 = prev_ccr2 - ENCODER_MOD;
+		state=1-state;
+		if(state){
+			DEBUG_RED_OFF;
+		}else{
+			DEBUG_RED_ON;
+		}
+	}else if (!(TPM2_C0SC & TPM_CnSC_CHF_MASK)) {//Clear the bit flag of the capture1 FTM2
 		TPM2_C0SC |= TPM_CnSC_CHF_MASK ;
 		delta1 = TPM2_C0V - prev_ccr1;
 		prev_ccr1 = TPM2_C0V;
-	}else
-	
-	//Clear the bit flag of the capture2 FTM2
-	if (!(TPM2_C1SC & TPM_CnSC_CHF_MASK)) {
-			TPM2_C1SC |= TPM_CnSC_CHF_MASK ;
-			delta2 = TPM2_C1V - prev_ccr2;
-			prev_ccr2 = TPM2_C1V;
+	}else if (!(TPM2_C1SC & TPM_CnSC_CHF_MASK)) {//Clear the bit flag of the capture2 FTM2
+		TPM2_C1SC |= TPM_CnSC_CHF_MASK ;
+		delta2 = TPM2_C1V - prev_ccr2;
+		prev_ccr2 = TPM2_C1V;
 	}
-	
 }
 

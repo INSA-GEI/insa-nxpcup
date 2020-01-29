@@ -1,6 +1,6 @@
 #include <MKL25Z4.h>
 #include "Debug.h"
-
+#include "Encoder.h"
 #define SLOW_BLINK      (10000000)
 #define FAST_BLINK      (1000000)
 #define BLINK_DELAY     FAST_BLINK
@@ -8,20 +8,13 @@
 void clock_init();
 void delay_time(int);
 
+Encoder myEncoder;
+
 int main (void){
 	clock_init();
 	debug_init();
-	encoder_init();
-	while(1){                
-		delay_time(FAST_BLINK);
-		DEBUG_RED_ON;       
-		delay_time(FAST_BLINK);
-		DEBUG_RED_OFF;        
-		delay_time(FAST_BLINK);
-		DEBUG_GREEN_ON;       
-		delay_time(FAST_BLINK);
-		DEBUG_GREEN_OFF;
-		
+	myEncoder.init();
+	while(1){      
 		
 	}
 }
@@ -86,4 +79,9 @@ void clock_init(){
     //    External reference clock for FLL (IREFS=0)
     MCG_C1 = MCG_C1_FRDIV(0x03);
     while((MCG_S & MCG_S_CLKST_MASK) != 0x0CU);  // Wait until PLL output
+}
+
+
+void FTM2_IRQHandler() {//encoder interrupt
+	myEncoder.interruptHandler();
 }
