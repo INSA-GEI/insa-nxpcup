@@ -43,7 +43,7 @@ class Encoder{
 	    int prev_ccr1 = 0;//Left ?
 	    int prev_ccr2 = 0;//Right ?
 	    int delta1 = 0;
-	    int deltaR2 = 0;
+	    int delta2 = 0;
 }
 
 
