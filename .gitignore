@@ -90,6 +90,7 @@ Project Logs for*/
 *.ico
 *.tiff
 *.svg
+_autosave-*
 
 # Inventor
 OldVersions/
