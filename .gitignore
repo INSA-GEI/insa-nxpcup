@@ -80,6 +80,7 @@ Project Logs for*/
 # kicad
 *.bak
 *.kicad_pcb-bak
+*.sch-bak
 
 # images
 *.png
@@ -89,6 +90,7 @@ Project Logs for*/
 *.ico
 *.tiff
 *.svg
+_autosave-*
 
 # Inventor
 OldVersions/
