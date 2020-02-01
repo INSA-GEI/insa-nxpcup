@@ -13,8 +13,15 @@ Encoder myEncoder;
 int main (void){
 	clock_init();
 	debug_init();
+	uart_write("Hello !\r\n",9);
 	myEncoder.init();
+	
 	while(1){      
+		//delay_time(SLOW_BLINK/5);
+		//uart_writeNb(myEncoder.getLeftSpeed(),0);
+		//uart_write(",",1);
+		//uart_writeNb(myEncoder.getRightSpeed(),0);
+	//uart_write("\r\n",2);
 		
 	}
 }
@@ -74,9 +81,9 @@ void clock_init(){
         ;
     
     // Switch to PEE mode
-    //    Select PLL output (CLKS=0)
-    //    FLL external reference divider (FRDIV=3)
-    //    External reference clock for FLL (IREFS=0)
+    // Select PLL output (CLKS=0)
+    // FLL external reference divider (FRDIV=3)
+    // External reference clock for FLL (IREFS=0)
     MCG_C1 = MCG_C1_FRDIV(0x03);
     while((MCG_S & MCG_S_CLKST_MASK) != 0x0CU);  // Wait until PLL output
 }
@@ -84,4 +91,7 @@ void clock_init(){
 
 void FTM2_IRQHandler() {//encoder interrupt
 	myEncoder.interruptHandler();
+	TPM2_SC |= TPM_SC_TOF_MASK;
+	TPM2_C0SC |= TPM_CnSC_CHF_MASK ;
+	TPM2_C1SC |= TPM_CnSC_CHF_MASK ;
 }

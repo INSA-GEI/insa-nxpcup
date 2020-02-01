@@ -13,8 +13,36 @@ int main (void){
 	int i=0;
 	debug_init();
 	char str[10];
+	SIM_SCGC5 = SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK | SIM_SCGC5_PORTD_MASK; //Enable the clock of PORTA, PORTB, PORTD
+	SIM_SCGC6 |= SIM_SCGC6_TPM2_MASK; //Enable the clock of TPM2 
+	
+	TPM2_SC = 7;		// prescaler for TPM2 
+	TPM2_SC |= TPM_SC_CMOD(1);					// enable TPM2 clock (LPTPM counter increments on every LPTPM counter clock p553)
+	TPM2_MOD = 65535;						// value of auto-reload
+	
+	
+	TPM2_C0SC = 0x04;
+	TPM2_C1SC = 0x04;
+	TPM2_C0SC|=TPM_CnSC_CHIE_MASK;					// Configuration of TPM2 channel_0 for ENC_SIG_A1 (p555)
+	TPM2_C1SC|= TPM_CnSC_CHIE_MASK;					// Configuration of TPM1 channel_1 for ENC_SIG_A2 (p555)
+	//TPM2_SC |= TPM_SC_TOIE_MASK;				// enable overflow interrupt in TPM2
+	
+	
+	PORTB_PCR2 |= PORT_PCR_MUX(3);				// ENC_SIG_A1 PTB2 TPM2_CH0
+	PORTB_PCR3 |= PORT_PCR_MUX(3);				// ENC_SIG_A2 PTB3 TPM2_CH1
+	
+	//Configures the individual port pins for input or output
+	GPIOB_PDDR |= (1<<2);
+	GPIOB_PDDR |= (1<<3); 
+	
+	
+	// enable interrupts 19 (TPM = FTM2)  in NVIC, no interrupt levels
+	NVIC_ICPR |= (1 << 19);			// clear pending interrupt 19
+	NVIC_ISER |= (1 << 19);			// enable interrupt 19
+	
+	
 	while(1){                
-		GPIOB_PTOR = DEBUG_RED_Pin;
+		/*GPIOB_PTOR = DEBUG_RED_Pin;
 		delay_time(FAST_BLINK);
 		i++;//=debug_getRotarySW();
 		debug_displaySendNb(i);
@@ -24,7 +52,7 @@ int main (void){
 			uart_write(str,l);
 			uart_writeNb(l,0);
 			uart_write("\r\n",2);
-		}
+		}*/
 	}
 }
 
@@ -89,3 +117,4 @@ void clock_init(){
     MCG_C1 = MCG_C1_FRDIV(0x03);
     while((MCG_S & MCG_S_CLKST_MASK) != 0x0CU);  // Wait until PLL output
 }
+

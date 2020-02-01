@@ -27,6 +27,7 @@
 #define ENCODER_PRECALER 128
 #define ENCODER_MOD 65535
 
+#define MAX_OVF 10
 
 #define ENCODER_CAL_SPEED (100*FCPU*IMPULSE_TIME/ENCODER_PRECALER) //coeff conversion delta -> speed(cm/s) (approx. = 10635)
 
@@ -47,6 +48,8 @@ class Encoder{
 	    int prev_ccr2;//Right ?
 	    int delta1;
 	    int delta2;
+	    int OVF_cnt1;
+	    int OVF_cnt2;
 };
 
 
