@@ -11,7 +11,9 @@
 #include <MKL25Z4.h>
 
 #define CORE_CLOCK 48000000UL
-
+#ifndef BAUDRATE
+	#define BAUDRATE 115200
+#endif
 //#define UARTXBEE //uncomment this line to enable uart on xbee module. By default uart is on opensda debugger
 
 #define DEBUG_RED_Pin		(1 << 18)

@@ -26,25 +26,25 @@
 #define ENCODER_CAL_SPEED (212712) //coeff de conversion : delta -> speed(mm/s)
 //the resolution is approx <6 counts.
 
-#define MAX_OVF 6 //If no pulse for 1s, reset spee count to invalid.
+#define MAX_OVF 6 //If no pulse for 1sec, reset speed count to invalid.
 
 
 
 class Encoder{
-    public:
-		Encoder(void);
-        /* This function initialises both encoders*/
-        void init(void);
-        int getLeftSpeed(void);//in cm/s
-        int getRightSpeed(void);//in cm/s
-        void interruptHandler(void);
-    private :
-	    int prev_ccr1;//Left ?
-	    int prev_ccr2;//Right ?
-	    int delta1;
-	    int delta2;
-	    int OVF_cnt1;
-	    int OVF_cnt2;
+public:
+	Encoder(void);
+	/* This function initialises both encoders*/
+	void init(void);
+	int getLeftSpeed(void);//in cm/s
+	int getRightSpeed(void);//in cm/s
+	void interruptHandler(void);
+private :
+	int prev_ccr1;//Left ?
+	int prev_ccr2;//Right ?
+	int delta1;
+	int delta2;
+	int OVF_cnt1;
+	int OVF_cnt2;
 };
 
 

@@ -7,18 +7,19 @@
 #include "Movement.h"
 
 
-Encoder myEncoder;
 
 Movement::Movement() {
 	targetAngle=0.0;
 	targetSpeedL=0;
 	targetSpeedR=0;
+	actualSpeedL=targetSpeedL;
+	actualSpeedR=targetSpeedR;
 }
 
 void Movement::init(void) {
 	motor_init();
 	servo_init();
-	myEncoder.init();
+	encoder.init();
 	MOTOR_LEFT_ENABLE;
 	MOTOR_RIGHT_ENABLE;
 }
@@ -37,13 +38,14 @@ void Movement::setSpeed(int speed) {
 	MOTOR_LEFT_FORWARD;
 	MOTOR_RIGHT_FORWARD;
 	int deltaSpeed=targetAngle*MOVEMENT_ENTRAXE_COEFF*speed;
-	
+
 	targetSpeedL=speed+deltaSpeed;
 	targetSpeedR=speed-deltaSpeed;
 
-	MOTOR_LEFT_FSPEED(targetSpeedL*MOTOR_CAL_SPEED);
-	MOTOR_RIGHT_FSPEED(targetSpeedR*MOTOR_CAL_SPEED);
-	
+	actualSpeedL=targetSpeedL;
+	actualSpeedR=targetSpeedR;
+	applySpeeds();
+
 }
 
 void Movement::setAngle(float angle) {
@@ -54,6 +56,10 @@ void Movement::setAngle(float angle) {
 }
 
 void Movement::stop(void) {
+	targetSpeedL=0;
+	targetSpeedR=0;
+	actualSpeedL=0;
+	actualSpeedR=0;
 	MOTOR_LEFT_FSPEED(0);
 	MOTOR_RIGHT_FSPEED(0);
 	MOTOR_LEFT_DISABLE;
@@ -62,9 +68,30 @@ void Movement::stop(void) {
 
 
 void Movement::regulate(void) {
-	int err_left=targetSpeedL-myEncoder.getLeftSpeed();
-	int err_right=targetSpeedR-myEncoder.getRightSpeed();
-	
-	if(err_left>)
-	
+	int err=encoder.getLeftSpeed();
+	if(err>0){	//detect invalid speed readings
+		err=targetSpeedL-err;//calculate error
+		if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){//if error needs correction
+			actualSpeedL=actualSpeedL+err*MOVEMENT_CORR_KP;//compensate real speed command
+		}
+	}
+	err=encoder.getRightSpeed();
+	if(err>0){	//detect invalid speed readings
+		err=targetSpeedR-err;
+		if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){
+			actualSpeedR=actualSpeedR+err*MOVEMENT_CORR_KP;
+		}
+	}
+	applySpeeds();
+
+}
+
+void Movement::applySpeeds(void) {
+	if(actualSpeedL<0)actualSpeedL=0;
+	if(actualSpeedR<0)actualSpeedR=0;
+	if(actualSpeedL>SPEED_LIMIT)actualSpeedL=SPEED_LIMIT;
+	if(actualSpeedR>SPEED_LIMIT)actualSpeedR=SPEED_LIMIT;
+
+	MOTOR_LEFT_FSPEED(actualSpeedL*MOTOR_CAL_SPEED);
+	MOTOR_RIGHT_FSPEED(actualSpeedR*MOTOR_CAL_SPEED);
 }

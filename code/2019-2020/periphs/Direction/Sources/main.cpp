@@ -13,11 +13,18 @@ Movement myMovement;
 int main (void){
 	clock_init();
 	debug_init();
+	uart_write("Hello !\r\n",9);
 	myMovement.init();
 	myMovement.set(1000,0.0); // Pour speed = 100 >> 3m en 3sec 
-						   // Pour speed = 150 >> 3m en 1.8sec
+	// Pour speed = 150 >> 3m en 1.8sec
 	while(1){
-		
+	
+		delay_time(FAST_BLINK/20);
+		uart_write("$",1);
+		uart_writeNb(myMovement.encoder.getLeftSpeed());
+		uart_write(" ",1);
+		uart_writeNb(myMovement.actualSpeedL);
+		uart_write(";",1);
 	}
 }
 
@@ -26,6 +33,17 @@ void delay_time(int number){
 	for(cnt=0;cnt<number;cnt++);
 }
 
+void FTM1_IRQHandler() {//servo interrupt, 100Hz
+	//Clear the bit of the interrupt FTM1
+	TPM1_SC |= TPM_SC_TOF_MASK;
+
+}
+void FTM2_IRQHandler() {//encoder interrupt
+	GPIOB_PTOR = DEBUG_RED_Pin;
+	myMovement.encoder.interruptHandler();
+	myMovement.regulate();
+	GPIOB_PTOR = DEBUG_RED_Pin;
+}
 
 void clock_init(){
 	// Enable clock gate to Port A module to enable pin routing (PORTA=1)

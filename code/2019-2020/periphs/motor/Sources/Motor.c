@@ -28,7 +28,7 @@ void motor_init(void){
 	PORTA_PCR5  |= PORT_PCR_MUX(1);	// PTA5 Motor Right In 2 (direction)
 	PORTC_PCR8  |= PORT_PCR_MUX(1);	// PTC8 Motor Left  In 1 (direction)
 	PORTC_PCR9  |= PORT_PCR_MUX(3);	// PTC9 Motor Left  In 2 (speed) PTC9 TPM0_CH5
-	
+
 
 	PORTC_PCR7  |= PORT_PCR_MUX(1);	// Motor Right Enable
 	PORTC_PCR0  |= PORT_PCR_MUX(1);	// Motor Left  Enable
@@ -42,7 +42,7 @@ void motor_init(void){
 
 	MOTOR_LEFT_ENABLE;
 	MOTOR_RIGHT_ENABLE;
-	
+
 	MOTOR_LEFT_FORWARD;
 	MOTOR_RIGHT_FORWARD;
 

@@ -8,7 +8,9 @@ Implémente un buffer circulaire et envoi par interruption.
 
 ##### TODO
 
-* Solve issue with rotary switch missing counts
+* Solve issue with rotary switch missing counts -> check electrical continuity on pcb and correct port config
+* Known issue with SW2 and BLUE_LED interferring : see pcb layout
+* Extra : simplify usage of uart with a uart class in cpp
 
 ---
 ## Motor
@@ -17,8 +19,7 @@ Controle pwm des moteurs gauche et droit.
 
 ##### TODO
 
-* Tester fonctionnement des 2 moteurs et polarité
-* Implémenter différentiel numérique en fonction d'un angle
+* Tabuler des vitesses en m/s pour diverses entrees en PWM (pour calibrer MOTOR_CAL_SPEED)
 
 ---
 ## Servo
@@ -27,17 +28,29 @@ Controle du servo avec limites d'angle.
 
 ##### TODO
 
-* Calibrate zero and max angle values
+* Check zero and max angle values
 
 ---
 
-## Encoder
+## encoder_v2
 
-Régulation de vitesse des roues pas retour encodeur
+Retour de vitesse des roues
 
 ##### TODO
 
-* Tout
+* Vérifier la bonne valeur de vitesse retournée par la classe pour une vitesse mesurée en réel
+
+---
+
+## Direction
+
+Controlleur utilisant Motor, Servo, encoder_v2
+
+##### TODO
+
+* Calibrer coefficient entraxe
+* calibrer correcteur KP
+* vérifier la non saturation SPEED_LIMIT en fonctionnement normal
 
 ---
 ---

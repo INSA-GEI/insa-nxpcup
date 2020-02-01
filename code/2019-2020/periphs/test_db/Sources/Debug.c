@@ -126,10 +126,6 @@ int uart_write(char *p, int len){
 }
 void uart_writeNb(int n,int digits){
 	int d=1;
-	if(n<0){
-		n=-n;
-		uart_write("-",1);
-	}
 	if(digits>0){
 		d=digits;
 	}else{

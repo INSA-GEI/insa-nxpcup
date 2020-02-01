@@ -57,7 +57,7 @@ void debug_init(){
 	DISP_LATCH_ON;
 
 	//UART init
-	uart_init(9600);
+	uart_init(BAUDRATE);
 }
 unsigned char debug_getRotarySW(){
 	//return (GPIOE_PDIR & 0x003C)>>2;
@@ -124,13 +124,13 @@ int uart_write(char *p, int len){
 	}
 	return len;
 }
-void uart_writeNb(int n,int digits){
-	int d=1;
-	if(digits>0){
-		d=digits;
-	}else{
-		while((10*d)<=n)d*=10;
+void uart_writeNb(int n){
+	if(n<0){
+		uart_write("-",1);
+		n=-n;
 	}
+	int d=1;
+	while((10*d)<=n)d*=10;
 	while(d>0){
 		while(buf_isfull(tx_buffer));
 		buf_put_byte(tx_buffer,((n/d)%10)+0x30);

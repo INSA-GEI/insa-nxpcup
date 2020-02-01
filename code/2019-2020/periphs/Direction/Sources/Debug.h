@@ -11,7 +11,9 @@
 #include <MKL25Z4.h>
 
 #define CORE_CLOCK 48000000UL
-
+#ifndef BAUDRATE
+	#define BAUDRATE 115200
+#endif
 //#define UARTXBEE //uncomment this line to enable uart on xbee module. By default uart is on opensda debugger
 
 #define DEBUG_RED_Pin		(1 << 18)
@@ -74,7 +76,7 @@ void buf_put_byte(RingBuffer *buf, uint8_t val);
 
 void UART0_IRQHandler() __attribute__((interrupt("IRQ")));
 int uart_write(char *p, int len);
-void uart_writeNb(int n,int digits);
+void uart_writeNb(int n);
 int uart_write_err(char *p, int len);
 int uart_read(char *p, int len);
 void uart_init(int baudrate);

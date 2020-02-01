@@ -57,7 +57,7 @@ void debug_init(){
 	DISP_LATCH_ON;
 
 	//UART init
-	uart_init(9600);
+	uart_init(BAUDRATE);
 }
 unsigned char debug_getRotarySW(){
 	//return (GPIOE_PDIR & 0x003C)>>2;

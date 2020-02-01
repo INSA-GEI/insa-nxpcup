@@ -91,7 +91,4 @@ void clock_init(){
 
 void FTM2_IRQHandler() {//encoder interrupt
 	myEncoder.interruptHandler();
-	/*TPM2_SC |= TPM_SC_TOF_MASK;
-	TPM2_C0SC |= TPM_CnSC_CHF_MASK ;
-	TPM2_C1SC |= TPM_CnSC_CHF_MASK ;*/
 }
