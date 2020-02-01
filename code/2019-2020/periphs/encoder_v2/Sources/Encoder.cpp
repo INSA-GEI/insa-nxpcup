@@ -48,53 +48,38 @@ void Encoder::init(void){
 }
 
 int Encoder::getLeftSpeed(void){
-	return delta1;
-	//if(delta1>0)return ENCODER_CAL_SPEED/delta1;
-	//return -1;
+	if(delta1>0)return ENCODER_CAL_SPEED/delta1;
+	return -1;
 }
 
 int Encoder::getRightSpeed(void){
-	return delta2;
-	//if(delta2>0)return ENCODER_CAL_SPEED/delta2;
-	//return -1;
+	if(delta2>0)return ENCODER_CAL_SPEED/delta2;
+	return -1;
 }
 
 
 void Encoder::interruptHandler(void){
 	
-	if (!(TPM2_SC & TPM_SC_TOF_MASK)) {//Clear the bit flag of the overflow interrupt FTM2
+	if ((TPM2_SC & TPM_SC_TOF_MASK)) {//Clear the bit flag of the overflow interrupt FTM2
 		TPM2_SC |= TPM_SC_TOF_MASK;
 		OVF_cnt1++;
 		OVF_cnt2++;
-		GPIOB_PTOR = DEBUG_RED_Pin;
-		
+		if(OVF_cnt1>MAX_OVF)delta1=-1;
+		if(OVF_cnt2>MAX_OVF)delta2=-1;
 	}
-	if (!(TPM2_C0SC & TPM_CnSC_CHF_MASK)) {//Clear the bit flag of the capture1 FTM2
+	if ((TPM2_C0SC & TPM_CnSC_CHF_MASK)) {//Clear the bit flag of the capture1 FTM2
 		TPM2_C0SC |= TPM_CnSC_CHF_MASK ;
 		int ccr1=TPM2_C0V;
 		
-
-		//GPIOB_PTOR = DEBUG_GREEN_Pin;
-		
-		if(OVF_cnt1<MAX_OVF){
-			delta1 = ccr1 - prev_ccr1 + OVF_cnt1*ENCODER_MOD;
-		}else{
-			delta1=-1;
-		}
+		delta1 = ccr1 - prev_ccr1 + OVF_cnt1*ENCODER_MOD;
 		prev_ccr1 = ccr1;
 		OVF_cnt1=0;
 		
 	}
-	if (!(TPM2_C1SC & TPM_CnSC_CHF_MASK)) {//Clear the bit flag of the capture2 FTM2
+	if ((TPM2_C1SC & TPM_CnSC_CHF_MASK)) {//Clear the bit flag of the capture2 FTM2
 		TPM2_C1SC |= TPM_CnSC_CHF_MASK ;
 		int ccr2=TPM2_C1V;
-		if(OVF_cnt2<MAX_OVF){
-			delta2 = ccr2 - prev_ccr2 + OVF_cnt2*ENCODER_MOD;
-		}else{
-			delta2=-1;
-		}
-
-		//GPIOB_PTOR = DEBUG_BLUE_Pin;
+		delta2 = ccr2 - prev_ccr2 + OVF_cnt2*ENCODER_MOD;
 		prev_ccr2 = ccr2;
 		OVF_cnt2=0;
 	}

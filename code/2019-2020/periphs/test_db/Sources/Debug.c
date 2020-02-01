@@ -32,7 +32,7 @@ void debug_init(){
 	//PTD1 (SW_USER_2) & PTD3 (SW_USER_1)//WARNING : BLUE LED attached to same pin as SW_USER2
 	PORTD_PCR1 = PORT_PCR_MUX(1);
 	PORTD_PCR3 = PORT_PCR_MUX(1);
-	//GPIOD_PDDR &=~ (1<<1);
+	GPIOD_PDDR &=~ (1<<1);
 	GPIOD_PDDR &=~ (1<<3);
 
 	//PTE2-5 : Rotary switch (2:LSB, 5:MSB);

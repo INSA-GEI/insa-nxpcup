@@ -1,36 +1,14 @@
-#include <MKL25Z4.h>
+/*
+ * main implementation: use this 'C' sample to create your own application
+ *
+ */
+
+
+
+
+
+#include "derivative.h" /* include peripheral declarations */
 #include "Debug.h"
-#include "Encoder.h"
-#define SLOW_BLINK      (10000000)
-#define FAST_BLINK      (1000000)
-#define BLINK_DELAY     FAST_BLINK
-
-void clock_init();
-void delay_time(int);
-
-Encoder myEncoder;
-
-int main (void){
-	clock_init();
-	debug_init();
-	uart_write("Hello !\r\n",9);
-	myEncoder.init();
-	
-	while(1){      
-		delay_time(FAST_BLINK/2);
-		uart_writeNb(myEncoder.getLeftSpeed(),0);
-		uart_write("\t",1);
-		uart_writeNb(myEncoder.getRightSpeed(),0);
-		uart_write("\r\n",2);
-		
-	}
-}
-
-void delay_time(int number){
-	int cnt;
-	for(cnt=0;cnt<number;cnt++);
-}
-
 
 void clock_init(){
     // Enable clock gate to Port A module to enable pin routing (PORTA=1)
@@ -89,9 +67,88 @@ void clock_init(){
 }
 
 
+#define MAX_OVF 65535
+int OVF_cnt1=0;
+int OVF_cnt2=0;
+int delta1=0;
+int delta2=0;
+int prev_ccr1=0;
+int prev_ccr2=0;
+
+
+int main(void){
+	clock_init();
+	debug_init();
+	SIM_SCGC5 = SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK | SIM_SCGC5_PORTD_MASK; //Enable the clock of PORTA, PORTB, PORTD
+	SIM_SCGC6 |= SIM_SCGC6_TPM2_MASK; //Enable the clock of TPM2 
+	
+	TPM2_SC = 7;		// prescaler for TPM2 
+	TPM2_SC |= TPM_SC_CMOD(1);					// enable TPM2 clock (LPTPM counter increments on every LPTPM counter clock p553)
+	TPM2_MOD = 65535;						// value of auto-reload
+	
+	TPM2_C0SC = 0;
+	TPM2_C1SC = 0;
+	TPM2_C0SC|=TPM_CnSC_CHIE_MASK | TPM_CnSC_ELSA_MASK;					// Configuration of TPM2 channel_0 for ENC_SIG_A1 (p555)
+	TPM2_C1SC|=TPM_CnSC_CHIE_MASK | TPM_CnSC_ELSA_MASK;					// Configuration of TPM1 channel_1 for ENC_SIG_A2 (p555)
+	TPM2_SC |= TPM_SC_TOIE_MASK;				// enable overflow interrupt in TPM2
+	
+	
+	PORTB_PCR2 |= PORT_PCR_MUX(3);				// ENC_SIG_A1 PTB2 TPM2_CH0
+	PORTB_PCR3 |= PORT_PCR_MUX(3);				// ENC_SIG_A2 PTB3 TPM2_CH1
+	
+	//Configures the individual port pins for input or output
+	GPIOB_PDDR |= (1<<2);
+	GPIOB_PDDR |= (1<<3); 
+	
+	
+	// enable interrupts 19 (TPM = FTM2)  in NVIC, no interrupt levels
+	NVIC_ICPR |= (1 << 19);			// clear pending interrupt 19
+	NVIC_ISER |= (1 << 19);			// enable interrupt 19
+		
+	for(;;) {	   
+	}
+	
+	return 0;
+}
+
 void FTM2_IRQHandler() {//encoder interrupt
-	myEncoder.interruptHandler();
-	/*TPM2_SC |= TPM_SC_TOF_MASK;
-	TPM2_C0SC |= TPM_CnSC_CHF_MASK ;
-	TPM2_C1SC |= TPM_CnSC_CHF_MASK ;*/
+	if ((TPM2_SC & TPM_SC_TOF_MASK)) {//Clear the bit flag of the overflow interrupt FTM2
+		TPM2_SC |= TPM_SC_TOF_MASK;
+		OVF_cnt1++;
+		OVF_cnt2++;
+		GPIOB_PTOR = DEBUG_RED_Pin;
+		
+	}
+	if ((TPM2_C0SC & TPM_CnSC_CHF_MASK)) {//Clear the bit flag of the capture1 FTM2
+		TPM2_C0SC |= TPM_CnSC_CHF_MASK ;
+		int ccr1=TPM2_C0V;
+		
+
+		//GPIOB_PTOR = DEBUG_GREEN_Pin;
+		
+		if(OVF_cnt1<MAX_OVF){
+			delta1 = ccr1 - prev_ccr1 + OVF_cnt1*6553;
+		}else{
+			delta1=-1;
+		}
+		prev_ccr1 = ccr1;
+		OVF_cnt1=0;
+		
+	}
+	if ((TPM2_C1SC & TPM_CnSC_CHF_MASK)) {//Clear the bit flag of the capture2 FTM2
+		TPM2_C1SC |= TPM_CnSC_CHF_MASK ;
+		int ccr2=TPM2_C1V;
+		if(OVF_cnt2<MAX_OVF){
+			delta2 = ccr2 - prev_ccr2 + OVF_cnt2*65536;
+		}else{
+			delta2=-1;
+		}
+
+		//GPIOB_PTOR = DEBUG_BLUE_Pin;
+		prev_ccr2 = ccr2;
+		OVF_cnt2=0;
+	}
+	//TPM2_SC |= TPM_SC_TOF_MASK;
+	//TPM2_C0SC |= TPM_CnSC_CHF_MASK ;
+	//TPM2_C1SC |= TPM_CnSC_CHF_MASK ;
 }

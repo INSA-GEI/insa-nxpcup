@@ -10,28 +10,23 @@
 
 #include <MKL25Z4.h>
 #include "Debug.h"
-
-#define WHEEL_DIAMETER 6.5*0.01					//in meter
-#define PI 3.1415926535					//						
-#define IMPULSE_TIME	PI*WHEEL_DIAMETER/360	// =Pi*D/360 s	due to :
-												// 360 fronts/tr
-												// 360/(Pi*D) fronts/m
-												// 360/(Pi*D) fronts/m.s
+//wheel diameter = 6.5cm
+// 360/(Pi*D) fronts/m.s
 
 //if max speed = 2m/s <=> Pulses/s=speed*360/(Pi*D)=3526 pulses/s
-//Resolution souhaitee : 2000pts/65535pts tot @ 2m/s d'ou PSC=2000*Fcpu/(3526*2^16)=207 -> max is 128
-// Res @ PSC=128 : Cnt=Fcpu/(PSC*3526)=53 pulses @ 2m/s
+//Resolution souhaitee : 2000pts/65535pts tot @ 2m/s d'ou PSC=2000*Fcpu/(3526*2^16)=415 -> max is 128
+// Res @ PSC=128 : Cnt=Fcpu/(PSC*3526)=106 pulses @ 2m/s
 
-#define FCPU 24000000UL
+#define FCPU 48000000UL
 #define ENCODER_MASK_TPM2_PRESCALER 7 	//Divides the clock by 128
-#define ENCODER_PRECALER 128
+
 #define ENCODER_MOD 65535
 
-#define MAX_OVF 10
+//Encoder cal speed=(100*FCPU*D*Pi/360/ENCODER_PRECALER)
+#define ENCODER_CAL_SPEED (212712) //coeff de conversion : delta -> speed(mm/s)
+//the resolution is approx <6 counts.
 
-#define ENCODER_CAL_SPEED (100*FCPU*IMPULSE_TIME/ENCODER_PRECALER) //coeff conversion delta -> speed(cm/s) (approx. = 10635)
-
-
+#define MAX_OVF 6 //If no pulse for 1s, reset spee count to invalid.
 
 
 

@@ -8,13 +8,14 @@
 void clock_init();
 void delay_time(int);
 
+Movement myMovement;
+
 int main (void){
 	clock_init();
 	debug_init();
-	movement_init();
-	movement_set(150,35.0); // Pour speed = 100 >> 3m en 3sec 
+	myMovement.init();
+	myMovement.set(1000,0.0); // Pour speed = 100 >> 3m en 3sec 
 						   // Pour speed = 150 >> 3m en 1.8sec
-	
 	while(1){
 		
 	}
