@@ -11,7 +11,13 @@
 #include "math.h"
 #include "stdio.h"
 #include "stdlib.h"
-#include "camera.h"
+
+#define CAM_DELAY				asm ("nop")				// minimal delay time
+#define	CAM_SI_HIGH				GPIOB_PDOR |= (1<<8)	// SI on PTB8
+#define	CAM_SI_LOW				GPIOB_PDOR &= ~(1<<8)	// SI on PTB8
+#define	CAM_CLK_HIGH			GPIOB_PDOR |= (1<<9)	// CLK on PTB9
+#define	CAM_CLK_LOW				GPIOB_PDOR &= ~(1<<9)	// CLK on PTB9
+
 
 
 // Define thresholds for Camera Black Line recognition
@@ -27,11 +33,36 @@
 
 #define PI							3.14159265358979323846	// value of PI
 
-int img_getDiffData(int index);
-void img_calculateMiddle (int * RoadMiddle, int * RoadMiddle_old, int * BlackLineLeft, int * BlackLineRight, int * diff, int * diff_old, int * number_edges);
+class Img_Proc{
+public:
+	int ImageData [128];				// array to store the LineScan image
+	int ImageDataDifference [128];		// array to store the PineScan pixel difference
+	
+	int diff;							// actual difference from line middle position
+	int diff_old;						// actual position of the servo relative to middle
+	int RoadMiddle;						// calculated middle of the road
+	int RoadMiddle_old;					// save the last "Middle of the road" position
+	int BlackLineRight;					// position of the black line on the right side (127)
+	int BlackLineLeft;					// position of the black line on the left side
+	int number_edges;
 
+	void init(void);					//initializes the camera
+	void capture(void);					//retrieves data from the camera
+	void differentiate(void);			//computes differential
+	void process(void);					//detects edges
+	void calculateMiddle(void);			//guesses the middle
+	void processAll(void);				//executes all camera related operations in order. Takes approx 940µs to complete
 
-void img_differentiate(void);
+private:
+	int CompareData_classic;			// set data for comparison to find max IN BASE ALGORITHM
+	int CompareData_low;				// set data for comparison to find max with low threshold
+	int CompareData_high;				// set data for comparison to find max with high threshold
+	int validate_gradient;				// used in image processing to validate some parameters
+		
+	float gaussian1;					// gaussian filters used in gaussian differences method
+	float gaussian2;
+};
+
 
 void test_FinishLine_Detection (void);
 /*
@@ -46,8 +77,8 @@ void test_FinishLine_Detection (void);
 *
 */
 
-void img_process (int * diff, int * diff_old, int * BlackLineLeft, int * BlackLineRight, int * RoadMiddle, int * number_edges);
-/*
+
+/* PROCESS
 *	Retrieves the image, applies algorithms to find local maximums and thus define the position of black lines. 
 *	PARAMETERS : operating mode : 1 = classic algorithm (same as the NXP_minimal) 
 *								  2 = using a gradient by direct differences (application of the filter : [-1 , 0 , 1] -> P(x) = -1*P(x-1)+0*P(x)+1*P(x+1))
@@ -57,9 +88,20 @@ void img_process (int * diff, int * diff_old, int * BlackLineLeft, int * BlackLi
 *				 diff_old : pointer to a variable "diff_old" defined in main. 
 *
 */ 
-
-
 /*
+
+	Two threshold functionning : 
+		For a pixel P(x), having gradient magnitude G, following conditions exists to detect a pixel as edge :
+			- if G < threshold_low then discard the edge
+			- if G > threshold_high then keep the edge
+			- if threshold_low < G < threshold_high and if any neighbour three units away have gradient magnitude greater than threshold_high, keep the edge
+			- if no neighbour in this regions have gradient > threshold_high, search the 5 units away for threshold_low < gradient < threshold_high. 
+				If so, keep the edge
+			- else : discard the edge. 
+
+*/
+
+/* DIFFERENTIATE
 *
 *				GAUSSIAN DIFFERENCES METHOD  :
 *

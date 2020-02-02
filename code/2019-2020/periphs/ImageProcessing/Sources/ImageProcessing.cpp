@@ -6,31 +6,87 @@
  */
 #include "ImageProcessing.h"
 
+int i,j;
 
-int i, j;									// counters for loops
-int ImageData [128];						// array to store the LineScan image
-int ImageDataDifference [128];				// array to store the PineScan pixel difference
-
-
-int CompareData_classic;					// set data for comparison to find max IN BASE ALGORITHM
-int CompareData_low;						// set data for comparison to find max with low threshold
-int CompareData_high;						// set data for comparison to find max with high threshold
-int validate_gradient;						// used in image processing to validate some parameters
+void Img_Proc::init(){
 	
-float gaussian1;								// gaussian filters used in gaussian differences method
-float gaussian2;
+	// turn on ADC0 clock
+	SIM_SCGC6 |= SIM_SCGC6_ADC0_MASK;
+	SIM_SCGC5 = SIM_SCGC5_PORTC_MASK | SIM_SCGC5_PORTB_MASK;
+	
+	PORTC_PCR2  |= PORT_PCR_MUX(0);		// Camera 1 PTC2 ADC0_SE11
+	
+	PORTB_PCR8  |= PORT_PCR_MUX(1);	// PTB8 Camera SI
+	PORTB_PCR9  |= PORT_PCR_MUX(1);	// PTB9 Camera Clock
+	GPIOB_PDDR |= (1<<8);			// PTB8 Camera SI
+	GPIOB_PDDR |= (1<<9);			// PTB9 Camera Clock
+	
+	
+	// ADC0 clock configuration : 													WARNING : maybe not compatible with 48MHz system clock ! to check
+	ADC0_CFG1 |= 0x01;				// clock is bus clock divided by 2 = 24 MHz
+	
+	// ADC0 resolution    
+	ADC0_CFG1 |= 0x08;				// resolution 10 bit, max. value is 1023
 
-int img_getDiffData(int index){
-	return ImageDataDifference[index];
+	// ADC0 conversion mode
+	ADC0_SC3 = 0x00;				// single conversion mode
+	
+	
+	diff=0;
+	diff_old=0;
+	RoadMiddle=0;
+	RoadMiddle_old=0;
+	BlackLineRight=127;
+	BlackLineLeft=0;
+	number_edges=0;
 }
 
+void Img_Proc::capture(void){
+		ADC0_CFG2 |= 0x10;							// select B side of the MUX
+		CAM_SI_HIGH;
+		CAM_DELAY;
+		CAM_CLK_HIGH;
+		CAM_DELAY;
+		CAM_SI_LOW;
+		CAM_DELAY;
+		// inputs data from camera (first pixel)
+		ADC0_SC1A  =  11;							// set ADC0 channel 11
+		while((ADC0_SC1A & ADC_SC1_COCO_MASK) == 0);// wait until ADC is ready
+		ImageData[0] = ADC0_RA;						// return value
+		CAM_CLK_LOW;
 
-void img_differentiate(void){
-		
-		camera_capture();
-		for(i=0;i<=127;i++)ImageData[i]=camera_getRawData(i);
-		ImageDataDifference[0]=0;
-		ImageDataDifference[127]=0;
+		for(i=1;i<128;i++){
+			CAM_DELAY;
+			CAM_CLK_HIGH;
+			 // inputs data from camera (one pixel each time through loop)
+			ADC0_SC1A  =  11;							// set ADC0 channel 11
+			while((ADC0_SC1A & ADC_SC1_COCO_MASK) == 0);// wait until ADC is ready
+			ImageData[i] = ADC0_RA;						// return value
+			CAM_CLK_LOW;
+		}
+	
+		CAM_DELAY;
+		CAM_DELAY;
+		CAM_CLK_HIGH;
+		CAM_DELAY;
+		CAM_DELAY;
+		CAM_CLK_LOW;
+		/*
+		//generating dummy data here
+		for(i=0;i<128;i++){
+			int data;
+			if((i>32 && i<48) || (i>80 && i<96)){
+				data=150+rand()%10;
+			}else{
+				data=50+rand()%10;
+			}
+			ImageData[i]=data;
+		}
+		*/
+}
+
+void Img_Proc::differentiate(void){
+
 		if (functionning_mode == 1){
 			for(i=0;i<=126;i++){							// classic algorithm (same as the NXP_minimal) 
 				ImageDataDifference[i] = abs (ImageData[i] - ImageData[i+1]);
@@ -58,29 +114,28 @@ void img_differentiate(void){
 		}
 	}	/*	End of function "Fill_ImageDataDifference"	*/
 
-
-	void img_process (int * diff, int * diff_old, int * BlackLineLeft, int * BlackLineRight, int * RoadMiddle, int* number_edges){
-		*number_edges = 0;		// reset the number of peaks to 0
+void Img_Proc::process (void){
+		number_edges = 0;		// reset the number of peaks to 0
 		
 		if (functionning_mode == 1){
 			// Find black line on the right side
 			CompareData_classic = THRESHOLD_classic;					// threshold
-			*BlackLineRight = 126;
+			BlackLineRight = 126;
 			for(i=64;i<=125;i++){
 	   			if (ImageDataDifference[i] > CompareData_classic){
 	   				CompareData_classic = ImageDataDifference[i];
-	   				*BlackLineRight = i;
-	   				(*number_edges)++;
+	   				BlackLineRight = i;
+	   				(number_edges)++;
 	   			}
 			}
 			// Find black line on the left side
 			CompareData_classic = THRESHOLD_classic;					// threshold
-			*BlackLineLeft = 1;
+			BlackLineLeft = 1;
 			for(i=64;i>=3;i--){							// only down to pixel 3, not 1
 			   	if (ImageDataDifference[i] > CompareData_classic){
 	 	 	 		CompareData_classic = ImageDataDifference[i];
-	 		  		*BlackLineLeft = i;
-	 		  		(*number_edges)++;
+	 		  		BlackLineLeft = i;
+	 		  		(number_edges)++;
 	 	  		}
 			}
 		}	/* END of "(IF mfunctionning_mod == 1)" */
@@ -99,20 +154,20 @@ void img_differentiate(void){
 			CompareData_low = THRESHOLD_low;					// threshold_low
 			CompareData_high = THRESHOLD_high;					// threshold_high
 
-			*BlackLineRight = 126;
+			BlackLineRight = 126;
 			for(i=126;i>=64;i--){
 	   			if (ImageDataDifference[i] > CompareData_high){
 	   				//CompareData_high = ImageDataDifference[i];
-	   				*BlackLineRight = i;
-	   				(*number_edges) ++;
+	   				BlackLineRight = i;
+	   				(number_edges) ++;
 	   			}else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high ){
 	   				if (i >= 67 && i < 124){
 	   					j = 1;
 	   					validate_gradient = 0;
 						while (j <= 3){
 	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high){
-	   							*BlackLineRight = i;
-	   							(*number_edges) ++;
+	   							BlackLineRight = i;
+	   							(number_edges) ++;
 	   							//CompareData_high = ImageDataDifference[i+j];	
 	   							validate_gradient = 1;
 	   						}
@@ -124,8 +179,8 @@ void img_differentiate(void){
 	   						j=1;
 	   						while (j <= 5){
 	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high)){
-	   								*BlackLineRight = i;
-	   								(*number_edges) ++;
+	   								BlackLineRight = i;
+	   								(number_edges) ++;
 	   								//CompareData_low = ImageDataDifference[i];	 
 	   							}
 	   							j++;
@@ -140,20 +195,20 @@ void img_differentiate(void){
 			CompareData_high = THRESHOLD_high;					// threshold_high
 
 			// image processing with the algorithm seen at the beginning. 
-			*BlackLineLeft = 1;
+			BlackLineLeft = 1;
 			for(i=1;i<=64;i++){
 	   			if (ImageDataDifference[i] > CompareData_high){
 	   				//CompareData_high = ImageDataDifference[i];
-	   				*BlackLineLeft = i;
-	   				(*number_edges) ++;
+	   				BlackLineLeft = i;
+	   				(number_edges) ++;
 	   			}else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high ){
 	   				if (i > 3 && i <= 61){
 	   					j = 1;
 	   					validate_gradient = 0;
 						while (j <= 3){
 	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high){
-	   							*BlackLineLeft = i;
-	   							(*number_edges) ++;
+	   							BlackLineLeft = i;
+	   							(number_edges) ++;
 	   							//CompareData_high = ImageDataDifference[i+j];
 	   							//CompareData_low = ImageDataDifference[i];	   		
 	   							validate_gradient = 1;				
@@ -166,8 +221,8 @@ void img_differentiate(void){
 	   						j=1;
 	   						while (j <= 5){
 	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high)){
-	   								*BlackLineLeft = i;
-	   								(*number_edges) ++;
+	   								BlackLineLeft = i;
+	   								(number_edges) ++;
 	   								//CompareData_high = ImageDataDifference[i+j];
 	   								//CompareData_low = ImageDataDifference[i];	 
 	   							}
@@ -192,18 +247,18 @@ void img_differentiate(void){
 
 			CompareData_low = THRESHOLD_low;					// threshold_low
 			CompareData_high = THRESHOLD_high;					// threshold_high
-			*BlackLineRight = 126;
+			BlackLineRight = 126;
 			for(i=127;i>=64;i--){
 	   			if (ImageDataDifference[i] > CompareData_high){
 	   				//CompareData_high = ImageDataDifference[i];
-	   				*BlackLineRight = i;
+	   				BlackLineRight = i;
 	   			}else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high ){
 	   				if (i >= 67 && i <= 124){
 	   					j = 1;
 	   					validate_gradient = 0;
 						while (j <= 3){
 	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high){
-	   							*BlackLineRight = i;
+	   							BlackLineRight = i;
 	   							//CompareData_high = ImageDataDifference[i+j];	
 	   							validate_gradient = 1;				
 	   						}
@@ -215,7 +270,7 @@ void img_differentiate(void){
 	   						j=1;
 	   						while (j <= 5){
 	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high)){
-	   								*BlackLineRight = i;
+	   								BlackLineRight = i;
 	   								//CompareData_low = ImageDataDifference[i];	 
 	   							}
 	   							j++;
@@ -230,18 +285,18 @@ void img_differentiate(void){
 			CompareData_high = THRESHOLD_high;					// threshold_high
 
 			// image processing with the algorithm seen at the beginning. 
-			*BlackLineLeft = 1;
+			BlackLineLeft = 1;
 			for(i=0;i<=64;i++){
 	   			if (ImageDataDifference[i] > CompareData_high){
 	   				//CompareData_high = ImageDataDifference[i];
-	   				*BlackLineLeft = i;
+	   				BlackLineLeft = i;
 	   			}else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high ){
 	   				if (i >= 3 && i <= 61){
 	   					j = 1;
 	   					validate_gradient = 0;
 						while (j <= 3){
 	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high){
-	   							*BlackLineLeft = i;
+	   							BlackLineLeft = i;
 	   							//CompareData_high = ImageDataDifference[i+j];
 	   							//CompareData_low = ImageDataDifference[i];	   		
 	   							validate_gradient = 1;				
@@ -255,7 +310,7 @@ void img_differentiate(void){
 	   						j=1;
 	   						while (j <= 5){
 	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high)){
-	   								*BlackLineLeft = i;
+	   								BlackLineLeft = i;
 	   								//CompareData_high = ImageDataDifference[i+j];
 	   								//CompareData_low = ImageDataDifference[i];	 
 	   							}
@@ -268,42 +323,46 @@ void img_differentiate(void){
 		} /* END of "if (functionning_mode == 4)"  */			
 	}	/*	END of the function "Image_Processing"	*/
 
-
-void img_calculateMiddle (int * RoadMiddle, int * RoadMiddle_old, int * BlackLineLeft, int * BlackLineRight, int * diff, int * diff_old, int * number_edges){
+void Img_Proc::calculateMiddle (void){
 
 	// Store old RoadMiddle value
-	*RoadMiddle_old = *RoadMiddle;
+	RoadMiddle_old = RoadMiddle;
 
 	// Find middle of the road, 64 for strait road
-	*RoadMiddle = (*BlackLineLeft + *BlackLineRight)/2;
+	RoadMiddle = (BlackLineLeft + BlackLineRight)/2;
 
 	// if a line is only on the the right side
-	if (*BlackLineLeft < 3){
-		*RoadMiddle = *BlackLineRight - 50;
+	if (BlackLineLeft < 3){
+		RoadMiddle = BlackLineRight - 50;
 	}
 	// if a line is only on the the left side
-	if (*BlackLineRight > 124){
-		*RoadMiddle = *BlackLineLeft + 50;
+	if (BlackLineRight > 124){
+		RoadMiddle = BlackLineLeft + 50;
 	}
 	// if no line on left and right side
 	if (number_edges == 0){
-		*RoadMiddle = *RoadMiddle_old;
-		for (i = 0 ; i < 1000000 ; i++);
+		RoadMiddle = RoadMiddle_old;
+		//for (i = 0 ; i < 1000000 ; i++);
 	}
-	if ((*BlackLineRight > 124) && (*BlackLineLeft < 3)){
-		*RoadMiddle = *RoadMiddle_old;		// we continue on the same trajectory as before 
+	if ((BlackLineRight > 124) && (BlackLineLeft < 3)){
+		RoadMiddle = RoadMiddle_old;		// we continue on the same trajectory as before 
 	}
 
 	// Store old value
-	*diff_old = *diff;							// store old difference
+	diff_old = diff;							// store old difference
 	
 	// Find difference from real middle
-	*diff = *RoadMiddle - 64;						// calculate actual difference
+	diff = RoadMiddle - 64;						// calculate actual difference
 
 	// plausibility check
-	if (abs (*diff - *diff_old) > 50){
-		*diff = *diff_old;
+	if (abs (diff - diff_old) > 50){
+		diff = diff_old;
 	}
 }
 
-
+void Img_Proc::processAll(void) {
+	capture();
+	differentiate();
+	process();
+	calculateMiddle();
+}

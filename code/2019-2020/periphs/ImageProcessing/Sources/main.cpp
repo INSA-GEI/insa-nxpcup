@@ -1,18 +1,11 @@
-#include <MKL25Z4.h>
+#include "derivative.h" /* include peripheral declarations */
+
 #include "Debug.h"
 #include "ImageProcessing.h"
 
 #define SLOW_BLINK      (10000000)
 #define FAST_BLINK      (1000000)
 #define BLINK_DELAY     FAST_BLINK
-
-int diff = 0;						// used in "camera.c"					// actual difference from line middle position
-int diff_old = 0;												// actual position of the servo relative to middle
-int RoadMiddle = 0;					// used in "camera.c"					// calculated middle of the road
-int RoadMiddle_old = 0;				// used in "movement.c"					// save the last "Middle of the road" position
-int BlackLineRight = 127;			// used in "camera.c"					// position of the black line on the right side
-int BlackLineLeft = 0;				// used in "camera.c"					// position of the black line on the left side
-int number_edges = 0;		
 
 
 void clock_init();
@@ -21,25 +14,24 @@ int main (void){
 	clock_init();
 	int i=0;
 	debug_init();
-	camera_init();
+	Img_Proc camera;
+	camera.init();
 	while(1){                
-		delay_time(50000);
+		delay_time(500000);
 		DEBUG_RED_ON;
-		img_differentiate();
-		img_process(&diff,&diff_old,&BlackLineLeft,&BlackLineRight,&RoadMiddle,&number_edges);
-		img_calculateMiddle(&RoadMiddle,&RoadMiddle_old,&BlackLineLeft,&BlackLineRight,&diff,&diff_old,&number_edges);
-		debug_displaySendNb(number_edges);
+		camera.processAll();
 		DEBUG_RED_OFF;
+		camera.processAll();
 		i++;
 		if(i>100){
 			DEBUG_GREEN_ON;
 			for(i=0;i<128;i++){	
 				uart_write("$",1);
-				uart_writeNb(camera_getRawData(i),0);
+				uart_writeNb(camera.ImageData[i],0);
 				uart_write(" ",1);
-				uart_writeNb(img_getDiffData(i),0);
+				uart_writeNb(camera.ImageDataDifference[i],0);
 				uart_write(" ",1);
-				if(BlackLineLeft==i || BlackLineRight==i || RoadMiddle==i){
+				if(camera.BlackLineLeft==i || camera.BlackLineRight==i || camera.RoadMiddle==i){
 					uart_writeNb(1000,0);	
 				}else{
 					uart_writeNb(0,0);	
