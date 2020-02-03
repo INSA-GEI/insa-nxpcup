@@ -92,7 +92,7 @@ void debug_displaySendNb(int8_t nb){
 	}
 }
 
-#define BUFLEN 128
+#define BUFLEN 256
 
 static uint8_t _tx_buffer[sizeof(RingBuffer) + BUFLEN] __attribute__ ((aligned(4)));
 static uint8_t _rx_buffer[sizeof(RingBuffer) + BUFLEN] __attribute__ ((aligned(4)));
@@ -125,11 +125,12 @@ int uart_write(char *p, int len){
 	return len;
 }
 void uart_writeNb(int n){
-	if(n<0){
-		uart_write("-",1);
-		n=-n;
-	}
 	int d=1;
+	if(n<0){
+		n=-n;
+		while(buf_isfull(tx_buffer));
+		buf_put_byte(tx_buffer,'-');
+	}
 	while((10*d)<=n)d*=10;
 	while(d>0){
 		while(buf_isfull(tx_buffer));

@@ -1,6 +1,7 @@
 #include <MKL25Z4.h>
 #include "Debug.h"
 #include "Encoder.h"
+#include "Motor.h"
 #define SLOW_BLINK      (10000000)
 #define FAST_BLINK      (1000000)
 #define BLINK_DELAY     FAST_BLINK
@@ -9,19 +10,51 @@ void clock_init();
 void delay_time(int);
 
 Encoder myEncoder;
-
+int avgLeft,avgRight,targetSpeed,i;
+char str[10];
 int main (void){
 	clock_init();
 	debug_init();
+	debug_displaySendNb(0);
 	uart_write("Hello !\r\n",9);
+	motor_init();
 	myEncoder.init();
+	targetSpeed=0;
+	avgLeft=0;
+	avgRight=0;
+	i=0;
 	
 	while(1){      
-		delay_time(FAST_BLINK/2);
-		uart_writeNb(myEncoder.getLeftSpeed(),0);
-		uart_write("\t",1);
-		uart_writeNb(myEncoder.getRightSpeed(),0);
-		uart_write("\r\n",2);
+		delay_time(FAST_BLINK/40);
+		i++;
+		avgLeft+=myEncoder.getLeftSpeed();
+		avgRight+=myEncoder.getRightSpeed();
+		if(i>=20){
+			i=0;
+			if(uart_read(str,1)>0){
+				if(str[0]=='+')targetSpeed+=10;
+				if(str[0]=='-')targetSpeed-=10;
+			}
+			if(targetSpeed>=0){
+				MOTOR_LEFT_FORWARD;
+				MOTOR_RIGHT_FORWARD;
+				MOTOR_LEFT_FSPEED(targetSpeed);
+				MOTOR_RIGHT_FSPEED(targetSpeed);
+			}else{
+				MOTOR_LEFT_BACKWARD;
+				MOTOR_RIGHT_BACKWARD;
+				MOTOR_LEFT_BSPEED(-targetSpeed);
+				MOTOR_RIGHT_BSPEED(-targetSpeed);
+			}
+			uart_writeNb(targetSpeed);
+			uart_write("\t",1);
+			uart_writeNb(avgLeft/20);
+			uart_write("\t",1);
+			uart_writeNb(avgRight/20);
+			uart_write("\r\n",2);
+			avgLeft=0;
+			avgRight=0;
+		}
 		
 	}
 }
