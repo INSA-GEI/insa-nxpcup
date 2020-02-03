@@ -16,8 +16,9 @@
 #define MOVEMENT_ENTRAXE_COEFF 0.075 	// E=15cm : Vdiff=E/2*speed*tan(theta) approx.= E/2*speed*theta
 
 #define MOVEMENT_CORR_THRESHOLD 6 		// correct the speed only when we are more than 1 cm/s off target speed
-#define MOVEMENT_CORR_KP 0.5			// amount of error to correct each iteration
-#define SPEED_LIMIT 5000 				//	mm/s
+#define MOVEMENT_CORR_KP .1			// amount of error to correct each iteration
+#define SPEED_LIMIT 9000 				//	mm/s
+#define MOVEMENT_INTERRUPT_MOD 1		//Modulo for interrupts regulation, divide from approx 6kHz to 1kHz //Maybe not a good idea 
 
 class Movement{
 public:
@@ -39,6 +40,7 @@ public:
 private:
 	void applySpeeds(void);
 	float targetAngle;//	degrees
+	int interruptCounter;//	interrupt counter to reduce  
 	
 };
 

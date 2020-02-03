@@ -12,6 +12,7 @@ Movement::Movement() {
 	targetAngle=0.0;
 	targetSpeedL=0;
 	targetSpeedR=0;
+	interruptCounter=0;
 	actualSpeedL=targetSpeedL;
 	actualSpeedR=targetSpeedR;
 }
@@ -30,7 +31,7 @@ void Movement::set(int speed, float angle) {
 }
 
 void Movement::setSpeed(int speed) {
-	if(speed<=0){
+	if(speed<0){
 		stop();
 		return;
 	}
@@ -68,21 +69,30 @@ void Movement::stop(void) {
 
 
 void Movement::regulate(void) {
-	int err=encoder.getLeftSpeed();
-	if(err>0){	//detect invalid speed readings
+	GPIOB_PTOR = DEBUG_RED_Pin;
+	if(++interruptCounter>=MOVEMENT_INTERRUPT_MOD){
+		int err=encoder.getLeftSpeed();
+		if(err<0){	//detect invalid speed readings
+			err=0;
+		}
 		err=targetSpeedL-err;//calculate error
 		if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){//if error needs correction
+			
 			actualSpeedL=actualSpeedL+err*MOVEMENT_CORR_KP;//compensate real speed command
 		}
-	}
-	err=encoder.getRightSpeed();
-	if(err>0){	//detect invalid speed readings
-		err=targetSpeedR-err;
-		if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){
-			actualSpeedR=actualSpeedR+err*MOVEMENT_CORR_KP;
+		
+		err=encoder.getRightSpeed();
+		if(err<0){	//detect invalid speed readings
+			err=0;
 		}
+			err=targetSpeedR-err;
+			if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){
+				actualSpeedR=actualSpeedR+err*MOVEMENT_CORR_KP;
+			}
+		
+		applySpeeds();
+		interruptCounter=0;
 	}
-	applySpeeds();
 
 }
 
