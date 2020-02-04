@@ -13,10 +13,10 @@
 #include "Encoder.h"
 #include "Debug.h"
 
-#define MOVEMENT_ENTRAXE_COEFF 0.075 	// E=15cm : Vdiff=E/2*speed*tan(theta) approx.= E/2*speed*theta
+#define MOVEMENT_ENTRAXE_COEFF 0.005//0.0056 	// E=15cm 
 
 #define MOVEMENT_CORR_THRESHOLD 6 		// correct the speed only when we are more than 1 cm/s off target speed
-#define MOVEMENT_CORR_KP .1			// amount of error to correct each iteration
+#define MOVEMENT_CORR_KP .3			// amount of error to correct each iteration
 #define SPEED_LIMIT 9000 				//	mm/s
 #define MOVEMENT_INTERRUPT_MOD 1		//Modulo for interrupts regulation, divide from approx 6kHz to 1kHz //Maybe not a good idea 
 
@@ -26,7 +26,6 @@ public:
 	void init(void);
 	void set(int speed, float angle);
 	void setSpeed(int speed);
-	void setAngle(float angle);
 	void stop(void);
 	void regulate(void);
 	Encoder encoder; // needed in public for interrupt access
@@ -39,6 +38,7 @@ public:
 	
 private:
 	void applySpeeds(void);
+	void setAngle(float angle);
 	float targetAngle;//	degrees
 	int interruptCounter;//	interrupt counter to reduce  
 	

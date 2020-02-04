@@ -40,9 +40,15 @@ void Movement::setSpeed(int speed) {
 	MOTOR_RIGHT_FORWARD;
 	int deltaSpeed=targetAngle*MOVEMENT_ENTRAXE_COEFF*speed;
 
+	/*int dl=speed+deltaSpeed;
+	int dr=speed-deltaSpeed;
+	
+	actualSpeedL+=dl-targetSpeedL;
+	actualSpeedR+=dl-targetSpeedR;
+	targetSpeedL=dl;
+	targetSpeedR=dr;*/
 	targetSpeedL=speed+deltaSpeed;
 	targetSpeedR=speed-deltaSpeed;
-
 	actualSpeedL=targetSpeedL;
 	actualSpeedR=targetSpeedR;
 	applySpeeds();

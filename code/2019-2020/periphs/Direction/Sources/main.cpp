@@ -10,31 +10,36 @@ void delay_time(int);
 
 Movement myMovement;
 int i=0;
-int v=0;
+int v=500;
 int main (void){
 	clock_init();
 	debug_init();
 	uart_write("Hello !\r\n",9);
 	myMovement.init();
-	myMovement.set(v,0.0); // Pour speed = 100 >> 3m en 3sec 
-	// Pour speed = 150 >> 3m en 1.8sec
+	delay_time(SLOW_BLINK);
+	myMovement.set(v,0.0); 
 	while(1){
 		
-		i++;
-		
-		if(i>150){
+		if(++i>100){
 			i=0;
 			v+=250;
-			if(v>2000)v=0;
-			myMovement.setSpeed(v);
+			if(v>5000)v=0;
+			myMovement.set(v,0.0); 
 		}
+		
 		delay_time(FAST_BLINK/20);
 		uart_write("$",1);
 		uart_writeNb(myMovement.targetSpeedL);
 		uart_write(" ",1);
-		uart_writeNb(myMovement.encoder.getLeftSpeed());
+		uart_writeNb(myMovement.targetSpeedR);
 		uart_write(" ",1);
 		uart_writeNb(myMovement.actualSpeedL);
+		uart_write(" ",1);
+		uart_writeNb(myMovement.actualSpeedR);
+		uart_write(" ",1);
+		uart_writeNb(myMovement.encoder.getLeftSpeed());
+		uart_write(" ",1);
+		uart_writeNb(myMovement.encoder.getRightSpeed());
 		uart_write(";",1);
 	}
 }
@@ -47,12 +52,12 @@ void delay_time(int number){
 void FTM1_IRQHandler() {//servo interrupt, 100Hz
 	//Clear the bit of the interrupt FTM1;
 	
-	myMovement.regulate();
 	TPM1_SC |= TPM_SC_TOF_MASK;
 
 }
 void FTM2_IRQHandler() {//encoder interrupt 6kHz
 	myMovement.encoder.interruptHandler();
+	myMovement.regulate();
 	
 }
 
