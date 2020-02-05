@@ -229,3 +229,38 @@ void buf_put_byte(RingBuffer *buf, uint8_t val){
 	buf->data[buf->tail] = val;
 	buf->tail = advance(buf->tail, buf->size);
 }
+
+/*********** LPTMR ***********/
+void lptmr_conf(unsigned int PSR_value){
+	
+	SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK;
+	PORTA_PCR19 = PORT_PCR_MUX(6);//LPTMR0_ALT2 
+	
+	// enable interrupts 19 (TPM = FTM2)  in NVIC, no interrupt levels
+	NVIC_ICPR |= (1 << 28);			// clear pending interrupt 28
+	NVIC_ISER |= (1 << 28);			// enable interrupt 28
+		
+	// Control Status Register
+	LPTMR0_CSR |=  LPTMR_CSR_TEN_MASK; 		 //Enable timer counter 
+	LPTMR0_CSR &= ~LPTMR_CSR_TMS_MASK ;						//Timer mode counter is selected
+	
+	// Prescaler Register
+	LPTMR0_PSR = LPTMR_PSR_PRESCALE(PSR_value);
+	LPTMR0_PSR &= ~LPTMR_PSR_PBYP_MASK;		//Presclaer enable	(to check...)			
+	LPTMR0_PSR |= LPTMR_PSR_PCS(2);			// Prescaler clock select
+	
+	// ARR
+	LPTMR0_CMR = LPTMR_CMR_COMPARE(15);					// ARR at the max
+	
+	LPTMR0_CSR |= LPTMR_CSR_TIE_MASK ;		// Enable Interruption (to do at the end of the initialization)
+	
+	
+}
+
+void LPTMR0_IRQHandler(void){
+	
+	//Clear flag interrupt
+	LPTMR0_CSR &= ~LPTMR_CSR_TCF_MASK;
+	
+	
+}

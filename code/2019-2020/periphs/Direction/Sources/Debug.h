@@ -40,6 +40,8 @@
 #define DISP_LATCH_OFF		(GPIOC_PCOR = DISP_LATCH_PIN)
 #define DISP_LATCH_ON		(GPIOC_PSOR = DISP_LATCH_PIN)
 
+#define LPTMR_ARR 65535
+
 
 void debug_init();
 
@@ -82,4 +84,9 @@ void uart_writeNb(int n);
 int uart_write_err(char *p, int len);
 int uart_read(char *p, int len);
 void uart_init(int baudrate);
+
+
+/************* Low Power Timer (LPTMR) **************/
+void lptmr_conf(unsigned int PSR_value);
+
 #endif /* DEBUG_H_ */
