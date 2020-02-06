@@ -44,6 +44,7 @@
 
 
 void debug_init();
+void clock_init();
 
 //input stuff
 unsigned char debug_getRotarySW();

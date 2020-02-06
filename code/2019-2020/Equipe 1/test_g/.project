@@ -25,9 +25,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>Sources/DRIVERS</name>
+			<name>Sources/drivers</name>
 			<type>2</type>
-			<locationURI>DRIVERS</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/drivers</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
