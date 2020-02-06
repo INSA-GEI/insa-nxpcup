@@ -79,26 +79,28 @@ uint8_t buf_get_byte(RingBuffer *buf);
 void buf_put_byte(RingBuffer *buf, uint8_t val);
 
 void UART0_IRQHandler() __attribute__((interrupt("IRQ")));
-int uart_write(char *p, int len);
+int uart_write(const char *p, int len);
 void uart_writeNb(int n);
-int uart_write_err(char *p, int len);
+int uart_write_err(const char *p, int len);
 int uart_read(char *p, int len);
 void uart_init(int baudrate);
 
 
 /************* Low Power Timer (LPTMR) **************/
 
-#define f_timer 2000u
+#define f_timer 1 // 0.4Hz to 11.5kHz max setting
 #define PSC_LPTMR 2048
 #define PSC_POWER 11
 #define ARR_LPTMR (int)(CORE_CLOCK/(f_timer*(PSC_LPTMR+1)))
 
-void lptmr_conf(unsigned int PSR_value);
+void lptmr_conf(void);
 
 /************* ADC0 **************/
-#define VBATT (7.2*2.2/(2.2+4.7)*1000.0)	// =2290mV (pont diviseur de tension)
+#define ADC_SCALING (3.3*(2.2+4.7)*1000.0/2.2)
 #define ADC_RESOLUTION 1023		//10 bits 
 #define BATT_SEUIL VBATT * ADC_RESOLUTION *0.5	//50% of battery
 
 
+void BatteryVoltage(void);
+void ADC_init(void);
 #endif /* DEBUG_H_ */

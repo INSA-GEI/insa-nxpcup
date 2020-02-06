@@ -58,6 +58,9 @@ void debug_init(){
 
 	//UART init
 	uart_init(BAUDRATE);
+	ADC_init();
+	BatteryVoltage();
+	lptmr_conf();
 }
 unsigned char debug_getRotarySW(){
 	//return (GPIOE_PDIR & 0x003C)>>2;
@@ -116,7 +119,7 @@ void UART0_IRQHandler(){
 	}
 }
 
-int uart_write(char *p, int len){
+int uart_write(const char *p, int len){
 	for(int i=0; i<len; i++) {
 		while(buf_isfull(tx_buffer));
 		buf_put_byte(tx_buffer, *p++);
@@ -138,7 +141,7 @@ void uart_writeNb(int n){
 		d/=10;
 	}
 }
-int uart_write_err(char *p, int len){
+int uart_write_err(const char *p, int len){
 	int i;
 	__disable_irq();
 	for(i=0; i<len; i++) {
@@ -258,16 +261,15 @@ void lptmr_conf(void){
 }
 
 void LPTMR0_IRQHandler(void){
-	
+	BatteryVoltage();
 	//Clear flag interrupt
-	LPTMR0_CSR &= ~LPTMR_CSR_TCF_MASK;
+	LPTMR0_CSR |= LPTMR_CSR_TCF_MASK;
 	
 	
 }
 
 
 /************** ADC0 *****************/
-
 
 void ADC_init(void){
 	// turn on ADC0 clock
@@ -290,7 +292,7 @@ void BatteryVoltage(void) {
 	//ADC0_SC1A |= ADC_SC1_AIEN_MASK;				//Interruption enabled
 	ADC0_SC1A  =  3;							// set ADC0 channel 11
 	while((ADC0_SC1A & ADC_SC1_COCO_MASK) == 0);// wait until ADC is ready
-	BattMeasurement = (int)((VBATT*ADC0_RA)/ADC_RESOLUTION);	
+	BattMeasurement = (int)((ADC_SCALING*ADC0_RA)/ADC_RESOLUTION);	
 		
 	uart_write("La batterie est de ", 20);
 	uart_writeNb(BattMeasurement);
