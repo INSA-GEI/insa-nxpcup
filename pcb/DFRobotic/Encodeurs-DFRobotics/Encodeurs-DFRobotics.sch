@@ -5,9 +5,9 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "Encodeurs DFRobotics"
-Date "2020-01-30"
+Date "2020-02-05"
 Rev "1.0"
-Comp "INSA"
+Comp "INSA - GEI"
 Comment1 ""
 Comment2 ""
 Comment3 ""
@@ -525,4 +525,15 @@ $EndComp
 Wire Wire Line
 	2350 6950 2550 6950
 Connection ~ 2550 6950
+$Comp
+L insa-sym:LOGO G1
+U 1 1 5E3AFE48
+P 7600 6800
+F 0 "G1" H 7600 6348 60  0001 C CNN
+F 1 "LOGO" H 7600 7252 60  0001 C CNN
+F 2 "" H 7600 6800 50  0001 C CNN
+F 3 "" H 7600 6800 50  0001 C CNN
+	1    7600 6800
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

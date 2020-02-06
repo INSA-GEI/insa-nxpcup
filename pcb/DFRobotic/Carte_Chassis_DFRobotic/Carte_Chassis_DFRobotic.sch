@@ -5,8 +5,8 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "Carte_DFRobotic"
-Date "2020-01-29"
-Rev "1.0"
+Date "2020-02-03"
+Rev "1.1"
 Comp "INSA Toulouse (GEI)"
 Comment1 ""
 Comment2 ""
@@ -106,7 +106,7 @@ L Device:R R1
 U 1 1 5DFFD4F4
 P 2500 1200
 F 0 "R1" H 2570 1246 50  0000 L CNN
-F 1 "100R" H 2570 1155 50  0000 L CNN
+F 1 "2.2K" H 2570 1155 50  0000 L CNN
 F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 2430 1200 50  0001 C CNN
 F 3 "~" H 2500 1200 50  0001 C CNN
 	1    2500 1200
@@ -1258,12 +1258,12 @@ Wire Wire Line
 Wire Wire Line
 	1500 6900 800  6900
 Wire Wire Line
-	4800 5400 5450 5400
+	4800 5100 5450 5100
 Wire Wire Line
 	4800 5300 5450 5300
 Text Label 5450 5300 2    50   ~ 0
 SW_USER1
-Text Label 5450 5400 2    50   ~ 0
+Text Label 5450 5100 2    50   ~ 0
 SW_USER2
 Wire Wire Line
 	1500 5300 800  5300
@@ -1306,7 +1306,6 @@ NoConn ~ 2600 6700
 NoConn ~ 2600 6600
 NoConn ~ 2600 6300
 NoConn ~ 1500 5600
-NoConn ~ 4800 5100
 NoConn ~ 4800 5200
 NoConn ~ 4800 5600
 Connection ~ 8950 1200
@@ -2078,4 +2077,5 @@ NoConn ~ 7050 6050
 NoConn ~ 7050 4800
 Wire Wire Line
 	6100 4800 7150 4800
+NoConn ~ 4800 5400
 $EndSCHEMATC
