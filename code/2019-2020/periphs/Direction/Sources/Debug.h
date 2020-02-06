@@ -87,6 +87,18 @@ void uart_init(int baudrate);
 
 
 /************* Low Power Timer (LPTMR) **************/
+
+#define f_timer 2000u
+#define PSC_LPTMR 2048
+#define PSC_POWER 11
+#define ARR_LPTMR (int)(CORE_CLOCK/(f_timer*(PSC_LPTMR+1)))
+
 void lptmr_conf(unsigned int PSR_value);
+
+/************* ADC0 **************/
+#define VBATT (7.2*2.2/(2.2+4.7)*1000.0)	// =2290mV (pont diviseur de tension)
+#define ADC_RESOLUTION 1023		//10 bits 
+#define BATT_SEUIL VBATT * ADC_RESOLUTION *0.5	//50% of battery
+
 
 #endif /* DEBUG_H_ */
