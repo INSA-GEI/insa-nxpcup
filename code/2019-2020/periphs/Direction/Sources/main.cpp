@@ -17,18 +17,18 @@ int main (void){
 	uart_write("Hello !\r\n",9);
 	myMovement.init();
 	delay_time(SLOW_BLINK);
-	myMovement.set(v,-20.0); 
+	myMovement.set(v,0.0); 
 	while(1){
 		
 		if(++i>100){
 			i=0;
 			v+=250;
-			if(v>5000)v=0;
-			myMovement.set(v,-20.0); 
+			if(v>2000)v=0;
+			myMovement.set(v,0.0); 
 		}
 		
 		delay_time(FAST_BLINK/20);
-		uart_write("$",1);
+		/*uart_write("$",1);
 		uart_writeNb(myMovement.targetSpeedL);
 		uart_write(" ",1);
 		uart_writeNb(myMovement.targetSpeedR);
@@ -40,7 +40,7 @@ int main (void){
 		uart_writeNb(myMovement.encoder.getLeftSpeed());
 		uart_write(" ",1);
 		uart_writeNb(myMovement.encoder.getRightSpeed());
-		uart_write(";",1);
+		uart_write(";",1);*/
 	}
 }
 
