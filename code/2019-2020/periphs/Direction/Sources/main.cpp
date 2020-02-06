@@ -17,14 +17,14 @@ int main (void){
 	uart_write("Hello !\r\n",9);
 	myMovement.init();
 	delay_time(SLOW_BLINK);
-	myMovement.set(v,0.0); 
+	myMovement.set(v,-20.0); 
 	while(1){
 		
 		if(++i>100){
 			i=0;
 			v+=250;
 			if(v>5000)v=0;
-			myMovement.set(v,0.0); 
+			myMovement.set(v,-20.0); 
 		}
 		
 		delay_time(FAST_BLINK/20);
