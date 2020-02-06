@@ -174,7 +174,8 @@ typedef enum {
    ---------------------------------------------------------------------------- */
 
 /*!
- * @addtogroup ADC_Peripheral ADC
+ * @addtogroup 
+_Peripheral ADC
  * @{
  */
 
