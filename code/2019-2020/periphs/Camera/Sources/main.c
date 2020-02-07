@@ -24,7 +24,7 @@ int main (void){
 		if(i>100){
 			for(i=0;i<128;i++){	
 				uart_write("$",1);
-				uart_writeNb(camera_getRawData(i),0);
+				uart_writeNb(camera_getRawData(i));
 				uart_write(";",1);
 			}
 			uart_write("\r\n",2);

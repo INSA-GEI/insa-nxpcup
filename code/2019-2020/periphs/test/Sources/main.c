@@ -24,7 +24,7 @@ int main (void){
 		int l=uart_read(str,10);
 		if(l>0){
 			uart_write(str,l);
-			uart_writeNb(l,0);
+			uart_writeNb(l);
 			uart_write("\r\n",2);
 		}
 	}

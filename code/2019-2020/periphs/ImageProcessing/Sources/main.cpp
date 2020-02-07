@@ -27,14 +27,14 @@ int main (void){
 			DEBUG_GREEN_ON;
 			for(i=0;i<128;i++){	
 				uart_write("$",1);
-				uart_writeNb(camera.ImageData[i],0);
+				uart_writeNb(camera.ImageData[i]);
 				uart_write(" ",1);
-				uart_writeNb(camera.ImageDataDifference[i],0);
+				uart_writeNb(camera.ImageDataDifference[i]);
 				uart_write(" ",1);
 				if(camera.BlackLineLeft==i || camera.BlackLineRight==i || camera.RoadMiddle==i){
-					uart_writeNb(1000,0);	
+					uart_writeNb(1000);	
 				}else{
-					uart_writeNb(0,0);	
+					uart_writeNb(0);	
 				}
 				uart_write(";",1);
 			}
