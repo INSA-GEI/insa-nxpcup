@@ -40,7 +40,7 @@
 #define DISP_LATCH_OFF		(GPIOC_PCOR = DISP_LATCH_PIN)
 #define DISP_LATCH_ON		(GPIOC_PSOR = DISP_LATCH_PIN)
 
-#define LPTMR_ARR 65535
+
 
 
 void debug_init();
@@ -92,7 +92,7 @@ void uart_init(int baudrate);
 #define PSC_LPTMR 2048
 #define PSC_POWER 11
 #define ARR_LPTMR (int)(CORE_CLOCK/(f_timer*(PSC_LPTMR+1)))
-
+#define LPTMR_ARR 65535
 void lptmr_conf(void);
 
 /************* ADC0 **************/

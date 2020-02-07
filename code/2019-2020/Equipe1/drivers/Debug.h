@@ -88,6 +88,22 @@ void uart_init(int baudrate);
 
 
 /************* Low Power Timer (LPTMR) **************/
-void lptmr_conf(unsigned int PSR_value);
+
+#define f_timer 1 // 0.4Hz to 11.5kHz max setting
+#define PSC_LPTMR 2048
+#define PSC_POWER 11
+#define ARR_LPTMR (int)(CORE_CLOCK/(f_timer*(PSC_LPTMR+1)))
+#define LPTMR_ARR 65535
+void lptmr_conf(void);
+
+/************* ADC0 **************/
+#define ADC_SCALING (3.3*(2.2+4.7)*1000.0/2.2)
+#define ADC_RESOLUTION 1023		//10 bits 
+#define BATT_SEUIL VBATT * ADC_RESOLUTION *0.5	//50% of battery
+
+
+void BatteryVoltage(void);
+void ADC_init(void);
+
 
 #endif /* DEBUG_H_ */

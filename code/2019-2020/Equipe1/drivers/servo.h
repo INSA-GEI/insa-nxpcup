@@ -16,12 +16,12 @@
 
 #define SERVO_SET_CHANNEL_0 0x28 		//Set these bits to configure channel 0 on "Edge-aligned PWM" with "high true pulses" configuration
 
-#define  SERVO_CENTER_POS 7280		// initial servo position (center)
-#define SERVO_HARD_LEFT 8030
-#define SERVO_HARD_RIGHT 6530
+#define  SERVO_CENTER_POS 7250		// initial servo position (center)
+#define SERVO_HARD_LEFT 8000
+#define SERVO_HARD_RIGHT 6500
 
-#define SERVO_MAX_LEFT_ANGLE -35.0
-#define SERVO_MAX_RIGHT_ANGLE 35.0
+#define SERVO_MAX_LEFT_ANGLE -22.0
+#define SERVO_MAX_RIGHT_ANGLE 29.0
 //Configuration of the pins/clock
 void servo_init(void);
 

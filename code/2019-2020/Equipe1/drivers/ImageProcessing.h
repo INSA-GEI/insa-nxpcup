@@ -19,6 +19,13 @@
 #define	CAM_CLK_LOW				GPIOB_PDOR &= ~(1<<9)	// CLK on PTB9
 
 
+//#define KP_STRAIGHT						50			// Proportional coefficient in straight line
+//#define KDP_STRAIGHT					15			// Differential coefficient in straight line
+
+#define KP_TURN 						.7			// Proportional coefficient in turn
+#define KDP_TURN 						.6			// Differential coefficient in turn
+
+
 
 // Define thresholds for Camera Black Line recognition
 #define THRESHOLD_high				140			// Higher threshold : does not capture noise but may not capture all maximums.
@@ -40,6 +47,7 @@ public:
 	
 	int diff;							// actual difference from line middle position
 	int diff_old;						// actual position of the servo relative to middle
+	float servo_angle;
 	int RoadMiddle;						// calculated middle of the road
 	int RoadMiddle_old;					// save the last "Middle of the road" position
 	int BlackLineRight;					// position of the black line on the right side (127)

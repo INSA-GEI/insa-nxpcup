@@ -34,6 +34,7 @@ void Img_Proc::init(){
 	
 	diff=0;
 	diff_old=0;
+	servo_angle=0;
 	RoadMiddle=0;
 	RoadMiddle_old=0;
 	BlackLineRight=127;
@@ -357,6 +358,8 @@ void Img_Proc::calculateMiddle (void){
 	// plausibility check
 	if (abs (diff - diff_old) > 50){
 		diff = diff_old;
+	}else{
+		servo_angle=KP_TURN*(float)diff + KDP_TURN*(float)(diff-diff_old);
 	}
 }
 

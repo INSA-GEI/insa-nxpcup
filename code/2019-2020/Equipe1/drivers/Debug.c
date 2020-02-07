@@ -61,6 +61,8 @@ void debug_init(){
 
 	//UART init
 	uart_init(BAUDRATE);
+	ADC_init();
+	BatteryVoltage();
 }
 unsigned char debug_getRotarySW(){
 	//return (GPIOE_PDIR & 0x003C)>>2;
@@ -234,7 +236,7 @@ void buf_put_byte(RingBuffer *buf, uint8_t val){
 }
 
 /*********** LPTMR ***********/
-void lptmr_conf(unsigned int PSR_value){
+void lptmr_conf(void){
 	
 	SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK;
 	PORTA_PCR19 = PORT_PCR_MUX(6);//LPTMR0_ALT2 
@@ -248,12 +250,12 @@ void lptmr_conf(unsigned int PSR_value){
 	LPTMR0_CSR &= ~LPTMR_CSR_TMS_MASK ;						//Timer mode counter is selected
 	
 	// Prescaler Register
-	LPTMR0_PSR = LPTMR_PSR_PRESCALE(PSR_value);
+	LPTMR0_PSR = LPTMR_PSR_PRESCALE(PSC_POWER);
 	LPTMR0_PSR &= ~LPTMR_PSR_PBYP_MASK;		//Presclaer enable	(to check...)			
 	LPTMR0_PSR |= LPTMR_PSR_PCS(2);			// Prescaler clock select
 	
 	// ARR
-	LPTMR0_CMR = LPTMR_CMR_COMPARE(15);					// ARR at the max
+	LPTMR0_CMR = ARR_LPTMR;					// ARR at the max
 	
 	LPTMR0_CSR |= LPTMR_CSR_TIE_MASK ;		// Enable Interruption (to do at the end of the initialization)
 	
@@ -261,12 +263,47 @@ void lptmr_conf(unsigned int PSR_value){
 }
 
 void LPTMR0_IRQHandler(void){
-	
+	BatteryVoltage();
 	//Clear flag interrupt
-	LPTMR0_CSR &= ~LPTMR_CSR_TCF_MASK;
+	LPTMR0_CSR |= LPTMR_CSR_TCF_MASK;
 	
 	
 }
+
+
+/************** ADC0 *****************/
+
+void ADC_init(void){
+	// turn on ADC0 clock
+		SIM_SCGC6 |= SIM_SCGC6_ADC0_MASK;
+		// ADC0 clock configuration : 													WARNING : maybe not compatible with 48MHz system clock ! to check
+			ADC0_CFG1 |= 0x01;				// clock is bus clock divided by 2 = 24 MHz
+			
+			// ADC0 resolution    
+			ADC0_CFG1 |= 0x08;				// resolution 10 bit, max. value is 1023
+
+			// ADC0 conversion mode
+			ADC0_SC3 = 0x00;				// single conversion mode
+}
+
+void BatteryVoltage(void) {
+
+	uint16_t BattMeasurement;
+	
+	ADC0_CFG2 |= 0x10;							// select B side of the MUX
+	//ADC0_SC1A |= ADC_SC1_AIEN_MASK;				//Interruption enabled
+	ADC0_SC1A  =  3;							// set ADC0 channel 11
+	while((ADC0_SC1A & ADC_SC1_COCO_MASK) == 0);// wait until ADC is ready
+	BattMeasurement = (int)((ADC_SCALING*ADC0_RA)/ADC_RESOLUTION);	
+		
+	uart_write("La batterie est de ", 20);
+	uart_writeNb(BattMeasurement);
+	uart_write("mV.\r\n", 5);
+	
+	ADC0_SC1A  =  11;	//For the camera
+	
+}
+
 
 
 
