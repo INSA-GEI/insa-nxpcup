@@ -9,6 +9,7 @@
 
 #include "derivative.h" /* include peripheral declarations */
 #include "Debug.h"
+#define SLOW_BLINK      (100000)
 
 void clock_init(){
     // Enable clock gate to Port A module to enable pin routing (PORTA=1)
@@ -66,13 +67,18 @@ void clock_init(){
     while((MCG_S & MCG_S_CLKST_MASK) != 0x0CU);  // Wait until PLL output
 }
 
+void delay_time(int number){
+	int cnt;
+	for(cnt=0;cnt<number;cnt++);
+}
 
 
 int main(void){
 	clock_init();
 	debug_init();
+	
+	for(;;) {	
 
-	for(;;) {	   
 	}
 	
 	return 0;

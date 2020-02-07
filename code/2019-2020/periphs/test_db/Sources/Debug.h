@@ -21,6 +21,7 @@
 #define DEBUG_RED_Pin		(1 << 18)
 #define DEBUG_GREEN_Pin		(1 << 19)
 #define DEBUG_BLUE_Pin		(1 << 1)
+#define DEBUG_CAM_LED_Pin   (1 << 12)
 
 #define DEBUG_RED_OFF		(GPIOB_PSOR = DEBUG_RED_Pin)
 #define DEBUG_RED_ON		(GPIOB_PCOR = DEBUG_RED_Pin)
@@ -28,6 +29,8 @@
 #define DEBUG_GREEN_ON		(GPIOB_PCOR = DEBUG_GREEN_Pin)
 #define DEBUG_BLUE_OFF		(GPIOD_PSOR = DEBUG_BLUE_Pin)
 #define DEBUG_BLUE_ON		(GPIOD_PCOR = DEBUG_BLUE_Pin)
+#define DEBUG_CAM_LED_ON    (GPIOC_PSOR = DEBUG_CAM_LED_Pin)
+#define DEBUG_CAM_LED_OFF   (GPIOC_PCOR = DEBUG_CAM_LED_Pin)
 
 #define DISP_CLK_PIN		(1<<5)
 #define DISP_SIN_PIN 		(1<<6)

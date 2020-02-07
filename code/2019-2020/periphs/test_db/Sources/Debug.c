@@ -28,7 +28,11 @@ void debug_init(){
 	GPIOD_PSOR = DEBUG_BLUE_Pin;
 	GPIOD_PDDR |= DEBUG_BLUE_Pin;
 
-
+	//Initialize CAM LED (PTC12)
+	PORTC_PCR12 = PORT_PCR_MUX(1);
+	GPIOC_PSOR = DEBUG_CAM_LED_Pin;
+	GPIOC_PDDR |= DEBUG_CAM_LED_Pin;
+	
 	//PTD1 (SW_USER_2) & PTD3 (SW_USER_1)//WARNING : BLUE LED attached to same pin as SW_USER2
 	PORTD_PCR1 = PORT_PCR_MUX(1);
 	PORTD_PCR3 = PORT_PCR_MUX(1);
@@ -244,8 +248,10 @@ void lptmr_conf(void){
 	NVIC_ISER |= (1 << 28);			// enable interrupt 28
 		
 	// Control Status Register
-	LPTMR0_CSR |=  LPTMR_CSR_TEN_MASK; 		 //Enable timer counter 
 	LPTMR0_CSR &= ~LPTMR_CSR_TMS_MASK ;						//Timer mode counter is selected
+	LPTMR0_CSR &= ~LPTMR_CSR_TFC_MASK;   // Reset counter overflow
+	LPTMR0_CSR |=  LPTMR_CSR_TEN_MASK; 		 //Enable timer counter
+	
 	
 	// Prescaler Register
 	LPTMR0_PSR = LPTMR_PSR_PRESCALE(PSC_POWER);
