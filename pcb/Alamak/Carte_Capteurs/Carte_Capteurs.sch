@@ -1315,12 +1315,10 @@ Wire Wire Line
 Wire Wire Line
 	1500 6900 800  6900
 Wire Wire Line
-	4800 5400 5450 5400
-Wire Wire Line
 	4800 5300 5450 5300
 Text Label 5450 5300 2    50   ~ 0
 SW_USER1
-Text Label 5450 5400 2    50   ~ 0
+Text Label 5450 5100 2    50   ~ 0
 SW_USER2
 Wire Wire Line
 	1500 5300 800  5300
@@ -1369,7 +1367,6 @@ NoConn ~ 2600 6700
 NoConn ~ 2600 6600
 NoConn ~ 2600 6300
 NoConn ~ 1500 5600
-NoConn ~ 4800 5100
 NoConn ~ 4800 5200
 NoConn ~ 4800 5600
 $Comp
@@ -1703,4 +1700,7 @@ Text Label 6200 4950 0    50   ~ 0
 PIXY2_TX
 Text Label 6200 5050 0    50   ~ 0
 PIXY2_RX
+Wire Wire Line
+	4800 5100 5450 5100
+NoConn ~ 4800 5400
 $EndSCHEMATC
