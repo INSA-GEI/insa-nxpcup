@@ -1,3 +1,0 @@
-(sym_lib_table
-  (lib (name Adaptateur_Camera2-rescue)(type Legacy)(uri ${KIPRJMOD}/Adaptateur_Camera2-rescue.lib)(options "")(descr ""))
-)

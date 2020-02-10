@@ -82,12 +82,13 @@ Project Logs for*/
 *.7z
 
 # documentations
-#*.pdf
+*.pdf
 *.chm
 
 # kicad
 *.bak
 *.kicad_pcb-bak
+*.sch-bak
 
 # images
 *.png
@@ -97,6 +98,7 @@ Project Logs for*/
 *.ico
 *.tiff
 *.svg
+_autosave-*
 
 # Inventor
 OldVersions/
