@@ -25,64 +25,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>Sources/Debug.c</name>
-			<type>1</type>
-			<location>D:/Documents/ecole/insa/4A/NXPCUP/insa-nxpcup/code/2019-2020/Equipe1/drivers/Debug.c</location>
-		</link>
-		<link>
-			<name>Sources/Debug.h</name>
-			<type>1</type>
-			<location>D:/Documents/ecole/insa/4A/NXPCUP/insa-nxpcup/code/2019-2020/Equipe1/drivers/Debug.h</location>
-		</link>
-		<link>
-			<name>Sources/Encoder.cpp</name>
-			<type>1</type>
-			<location>D:/Documents/ecole/insa/4A/NXPCUP/insa-nxpcup/code/2019-2020/Equipe1/drivers/Encoder.cpp</location>
-		</link>
-		<link>
-			<name>Sources/Encoder.h</name>
-			<type>1</type>
-			<location>D:/Documents/ecole/insa/4A/NXPCUP/insa-nxpcup/code/2019-2020/Equipe1/drivers/Encoder.h</location>
-		</link>
-		<link>
-			<name>Sources/ImageProcessing.cpp</name>
-			<type>1</type>
-			<location>D:/Documents/ecole/insa/4A/NXPCUP/insa-nxpcup/code/2019-2020/Equipe1/drivers/ImageProcessing.cpp</location>
-		</link>
-		<link>
-			<name>Sources/ImageProcessing.h</name>
-			<type>1</type>
-			<location>D:/Documents/ecole/insa/4A/NXPCUP/insa-nxpcup/code/2019-2020/Equipe1/drivers/ImageProcessing.h</location>
-		</link>
-		<link>
-			<name>Sources/Motor.c</name>
-			<type>1</type>
-			<location>D:/Documents/ecole/insa/4A/NXPCUP/insa-nxpcup/code/2019-2020/Equipe1/drivers/Motor.c</location>
-		</link>
-		<link>
-			<name>Sources/Motor.h</name>
-			<type>1</type>
-			<location>D:/Documents/ecole/insa/4A/NXPCUP/insa-nxpcup/code/2019-2020/Equipe1/drivers/Motor.h</location>
-		</link>
-		<link>
-			<name>Sources/Movement.cpp</name>
-			<type>1</type>
-			<location>D:/Documents/ecole/insa/4A/NXPCUP/insa-nxpcup/code/2019-2020/Equipe1/drivers/Movement.cpp</location>
-		</link>
-		<link>
-			<name>Sources/Movement.h</name>
-			<type>1</type>
-			<location>D:/Documents/ecole/insa/4A/NXPCUP/insa-nxpcup/code/2019-2020/Equipe1/drivers/Movement.h</location>
-		</link>
-		<link>
-			<name>Sources/servo.c</name>
-			<type>1</type>
-			<location>D:/Documents/ecole/insa/4A/NXPCUP/insa-nxpcup/code/2019-2020/Equipe1/drivers/servo.c</location>
-		</link>
-		<link>
-			<name>Sources/servo.h</name>
-			<type>1</type>
-			<location>D:/Documents/ecole/insa/4A/NXPCUP/insa-nxpcup/code/2019-2020/Equipe1/drivers/servo.h</location>
+			<name>Sources/drivers</name>
+			<type>2</type>
+			<locationURI>PARENT-1-PROJECT_LOC/drivers</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
