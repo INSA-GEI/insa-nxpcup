@@ -29,11 +29,13 @@ void servo_setPos(int angle){
 	int pos=SERVO_CENTER_POS;
 	if(angle>0){
 		if(angle>SERVO_MAX_RIGHT_ANGLE)angle=SERVO_MAX_RIGHT_ANGLE;
-		pos+=angle*(SERVO_HARD_RIGHT-SERVO_CENTER_POS)/SERVO_MAX_RIGHT_ANGLE;
+		pos+=(SERVO_HARD_RIGHT-SERVO_CENTER_POS)*angle/SERVO_MAX_RIGHT_ANGLE;
 	}else{
 		if(angle<SERVO_MAX_LEFT_ANGLE)angle=SERVO_MAX_LEFT_ANGLE;
-		pos+=angle*(SERVO_HARD_LEFT-SERVO_CENTER_POS)/SERVO_MAX_LEFT_ANGLE;
+		pos+=(SERVO_HARD_LEFT-SERVO_CENTER_POS)*angle/SERVO_MAX_LEFT_ANGLE;
 	}
+	uart_writeNb(pos);
+	uart_write("\t\t",2);
 	TPM1_C0V=pos;
 }
 

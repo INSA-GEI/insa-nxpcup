@@ -16,9 +16,9 @@
 #define MOVEMENT_ENTRAXE_COEFF 0.005//0.0056 	// E=15cm 
 
 #define MOVEMENT_CORR_THRESHOLD 6 		// correct the speed only when we are more than 1 cm/s off target speed
-#define MOVEMENT_CORR_KP .3			// amount of error to correct each iteration
+#define MOVEMENT_CORR_KP 1			// amount of error to correct each iteration
 #define SPEED_LIMIT 9000 				//	mm/s
-#define MOVEMENT_INTERRUPT_MOD 1		//Modulo for interrupts regulation, divide from approx 6kHz to 1kHz //Maybe not a good idea 
+ 
 
 class Movement{
 public:
@@ -40,7 +40,6 @@ private:
 	void applySpeeds(void);
 	void setAngle(float angle);
 	float targetAngle;//	degrees
-	int interruptCounter;//	interrupt counter to reduce  
 	
 };
 

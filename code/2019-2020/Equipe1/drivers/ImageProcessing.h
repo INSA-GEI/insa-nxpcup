@@ -7,6 +7,11 @@
 
 #ifndef IMAGEPROCESSING_H_
 #define IMAGEPROCESSING_H_
+
+
+#define SERVO_MAX_LEFT_ANGLE -22.0
+#define SERVO_MAX_RIGHT_ANGLE 29.0
+
 #include <MKL25Z4.h>
 #include "math.h"
 #include "stdio.h"
@@ -42,17 +47,17 @@
 
 class Img_Proc{
 public:
-	int ImageData [128];				// array to store the LineScan image
-	int ImageDataDifference [128];		// array to store the PineScan pixel difference
+	uint16_t ImageData [128];				// array to store the LineScan image
+	uint16_t ImageDataDifference [128];		// array to store the PineScan pixel difference
 	
 	int diff;							// actual difference from line middle position
 	int diff_old;						// actual position of the servo relative to middle
 	float servo_angle;
-	int RoadMiddle;						// calculated middle of the road
-	int RoadMiddle_old;					// save the last "Middle of the road" position
-	int BlackLineRight;					// position of the black line on the right side (127)
-	int BlackLineLeft;					// position of the black line on the left side
-	int number_edges;
+	uint16_t RoadMiddle;						// calculated middle of the road
+	uint16_t RoadMiddle_old;					// save the last "Middle of the road" position
+	uint16_t BlackLineRight;					// position of the black line on the right side (127)
+	uint16_t BlackLineLeft;					// position of the black line on the left side
+	uint16_t number_edges;
 
 	void init(void);					//initializes the camera
 	void capture(void);					//retrieves data from the camera

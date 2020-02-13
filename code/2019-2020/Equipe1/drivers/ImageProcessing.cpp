@@ -360,6 +360,8 @@ void Img_Proc::calculateMiddle (void){
 		diff = diff_old;
 	}else{
 		servo_angle=KP_TURN*(float)diff + KDP_TURN*(float)(diff-diff_old);
+		if(servo_angle<SERVO_MAX_LEFT_ANGLE)servo_angle=SERVO_MAX_LEFT_ANGLE;
+		if(servo_angle>SERVO_MAX_RIGHT_ANGLE)servo_angle=SERVO_MAX_RIGHT_ANGLE;
 	}
 }
 

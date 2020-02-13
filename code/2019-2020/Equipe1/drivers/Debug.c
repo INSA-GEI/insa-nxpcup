@@ -38,6 +38,11 @@ void debug_init(){
 	GPIOD_PDDR &=~ (1<<1);
 	GPIOD_PDDR &=~ (1<<3);
 
+	//Initialize CAM LED (PTC12)
+	PORTC_PCR12 = PORT_PCR_MUX(1);
+	GPIOC_PSOR = DEBUG_CAM_LED_Pin;
+	GPIOC_PDDR |= DEBUG_CAM_LED_Pin;
+
 	//PTE2-5 : Rotary switch (2:LSB, 5:MSB);
 	PORTE_PCR2 = PORT_PCR_MUX(1);
 	PORTE_PCR3 = PORT_PCR_MUX(1);
@@ -61,8 +66,8 @@ void debug_init(){
 
 	//UART init
 	uart_init(BAUDRATE);
-	ADC_init();
-	BatteryVoltage();
+	//ADC_init();
+	//BatteryVoltage();
 }
 unsigned char debug_getRotarySW(){
 	//return (GPIOE_PDIR & 0x003C)>>2;
