@@ -45,11 +45,19 @@
 
 #define PI							3.14159265358979323846	// value of PI
 
+#define THRESHOLD_FINISH_MIN 5				//Minimal threshold of edges for the finish 
+#define THRESHOLD_FINISH_MAX 9				//Maximal threshold of edges for the finish 
+#define COUNTER_THRESHOLD_FINISH 10				
+#define BLACK_RECTANGLE_MIDDLE_1 40		//(124+94/2)mm*128/550mm=171*128/550=40
+#define BLACK_RECTANGLE_MIDDLE_2 88		//(550-(124+94/2))mm*128/550mm=379*128/550=88
+#define RECT_WIDTH 22				//(94*128)/550=22
 class Img_Proc{
 public:
 	uint16_t ImageData [128];				// array to store the LineScan image
 	uint16_t ImageDataDifference [128];		// array to store the PineScan pixel difference
 	
+	bool finish;						//indicates if we are at the end of the circuit
+	int edges_cnt;						//counter when the edges are currently detected between 7 and 10
 	int diff;							// actual difference from line middle position
 	int diff_old;						// actual position of the servo relative to middle
 	float servo_angle;
@@ -65,7 +73,9 @@ public:
 	void process(void);					//detects edges
 	void calculateMiddle(void);			//guesses the middle
 	void processAll(void);				//executes all camera related operations in order. Takes approx 940µs to complete
-
+	bool test_FinishLine_Detection(void);
+	void compute_data_threshold(void);
+	
 private:
 	int CompareData_classic;			// set data for comparison to find max IN BASE ALGORITHM
 	int CompareData_low;				// set data for comparison to find max with low threshold

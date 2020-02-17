@@ -40,6 +40,8 @@ void Img_Proc::init(){
 	BlackLineRight=127;
 	BlackLineLeft=0;
 	number_edges=0;
+	edges_cnt=0;
+	finish=false;
 }
 
 void Img_Proc::capture(void){
@@ -365,9 +367,48 @@ void Img_Proc::calculateMiddle (void){
 	}
 }
 
+//You may need to adjust the values of "CompareData_high" by modifying the macro "THRESHOLD_high".
+bool Img_Proc::test_FinishLine_Detection (void){
+	
+	for(i=0; i<(RECT_WIDTH/4); i++){
+		if (ImageDataDifference[BLACK_RECTANGLE_MIDDLE_1+i] > CompareData_high && ImageDataDifference[BLACK_RECTANGLE_MIDDLE_1-i] > CompareData_high){
+			edges_cnt++;
+		} else {
+			edges_cnt=0;
+		}
+		if (ImageDataDifference[BLACK_RECTANGLE_MIDDLE_2+i] > CompareData_high && ImageDataDifference[BLACK_RECTANGLE_MIDDLE_2-i] > CompareData_high){
+			edges_cnt++;
+		} else {
+			edges_cnt=0;
+		}
+	}
+	//finish = false at the initialization
+	if (edges_cnt>=COUNTER_THRESHOLD_FINISH){
+		finish = true;
+		edges_cnt=0;
+	}
+	
+	return finish;
+}
+
+//To add at the end of  process() in order to test the variation of the thresholds towards the number of edges detected.
+void Img_Proc::compute_data_threshold(void){
+	
+	if(number_edges > 2 && not(finish)){
+		CompareData_high += 5;
+		CompareData_low += 5;
+	}
+	else if(number_edges < 2){
+		CompareData_high -= 3;
+		CompareData_low -= 3;
+	}
+}
+
+
 void Img_Proc::processAll(void) {
 	capture();
 	differentiate();
 	process();
 	calculateMiddle();
+	//test_FinishLine_Detection();
 }
