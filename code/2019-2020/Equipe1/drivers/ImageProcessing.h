@@ -59,7 +59,8 @@ public:
 	bool finish;						//indicates if we are at the end of the circuit
 	int edges_cnt;						//counter when the edges are currently detected between 7 and 10
 	int diff;							// actual difference from line middle position
-	int diff_old;						// actual position of the servo relative to middle
+	int diff_old;
+	int threshold;				// actual position of the servo relative to middle
 	float servo_angle;
 	uint16_t RoadMiddle;						// calculated middle of the road
 	uint16_t RoadMiddle_old;					// save the last "Middle of the road" position
