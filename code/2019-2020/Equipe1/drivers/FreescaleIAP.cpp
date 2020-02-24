@@ -69,7 +69,7 @@ IAPCode erase_sector(int address) {
     return check_error();
 }
 
-IAPCode program_flash(int address, char *data, unsigned int length) {
+IAPCode program_flash(int address, char *data, /*unsigned*/ int length) {
     #ifdef IAPDEBUG
 	uart_write( "IAP: Programming flash", 22);
     #endif

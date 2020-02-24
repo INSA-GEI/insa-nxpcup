@@ -53,7 +53,7 @@ IAPCode erase_sector(int address);
  * @param length number of bytes to program (must be a multiple of 4. must be a multiple of 8 when K64F)
  * @param return Success if no errors were encountered, otherwise one of the error states
  */
-IAPCode program_flash(int address, char *data, unsigned int length);
+IAPCode program_flash(int address, char *data, int length);
 
 /**
  * Returns size of flash memory
