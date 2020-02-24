@@ -101,6 +101,9 @@ void FTM1_IRQHandler() {//servo interrupt, 100Hz
 		uart_write("cnt: ",5);
 		uart_writeNb(camera.edges_cnt);
 		uart_write("\n\r",2);
+		uart_write("Seuil: ",7);
+		uart_writeNb(camera.threshold);
+		uart_write("\n\r",2);
 	}
 	
 	if (camera.test_FinishLine_Detection()==true)V=0;

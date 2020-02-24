@@ -42,6 +42,8 @@ void Img_Proc::init(){
 	number_edges=0;
 	edges_cnt=0;
 	finish=false;
+	CompareData_high = THRESHOLD_high;
+	CompareData_low = THRESHOLD_low;
 }
 
 void Img_Proc::capture(void){
@@ -154,8 +156,8 @@ void Img_Proc::process (void){
 		else if (functionning_mode == 2 || functionning_mode == 3){
 			// Find black line on the right side
 
-			CompareData_low = THRESHOLD_low;					// threshold_low
-			CompareData_high = THRESHOLD_high;					// threshold_high
+			//CompareData_low = THRESHOLD_low;					// threshold_low
+			//CompareData_high = THRESHOLD_high;					// threshold_high
 
 			BlackLineRight = 126;
 			for(i=126;i>=64;i--){
@@ -194,8 +196,8 @@ void Img_Proc::process (void){
 			}	/* END for (i=126;i>=64;i--) */
 
 	   		// Find black line on the left side
-			CompareData_low = THRESHOLD_low;					// threshold_low
-			CompareData_high = THRESHOLD_high;					// threshold_high
+			//CompareData_low = THRESHOLD_low;					// threshold_low
+			//CompareData_high = THRESHOLD_high;					// threshold_high
 
 			// image processing with the algorithm seen at the beginning. 
 			BlackLineLeft = 1;
@@ -248,8 +250,8 @@ void Img_Proc::process (void){
 		else if (functionning_mode == 4){
 			// Find black line on the right side
 
-			CompareData_low = THRESHOLD_low;					// threshold_low
-			CompareData_high = THRESHOLD_high;					// threshold_high
+			//CompareData_low = THRESHOLD_low;					// threshold_low
+			//CompareData_high = THRESHOLD_high;					// threshold_high
 			BlackLineRight = 126;
 			for(i=127;i>=64;i--){
 	   			if (ImageDataDifference[i] > CompareData_high){
@@ -284,8 +286,8 @@ void Img_Proc::process (void){
 			}	/* END for (i=126;i>=64;i--) */
 
 	   		// Find black line on the left side
-			CompareData_low = THRESHOLD_low;					// threshold_low
-			CompareData_high = THRESHOLD_high;					// threshold_high
+			//CompareData_low = THRESHOLD_low;					// threshold_low
+			//CompareData_high = THRESHOLD_high;					// threshold_high
 
 			// image processing with the algorithm seen at the beginning. 
 			BlackLineLeft = 1;
@@ -370,23 +372,26 @@ void Img_Proc::calculateMiddle (void){
 //You may need to adjust the values of "CompareData_high" by modifying the macro "THRESHOLD_high".
 bool Img_Proc::test_FinishLine_Detection (void){
 	
-	for(i=0; i<(RECT_WIDTH/4); i++){
-		if (ImageDataDifference[BLACK_RECTANGLE_MIDDLE_1+i] > CompareData_high && ImageDataDifference[BLACK_RECTANGLE_MIDDLE_1-i] > CompareData_high){
-			edges_cnt++;
-		} else {
-			edges_cnt=0;
-		}
-		if (ImageDataDifference[BLACK_RECTANGLE_MIDDLE_2+i] > CompareData_high && ImageDataDifference[BLACK_RECTANGLE_MIDDLE_2-i] > CompareData_high){
-			edges_cnt++;
-		} else {
-			edges_cnt=0;
-		}
-	}
+	threshold = 10;
+	
+	//for(i=0; i<(RECT_WIDTH/4); i++){
+	//	if (ImageDataDifference[BLACK_RECTANGLE_MIDDLE_1+i] >= threshold || ImageDataDifference[BLACK_RECTANGLE_MIDDLE_1-i] >= threshold){
+	//		edges_cnt++;
+	//	} else {
+	//		edges_cnt=0;
+	//	}
+	//	if (ImageDataDifference[BLACK_RECTANGLE_MIDDLE_2+i] >= threshold || ImageDataDifference[BLACK_RECTANGLE_MIDDLE_2-i] >= threshold){
+	//		edges_cnt++;
+	//	} else {
+	//		edges_cnt=0;
+	//	}
+	//}
 	//finish = false at the initialization
-	if (edges_cnt>=COUNTER_THRESHOLD_FINISH){
-		finish = true;
-		edges_cnt=0;
-	}
+	//if (edges_cnt>=COUNTER_THRESHOLD_FINISH){
+//		finish = true;
+//		edges_cnt=0;
+//	}
+	//if (number_edges >= 10) finish=true;
 	
 	return finish;
 }
@@ -394,13 +399,24 @@ bool Img_Proc::test_FinishLine_Detection (void){
 //To add at the end of  process() in order to test the variation of the thresholds towards the number of edges detected.
 void Img_Proc::compute_data_threshold(void){
 	
-	if(number_edges > 2 && not(finish)){
-		CompareData_high += 5;
-		CompareData_low += 5;
+	if(number_edges >= 2 && not(finish)){
+		CompareData_high += 12;
+		threshold = CompareData_high;
+		CompareData_low += 10;
+		if (CompareData_high > 200) CompareData_high=200;
+		if (CompareData_low > 80) CompareData_high=80;
 	}
-	else if(number_edges < 2){
+	else if(number_edges > 0 || number_edges < 2){
 		CompareData_high -= 3;
+		threshold = CompareData_high;
 		CompareData_low -= 3;
+		if (CompareData_high < 20) CompareData_high=20;
+		if (CompareData_low < 5) CompareData_high=5;
+	}
+	else {
+		CompareData_high = THRESHOLD_high;
+		threshold = CompareData_high;
+		CompareData_low = THRESHOLD_low;
 	}
 }
 
@@ -410,5 +426,6 @@ void Img_Proc::processAll(void) {
 	differentiate();
 	process();
 	calculateMiddle();
+	compute_data_threshold();
 	//test_FinishLine_Detection();
 }
