@@ -42,8 +42,8 @@ void Img_Proc::init(){
 	number_edges=0;
 	edges_cnt=0;
 	finish=false;
-	CompareData_high = THRESHOLD_high;
-	CompareData_low = THRESHOLD_low;
+	CompareData_high = 200;
+	CompareData_low = 100;
 }
 
 void Img_Proc::capture(void){
@@ -372,7 +372,7 @@ void Img_Proc::calculateMiddle (void){
 //You may need to adjust the values of "CompareData_high" by modifying the macro "THRESHOLD_high".
 bool Img_Proc::test_FinishLine_Detection (void){
 	
-	threshold = 10;
+	//threshold = 10;
 	
 	//for(i=0; i<(RECT_WIDTH/4); i++){
 	//	if (ImageDataDifference[BLACK_RECTANGLE_MIDDLE_1+i] >= threshold || ImageDataDifference[BLACK_RECTANGLE_MIDDLE_1-i] >= threshold){
@@ -391,8 +391,15 @@ bool Img_Proc::test_FinishLine_Detection (void){
 //		finish = true;
 //		edges_cnt=0;
 //	}
-	//if (number_edges >= 10) finish=true;
 	
+	if (number_edges >= 8){
+		edges_cnt++;
+	}else{
+		edges_cnt=0;
+	}
+		
+	if (edges_cnt>=COUNTER_THRESHOLD_FINISH) finish=true;
+			
 	return finish;
 }
 
