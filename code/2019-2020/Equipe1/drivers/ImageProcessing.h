@@ -45,12 +45,12 @@
 
 #define PI							3.14159265358979323846	// value of PI
 
-#define THRESHOLD_FINISH_MIN 5				//Minimal threshold of edges for the finish 
-#define THRESHOLD_FINISH_MAX 9				//Maximal threshold of edges for the finish 
-#define COUNTER_THRESHOLD_FINISH 10				
+#define COUNTER_THRESHOLD_FINISH(x) 2*(x) 				
 #define BLACK_RECTANGLE_MIDDLE_1 40		//(124+94/2)mm*128/550mm=171*128/550=40
 #define BLACK_RECTANGLE_MIDDLE_2 88		//(550-(124+94/2))mm*128/550mm=379*128/550=88
-#define RECT_WIDTH 22				//(94*128)/550=22
+
+#define RECT_WIDTH(x)	(int)(94*x/550)	
+
 class Img_Proc{
 public:
 	uint16_t ImageData [128];				// array to store the LineScan image
@@ -60,7 +60,7 @@ public:
 	int edges_cnt;						//counter when the edges are currently detected between 7 and 10
 	int diff;							// actual difference from line middle position
 	int diff_old;
-	int threshold;				// actual position of the servo relative to middle
+	int threshold;						// actual position of the servo relative to middle
 	int black_middle_pos_rect1;
 	int black_middle_pos_rect2;
 	float servo_angle;

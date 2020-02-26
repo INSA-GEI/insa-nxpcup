@@ -374,41 +374,25 @@ void Img_Proc::calculateMiddle (void){
 //You may need to adjust the values of "CompareData_high" by modifying the macro "THRESHOLD_high".
 bool Img_Proc::test_FinishLine_Detection (void){
 	
-	threshold = 10;	
-	black_middle_pos_rect1=181*BlackLineRight/550;
-	black_middle_pos_rect2=349*(127-BlackLineLeft)/550;
+	threshold = CompareData_classic;	
 	
-	for(i=0; i<(RECT_WIDTH/4); i++){
-		if (BlackLineLeft+BLACK_RECTANGLE_MIDDLE_2<127-RECT_WIDTH/4){ //Max Value of BlackLineLeft=34
-			if (ImageDataDifference[BlackLineLeft + BLACK_RECTANGLE_MIDDLE_1+i] >= threshold || ImageDataDifference[BlackLineLeft+BLACK_RECTANGLE_MIDDLE_1-i] >= threshold){
-				edges_cnt++;
-			} else {
-				edges_cnt=0;
-			}
-			if (ImageDataDifference[BlackLineLeft + BLACK_RECTANGLE_MIDDLE_2+i] >= threshold || ImageDataDifference[BlackLineLeft+BLACK_RECTANGLE_MIDDLE_1-i] >= threshold){
-				edges_cnt++;
-			} else {
-				edges_cnt=0;
-			}
-		}
-		else if (BlackLineRight-(127-BLACK_RECTANGLE_MIDDLE_1)>=RECT_WIDTH/4){//Max Value of BlackLineRight=92
-			if (ImageDataDifference[BlackLineRight -(127-BLACK_RECTANGLE_MIDDLE_2)+i] >= threshold || ImageDataDifference[127-BlackLineRight+(128-BLACK_RECTANGLE_MIDDLE_2)-i] >= threshold){
-				edges_cnt++;
-			} else {
-				edges_cnt=0;
-			}
-			if (ImageDataDifference[BlackLineLeft+RECT_WIDTH/4+i] >= threshold || ImageDataDifference[BlackLineLeft+RECT_WIDTH/4-i] >= threshold){
-				edges_cnt++;
-			} else {
-				edges_cnt=0;
-			}
-		}else{
-			
-		}
+	black_middle_pos_rect1=BlackLineLeft+191*(BlackLineRight-BlackLineLeft+1)/550;
+	black_middle_pos_rect2=BlackLineLeft+359*(BlackLineRight-BlackLineLeft+1)/550;
 		
+	for(i=0; i<(RECT_WIDTH(BlackLineRight)/4); i++){
+			if (ImageDataDifference[ black_middle_pos_rect1+i] >= threshold && ImageDataDifference[black_middle_pos_rect1-i] >= threshold){
+				edges_cnt++;
+			} else {
+				edges_cnt=0;
+			}
+			if (ImageDataDifference[black_middle_pos_rect2+i] >= threshold && ImageDataDifference[black_middle_pos_rect2-i] >= threshold){
+				edges_cnt++;
+			} else {
+				edges_cnt=0;
+			}
 	}
 	//finish = false at the initialization
-	if (edges_cnt>=COUNTER_THRESHOLD_FINISH && number_edges>=4){
+	if (edges_cnt>=COUNTER_THRESHOLD_FINISH(RECT_WIDTH(BlackLineRight)/4)){
 		finish = true;
 		edges_cnt=0;
 	}
