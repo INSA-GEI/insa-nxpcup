@@ -8,6 +8,9 @@
 
 
 unsigned int V=500;
+unsigned int Vset=500;
+const unsigned int LOW_SPEED=250;
+
 int n=2;
 int c=0;
 bool FLAG_SEND_IMG=false;
@@ -19,7 +22,7 @@ Img_Proc camera;
 void delay_time(int number);
 
 int main(){
-
+/*
 	debug_init();
 	myMovement.init();
 	camera.init();
@@ -41,18 +44,18 @@ int main(){
 		if(uart_read(str,1)>0){
 			switch(str[0]){
 			case '+':	//increment speed
-				V+=250;
+				Vset+=250;
 				n++;
 				break;
 
 			case ' ':	//emergency stop
-				V=0;
+				Vset=0;
 				n=0;
 				break;
 
 			case '-':	//decrement speed
 				if(n>0){
-					V-=250;
+					Vset-=250;
 					n--;
 				}
 				break;
@@ -74,7 +77,7 @@ int main(){
 			debug_displaySendNb(n);
 		}
 	}
-
+*/
 	return 0;
 }
 
@@ -85,7 +88,7 @@ void delay_time(int number){
 
 void FTM1_IRQHandler() {//servo interrupt, 100Hz
 	//Clear the bit of the interrupt FTM1;
-	camera.processAll();
+	/*camera.processAll();
 	c++;
 	if(c>50){
 		c=0;
@@ -102,6 +105,12 @@ void FTM1_IRQHandler() {//servo interrupt, 100Hz
 		uart_writeNb(camera.servo_angle);
 		uart_write(";",1);
 	}
+	if((camera.servo_angle>5.0 || camera.servo_angle<5.0) && (Vset!=0) && V!=LOW_SPEED){
+		V=LOW_SPEED;
+		debug_displaySendNb(15);
+	}else{
+		V=Vset;
+	}
 	myMovement.set(V,camera.servo_angle);
 
 	TPM1_SC |= TPM_SC_TOF_MASK;
@@ -110,5 +119,5 @@ void FTM1_IRQHandler() {//servo interrupt, 100Hz
 void FTM2_IRQHandler() {//encoder interrupt 6kHz
 	myMovement.encoder.interruptHandler();
 	myMovement.regulate();
-
+*/
 }

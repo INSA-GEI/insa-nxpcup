@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>NXP_Dry_sandbox</name>
+	<name>NXP_Dry</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -27,13 +27,17 @@
 		<link>
 			<name>Sources/drivers</name>
 			<type>2</type>
-			<locationURI>copy_PARENT/drivers</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/drivers</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
 		<variable>
 			<name>Drivers</name>
 			<value>$%7BPARENT-1-PROJECT_LOC%7D/drivers</value>
+		</variable>
+		<variable>
+			<name>PREVIOUS_PROJECT_LOC</name>
+			<value>PROJECT_LOC</value>
 		</variable>
 		<variable>
 			<name>copy_PARENT</name>
