@@ -33,7 +33,7 @@ int main(){
 		if(FLAG_SEND_IMG && FLAG_ENABLE_LOG_IMG){
 			for(int i=0;i<128;i++){
 				uart_write("$",1);
-				uart_writeNb(camera.ImageData[i]);
+				uart_writeNb(camera.ImageDataDifference[i]);
 				uart_write(";",1);
 			}
 			FLAG_SEND_IMG=false;
