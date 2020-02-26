@@ -44,6 +44,8 @@ void Img_Proc::init(){
 	finish=false;
 	CompareData_high = 200;
 	CompareData_low = 100;
+	black_middle_pos_rect1=0;
+	black_middle_pos_rect2=0;
 }
 
 void Img_Proc::capture(void){
@@ -372,35 +374,84 @@ void Img_Proc::calculateMiddle (void){
 //You may need to adjust the values of "CompareData_high" by modifying the macro "THRESHOLD_high".
 bool Img_Proc::test_FinishLine_Detection (void){
 	
-	//threshold = 10;
+	threshold = 10;	
+	black_middle_pos_rect1=181*BlackLineRight/550;
+	black_middle_pos_rect2=349*(127-BlackLineLeft)/550;
 	
-	//for(i=0; i<(RECT_WIDTH/4); i++){
-	//	if (ImageDataDifference[BLACK_RECTANGLE_MIDDLE_1+i] >= threshold || ImageDataDifference[BLACK_RECTANGLE_MIDDLE_1-i] >= threshold){
-	//		edges_cnt++;
-	//	} else {
-	//		edges_cnt=0;
-	//	}
-	//	if (ImageDataDifference[BLACK_RECTANGLE_MIDDLE_2+i] >= threshold || ImageDataDifference[BLACK_RECTANGLE_MIDDLE_2-i] >= threshold){
-	//		edges_cnt++;
-	//	} else {
-	//		edges_cnt=0;
-	//	}
-	//}
+	for(i=0; i<(RECT_WIDTH/4); i++){
+		if (BlackLineLeft+BLACK_RECTANGLE_MIDDLE_2<127-RECT_WIDTH/4){ //Max Value of BlackLineLeft=34
+			if (ImageDataDifference[BlackLineLeft + BLACK_RECTANGLE_MIDDLE_1+i] >= threshold || ImageDataDifference[BlackLineLeft+BLACK_RECTANGLE_MIDDLE_1-i] >= threshold){
+				edges_cnt++;
+			} else {
+				edges_cnt=0;
+			}
+			if (ImageDataDifference[BlackLineLeft + BLACK_RECTANGLE_MIDDLE_2+i] >= threshold || ImageDataDifference[BlackLineLeft+BLACK_RECTANGLE_MIDDLE_1-i] >= threshold){
+				edges_cnt++;
+			} else {
+				edges_cnt=0;
+			}
+		}
+		else if (BlackLineRight-(127-BLACK_RECTANGLE_MIDDLE_1)>=RECT_WIDTH/4){//Max Value of BlackLineRight=92
+			if (ImageDataDifference[BlackLineRight -(127-BLACK_RECTANGLE_MIDDLE_2)+i] >= threshold || ImageDataDifference[127-BlackLineRight+(128-BLACK_RECTANGLE_MIDDLE_2)-i] >= threshold){
+				edges_cnt++;
+			} else {
+				edges_cnt=0;
+			}
+			if (ImageDataDifference[BlackLineLeft+RECT_WIDTH/4+i] >= threshold || ImageDataDifference[BlackLineLeft+RECT_WIDTH/4-i] >= threshold){
+				edges_cnt++;
+			} else {
+				edges_cnt=0;
+			}
+		}else{
+			
+		}
+		
+	}
 	//finish = false at the initialization
-	//if (edges_cnt>=COUNTER_THRESHOLD_FINISH){
-//		finish = true;
-//		edges_cnt=0;
-//	}
-	
-	if (number_edges >= 8){
-		edges_cnt++;
-	}else{
+	if (edges_cnt>=COUNTER_THRESHOLD_FINISH && number_edges>=4){
+		finish = true;
 		edges_cnt=0;
 	}
-		
-	if (edges_cnt>=COUNTER_THRESHOLD_FINISH) finish=true;
-			
+	
 	return finish;
+	
+	
+	/*for(i=0; i<(RECT_WIDTH/4); i++){
+		if (BlackLineLeft+BLACK_RECTANGLE_MIDDLE_2<127-RECT_WIDTH/4){ //Max Value of BlackLineLeft=34
+			if (ImageDataDifference[BlackLineLeft + BLACK_RECTANGLE_MIDDLE_1+i] >= threshold || ImageDataDifference[BlackLineLeft+BLACK_RECTANGLE_MIDDLE_1-i] >= threshold){
+				edges_cnt++;
+			} else {
+				edges_cnt=0;
+			}
+			if (ImageDataDifference[BlackLineLeft + BLACK_RECTANGLE_MIDDLE_2+i] >= threshold || ImageDataDifference[BlackLineLeft+BLACK_RECTANGLE_MIDDLE_1-i] >= threshold){
+				edges_cnt++;
+			} else {
+				edges_cnt=0;
+			}
+		}
+		else if (BlackLineRight-(127-BLACK_RECTANGLE_MIDDLE_1)>=RECT_WIDTH/4){//Max Value of BlackLineRight=92
+			if (ImageDataDifference[BlackLineRight -(127-BLACK_RECTANGLE_MIDDLE_2)+i] >= threshold || ImageDataDifference[127-BlackLineRight+(128-BLACK_RECTANGLE_MIDDLE_2)-i] >= threshold){
+				edges_cnt++;
+			} else {
+				edges_cnt=0;
+			}
+			if (ImageDataDifference[BlackLineLeft+RECT_WIDTH/4+i] >= threshold || ImageDataDifference[BlackLineLeft+RECT_WIDTH/4-i] >= threshold){
+				edges_cnt++;
+			} else {
+				edges_cnt=0;
+			}
+		}else{
+			
+		}
+		
+	}
+	//finish = false at the initialization
+	if (edges_cnt>=COUNTER_THRESHOLD_FINISH && number_edges>=4){
+		finish = true;
+		edges_cnt=0;
+	}
+	
+	return finish;*/
 }
 
 //To add at the end of  process() in order to test the variation of the thresholds towards the number of edges detected.
@@ -411,14 +462,14 @@ void Img_Proc::compute_data_threshold(void){
 		threshold = CompareData_high;
 		CompareData_low += 10;
 		if (CompareData_high > 200) CompareData_high=200;
-		if (CompareData_low > 80) CompareData_high=80;
+		if (CompareData_low > 80) CompareData_low=80;
 	}
 	else if(number_edges > 0 || number_edges < 2){
 		CompareData_high -= 3;
 		threshold = CompareData_high;
 		CompareData_low -= 3;
 		if (CompareData_high < 20) CompareData_high=20;
-		if (CompareData_low < 5) CompareData_high=5;
+		if (CompareData_low < 5) CompareData_low=5;
 	}
 	else {
 		CompareData_high = THRESHOLD_high;

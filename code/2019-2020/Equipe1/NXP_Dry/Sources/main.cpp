@@ -8,7 +8,7 @@
 
 
 unsigned int V=500;
-unsigned int Vset=500;
+unsigned int Vset=1000;
 const unsigned int SLOW_SPEED = 500;
 const float ADAPTIVE_SPEED_ANGLE = 8.0;
 const float ADAPTIVE_SPEED_HYST = 2.0;
