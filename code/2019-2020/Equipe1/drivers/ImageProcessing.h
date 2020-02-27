@@ -45,7 +45,7 @@
 
 #define PI							3.14159265358979323846	// value of PI
 
-#define COUNTER_THRESHOLD_FINISH(x) 2*(x) 				
+#define COUNTER_THRESHOLD_FINISH	4				
 #define BLACK_RECTANGLE_MIDDLE_1 40		//(124+94/2)mm*128/550mm=171*128/550=40
 #define BLACK_RECTANGLE_MIDDLE_2 88		//(550-(124+94/2))mm*128/550mm=379*128/550=88
 
@@ -61,8 +61,12 @@ public:
 	int diff;							// actual difference from line middle position
 	int diff_old;
 	int threshold;						// actual position of the servo relative to middle
-	int black_middle_pos_rect1;
-	int black_middle_pos_rect2;
+	int black_edge_left_pos_rect1;
+	int black_edge_right_pos_rect1;
+	int black_edge_left_pos_rect2;
+	int black_edge_right_pos_rect2;
+	
+	
 	float servo_angle;
 	uint16_t RoadMiddle;						// calculated middle of the road
 	uint16_t RoadMiddle_old;					// save the last "Middle of the road" position

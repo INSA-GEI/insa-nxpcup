@@ -110,9 +110,6 @@ void FTM1_IRQHandler() {//servo interrupt, 100Hz
 	
 	myMovement.set(V,camera.servo_angle);
 	
-	if(V=0){ 
-		myMovement.stop(); 
-	}
 
 	TPM1_SC |= TPM_SC_TOF_MASK;
 
