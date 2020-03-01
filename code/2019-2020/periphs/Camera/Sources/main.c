@@ -15,7 +15,7 @@ int main (void){
 	debug_init();
 	camera_init();
 	while(1){                
-		delay_time(FAST_BLINK/5);
+		delay_time(FAST_BLINK/30);
 		//DEBUG_GREEN_ON;
 		DEBUG_RED_ON;
 		camera_capture();
