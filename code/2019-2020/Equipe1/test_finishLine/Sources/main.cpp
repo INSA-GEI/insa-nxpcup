@@ -7,7 +7,7 @@
 #define FAST_BLINK      (1000000)
 
 
-unsigned int V=500;
+unsigned int V=800;
 int n=2;
 int c=0;
 int cnt=0;
@@ -31,10 +31,11 @@ int main(){
 	for(;;) {
 
 		if(FLAG_SEND_IMG && FLAG_ENABLE_LOG_IMG){
+			uart_write("* * * * * * * * * * *\r\n",23);
 			for(int i=0;i<128;i++){
-				uart_write("$",1);
+				uart_write(" ",1);
 				uart_writeNb(camera.ImageDataDifference[i]);
-				uart_write(";",1);
+				uart_write(" ;",2);
 			}
 			FLAG_SEND_IMG=false;
 		}
@@ -101,9 +102,21 @@ void FTM1_IRQHandler() {//servo interrupt, 100Hz
 		uart_write("cnt: ",5);
 		uart_writeNb(camera.edges_cnt);
 		uart_write("\n\r",2);
-		uart_write("Seuil: ",7);
-		uart_writeNb(camera.threshold);
+		uart_write("black_edge_left_pos_rect1 ",26);
+		uart_writeNb(camera.black_edge_left_pos_rect1);
 		uart_write("\n\r",2);
+		uart_write("black_edge_right_pos_rect1 ",27);
+				uart_writeNb(camera.black_edge_right_pos_rect1);
+				uart_write("\n\r",2);
+				uart_write("black_edge_left_pos_rect2 ",26);
+						uart_writeNb(camera.black_edge_left_pos_rect2);
+						uart_write("\n\r",2);
+						uart_write("black_edge_right_pos_rect2 ",27);
+								uart_writeNb(camera.black_edge_right_pos_rect2);
+								uart_write("\n\r",2);
+		/*uart_write("Seuil: ",7);
+		uart_writeNb(camera.threshold);
+		uart_write("\n\r",2);*/
 	}
 	
 	if (camera.test_FinishLine_Detection()==true)V=0;

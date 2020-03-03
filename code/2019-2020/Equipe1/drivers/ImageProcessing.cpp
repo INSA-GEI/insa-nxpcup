@@ -36,10 +36,13 @@ void Img_Proc::init(){
 	number_edges=0;
 	edges_cnt=0;
 	finish=false;
-	CompareData_high = 200;
-	CompareData_low = 100;
-	black_middle_pos_rect1=0;
-	black_middle_pos_rect2=0;
+	CompareData_high = THRESHOLD_high;
+	CompareData_low = THRESHOLD_low;
+	black_edge_left_pos_rect1=0;
+	black_edge_right_pos_rect1=0;
+	black_edge_left_pos_rect2=0;
+	black_edge_right_pos_rect2=0;
+
 }
 
 void Img_Proc::capture(void){
@@ -368,84 +371,60 @@ void Img_Proc::calculateMiddle (void){
 //You may need to adjust the values of "CompareData_high" by modifying the macro "THRESHOLD_high".
 bool Img_Proc::test_FinishLine_Detection (void){
 	
-	threshold = 10;	
-	black_middle_pos_rect1=181*BlackLineRight/550;
-	black_middle_pos_rect2=349*(127-BlackLineLeft)/550;
+	threshold = 60;	
 	
-	for(i=0; i<(RECT_WIDTH/4); i++){
-		if (BlackLineLeft+BLACK_RECTANGLE_MIDDLE_2<127-RECT_WIDTH/4){ //Max Value of BlackLineLeft=34
-			if (ImageDataDifference[BlackLineLeft + BLACK_RECTANGLE_MIDDLE_1+i] >= threshold || ImageDataDifference[BlackLineLeft+BLACK_RECTANGLE_MIDDLE_1-i] >= threshold){
+	for (int i=BlackLineLeft+5;i<BlackLineRight-5;i++){
+			if (ImageDataDifference[i] >= threshold){
 				edges_cnt++;
-			} else {
-				edges_cnt=0;
 			}
-			if (ImageDataDifference[BlackLineLeft + BLACK_RECTANGLE_MIDDLE_2+i] >= threshold || ImageDataDifference[BlackLineLeft+BLACK_RECTANGLE_MIDDLE_1-i] >= threshold){
-				edges_cnt++;
-			} else {
-				edges_cnt=0;
-			}
-		}
-		else if (BlackLineRight-(127-BLACK_RECTANGLE_MIDDLE_1)>=RECT_WIDTH/4){//Max Value of BlackLineRight=92
-			if (ImageDataDifference[BlackLineRight -(127-BLACK_RECTANGLE_MIDDLE_2)+i] >= threshold || ImageDataDifference[127-BlackLineRight+(128-BLACK_RECTANGLE_MIDDLE_2)-i] >= threshold){
-				edges_cnt++;
-			} else {
-				edges_cnt=0;
-			}
-			if (ImageDataDifference[BlackLineLeft+RECT_WIDTH/4+i] >= threshold || ImageDataDifference[BlackLineLeft+RECT_WIDTH/4-i] >= threshold){
-				edges_cnt++;
-			} else {
-				edges_cnt=0;
-			}
-		}else{
-			
-		}
-		
-	}
+	}	
+	
 	//finish = false at the initialization
-	if (edges_cnt>=COUNTER_THRESHOLD_FINISH && number_edges>=4){
+	if (edges_cnt>=COUNTER_THRESHOLD_FINISH){
+		finish = true;
+	} 
+	edges_cnt=0;
+				
+	return finish;
+	/*black_edge_left_pos_rect1=BlackLineLeft+(124)*(BlackLineRight-BlackLineLeft+1)/530;
+	black_edge_right_pos_rect1=BlackLineLeft+(124+94)*(BlackLineRight-BlackLineLeft+1)/530;
+	black_edge_left_pos_rect2=BlackLineLeft+(124+94+74)*(BlackLineRight-BlackLineLeft+1)/530;
+	black_edge_right_pos_rect2=BlackLineLeft+(124+94+74+94)*(BlackLineRight-BlackLineLeft+1)/530;
+
+		for (int i=0;i<=10;i++){
+			if (ImageDataDifference[black_edge_left_pos_rect1+i] >= threshold || ImageDataDifference[black_edge_left_pos_rect1-i] >= threshold){
+				edges_cnt++;
+				i=10;
+			} else {edges_cnt=0;}
+		}	
+		for (int i=0;i<=10;i++){
+			if (ImageDataDifference[black_edge_right_pos_rect1+i] >= threshold || ImageDataDifference[black_edge_right_pos_rect1-i] >= threshold){
+				edges_cnt++;
+				i=20;
+			} else {edges_cnt=0;}
+}	
+		for (int i=0;i<=10;i++){
+			if (ImageDataDifference[black_edge_left_pos_rect2+i] >= threshold || ImageDataDifference[black_edge_left_pos_rect2-i] >= threshold){
+				edges_cnt++;
+				i=20;
+			} else {edges_cnt=0;}
+		}	
+		for (int i=0;i<=10;i++){
+			if (ImageDataDifference[black_edge_right_pos_rect2+i] >= threshold || ImageDataDifference[black_edge_right_pos_rect2-i] >= threshold){
+				edges_cnt++;
+				i=20;
+				} else {edges_cnt=0;}
+		}	
+	
+	//finish = false at the initialization
+	if (edges_cnt>=COUNTER_THRESHOLD_FINISH){
 		finish = true;
 		edges_cnt=0;
 	}
 	
 	return finish;
+	*/
 	
-	
-	/*for(i=0; i<(RECT_WIDTH/4); i++){
-		if (BlackLineLeft+BLACK_RECTANGLE_MIDDLE_2<127-RECT_WIDTH/4){ //Max Value of BlackLineLeft=34
-			if (ImageDataDifference[BlackLineLeft + BLACK_RECTANGLE_MIDDLE_1+i] >= threshold || ImageDataDifference[BlackLineLeft+BLACK_RECTANGLE_MIDDLE_1-i] >= threshold){
-				edges_cnt++;
-			} else {
-				edges_cnt=0;
-			}
-			if (ImageDataDifference[BlackLineLeft + BLACK_RECTANGLE_MIDDLE_2+i] >= threshold || ImageDataDifference[BlackLineLeft+BLACK_RECTANGLE_MIDDLE_1-i] >= threshold){
-				edges_cnt++;
-			} else {
-				edges_cnt=0;
-			}
-		}
-		else if (BlackLineRight-(127-BLACK_RECTANGLE_MIDDLE_1)>=RECT_WIDTH/4){//Max Value of BlackLineRight=92
-			if (ImageDataDifference[BlackLineRight -(127-BLACK_RECTANGLE_MIDDLE_2)+i] >= threshold || ImageDataDifference[127-BlackLineRight+(128-BLACK_RECTANGLE_MIDDLE_2)-i] >= threshold){
-				edges_cnt++;
-			} else {
-				edges_cnt=0;
-			}
-			if (ImageDataDifference[BlackLineLeft+RECT_WIDTH/4+i] >= threshold || ImageDataDifference[BlackLineLeft+RECT_WIDTH/4-i] >= threshold){
-				edges_cnt++;
-			} else {
-				edges_cnt=0;
-			}
-		}else{
-			
-		}
-		
-	}
-	//finish = false at the initialization
-	if (edges_cnt>=COUNTER_THRESHOLD_FINISH && number_edges>=4){
-		finish = true;
-		edges_cnt=0;
-	}
-	
-	return finish;*/
 }
 
 //To add at the end of  process() in order to test the variation of the thresholds towards the number of edges detected.
@@ -478,6 +457,6 @@ void Img_Proc::processAll(void) {
 	differentiate();
 	process();
 	calculateMiddle();
-	compute_data_threshold();
+	//compute_data_threshold();
 	//test_FinishLine_Detection();
 }
