@@ -104,9 +104,9 @@ int main(){
 			default:
 				break;
 			}
-			Vslow=Vset*.3;
+			/*Vslow=Vset*.3;
 			if(Vslow<VslowTH)Vslow=VslowTH;
-			debug_displaySendNb(n);
+			debug_displaySendNb(n);*/
 		}
 	}
 
@@ -129,17 +129,17 @@ void FTM1_IRQHandler() {//servo interrupt, 100Hz
 		
 	}if(FLAG_ENABLE_LOG_SERVO && cnt>10){
 		cnt=0;
-		uart_write("edges: ",7);
-		uart_writeNb(camera.number_edges);
-		uart_write("\n\r",2);
-		uart_write("cnt: ",5);
-		uart_writeNb(camera.edges_cnt);
-		uart_write("\n\r",2);
-		uart_write("Seuil: ",7);
-		uart_writeNb(camera.threshold);
-		uart_write("\n\r",2);
+		uart_write("$",1);
+		uart_writeNb((int)camera.servo_angle);
+		uart_write(" ",1);
+		uart_writeNb(camera.diff-camera.diff_old);
+		uart_write(" ",1);
+		uart_writeNb(camera.diff);
+		uart_write(" ",1);
+		uart_writeNb(camera.RoadMiddle);
+		uart_write(";",1);
 	}
-	
+	/*
 	if((camera.servo_angle>(ADAPTIVE_SPEED_ANGLE+ADAPTIVE_SPEED_HYST) || camera.servo_angle < -(ADAPTIVE_SPEED_ANGLE+ADAPTIVE_SPEED_HYST) ) && Vset!=0 && V!=Vslow){
 		V=Vslow;
 		debug_displaySendNb(15);
@@ -147,8 +147,8 @@ void FTM1_IRQHandler() {//servo interrupt, 100Hz
 		V+=20;
 		debug_displaySendNb(n);
 	}
-	
-	myMovement.set(V,camera.servo_angle);
+	*/
+	myMovement.set(Vset,camera.servo_angle);
 
 	TPM1_SC |= TPM_SC_TOF_MASK;
 
