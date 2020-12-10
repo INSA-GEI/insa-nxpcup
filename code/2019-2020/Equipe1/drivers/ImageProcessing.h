@@ -21,8 +21,8 @@
 //#define KP_STRAIGHT						50			// Proportional coefficient in straight line
 //#define KDP_STRAIGHT					15			// Differential coefficient in straight line
 
-#define KP_TURN 						.7			// Proportional coefficient in turn
-#define KDP_TURN 						.6			// Differential coefficient in turn
+#define KP_TURN 						1			// Proportional coefficient in turn
+#define KDP_TURN 						.8			// Differential coefficient in turn
 
 
 

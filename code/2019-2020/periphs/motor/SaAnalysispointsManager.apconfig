@@ -1,6 +1,6 @@
 <Analysispoints>
 	<Name>AnalysispointsManager</Name>
-	<ProjectPath>D:/Documents/ecole/insa/4A/NXPCUP/insa-nxpcup/code/2019-2020/periphs/motor/SaAnalysispointsManager.apconfig</ProjectPath>
+	<ProjectPath>C:/Users/romai/Documents/INSA_4A/PIR/insa-nxpcup/code/2019-2020/periphs/motor/SaAnalysispointsManager.apconfig</ProjectPath>
 	<MaxNumberOfCores>1</MaxNumberOfCores>
 	<Comments>Analysispoints Manager</Comments>
 	<IgnoreAll>false</IgnoreAll>
