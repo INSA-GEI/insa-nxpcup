@@ -45,6 +45,9 @@ public:
 
 private:
 	void Set_speed(void);
+	int mode_debug;
+	void Set_debug_mode(int i); //i=>0 : Cam+ange_servo  //i=>1 : Cam[i] //i=>2 : 
+	void Aff_debug(void);
 };
 
 //####################### Wheels #################################

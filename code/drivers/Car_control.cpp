@@ -7,7 +7,6 @@
 //#################################### Var ###################
 //################ var aux #############
 int c=0;
-int cnt=0;
 int n=0;//Allow us to use the debug with Putty
 
 int Count=0; //count how many time we were not to close to the black line
@@ -31,6 +30,7 @@ void Car::init(void){
 	Vhigh=VHIGH;
 	mode_speed=0;
 	delta_speed=0;
+	mode_debug=0;
 }
 
 void Car::Set_speed(void){
@@ -109,14 +109,44 @@ void Car::Car_handler(void){
 	
 	//Debug
 	c++;
-	cnt++;
-	if(c>50){
+	if(c>500){
 		c=0;
-		FLAG_SEND_IMG=true;
-			
+		FLAG_SEND_IMG=true;		
 	}
-	if(cnt>500){
-		cnt=0;
+	Aff_debug();
+	//We refresh the deplacement's parameters. Speed +wheels Angle
+	Set_deplacement();
+}
+
+
+
+//#################### Debug ###############################
+
+void Car::Set_debug_mode(int i){
+	mode_debug=i;
+	if (mode_debug==0){
+		FLAG_ENABLE_LOG_IMG=0;
+		FLAG_ENABLE_LOG_SERVO=1;
+	}else if (mode_debug==1){
+		FLAG_ENABLE_LOG_IMG=1;
+		FLAG_ENABLE_LOG_SERVO=0;
+	}
+}
+
+void Car::Aff_debug(void){
+	if(FLAG_SEND_IMG && FLAG_ENABLE_LOG_IMG){
+		for(int i=0;i<128;i++){
+			uart_write("$",1);
+			uart_writeNb(cam.ImageData[i]);
+			/*uart_write(" ",1);
+			if(cam.BlackLineLeft==i ||cam.RoadMiddle==i ||cam.BlackLineRight==i){
+				uart_writeNb(200);
+			}else{
+				uart_writeNb(0);
+			}*/
+			uart_write(";",1);
+		}
+	}else if(FLAG_SEND_IMG && FLAG_ENABLE_LOG_SERVO){
 		uart_write("$",1);
 		uart_writeNb((int)servo_angle);
 		uart_write(" ",1);
@@ -127,32 +157,11 @@ void Car::Car_handler(void){
 		uart_writeNb(cam.RoadMiddle);
 		uart_write(";",1);
 	}
-	
-	//We refresh the deplacement's parameters. Speed +wheels Angle
-	Set_deplacement();
+	FLAG_SEND_IMG=false;
 }
-
-
-
-//#################### Debug ###############################
-
 void Car::Car_debug(void){
 	char str[10];
-			if(FLAG_SEND_IMG && FLAG_ENABLE_LOG_IMG){
-				for(int i=0;i<128;i++){
-					uart_write("$",1);
-					uart_writeNb(cam.ImageData[i]);
-					uart_write(" ",1);
-					if(cam.BlackLineLeft==i ||cam.RoadMiddle==i ||cam.BlackLineRight==i){
-						uart_writeNb(200);
-					}else{
-						uart_writeNb(0);
-					}
-					uart_write(";",1);
-				}
-				FLAG_SEND_IMG=false;
-			}
-
+	
 			if(uart_read(str,1)>0){
 				switch(str[0]){
 				case '+':	//increment speed
