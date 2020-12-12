@@ -21,7 +21,7 @@ public:
 	//Speed in strait line
 	unsigned int Vhigh;//=1500
 	
-	int mode_speed=0;
+	int mode_speed;
 	//functions
 	void init(void);
 	void Caculate_angle_wheel(void);
