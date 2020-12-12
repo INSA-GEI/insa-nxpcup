@@ -14,6 +14,8 @@
 #include "Debug.h"
 
 #define MOVEMENT_ENTRAXE_COEFF 0.005//0.0056 	// E=15cm 
+#define LENGHT_CAR 200 //en mm
+#define L_ENTRAXE 150 //en mm 
 
 #define MOVEMENT_CORR_THRESHOLD 6 		// correct the speed only when we are more than 1 cm/s off target speed
 #define MOVEMENT_CORR_KP 1			// amount of error to correct each iteration
@@ -26,6 +28,7 @@ public:
 	void init(void);
 	void set(int speed, float angle);
 	void setSpeed(int speed);
+	void setDiff(int speed,float delta);
 	void stop(void);
 	void regulate(void);
 	Encoder encoder; // needed in public for interrupt access
@@ -39,7 +42,6 @@ public:
 private:
 	void applySpeeds(void);
 	void setAngle(float angle);
-	float targetAngle;//	degrees
 	
 };
 

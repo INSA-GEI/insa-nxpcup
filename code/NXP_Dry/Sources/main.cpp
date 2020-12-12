@@ -33,5 +33,12 @@ void FTM1_IRQHandler() {
 	car.Car_handler();
 }
 
+//Differential speed handlers
+void FTM2_IRQHandler() {//encoder interrupt 6kHz
+	car.myMovement.encoder.interruptHandler();
+	car.myMovement.regulate();
+
+}
+
 
 

@@ -1,6 +1,6 @@
 <Analysispoints>
 	<Name>AnalysispointsManager</Name>
-	<ProjectPath>C:/Users/rapha/Desktop/NXP_CUP/GIT/insa-nxpcup/code/NXP_Dry/SaAnalysispointsManager.apconfig</ProjectPath>
+	<ProjectPath>C:/Users/rapha/Desktop/NXP_CUP/insa-nxpcup/code/NXP_Dry/SaAnalysispointsManager.apconfig</ProjectPath>
 	<MaxNumberOfCores>1</MaxNumberOfCores>
 	<Comments>Analysispoints Manager</Comments>
 	<IgnoreAll>false</IgnoreAll>

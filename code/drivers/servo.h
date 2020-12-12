@@ -20,8 +20,8 @@
 #define SERVO_HARD_LEFT 8000
 #define SERVO_HARD_RIGHT 6460
 
-#define SERVO_MAX_LEFT_ANGLE -22.0
-#define SERVO_MAX_RIGHT_ANGLE 29.0
+#define SERVO_MAX_LEFT_ANGLE -30.0 //Avant -22
+#define SERVO_MAX_RIGHT_ANGLE 30.0 //Avant 29
 //Configuration of the pins/clock
 void servo_init(void);
 

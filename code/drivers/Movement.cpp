@@ -9,7 +9,6 @@
 
 
 Movement::Movement() {
-	targetAngle=0.0;
 	targetSpeedL=0;
 	targetSpeedR=0;
 	actualSpeedL=targetSpeedL;
@@ -38,23 +37,17 @@ void Movement::setSpeed(int speed) {
 	if(speed>SPEED_LIMIT)speed=SPEED_LIMIT;
 	MOTOR_LEFT_FORWARD;
 	MOTOR_RIGHT_FORWARD;
-	int deltaSpeed=targetAngle*MOVEMENT_ENTRAXE_COEFF*speed;
+	
+}
 
-	/*int dl=speed+deltaSpeed;
-	int dr=speed-deltaSpeed;
-
-	actualSpeedL+=dl-targetSpeedL;
-	actualSpeedR+=dl-targetSpeedR;
-	targetSpeedL=dl;
-	targetSpeedR=dr;*/
-	targetSpeedL=speed+deltaSpeed;
-	targetSpeedR=speed-deltaSpeed;
+void Movement::setDiff(int speed,float delta) {
+	targetSpeedL=speed+delta;
+	targetSpeedR=speed-delta;
 }
 
 void Movement::setAngle(float angle) {
 	if(angle>SERVO_MAX_RIGHT_ANGLE)angle=SERVO_MAX_RIGHT_ANGLE;
 	if(angle<SERVO_MAX_LEFT_ANGLE)angle=SERVO_MAX_LEFT_ANGLE;
-	targetAngle=angle;
 	servo_setPos(angle);
 }
 
@@ -72,7 +65,9 @@ void Movement::stop(void) {
 
 void Movement::regulate(void) {
 	GPIOB_PTOR = DEBUG_RED_Pin;
-	int err=encoder.getLeftSpeed();
+	//int err=encoder.getLeftSpeed();
+	int err=TPM0_C5V; //data apply to the PWM of the motors
+	err=(-err+600)/MOTOR_CAL_SPEED; //Conversion PWM => mm/s
 	if(err<0){	//detect invalid speed readings
 		err=0;
 	}
@@ -82,7 +77,9 @@ void Movement::regulate(void) {
 		actualSpeedL=actualSpeedL+err*MOVEMENT_CORR_KP;//compensate real speed command
 	}
 
-	err=encoder.getRightSpeed();
+	//err=encoder.getRightSpeed();
+	err=TPM0_C1V;
+	err=(-err+600)/MOTOR_CAL_SPEED;
 	if(err<0){	//detect invalid speed readings
 		err=0;
 	}

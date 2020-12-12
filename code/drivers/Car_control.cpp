@@ -1,10 +1,8 @@
 #include "Car_control.h"
-#include "Movement.h"
-#include "Debug.h"
-#include "ImageProcessing.h"
 
-Movement myMovement;
-Img_Proc cam;
+#include "Debug.h"
+
+
 
 //#################################### Var ###################
 //################ var aux #############
@@ -28,15 +26,17 @@ void Car::init(void){
 	myMovement.set(Vset,0.0);
 	servo_angle=0;
 	Vset=0;
+	V_old=0;
 	Vslow=VSLOW;
 	Vhigh=VHIGH;
 	mode_speed=0;
+	delta_speed=0;
 }
 
 void Car::Set_speed(void){
 	//We notice if we have been near the black lines or not
 	if (mode_speed!=0){
-		/*if (abs(cam.diff)<15){
+		if (abs(cam.diff)<MAX_ANGLE_BEFORE_SLOWDOWN){
 			Count++;
 			if ((Count%INCREASE_SPEED)==0){
 				Vslow+=200;
@@ -45,21 +45,38 @@ void Car::Set_speed(void){
 		}else{
 			Vslow-=200;
 			Vhigh-=200;
-		}*/
+		}
 		
 		//On regarde si on est dans un virage ou pas
-		if (abs(servo_angle) < MAX_ANGLE_BEFORE_SLOWDOWN){
+		//Que 2 valeurs
+		/*if (abs(servo_angle) < MAX_ANGLE_BEFORE_SLOWDOWN){
 			Vset=Vhigh;
 		}else{
 			Vset=Vslow;
-		}
-	}	
+		}*/
+		//Linear mode
+		V_old=Vset;
+		Vset=(-(Vhigh-Vslow)/MAX_ANGLE)*servo_angle+Vhigh;
+	}
 	
+	//Calcul du diff
+	//We calculate the delta_speed of the rear wheels
+	//delta_speed=servo_angle*MOVEMENT_ENTRAXE_COEFF*Vset;
+	//##################### Changement ??????????????????????????????????????#########
+	float r=LENGHT_CAR/(servo_angle*DEG_TO_RAD); //r=radius of the turn
+	delta_speed=(V_old*L_ENTRAXE)/(2*r+L_ENTRAXE);
 }
 
 void Car::Set_deplacement(void){
 	Set_speed();
-	myMovement.set(Vset,servo_angle);
+	//##################### Changement ??????????????????????????????????????#########
+	if (cam.number_edges>2){
+		myMovement.stop();
+	}else{
+		myMovement.set(Vset,servo_angle);
+		myMovement.setDiff(Vset,delta_speed);
+	}
+	
 	TPM1_SC |= TPM_SC_TOF_MASK;
 }
 
@@ -71,22 +88,26 @@ void Car::Caculate_angle_wheel(void){
 	if (abs (cam.diff - cam.diff_old) > 50){
 		cam.diff = cam.diff_old;
 	}else{
-		//PID
+		//PID 
 		servo_angle=K*(float)cam.diff+(Ki*Te-K)*(float)cam.diff_old+servo_angle;
 		//previous algo
 		/*servo_angle=KP_TURN*(float)cam.diff + KDP_TURN*(float)(cam.diff-cam.diff_old);*/
 		
-		if(servo_angle<SERVO_MAX_LEFT_ANGLE)servo_angle=SERVO_MAX_LEFT_ANGLE;
-		if(servo_angle>SERVO_MAX_RIGHT_ANGLE)servo_angle=SERVO_MAX_RIGHT_ANGLE;
+//##################### Changement valeurs  ##########################
+		if(servo_angle<-MAX_ANGLE)servo_angle=(-MAX_ANGLE);
+		if(servo_angle>MAX_ANGLE)servo_angle=MAX_ANGLE;
 	}
 }
 
 
 //################ Handler ##########################
 void Car::Car_handler(void){
-	//servo interrupt, 100Hz
-	//Clear the bit of the interrupt FTM1;
+	//servo//rear motors interrupt, 100Hz => Te=10ms
+	
+	//
 	Caculate_angle_wheel();
+	
+	//Debug
 	c++;
 	cnt++;
 	if(c>50){
@@ -94,7 +115,7 @@ void Car::Car_handler(void){
 		FLAG_SEND_IMG=true;
 			
 	}
-	if(cnt>100){
+	if(cnt>500){
 		cnt=0;
 		uart_write("$",1);
 		uart_writeNb((int)servo_angle);
@@ -106,15 +127,13 @@ void Car::Car_handler(void){
 		uart_writeNb(cam.RoadMiddle);
 		uart_write(";",1);
 	}
+	
+	//We refresh the deplacement's parameters. Speed +wheels Angle
 	Set_deplacement();
 }
 
 
-void FTM2_IRQHandler() {//encoder interrupt 6kHz
-	myMovement.encoder.interruptHandler();
-	myMovement.regulate();
 
-}
 //#################### Debug ###############################
 
 void Car::Car_debug(void){
