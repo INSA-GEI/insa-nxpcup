@@ -5,8 +5,8 @@
 #include "Movement.h"
 #include "ImageProcessing.h"
 
-#define VSLOW 800
-#define VHIGH 1500
+#define VSLOW 1000
+#define VHIGH 2000
 #define VSET 0
 #define INCREASE_SPEED 400//Nb of time ok before we increase the speed handler every 10ms
 #define MAX_ANGLE_BEFORE_SLOWDOWN 8 

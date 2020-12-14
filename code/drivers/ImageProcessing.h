@@ -3,8 +3,8 @@
 #define IMAGEPROCESSING_H_
 
 
-//#define SERVO_MAX_LEFT_ANGLE -30.0
-//#define SERVO_MAX_RIGHT_ANGLE 30.0
+#define SERVO_MAX_LEFT_ANGLE -30.0
+#define SERVO_MAX_RIGHT_ANGLE 30.0
 
 #include <MKL25Z4.h>
 #include "math.h"

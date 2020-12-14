@@ -66,17 +66,22 @@ void Car::Set_speed(void){
 	//delta_speed=servo_angle*MOVEMENT_ENTRAXE_COEFF*Vset;
 	//##################### Changement ??????????????????????????????????????#########
 	float r=LENGHT_CAR/(servo_angle*DEG_TO_RAD); //r=radius of the turn
-	delta_speed=(V_old*L_ENTRAXE)/(r+L_ENTRAXE);//(2*r+L_ENTRAXE);
+	delta_speed=(Vset*L_ENTRAXE)/(2*r+L_ENTRAXE);
+	
 }
 
 void Car::Set_deplacement(void){
 	Set_speed();
 	//##################### Changement ??????????????????????????????????????#########
-	/*if (cam.number_edges>2){
-		myMovement.stop();
-	}else{*/
-	myMovement.set(Vset,servo_angle);
-	myMovement.setDiff(Vset,delta_speed);
+	if (cam.edges_cnt>10){
+		Vset=0;
+		mode_speed=0;
+		uart_write("Fin !",5);
+		servo_angle=0;
+	}else{
+		myMovement.set(Vset,servo_angle);
+		myMovement.setDiff(Vset,delta_speed);
+	}
 	
 	
 	TPM1_SC |= TPM_SC_TOF_MASK;
@@ -228,6 +233,9 @@ void Car::Car_debug(void){
 					if(mode_speed==0){
 						mode_speed++;
 						uart_write("speed_auto\n\r",12);
+					}else if(mode_speed==1){
+						mode_speed++;
+						uart_write("speed_auto_incr\n\r",17);
 					}else{
 						mode_speed=0;
 						uart_write("speed_mano\n\r",12);
