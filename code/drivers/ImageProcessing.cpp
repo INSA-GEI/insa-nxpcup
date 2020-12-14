@@ -225,16 +225,9 @@ void Img_Proc::calculateMiddle (void){
 	
 
 	
-	if (BlackLineRight==127){
-		diff = RoadMiddle - 58;
-		diff=(2*diff_old+diff)/3;
-	}else if (BlackLineLeft==0){
-		diff = RoadMiddle - 70;
-		diff=(2*diff_old+diff)/3;
-	}else{
-		// Find difference from real middle
-		diff = RoadMiddle - 64;						// calculate actual difference
-	}
+	
+	// Find difference from real middle
+	diff = RoadMiddle - 64;						// calculate actual difference
 
 }
 

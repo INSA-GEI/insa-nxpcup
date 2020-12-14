@@ -31,7 +31,7 @@ void Car::init(void){
 	delta_speed=0;
 	mode_debug=0;
 	
-	//Vset=500;
+	//Vset=250;
 	//mode_speed=1;
 }
 
