@@ -36,23 +36,25 @@ void Car::Set_speed(void){
 	//uart_write("$",1);
 	//We notice if we have been near the black lines or not
 	if (mode_speed!=0){
-		if (abs(cam.diff)<MAX_ANGLE_BEFORE_SLOWDOWN){
-			Count++;
-			if ((Count%INCREASE_SPEED)==0){
-				Vslow+=200;
-				Vhigh+=200;
+		if (mode_speed==2){
+			if (abs(cam.diff)<MAX_ANGLE_BEFORE_SLOWDOWN){
+				Count++;
+				if ((Count%INCREASE_SPEED)==0){
+					Vslow+=200;
+					Vhigh+=200;
+				}
+			}else{
+				Count--;
+				//Vslow-=200;
+				//Vhigh-=200;
 			}
-		}else{
-			Count--;
-			//Vslow-=200;
-			//Vhigh-=200;
 		}
 		
 		//Linear mode
 		V_old=Vset;
 		if (Vset!=0){
 			Vset=(-(Vslow-Vhigh)/MAX_ANGLE)*servo_angle+Vhigh;
-			uart_writeNb(Vset);
+			
 		}
 	}
 	
