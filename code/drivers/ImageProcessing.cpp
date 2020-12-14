@@ -91,8 +91,9 @@ void Img_Proc::capture(void){
 void Img_Proc::differentiate(void){
 		if (functionning_mode == 1){
 			for(i=1;i<=126;i++){	
-				ImageDataDifference[i] = abs (-ImageData[i-1] + ImageData[i+1]);
+				ImageDataDifference[i] = abs (ImageData[i-1] + ImageData[i] + ImageData[i+1])/3;
 			}
+			
 		}
 		if (functionning_mode == 2){
 			for(i=1;i<=126;i++){							// using a gradient by direct differences (application of the filter : [-1 , 0 , 1] -> P(x) = -1*P(x-1)+0*P(x)+1*P(x+1))
