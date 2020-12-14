@@ -55,7 +55,7 @@ private:
 #define KP_TURN 						1.1			// Proportional coefficient in turn
 #define KDP_TURN 						0.8			// Differential coefficient in turn
 
-#define K 								0.7 //P of the PI
+#define K 								2 //P of the PI
 #define Ki								1 //I of the PI
 
 

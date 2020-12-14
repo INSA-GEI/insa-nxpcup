@@ -33,6 +33,7 @@ void Car::init(void){
 }
 
 void Car::Set_speed(void){
+	//uart_write("$",1);
 	//We notice if we have been near the black lines or not
 	if (mode_speed!=0){
 		if (abs(cam.diff)<MAX_ANGLE_BEFORE_SLOWDOWN){
@@ -42,21 +43,15 @@ void Car::Set_speed(void){
 				Vhigh+=200;
 			}
 		}else{
-			Vslow-=200;
-			Vhigh-=200;
+			Count--;
+			//Vslow-=200;
+			//Vhigh-=200;
 		}
 		
-		//On regarde si on est dans un virage ou pas
-		//Que 2 valeurs
-		/*if (abs(servo_angle) < MAX_ANGLE_BEFORE_SLOWDOWN){
-			Vset=Vhigh;
-		}else{
-			Vset=Vslow;
-		}*/
 		//Linear mode
 		V_old=Vset;
 		if (Vset!=0){
-			Vset=(-(Vhigh-Vslow)/MAX_ANGLE)*servo_angle+Vhigh;
+			Vset=(-(Vslow-Vhigh)/MAX_ANGLE)*servo_angle+Vhigh;
 			uart_writeNb(Vset);
 		}
 	}

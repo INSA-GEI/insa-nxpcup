@@ -41,8 +41,8 @@ void Movement::setSpeed(int speed) {
 }
 
 void Movement::setDiff(int speed,float delta) {
-	targetSpeedL=speed+delta;
-	targetSpeedR=speed-delta;
+	targetSpeedL=speed;//+delta;
+	targetSpeedR=speed;//-delta;
 }
 
 void Movement::setAngle(float angle) {
@@ -65,9 +65,7 @@ void Movement::stop(void) {
 
 void Movement::regulate(void) {
 	GPIOB_PTOR = DEBUG_RED_Pin;
-	//int err=encoder.getLeftSpeed();
-	int err=TPM0_C5V; //data apply to the PWM of the motors
-	err=(-err+600)/MOTOR_CAL_SPEED; //Conversion PWM => mm/s
+	int err=encoder.getLeftSpeed();
 	if(err<0){	//detect invalid speed readings
 		err=0;
 	}
@@ -77,9 +75,7 @@ void Movement::regulate(void) {
 		actualSpeedL=actualSpeedL+err*MOVEMENT_CORR_KP;//compensate real speed command
 	}
 
-	//err=encoder.getRightSpeed();
-	err=TPM0_C1V;
-	err=(-err+600)/MOTOR_CAL_SPEED;
+	err=encoder.getRightSpeed();
 	if(err<0){	//detect invalid speed readings
 		err=0;
 	}
