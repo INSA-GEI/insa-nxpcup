@@ -55,26 +55,29 @@ void Car::Set_speed(void){
 		}*/
 		//Linear mode
 		V_old=Vset;
-		Vset=(-(Vhigh-Vslow)/MAX_ANGLE)*servo_angle+Vhigh;
+		if (Vset!=0){
+			Vset=(-(Vhigh-Vslow)/MAX_ANGLE)*servo_angle+Vhigh;
+			uart_writeNb(Vset);
+		}
 	}
 	
 	//Calcul du diff
 	//We calculate the delta_speed of the rear wheels
-	//delta_speed=servo_angle*MOVEMENT_ENTRAXE_COEFF*Vset;
+	delta_speed=servo_angle*MOVEMENT_ENTRAXE_COEFF*Vset;
 	//##################### Changement ??????????????????????????????????????#########
-	float r=LENGHT_CAR/(servo_angle*DEG_TO_RAD); //r=radius of the turn
-	delta_speed=(V_old*L_ENTRAXE)/(2*r+L_ENTRAXE);
+	//float r=LENGHT_CAR/(servo_angle*DEG_TO_RAD); //r=radius of the turn
+	//delta_speed=(V_old*L_ENTRAXE)/(2*r+L_ENTRAXE);
 }
 
 void Car::Set_deplacement(void){
 	Set_speed();
 	//##################### Changement ??????????????????????????????????????#########
-	if (cam.number_edges>2){
+	/*if (cam.number_edges>2){
 		myMovement.stop();
-	}else{
-		myMovement.set(Vset,servo_angle);
-		myMovement.setDiff(Vset,delta_speed);
-	}
+	}else{*/
+	myMovement.set(Vset,servo_angle);
+	myMovement.setDiff(Vset,delta_speed);
+	
 	
 	TPM1_SC |= TPM_SC_TOF_MASK;
 }
@@ -136,7 +139,7 @@ void Car::Aff_debug(void){
 	if(FLAG_SEND_IMG && FLAG_ENABLE_LOG_IMG){
 		for(int i=0;i<128;i++){
 			uart_write("$",1);
-			uart_writeNb(cam.ImageData[i]);
+			//uart_writeNb(cam.ImageData[i]);
 			/*uart_write(" ",1);
 			if(cam.BlackLineLeft==i ||cam.RoadMiddle==i ||cam.BlackLineRight==i){
 				uart_writeNb(200);
@@ -152,6 +155,8 @@ void Car::Aff_debug(void){
 		uart_writeNb(cam.diff-cam.diff_old);
 		uart_write(" ",1);
 		uart_writeNb(cam.diff);
+		uart_write(" ",1);
+		uart_writeNb(cam.number_edges);
 		uart_write(" ",1);
 		uart_writeNb(cam.RoadMiddle);
 		uart_write(";",1);
@@ -221,10 +226,10 @@ void Car::Car_debug(void){
 				case 'x':	//decrement speed
 					if(mode_speed==0){
 						mode_speed++;
-						uart_write("speed_auto\n",11);
+						uart_write("speed_auto\n\r",12);
 					}else{
 						mode_speed=0;
-						uart_write("speed_mano\n",11);
+						uart_write("speed_mano\n\r",12);
 					}
 					break;
 
@@ -232,12 +237,17 @@ void Car::Car_debug(void){
 					GPIOC_PTOR =DEBUG_CAM_LED_Pin;
 					break;
 				case 'i':
+					uart_write("debug_img\n\r",11);
 					FLAG_ENABLE_LOG_IMG=!FLAG_ENABLE_LOG_IMG;
 					FLAG_ENABLE_LOG_SERVO=false;
 					break;
 				case 's':
+					uart_write("debug_servo\n\r",13);
 					FLAG_ENABLE_LOG_SERVO=!FLAG_ENABLE_LOG_SERVO;
 					FLAG_ENABLE_LOG_IMG=false;
+					break;
+				case 'v':
+					FLAG_SEND_IMG=true;
 					break;
 				default:
 					break;
