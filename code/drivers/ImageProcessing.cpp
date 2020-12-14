@@ -223,9 +223,6 @@ void Img_Proc::calculateMiddle (void){
 	// Store old value
 	diff_old = diff;							// store old difference
 	
-
-	
-	
 	// Find difference from real middle
 	diff = RoadMiddle - 64;						// calculate actual difference
 
