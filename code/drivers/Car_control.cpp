@@ -30,6 +30,9 @@ void Car::init(void){
 	mode_speed=0;
 	delta_speed=0;
 	mode_debug=0;
+	
+	//Vset=500;
+	//mode_speed=1;
 }
 
 void Car::Set_speed(void){
@@ -60,10 +63,10 @@ void Car::Set_speed(void){
 	
 	//Calcul du diff
 	//We calculate the delta_speed of the rear wheels
-	delta_speed=servo_angle*MOVEMENT_ENTRAXE_COEFF*Vset;
+	//delta_speed=servo_angle*MOVEMENT_ENTRAXE_COEFF*Vset;
 	//##################### Changement ??????????????????????????????????????#########
-	//float r=LENGHT_CAR/(servo_angle*DEG_TO_RAD); //r=radius of the turn
-	//delta_speed=(V_old*L_ENTRAXE)/(2*r+L_ENTRAXE);
+	float r=LENGHT_CAR/(servo_angle*DEG_TO_RAD); //r=radius of the turn
+	delta_speed=(V_old*L_ENTRAXE)/(r+L_ENTRAXE);//(2*r+L_ENTRAXE);
 }
 
 void Car::Set_deplacement(void){
@@ -209,6 +212,7 @@ void Car::Car_debug(void){
 					mode_speed=0;
 					uart_write("Stop !",6);
 					n=0;
+					servo_angle=0;
 					break;
 
 				case '-':	//decrement speed
