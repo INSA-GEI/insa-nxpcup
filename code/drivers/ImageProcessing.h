@@ -3,8 +3,8 @@
 #define IMAGEPROCESSING_H_
 
 
-#define SERVO_MAX_LEFT_ANGLE -30.0
-#define SERVO_MAX_RIGHT_ANGLE 30.0
+//#define SERVO_MAX_LEFT_ANGLE -30.0
+//#define SERVO_MAX_RIGHT_ANGLE 30.0
 
 #include <MKL25Z4.h>
 #include "math.h"
@@ -66,6 +66,13 @@ public:
 	void processAll(void);				//executes all camera related operations in order. Takes approx 940µs to complete
 	bool test_FinishLine_Detection(void);
 	void compute_data_threshold(void);
+	
+	/*** 2020 - 2021 ***/
+	void display_camera_data(void);
+	void display_gradient(void);
+	//void export_raw_data(void);
+	void gradient(void);
+	
 	
 private:
 	int CompareData_classic;			// set data for comparison to find max IN BASE ALGORITHM
