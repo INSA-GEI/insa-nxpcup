@@ -5,11 +5,11 @@
 #include "Movement.h"
 #include "ImageProcessing.h"
 
-#define VSLOW 1000
-#define VHIGH 2000
+#define VSLOW 800
+#define VHIGH 1500
 #define VSET 0
 #define INCREASE_SPEED 400//Nb of time ok before we increase the speed handler every 10ms
-#define MAX_ANGLE_BEFORE_SLOWDOWN 8 
+#define MAX_DIFF_BEFORE_SLOWDOWN 10 
 #define MAX_ANGLE 30.0
 
 #define Te 0.01 //sample time 10ms handler rear motors
@@ -25,12 +25,12 @@ public:
 	bool finish;//indicates if we are at the end of the circuit
 	float servo_angle;
 	//Speed of the car
-	unsigned int Vset;//=0
-	unsigned int V_old;
+	int Vset;//=0
+	int V_old;
 	//Speed in turn
-	unsigned int Vslow;//=500
+	int Vslow;//=500
 	//Speed in strait line
-	unsigned int Vhigh;//=1500
+	int Vhigh;//=1500
 	
 	float delta_speed;//Value for the rear differential
 	

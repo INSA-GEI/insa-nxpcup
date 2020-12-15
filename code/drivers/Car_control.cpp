@@ -30,17 +30,14 @@ void Car::init(void){
 	mode_speed=0;
 	delta_speed=0;
 	mode_debug=0;
-	
-	//Vset=250;
-	//mode_speed=1;
 }
 
 void Car::Set_speed(void){
 	//uart_write("$",1);
 	//We notice if we have been near the black lines or not
 	if (mode_speed!=0){
-		if (mode_speed==2){
-			if (abs(cam.diff)<MAX_ANGLE_BEFORE_SLOWDOWN){
+		/*if (mode_speed==2){
+			if (abs(cam.diff)<MAX_DIFF_BEFORE_SLOWDOWN){
 				Count++;
 				if ((Count%INCREASE_SPEED)==0){
 					Vslow+=200;
@@ -51,23 +48,47 @@ void Car::Set_speed(void){
 				//Vslow-=200;
 				//Vhigh-=200;
 			}
-		}
+		}*/
 		
 		//Linear mode
 		V_old=Vset;
 		if (Vset!=0){
-			Vset=(-(Vslow-Vhigh)/MAX_ANGLE)*servo_angle+Vhigh;
-			
+			Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh;
+			/*uart_write("x : ",4);
+			uart_writeNb(abs(servo_angle));
+			uart_write(" / ",3);
+			uart_write("a : ",4);
+			uart_writeNb((Vslow-Vhigh)/MAX_ANGLE);
+			uart_write(" / ",3);
+			uart_write("b : ",4);
+			uart_writeNb(Vhigh);
+			uart_write(" / ",3);
+			uart_write("Vset : ",6);
+			uart_writeNb((int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh);
+			uart_write("\r\n",2);*/
 		}
 	}
 	
 	//Calcul du diff
 	//We calculate the delta_speed of the rear wheels
 	//delta_speed=servo_angle*MOVEMENT_ENTRAXE_COEFF*Vset;
-	//##################### Changement ??????????????????????????????????????#########
-	float r=LENGHT_CAR/(servo_angle*DEG_TO_RAD); //r=radius of the turn
-	delta_speed=(Vset*L_ENTRAXE)/(2*r+L_ENTRAXE);
+	//##################### Changement #########
+	if (abs(servo_angle)<MAX_ANGLE/3){
+		//Strait line
+		delta_speed=0;
+	}else if(abs(servo_angle)>2*MAX_ANGLE/3){
+		//Hard turn
+		delta_speed=Vset/2;
+	}else{
+		//Soft turn
+		float r=LENGHT_CAR/(abs(servo_angle)*DEG_TO_RAD); //r=radius of the turn
+		delta_speed=(Vset*L_ENTRAXE)/(2*r+L_ENTRAXE);
+	}
 	
+	//Left turn servoangle<0
+	if (servo_angle<0){
+		delta_speed=-delta_speed;
+	}	
 }
 
 void Car::Set_deplacement(void){
@@ -155,15 +176,17 @@ void Car::Aff_debug(void){
 		}
 	}else if(FLAG_SEND_IMG && FLAG_ENABLE_LOG_SERVO){
 		uart_write("$",1);
-		uart_writeNb((int)servo_angle);
+		uart_writeNb(Vset);
 		uart_write(" ",1);
+		uart_writeNb((int)servo_angle);
+		/*uart_write(" ",1);
 		uart_writeNb(cam.diff-cam.diff_old);
 		uart_write(" ",1);
 		uart_writeNb(cam.diff);
 		uart_write(" ",1);
 		uart_writeNb(cam.number_edges);
 		uart_write(" ",1);
-		uart_writeNb(cam.RoadMiddle);
+		uart_writeNb(cam.RoadMiddle);*/
 		uart_write(";",1);
 	}
 	FLAG_SEND_IMG=false;
@@ -231,13 +254,14 @@ void Car::Car_debug(void){
 					break;
 				case 'x':	//decrement speed
 					if(mode_speed==0){
-						mode_speed++;
+						mode_speed=1;
 						uart_write("speed_auto\n\r",12);
 					}else if(mode_speed==1){
-						mode_speed++;
+						mode_speed=2;
 						uart_write("speed_auto_incr\n\r",17);
 					}else{
 						mode_speed=0;
+						Vset=Vslow;
 						uart_write("speed_mano\n\r",12);
 					}
 					break;
