@@ -133,7 +133,7 @@ void Car::Caculate_angle_wheel(void){
 
 void Car::processESP(){
 	//############## ESP #################
-	if (abs (servo_angle-old_servo_angle)>MAX_ANGLE/3 && sng(servo_angle)!=sng(old_servo_angle)){
+	if (abs (servo_angle-old_servo_angle)>MAX_ANGLE/4 && sng(servo_angle)!=sng(old_servo_angle)){
 		ESP++;
 	}
 	
@@ -145,20 +145,22 @@ void Car::processESP(){
 			old_ESP=0;
 		}else if (ESP>LIMIT_ESP){
 			detect_ESP=true;
-			c_ESP=-50;
+			c_ESP=-TIME_ACTIVE_ESP;
 			old_ESP=ESP;
 		}
 	}
 	if (detect_ESP){
-		/*if (mode_speed!=0){
+		if (mode_speed!=0){
 			Vset=300;
 		}
-		delta_speed=0;*/
-		if(c_ESP>10){
+		delta_speed=0;
+		if(ESP!=0){
 			uart_write("ESP : ",6);
 			uart_writeNb((int)detect_ESP);
 			uart_write("\r\n",2);
 		}
+		ESP=0;
+		old_ESP=0;
 	}
 }
 

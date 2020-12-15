@@ -12,6 +12,7 @@
 #define MAX_DIFF_BEFORE_SLOWDOWN 10 
 #define MAX_ANGLE 30.0
 #define LIMIT_ESP 5 //between 1 and 10
+#define TIME_ACTIVE_ESP	50 //*10ms
 
 #define Te 0.01 //sample time 10ms handler rear motors
 #define DEG_TO_RAD 0.0175
