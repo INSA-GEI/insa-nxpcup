@@ -6,6 +6,9 @@
 //#################################### Var ###################
 //################ var aux #############
 int c=0;
+int c_ESP=0;
+int old_ESP=0;
+float old_servo_angle=0;
 int n=0;//Allow us to use the debug with Putty
 
 int Count=0; //count how many time we were not to close to the black line
@@ -30,6 +33,8 @@ void Car::init(void){
 	mode_speed=0;
 	delta_speed=0;
 	mode_debug=0;
+	ESP=0;
+	detect_ESP=false;
 }
 
 void Car::Set_speed(void){
@@ -54,11 +59,12 @@ void Car::Set_speed(void){
 		V_old=Vset;
 		if (Vset!=0){
 			Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh;
-			/*uart_write("x : ",4);
-			uart_writeNb(abs(servo_angle));
+			//Vset=(V_old+Vset)/2;
+			/*uart_write("Vold : ",7);
+			uart_writeNb(V_old);
 			uart_write(" / ",3);
-			uart_write("a : ",4);
-			uart_writeNb((Vslow-Vhigh)/MAX_ANGLE);
+			uart_write("Vset : ",7);
+			uart_writeNb(Vset);
 			uart_write(" / ",3);
 			uart_write("b : ",4);
 			uart_writeNb(Vhigh);
@@ -77,7 +83,7 @@ void Car::Set_speed(void){
 		//Strait line
 		delta_speed=0;
 	}else if(abs(servo_angle)>2*MAX_ANGLE/3){
-		//Hard turn
+		//Hard turn => turn with r=Entraxe
 		delta_speed=Vset/2;
 	}else{
 		//Soft turn
@@ -88,11 +94,10 @@ void Car::Set_speed(void){
 	//Left turn servoangle<0
 	if (servo_angle<0){
 		delta_speed=-delta_speed;
-	}	
+	}
 }
 
 void Car::Set_deplacement(void){
-	Set_speed();
 	//##################### Changement ??????????????????????????????????????#########
 	if (cam.edges_cnt>10){
 		Vset=0;
@@ -117,13 +122,43 @@ void Car::Caculate_angle_wheel(void){
 		cam.diff = cam.diff_old;
 	}else{
 		//PID 
+		old_servo_angle=servo_angle;
 		servo_angle=K*(float)cam.diff+(Ki*Te-K)*(float)cam.diff_old+servo_angle;
-		//previous algo
-		/*servo_angle=KP_TURN*(float)cam.diff + KDP_TURN*(float)(cam.diff-cam.diff_old);*/
 		
 //##################### Changement valeurs  ##########################
 		if(servo_angle<-MAX_ANGLE)servo_angle=(-MAX_ANGLE);
 		if(servo_angle>MAX_ANGLE)servo_angle=MAX_ANGLE;
+	}
+}
+
+void Car::processESP(){
+	//############## ESP #################
+	if (abs (servo_angle-old_servo_angle)>MAX_ANGLE/3 && sng(servo_angle)!=sng(old_servo_angle)){
+		ESP++;
+	}
+	
+	if(c_ESP>10){
+		c_ESP=0;
+		if (ESP==old_ESP){
+			ESP=0;
+			detect_ESP=false;
+			old_ESP=0;
+		}else if (ESP>LIMIT_ESP){
+			detect_ESP=true;
+			c_ESP=-50;
+			old_ESP=ESP;
+		}
+	}
+	if (detect_ESP){
+		/*if (mode_speed!=0){
+			Vset=300;
+		}
+		delta_speed=0;*/
+		if(c_ESP>10){
+			uart_write("ESP : ",6);
+			uart_writeNb((int)detect_ESP);
+			uart_write("\r\n",2);
+		}
 	}
 }
 
@@ -137,10 +172,15 @@ void Car::Car_handler(void){
 	
 	//Debug
 	c++;
+	c_ESP++;
 	if(c>500){
 		c=0;
 		FLAG_SEND_IMG=true;		
 	}
+	
+	Set_speed();
+	//ESP at the end because it changes Vset and delta_speed
+	processESP();
 	Aff_debug();
 	//We refresh the deplacement's parameters. Speed +wheels Angle
 	Set_deplacement();
@@ -286,4 +326,12 @@ void Car::Car_debug(void){
 					break;
 				}
 			}
+}
+
+int sng(int a){
+	if (a<=0){
+		return 1;
+	}else{
+		return -1;
+	}
 }
