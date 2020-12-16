@@ -59,7 +59,10 @@ void Car::Set_speed(void){
 		V_old=Vset;
 		if (Vset!=0){
 			Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh;
-			//Vset=(V_old+Vset)/2;
+			//Test#####################################
+			if (Vset>V_old){
+				Vset=0.1*Vset+0.9*V_old; //Temps de montée max 100ms
+			}
 			/*uart_write("Vold : ",7);
 			uart_writeNb(V_old);
 			uart_write(" / ",3);
