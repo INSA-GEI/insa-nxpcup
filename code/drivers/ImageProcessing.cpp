@@ -92,7 +92,7 @@ void Img_Proc::capture(void){
 }
 
 void Img_Proc::differentiate(void){
-		if (functionning_mode == 1){
+		if (functionning_mode == 1){ //Tout Pourri
 			for(i=1;i<=126;i++){	
 				ImageDataDifference[i] = abs (ImageData[i-1] + ImageData[i] + ImageData[i+1])/3;
 			}
