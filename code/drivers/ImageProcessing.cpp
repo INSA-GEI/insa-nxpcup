@@ -1,4 +1,7 @@
 #include "ImageProcessing.h"
+#include "Debug.h"
+//#include <stdlib.h>
+//#include <stdio.h>
 
 int i,j;
 
@@ -312,11 +315,93 @@ void Img_Proc::compute_data_threshold(void){
 }
 
 
+void Img_Proc::display_camera_data(void) {
+	//uart_write("Raw data : ",11);
+	for (int i=0;i<128;i++) {
+		uart_write("$",1);
+		uart_writeNb(ImageData[i]);
+		uart_write(" ",1);
+		uart_writeNb(ImageDataDifference[i]);
+		uart_write(";",1);
+	}
+	for (int i=0;i<40;i++) {
+			uart_write("$",1);
+			uart_writeNb(0);
+			uart_write(" ",1);
+			uart_writeNb(0);
+			uart_write(";",1);
+	}
+	uart_write("\r\n",2);
+}
+
+void Img_Proc::display_gradient(void) {
+	//uart_write("Gradient : ",11);
+	for (int i=0;i<128;i++) {
+		uart_write("$",1);
+		uart_writeNb(ImageDataDifference[i]);
+		uart_write(";",1);
+	}
+	uart_write("\r\n",2);
+}
+
+/*void Img_Proc::export_raw_data(void) {
+    FILE* fichier = NULL;
+	
+	fichier = fopen("camera_raw_data.txt", "w+");
+	// si on veut que le fichier ne soit pas écrasé à chaque fois : 
+	// fichier = fopen("camera_raw_data.txt", "a+");
+	if (fichier != NULL)
+	{
+		//Ecriture des data brutes dans le fichier
+		fputs("START\n", fichier);
+		for (int i=0;i<128;i++) {
+	 		fprintf(fichier, "%d ", ImageData[i]);
+		}
+		fputs(" ;\nSTOP\n", fichier);
+		fclose(fichier);
+	}
+	else
+	{
+		uart_write("Erreur enregistrement des données brutes de la caméra",42);
+	}
+	    
+}*/
+
+void Img_Proc::gradient(void){
+
+		if (functionning_mode == 1){
+			for(i=1;i<=126;i++){	// différence simple
+				ImageDataDifference[i] = abs (-ImageData[i] + ImageData[i+1]);
+			}
+			ImageDataDifference[0] = abs (- ImageData[0] + ImageData[1]);	// first value doesnt have "gradient" for this method
+			ImageDataDifference[127] = abs (- ImageData[126] + ImageData[127]);	// last value doesnt have "gradient" for this method
+		}else if (functionning_mode == 2){
+			for(i=1;i<=126;i++){	// using a gradient by direct differences (application of the filter : [-1 , 0 , 1] -> P(x) = -1*P(x-1)+0*P(x)+1*P(x+1))
+				ImageDataDifference[i] = abs (-ImageData[i-1] + ImageData[i+1]);
+			}
+			ImageDataDifference[0] = abs (- ImageData[0] + ImageData[1]);	// first value doesnt have "gradient" for this method
+			ImageDataDifference[127] = abs (- ImageData[126] + ImageData[127]);	// last value doesnt have "gradient" for this method
+		}else if (functionning_mode == 3){ //Test non fructueux
+			for(i=1;i<=126;i++){
+				ImageDataDifference[i] = abs (-((ImageData[i-1])*(ImageData[i-1])) + ((ImageData[i+1])*(ImageData[i+1])));
+			}
+			ImageDataDifference[0] = abs (-((ImageData[0])*(ImageData[0])) + ((ImageData[1])*(ImageData[1])));	//first value
+			ImageDataDifference[127] = abs (-((ImageData[126])*(ImageData[126])) + ((ImageData[127])*(ImageData[127])));	//last value
+		}else if (functionning_mode == 4){
+			for(i=0;i<=127;i++){							// using the Gaussian difference method
+				gaussian1 = (1/(SIGMA_1 * sqrt(2*PI))) * exp(-(pow(i,2))/(2*pow(SIGMA_1,2)));
+				gaussian2 = (1/(SIGMA_2 * sqrt(2*PI))) * exp(-(pow(i,2))/(2*pow(SIGMA_2,2)));
+				ImageDataDifference[i] = abs ( (int) (round ( (ImageData[i] * gaussian1 - ImageData[i] * gaussian2) ) ) );
+			}
+		}
+	}	/*	End of function "Fill_ImageDataDifference"	*/
+
+
 void Img_Proc::processAll(void) {
 	capture();
 	differentiate();
 	process();
 	calculateMiddle();
 	//compute_data_threshold();
-	test_FinishLine_Detection();
+	//test_FinishLine_Detection();
 }
