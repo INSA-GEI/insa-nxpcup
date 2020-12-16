@@ -525,12 +525,13 @@ void Img_Proc::gradient(void){
 				ImageDataDifference[i] = abs ( (int) (round ( (ImageData[i] * gaussian1 - ImageData[i] * gaussian2) ) ) );
 			}
 		}
-	}	/*	End of function "Fill_ImageDataDifference"	*/
+	}	/*	End of function "gradient"	*/
 
 
 void Img_Proc::processAll(void) {
 	capture();
-	differentiate();
+	//differentiate();
+	gradient();
 	process();
 	calculateMiddle();
 	//compute_data_threshold();
