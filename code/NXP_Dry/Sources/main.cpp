@@ -24,6 +24,7 @@ int main(){
 		car.Car_debug();
 		if(i>500){
 			i=0;
+			camera.processAll();
 			camera.display_camera_data();
 		}else{
 			i++;

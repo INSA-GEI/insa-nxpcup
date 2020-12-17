@@ -46,6 +46,7 @@ void Img_Proc::init(){
 	black_edge_right_pos_rect2=0;
 	//Ajout Maty
 	number_gradient=0;
+	CompareData=THRESHOLD_high;
 
 }
 
@@ -395,33 +396,27 @@ void Img_Proc::gradient(void){
 
 void Img_Proc::process_camera (void){
 		number_gradient = 0;		// reset the number of peaks to 0		
-		if (functionning_mode == 2){
-			for(i=126;i>=64;i--){
-	   			if (ImageDataDifference[i] > CompareData_high){
-	   				BlackLineRight = i;
-	   				(number_gradient) ++;
-	   			}		/* END if ... */
-			}	/* END for (i=126;i>=64;i--) */
-
-	   		// Find black line on the left side
-			
-			// image processing with the algorithm seen at the beginning. 
-			BlackLineLeft = 0;
-			for(i=1;i<=64;i++){
-	   			if (ImageDataDifference[i] > CompareData_high){
-	   				//CompareData_high = ImageDataDifference[i];
-	   				BlackLineLeft = i;
-	   				(number_edges) ++;
-	   			}			
-	   		}	/* END for (i=64;i>=1;i--) */
-		}	/* END of "(IF mfunctionning_mod == 2 " */		
+		
+		
+		for(i=126;i>=1;i--){		//on va de droite a gauche
+			if (ImageDataDifference[i] > CompareData){
+				(number_gradient)++;
+				if (ImageData[i-3]>Threshold_White){			//Je prends i-3 pour sortir de la ligne noire
+					//C est le cote droit
+					BlackLineRight=i;				
+				} else if (ImageData[i+3]>Threshold_White){
+					//C est le cote droit
+					BlackLineLeft=i;
+				}
+			}
+		}
 	}	/*	END of the function "Image_Processing"	*/
 
 
 void Img_Proc::processAll(void) {
 	capture();
-	differentiate();
-	process();
+	gradient();
+	process_camera();
 	calculateMiddle();
 	//compute_data_threshold();
 	//test_FinishLine_Detection();
