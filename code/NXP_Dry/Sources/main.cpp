@@ -11,6 +11,7 @@ Car car;
 
 int main(){
 	//int p=0; //???? pour l'affichage
+	int i=0;
 	debug_init();
 	debug_displaySendNb((GPIOE_PDIR & 0x003C)>>2);
 	DEBUG_CAM_LED_OFF;
@@ -18,6 +19,13 @@ int main(){
 	
 	for(;;) {
 		car.Car_debug();
+		if(i>500){
+			i=0;
+			camera.processAll();
+			camera.display_camera_data();
+		}else{
+			i++;
+		}
 	}
 
 	return 0;

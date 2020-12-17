@@ -314,6 +314,7 @@ void Img_Proc::compute_data_threshold(void){
 	}
 }
 
+/***** 2020 - 2021 *****/
 
 void Img_Proc::display_camera_data(void) {
 	//uart_write("Raw data : ",11);
@@ -396,11 +397,118 @@ void Img_Proc::gradient(void){
 		}
 	}	/*	End of function "Fill_ImageDataDifference"	*/
 
+/* PROCESS_CAMERA 
+ * Objectif : détecter les bords avec les gradients + regarder si à droite ou à gauche c'est du blanc ou du gris 
+ * 			  pour dire si on détecte un côté droit ou gauche car parfois quand la voiture tourne trop on ne détecte 
+ * 			  plus qu'un seul bord et elle ne sait pas si elle doit tourner à droite ou à gauche 
+ */
+void Img_Proc::process_camera (void){
+	BlackLineRight = 127; //If no black line is detected, we suppose that 
+	number_gradient = 0;		//reset the number of peaks to 0	
+	
+	
+	for(i=126;i>=1;i--){		//on va de droite à gauche
+		if (ImageDataDifference[i] > CompareData){
+			(number_gradient)++;
+			if (ImageData[i-3]>Threshold_White){	//Je prends i-3 pour sortir de la ligne noire
+				//C'est le côté droit
+				BlackLineRight=i;				
+			} else if (ImageData[i+3]>Threshold_White){
+				//C'est le côté droit
+				BlackLineLeft=i;
+			}
+		}
+	}
+}	/*	END of the function "Process_Camera"	*/
+
+
+
+/*if (functionning_mode == 2){
+			// Find black line on the right side
+			
+			for(i=126;i>=64;i--){
+	   			if (ImageDataDifference[i] > CompareData_high){
+	   				//CompareData_high = ImageDataDifference[i];
+	   				BlackLineRight = i;
+	   				(number_edges) ++;
+	   			}else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high ){
+	   				if (i >= 67 && i < 124){
+	   					j = 1;
+	   					validate_gradient = 0;
+						while (j <= 3){
+	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high){
+	   							BlackLineRight = i;
+	   							(number_edges) ++;
+	   							//CompareData_high = ImageDataDifference[i+j];	
+	   							validate_gradient = 1;
+	   						}
+	   						j++;
+	   					}
+	   				}
+	   				if (validate_gradient != 1){
+	   					if (i >= 69 && i < 122){
+	   						j=1;
+	   						while (j <= 5){
+	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high)){
+	   								BlackLineRight = i;
+	   								(number_edges) ++;
+	   								//CompareData_low = ImageDataDifference[i];	 
+	   							}
+	   							j++;
+	   						}
+	   					}
+	   				}
+	   			}	 END for (i=126;i>=64;i--) 
+
+	   		// Find black line on the left side
+			
+			// image processing with the algorithm seen at the beginning. 
+			BlackLineLeft = 0;
+			for(i=1;i<=64;i++){
+	   			if (ImageDataDifference[i] > CompareData_high){
+	   				//CompareData_high = ImageDataDifference[i];
+	   				BlackLineLeft = i;
+	   				(number_edges) ++;
+	   			}else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high ){
+	   				if (i > 3 && i <= 61){
+	   					j = 1;
+	   					validate_gradient = 0;
+						while (j <= 3){
+	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high){
+	   							BlackLineLeft = i;
+	   							(number_edges) ++;
+	   							//CompareData_high = ImageDataDifference[i+j];
+	   							//CompareData_low = ImageDataDifference[i];	   		
+	   							validate_gradient = 1;				
+	   						}
+	   						j++;
+	   					}
+	   				}
+	   				if (validate_gradient != 1){
+	   					if (i > 5 && i <= 59){
+	   						j=1;
+	   						while (j <= 5){
+	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high)){
+	   								BlackLineLeft = i;
+	   								(number_edges) ++;
+	   								//CompareData_high = ImageDataDifference[i+j];
+	   								//CompareData_low = ImageDataDifference[i];	 
+	   							}
+	   							j++;
+	   						}
+	   					}
+	   				}
+	   			}		ND else if ... */
+
+
+
 
 void Img_Proc::processAll(void) {
 	capture();
 	differentiate();
+	//gradient();
 	process();
+	//process_camera();
 	calculateMiddle();
 	//compute_data_threshold();
 	//test_FinishLine_Detection();

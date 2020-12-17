@@ -68,10 +68,14 @@ public:
 	void compute_data_threshold(void);
 	
 	/*** 2020 - 2021 ***/
+	uint16_t number_gradient;			//Ajout Maty
+	
 	void display_camera_data(void);
 	void display_gradient(void);
 	//void export_raw_data(void);
 	void gradient(void);
+	void process_camera(void);					//detects gradient
+
 	
 	
 private:
@@ -82,6 +86,10 @@ private:
 		
 	float gaussian1;					// gaussian filters used in gaussian differences method
 	float gaussian2;
+
+	/*** 2020 - 2021 ***/
+	int CompareData;
+
 };
 
 
