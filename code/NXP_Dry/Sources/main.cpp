@@ -6,6 +6,7 @@
 //#define FAST_BLINK      (1000000)
 int z=0;
 Car car;
+Img_Proc camera;
 
 //void delay_time(int number);
 
@@ -19,9 +20,11 @@ int main(){
 	
 	for(;;) {
 		car.Car_debug();
-		if(i>500){
+		if(i>500000){ //mettre un seuil assez haut sinon écriture et lecture en même temps entre capture et display_camera_data qui fait un hardfault
 			i=0;
-			camera.processAll();
+			camera.capture();
+			camera.differentiate();
+			camera.process();
 			camera.display_camera_data();
 		}else{
 			i++;

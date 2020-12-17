@@ -45,7 +45,7 @@ void Img_Proc::init(){
 	black_edge_left_pos_rect2=0;
 	black_edge_right_pos_rect2=0;
 	//Ajout Maty
-	number_gradient=0;
+	//number_gradient=0;
 	CompareData=THRESHOLD_high;
 
 }
@@ -406,9 +406,7 @@ void Img_Proc::gradient(void){
  * 			  plus qu'un seul bord et elle ne sait pas si elle doit tourner à droite ou à gauche 
  */
 void Img_Proc::process_camera (void){
-	BlackLineRight = 127; //If no black line is detected, we suppose that 
 	number_gradient = 0;		//reset the number of peaks to 0	
-	
 	
 	for(i=126;i>=1;i--){		//on va de droite à gauche
 		if (ImageDataDifference[i] > CompareData){
@@ -422,88 +420,7 @@ void Img_Proc::process_camera (void){
 			}
 		}
 	}
-}	/*	END of the function "Process_Camera"	*/
-
-
-
-/*if (functionning_mode == 2){
-			// Find black line on the right side
-			
-			for(i=126;i>=64;i--){
-	   			if (ImageDataDifference[i] > CompareData_high){
-	   				//CompareData_high = ImageDataDifference[i];
-	   				BlackLineRight = i;
-	   				(number_edges) ++;
-	   			}else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high ){
-	   				if (i >= 67 && i < 124){
-	   					j = 1;
-	   					validate_gradient = 0;
-						while (j <= 3){
-	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high){
-	   							BlackLineRight = i;
-	   							(number_edges) ++;
-	   							//CompareData_high = ImageDataDifference[i+j];	
-	   							validate_gradient = 1;
-	   						}
-	   						j++;
-	   					}
-	   				}
-	   				if (validate_gradient != 1){
-	   					if (i >= 69 && i < 122){
-	   						j=1;
-	   						while (j <= 5){
-	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high)){
-	   								BlackLineRight = i;
-	   								(number_edges) ++;
-	   								//CompareData_low = ImageDataDifference[i];	 
-	   							}
-	   							j++;
-	   						}
-	   					}
-	   				}
-	   			}	 END for (i=126;i>=64;i--) 
-
-	   		// Find black line on the left side
-			
-			// image processing with the algorithm seen at the beginning. 
-			BlackLineLeft = 0;
-			for(i=1;i<=64;i++){
-	   			if (ImageDataDifference[i] > CompareData_high){
-	   				//CompareData_high = ImageDataDifference[i];
-	   				BlackLineLeft = i;
-	   				(number_edges) ++;
-	   			}else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high ){
-	   				if (i > 3 && i <= 61){
-	   					j = 1;
-	   					validate_gradient = 0;
-						while (j <= 3){
-	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high){
-	   							BlackLineLeft = i;
-	   							(number_edges) ++;
-	   							//CompareData_high = ImageDataDifference[i+j];
-	   							//CompareData_low = ImageDataDifference[i];	   		
-	   							validate_gradient = 1;				
-	   						}
-	   						j++;
-	   					}
-	   				}
-	   				if (validate_gradient != 1){
-	   					if (i > 5 && i <= 59){
-	   						j=1;
-	   						while (j <= 5){
-	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high)){
-	   								BlackLineLeft = i;
-	   								(number_edges) ++;
-	   								//CompareData_high = ImageDataDifference[i+j];
-	   								//CompareData_low = ImageDataDifference[i];	 
-	   							}
-	   							j++;
-	   						}
-	   					}
-	   				}
-	   			}		ND else if ... */
-
-
+}	
 
 
 void Img_Proc::processAll(void) {
@@ -515,4 +432,5 @@ void Img_Proc::processAll(void) {
 	calculateMiddle();
 	//compute_data_threshold();
 	//test_FinishLine_Detection();
+	//display_camera_data();
 }
