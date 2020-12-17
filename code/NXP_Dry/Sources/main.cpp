@@ -10,9 +10,9 @@ Car car;
 //void delay_time(int number);
 
 int main(){
-	int p=0; //???? pour l'affichage
+	//int p=0; //???? pour l'affichage
 	debug_init();
-	debug_displaySendNb(p);
+	debug_displaySendNb(0);
 	DEBUG_CAM_LED_OFF;
 	car.init();
 	

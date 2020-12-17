@@ -13,10 +13,13 @@
 #define MAX_ANGLE 30.0
 #define LIMIT_ESP 5 //between 1 and 10
 #define TIME_ACTIVE_ESP	50 //*10ms
-#define T_BRAKE 50 //Threshold before braking
+#define T_BRAKE 100 //Threshold before braking
+#define INCREMENT_SPEED 20
 
 #define Te 0.01 //sample time 10ms handler rear motors
 #define DEG_TO_RAD 0.0175
+
+#define CARRE(x) ((x)*(x))
 
 class Car{
 public:
@@ -38,6 +41,8 @@ public:
 	int ESP;
 	bool detect_ESP;
 	bool active_ESP;
+	
+	bool enable_brake;
 	
 	float delta_speed;//Value for the rear differential
 	
@@ -61,9 +66,6 @@ private:
 int sng(int a);
 
 //####################### Wheels #################################
-
-#define KP_TURN 						1.1			// Proportional coefficient in turn
-#define KDP_TURN 						0.8			// Differential coefficient in turn
 
 #define K 								1.8 //2 //P of the PI
 #define Ki								1 //I of the PI

@@ -38,6 +38,7 @@ void Car::init(void){
 	ESP=0;
 	detect_ESP=false;
 	active_ESP=false;
+	enable_brake=false;
 	K_camdiff=(float)((2*K+Te*Ki)/2);
 	K_camdiffold=(float)((Te*Ki-2*K)/2);
 	
@@ -64,14 +65,21 @@ void Car::Set_speed(void){
 		//Linear mode
 		V_old=abs(Vset);
 		
+		
 		if (Vset!=0){
 			Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh;
 			//Test#####################################
-			if (Vset>V_old-T_BRAKE){
-				Vset=0.1*Vset+0.9*V_old; //Temps de montée max 100ms
+			if (Vset<V_old && Vset>(2*Vhigh+Vslow)/3){
+				enable_brake=true;	
 			}else{
-				//Vset<0
+				enable_brake=false;
+			}
+			
+			if (enable_brake){
+				//enable_brake=true;
 				Vset=-Vset;
+			}else if (Vset>V_old+INCREMENT_SPEED){
+				Vset=V_old+INCREMENT_SPEED; //Temps de montée max 100ms
 			}
 			/*uart_write("Vold : ",7);
 			uart_writeNb(V_old);
@@ -136,9 +144,9 @@ void Car::Caculate_angle_wheel(void){
 	}else{
 		//PID 
 		old_servo_angle=servo_angle;
-		servo_angle=K*(float)cam.diff+(Ki*Te-K)*(float)cam.diff_old+servo_angle;
+		//servo_angle=K*(float)cam.diff+(Ki*Te-K)*(float)cam.diff_old+servo_angle;
 		//PID Approx bilinéaire
-		//servo_angle=servo_angle+(float)cam.diff*K_camdiff+(float)cam.diff_old*K_camdiffold;
+		servo_angle=servo_angle+(float)cam.diff*K_camdiff+(float)cam.diff_old*K_camdiffold;
 //##################### Changement valeurs  ##########################
 		if(servo_angle<-MAX_ANGLE)servo_angle=(-MAX_ANGLE);
 		if(servo_angle>MAX_ANGLE)servo_angle=MAX_ANGLE;
