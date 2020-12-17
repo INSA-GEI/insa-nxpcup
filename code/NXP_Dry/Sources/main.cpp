@@ -36,19 +36,7 @@ void FTM1_IRQHandler() {
 //Differential speed handlers
 void FTM2_IRQHandler() {//encoder interrupt 6kHz
 	car.myMovement.encoder.interruptHandler();
-	if (car.Vset>=0){
-		z=0;
-		car.myMovement.regulate(); //Applique la PWM correspond à la vitesse aux moteurs
-	}else{
-		if (z==0){
-			
-			z++;
-		}else{
-			car.Braking();
-			z++;
-		}
-	}
-
+	car.myMovement.regulate(); //Applique la PWM correspond à la vitesse aux moteurs
 }
 
 

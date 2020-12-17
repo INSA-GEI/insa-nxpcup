@@ -49,7 +49,6 @@ public:
 	void Car_debug(void);
 	void Car_handler(void);
 	void processESP(void);
-	void Braking(void);
 
 private:
 	void Set_speed(void);

@@ -5,8 +5,9 @@
  *      Author: Guest
  */
 #include "Movement.h"
+#include "math.h"
 
-
+int speed=0;
 
 Movement::Movement() {
 	targetSpeedL=0;
@@ -32,19 +33,18 @@ void Movement::setSpeed(int speed) {
 	if(speed<0){
 		MOTOR_RIGHT_BACKWARD;
 		MOTOR_LEFT_BACKWARD;
-		return;
+	}else{
+		MOTOR_LEFT_FORWARD;
+		MOTOR_RIGHT_FORWARD;
 	}
-	
-	if(speed>SPEED_LIMIT)speed=SPEED_LIMIT;
-	MOTOR_LEFT_FORWARD;
-	MOTOR_RIGHT_FORWARD;
 	
 }
 
-void Movement::setDiff(int speed,float delta) {
+void Movement::setDiff(int v,float delta) {
+	speed=(int) v;
 	if (speed<0){
-		targetSpeedL=abs(speed);
-		targetSpeedR=abs(speed);
+		targetSpeedL=-speed;
+		targetSpeedR=-speed;
 	}else{
 		targetSpeedL=speed+delta;
 		targetSpeedR=speed-delta;
@@ -70,24 +70,29 @@ void Movement::stop(void) {
 
 
 void Movement::regulate(void) {
-	GPIOB_PTOR = DEBUG_RED_Pin;
-	int err=encoder.getLeftSpeed();
-	if(err<0){	//detect invalid speed readings
-		err=0;
-	}
-	err=targetSpeedL-err;//calculate error
-	if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){//if error needs correction
-
-		actualSpeedL=actualSpeedL+err*MOVEMENT_CORR_KP;//compensate real speed command
-	}
-
-	err=encoder.getRightSpeed();
-	if(err<0){	//detect invalid speed readings
-		err=0;
-	}
-	err=targetSpeedR-err;
-	if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){
-		actualSpeedR=actualSpeedR+err*MOVEMENT_CORR_KP;
+	if (speed>0){
+		GPIOB_PTOR = DEBUG_RED_Pin;
+		int err=encoder.getLeftSpeed();
+		if(err<0){	//detect invalid speed readings
+			err=0;
+		}
+		err=targetSpeedL-err;//calculate error
+		if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){//if error needs correction
+	
+			actualSpeedL=actualSpeedL+err*MOVEMENT_CORR_KP;//compensate real speed command
+		}
+	
+		err=encoder.getRightSpeed();
+		if(err<0){	//detect invalid speed readings
+			err=0;
+		}
+		err=targetSpeedR-err;
+		if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){
+			actualSpeedR=actualSpeedR+err*MOVEMENT_CORR_KP;
+		}
+	}else{
+		actualSpeedR=targetSpeedR;
+		actualSpeedL=targetSpeedL;
 	}
 
 	applySpeeds();
@@ -98,7 +103,12 @@ void Movement::applySpeeds(void) {
 	if(actualSpeedR<0)actualSpeedR=0;
 	if(actualSpeedL>SPEED_LIMIT)actualSpeedL=SPEED_LIMIT;
 	if(actualSpeedR>SPEED_LIMIT)actualSpeedR=SPEED_LIMIT;
-
-	MOTOR_LEFT_FSPEED(actualSpeedL*MOTOR_CAL_SPEED);
-	MOTOR_RIGHT_FSPEED(actualSpeedR*MOTOR_CAL_SPEED);
+	
+	if (speed>=0){
+		MOTOR_LEFT_FSPEED(actualSpeedL*MOTOR_CAL_SPEED);
+		MOTOR_RIGHT_FSPEED(actualSpeedR*MOTOR_CAL_SPEED);
+	}else{
+		MOTOR_LEFT_BSPEED(200);
+		MOTOR_RIGHT_BSPEED(200);
+	}
 }

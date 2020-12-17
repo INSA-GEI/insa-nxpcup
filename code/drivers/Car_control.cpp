@@ -44,7 +44,6 @@ void Car::init(void){
 }
 
 void Car::Set_speed(void){
-	//uart_write("$",1);
 	//We notice if we have been near the black lines or not
 	if (mode_speed!=0){
 		/*if (mode_speed==2){
@@ -62,13 +61,18 @@ void Car::Set_speed(void){
 		}*/
 		
 		//Linear mode
-		V_old=Vset;
+		if (Vset>0){
+			V_old=Vset;
+		}else{
+			V_old=Vslow;
+		}
 		if (Vset!=0){
 			Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh;
 			//Test#####################################
 			if (Vset>V_old){
 				Vset=0.01*Vset+0.99*V_old; //Temps de montée max 100ms
-			}else if(abs(Vset-V_old)>300){
+			}else if(abs(Vset-V_old)>300){ 
+				//Vset<0 and Vset-Vold<300
 				Vset=-Vset;
 			}
 			/*uart_write("Vold : ",7);
@@ -106,12 +110,6 @@ void Car::Set_speed(void){
 	if (servo_angle<0){
 		delta_speed=-delta_speed;
 	}
-}
-
-void Car::Braking(void){
-	//Utiliser dans le main	
-	MOTOR_LEFT_BSPEED(200);
-	MOTOR_RIGHT_BSPEED(200);
 }
 
 void Car::Set_deplacement(void){
@@ -233,15 +231,7 @@ void Car::Set_debug_mode(int i){
 void Car::Aff_debug(void){
 	if(FLAG_SEND_IMG && FLAG_ENABLE_LOG_IMG){
 		for(int i=0;i<128;i++){
-			uart_write("$",1);
-			//uart_writeNb(cam.ImageData[i]);
-			/*uart_write(" ",1);
-			if(cam.BlackLineLeft==i ||cam.RoadMiddle==i ||cam.BlackLineRight==i){
-				uart_writeNb(200);
-			}else{
-				uart_writeNb(0);
-			}*/
-			uart_write(";",1);
+			cam.display_camera_data();
 		}
 	}else if(FLAG_SEND_IMG && FLAG_ENABLE_LOG_SERVO){
 		uart_write("$",1);
