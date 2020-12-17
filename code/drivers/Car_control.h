@@ -13,8 +13,9 @@
 #define MAX_ANGLE 30.0
 #define LIMIT_ESP 5 //between 1 and 10
 #define TIME_ACTIVE_ESP	50 //*10ms
-#define T_BRAKE 100 //Threshold before braking
+#define T_BRAKE 200 //Threshold before braking
 #define INCREMENT_SPEED 20
+#define TURN_SPEED 1100
 
 #define Te 0.01 //sample time 10ms handler rear motors
 #define DEG_TO_RAD 0.0175

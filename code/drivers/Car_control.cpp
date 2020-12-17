@@ -69,7 +69,7 @@ void Car::Set_speed(void){
 		if (Vset!=0){
 			Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh;
 			//Test#####################################
-			if (Vset<V_old && Vset>(2*Vhigh+Vslow)/3){
+			if (Vset<V_old-T_BRAKE && abs(Vset)>TURN_SPEED){
 				enable_brake=true;	
 			}else{
 				enable_brake=false;
@@ -77,7 +77,7 @@ void Car::Set_speed(void){
 			
 			if (enable_brake){
 				//enable_brake=true;
-				Vset=-Vset;
+				Vset=-(Vhigh-Vset+Vslow);
 			}else if (Vset>V_old+INCREMENT_SPEED){
 				Vset=V_old+INCREMENT_SPEED; //Temps de montée max 100ms
 			}

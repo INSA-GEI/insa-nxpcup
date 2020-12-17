@@ -12,7 +12,7 @@ Car car;
 int main(){
 	//int p=0; //???? pour l'affichage
 	debug_init();
-	debug_displaySendNb(0);
+	debug_displaySendNb((GPIOE_PDIR & 0x003C)>>2);
 	DEBUG_CAM_LED_OFF;
 	car.init();
 	
