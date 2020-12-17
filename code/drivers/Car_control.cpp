@@ -44,6 +44,7 @@ void Car::init(void){
 }
 
 void Car::Set_speed(void){
+	//Negative speed => go back
 	//We notice if we have been near the black lines or not
 	if (mode_speed!=0){
 		/*if (mode_speed==2){
@@ -61,18 +62,15 @@ void Car::Set_speed(void){
 		}*/
 		
 		//Linear mode
-		if (Vset>0){
-			V_old=Vset;
-		}else{
-			V_old=Vslow;
-		}
+		V_old=abs(Vset);
+		
 		if (Vset!=0){
 			Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh;
 			//Test#####################################
-			if (Vset>V_old){
-				Vset=0.01*Vset+0.99*V_old; //Temps de montée max 100ms
-			}else if(abs(Vset-V_old)>300){ 
-				//Vset<0 and Vset-Vold<300
+			if (Vset>V_old-T_BRAKE){
+				Vset=0.1*Vset+0.9*V_old; //Temps de montée max 100ms
+			}else{
+				//Vset<0
 				Vset=-Vset;
 			}
 			/*uart_write("Vold : ",7);

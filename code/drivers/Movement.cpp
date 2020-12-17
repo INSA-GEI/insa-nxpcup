@@ -101,14 +101,18 @@ void Movement::regulate(void) {
 void Movement::applySpeeds(void) {
 	if(actualSpeedL<0)actualSpeedL=0;
 	if(actualSpeedR<0)actualSpeedR=0;
-	if(actualSpeedL>SPEED_LIMIT)actualSpeedL=SPEED_LIMIT;
-	if(actualSpeedR>SPEED_LIMIT)actualSpeedR=SPEED_LIMIT;
 	
 	if (speed>=0){
+		if(actualSpeedL>SPEED_LIMIT)actualSpeedL=SPEED_LIMIT;
+		if(actualSpeedR>SPEED_LIMIT)actualSpeedR=SPEED_LIMIT;
 		MOTOR_LEFT_FSPEED(actualSpeedL*MOTOR_CAL_SPEED);
 		MOTOR_RIGHT_FSPEED(actualSpeedR*MOTOR_CAL_SPEED);
 	}else{
-		MOTOR_LEFT_BSPEED(200);
-		MOTOR_RIGHT_BSPEED(200);
+		actualSpeedL*=2;
+		actualSpeedR*=2;
+		if(actualSpeedL>SPEED_LIMIT)actualSpeedL=SPEED_LIMIT;
+		if(actualSpeedR>SPEED_LIMIT)actualSpeedR=SPEED_LIMIT;
+		MOTOR_LEFT_BSPEED(actualSpeedL*MOTOR_CAL_SPEED);
+		MOTOR_RIGHT_BSPEED(actualSpeedR*MOTOR_CAL_SPEED);
 	}
 }
