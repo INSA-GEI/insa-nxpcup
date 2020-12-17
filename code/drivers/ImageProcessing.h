@@ -57,6 +57,8 @@ public:
 	uint16_t BlackLineRight;					// position of the black line on the right side (127)
 	uint16_t BlackLineLeft;					// position of the black line on the left side
 	uint16_t number_edges;
+	
+	uint16_t number_gradient;			//Ajout Maty
 
 	void init(void);					//initializes the camera
 	void capture(void);					//retrieves data from the camera
@@ -72,7 +74,7 @@ public:
 	void display_gradient(void);
 	//void export_raw_data(void);
 	void gradient(void);
-	
+	void process_camera(void);					//detects gradient
 	
 private:
 	int CompareData_classic;			// set data for comparison to find max IN BASE ALGORITHM

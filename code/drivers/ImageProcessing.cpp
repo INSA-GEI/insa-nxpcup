@@ -44,6 +44,8 @@ void Img_Proc::init(){
 	black_edge_right_pos_rect1=0;
 	black_edge_left_pos_rect2=0;
 	black_edge_right_pos_rect2=0;
+	//Ajout Maty
+	number_gradient=0;
 
 }
 
@@ -112,10 +114,6 @@ void Img_Proc::process (void){
 		
 		if (functionning_mode == 2){
 			// Find black line on the right side
-
-			//CompareData_low = THRESHOLD_low;					// threshold_low
-			//CompareData_high = THRESHOLD_high;					// threshold_high
-
 			BlackLineRight = 127;
 			for(i=126;i>=64;i--){
 	   			if (ImageDataDifference[i] > CompareData_high){
@@ -153,9 +151,7 @@ void Img_Proc::process (void){
 			}	/* END for (i=126;i>=64;i--) */
 
 	   		// Find black line on the left side
-			//CompareData_low = THRESHOLD_low;					// threshold_low
-			//CompareData_high = THRESHOLD_high;					// threshold_high
-
+			
 			// image processing with the algorithm seen at the beginning. 
 			BlackLineLeft = 0;
 			for(i=1;i<=64;i++){
@@ -395,6 +391,31 @@ void Img_Proc::gradient(void){
 			}
 		}
 	}	/*	End of function "Fill_ImageDataDifference"	*/
+
+
+void Img_Proc::process_camera (void){
+		number_gradient = 0;		// reset the number of peaks to 0		
+		if (functionning_mode == 2){
+			for(i=126;i>=64;i--){
+	   			if (ImageDataDifference[i] > CompareData_high){
+	   				BlackLineRight = i;
+	   				(number_gradient) ++;
+	   			}		/* END if ... */
+			}	/* END for (i=126;i>=64;i--) */
+
+	   		// Find black line on the left side
+			
+			// image processing with the algorithm seen at the beginning. 
+			BlackLineLeft = 0;
+			for(i=1;i<=64;i++){
+	   			if (ImageDataDifference[i] > CompareData_high){
+	   				//CompareData_high = ImageDataDifference[i];
+	   				BlackLineLeft = i;
+	   				(number_edges) ++;
+	   			}			
+	   		}	/* END for (i=64;i>=1;i--) */
+		}	/* END of "(IF mfunctionning_mod == 2 " */		
+	}	/*	END of the function "Image_Processing"	*/
 
 
 void Img_Proc::processAll(void) {
