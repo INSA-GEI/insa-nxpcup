@@ -44,6 +44,9 @@ void Img_Proc::init(){
 	black_edge_right_pos_rect1=0;
 	black_edge_left_pos_rect2=0;
 	black_edge_right_pos_rect2=0;
+	//Ajout Maty
+	number_gradient=0;
+	CompareData=THRESHOLD_high;
 
 }
 

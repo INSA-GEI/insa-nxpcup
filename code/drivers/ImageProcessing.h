@@ -22,6 +22,8 @@
 #define THRESHOLD_high				140			// Higher threshold : does not capture noise but may not capture all maximums.
 #define THRESHOLD_low				50			// Lower threshold : May capture more maximums than High threshold but can capture noise too.
 
+#define Threshold_White				160
+
 #define THRESHOLD_classic			120			// standard threshold : used in the basic image processing function
 
 #define functionning_mode			2			// operating mode: from 1 to 3: algorithm more and more precise but heavy
