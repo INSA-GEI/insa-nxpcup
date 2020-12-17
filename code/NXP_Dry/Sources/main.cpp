@@ -13,7 +13,7 @@ Img_Proc camera;
 
 int main(){
 	int p=0; //???? pour l'affichage
-	int i=0;
+	//int i=0;
 	debug_init();
 	debug_displaySendNb(p);
 	DEBUG_CAM_LED_OFF;
@@ -22,15 +22,14 @@ int main(){
 	
 	for(;;) {
 		car.Car_debug();
-		if(i>500){
+		/*if(i>500){
 			i=0;
 			camera.processAll();
 			camera.display_camera_data();
 		}else{
 			i++;
-		}
+		}*/
 	}
-
 	return 0;
 }
 

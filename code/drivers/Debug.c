@@ -247,7 +247,7 @@ void lptmr_conf(void){
 	SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK;
 	PORTA_PCR19 = PORT_PCR_MUX(6);//LPTMR0_ALT2 
 	
-	// enable interrupts 19 (TPM = FTM2)  in NVIC, no interrupt levels
+	// Enable interrupts 19 (TPM = FTM2)  in NVIC, no interrupt levels
 	NVIC_ICPR |= (1 << 28);			// clear pending interrupt 28
 	NVIC_ISER |= (1 << 28);			// enable interrupt 28
 		
@@ -280,7 +280,7 @@ void LPTMR0_IRQHandler(void){
 void ADC_init(void){
 	// turn on ADC0 clock
 	SIM_SCGC6 |= SIM_SCGC6_ADC0_MASK;
-	// ADC0 clock configuration : 													WARNING : maybe not compatible with 48MHz system clock ! to check
+	// ADC0 clock configuration : WARNING : maybe not compatible with 48MHz system clock ! to check
 	ADC0_CFG1 |= 0x01;				// clock is bus clock divided by 2 = 24 MHz
 	// ADC0 resolution    
 	ADC0_CFG1 |= 0x08;				// resolution 10 bit, max. value is 1023

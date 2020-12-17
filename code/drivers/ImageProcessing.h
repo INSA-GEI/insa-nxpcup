@@ -71,7 +71,7 @@ public:
 	bool test_FinishLine_Detection(void);
 	void compute_data_threshold(void);
 	
-	/*** 2020 - 2021 ***/
+	/***** 2020 - 2021 *****/
 	void display_camera_data(void);
 	void display_gradient(void);
 	//void export_raw_data(void);
