@@ -43,8 +43,8 @@ void Movement::setSpeed(int speed) {
 void Movement::setDiff(int v,float delta) {
 	speed=(int) v;
 	if (speed<0){
-		targetSpeedL=-speed;
-		targetSpeedR=-speed;
+		targetSpeedL=-speed-delta;
+		targetSpeedR=-speed+delta;
 	}else{
 		targetSpeedL=speed+delta;
 		targetSpeedR=speed-delta;

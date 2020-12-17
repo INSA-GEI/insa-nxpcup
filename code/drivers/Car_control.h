@@ -5,17 +5,24 @@
 #include "Movement.h"
 #include "ImageProcessing.h"
 
-#define VSLOW 800
-#define VHIGH 1500
-#define VSET 0
-#define INCREASE_SPEED 400//Nb of time ok before we increase the speed handler every 10ms
+
+#define INCREASE_SPEED_MAX_MIN 400//Nb of time ok before we increase the speed handler every 10ms
 #define MAX_DIFF_BEFORE_SLOWDOWN 10 
 #define MAX_ANGLE 30.0
+
+//######### ESP ####################################
 #define LIMIT_ESP 5 //between 1 and 10
-#define TIME_ACTIVE_ESP	50 //*10ms
+#define TIME_ACTIVE_ESP	50 //+10)*10ms
+#define COEFF_ANGLE_ESP 4.0 //Angle = Max_angle/coeff_angle_esp
+
+//#################### SPEED #############################
+#define VSLOW 800
+#define VHIGH 3500
+//#define VSET 0
 #define T_BRAKE 200 //Threshold before braking
-#define INCREMENT_SPEED 20
+#define INCREMENT_SPEED 40
 #define TURN_SPEED 1100
+
 
 #define Te 0.01 //sample time 10ms handler rear motors
 #define DEG_TO_RAD 0.0175
@@ -34,6 +41,7 @@ public:
 	//Speed of the car
 	int Vset;//=0
 	int V_old;
+	int V_mes;
 	//Speed in turn
 	int Vslow;//=500
 	//Speed in strait line
@@ -59,6 +67,7 @@ public:
 
 private:
 	void Set_speed(void);
+	void Set_diff_speed(void);
 	int mode_debug;
 	void Set_debug_mode(int i); //i=>0 : Cam+ange_servo  //i=>1 : Cam[i] //i=>2 : 
 	void Aff_debug(void);

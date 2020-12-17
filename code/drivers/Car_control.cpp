@@ -45,13 +45,15 @@ void Car::init(void){
 }
 
 void Car::Set_speed(void){
+	//On mesure la vitesse
+	V_mes=(myMovement.encoder.getLeftSpeed()+myMovement.encoder.getRightSpeed())/2;
 	//Negative speed => go back
 	//We notice if we have been near the black lines or not
 	if (mode_speed!=0){
 		/*if (mode_speed==2){
 			if (abs(cam.diff)<MAX_DIFF_BEFORE_SLOWDOWN){
 				Count++;
-				if ((Count%INCREASE_SPEED)==0){
+				if ((Count%INCREASE_SPEED_MAX_MIN)==0){
 					Vslow+=200;
 					Vhigh+=200;
 				}
@@ -69,7 +71,7 @@ void Car::Set_speed(void){
 		if (Vset!=0){
 			Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh;
 			//Test#####################################
-			if (Vset<V_old-T_BRAKE && abs(Vset)>TURN_SPEED){
+			if (Vset<V_old-T_BRAKE && abs(V_mes)>TURN_SPEED){
 				enable_brake=true;	
 			}else{
 				enable_brake=false;
@@ -81,21 +83,28 @@ void Car::Set_speed(void){
 			}else if (Vset>V_old+INCREMENT_SPEED){
 				Vset=V_old+INCREMENT_SPEED; //Temps de montée max 100ms
 			}
-			/*uart_write("Vold : ",7);
-			uart_writeNb(V_old);
-			uart_write(" / ",3);*/
-			uart_write("Vset : ",7);
-			uart_writeNb(Vset);
-			/*uart_write(" / ",3);
-			uart_write("b : ",4);
-			uart_writeNb(Vhigh);
-			uart_write(" / ",3);
-			uart_write("Vset : ",6);
-			uart_writeNb((int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh);*/
-			uart_write("\r\n",2);
+			if (Vset<0){
+				/*uart_write("Vold : ",7);
+				uart_writeNb(V_old);
+				uart_write(" / ",3);*/
+				uart_write("Brake ! ",8);
+				uart_write("Vset : ",7);
+				uart_writeNb(Vset);
+				uart_write(" / ",3);
+				uart_write("Vold : ",7);
+				uart_writeNb(V_old);
+				/*uart_write("b : ",4);
+				uart_writeNb(Vhigh);
+				uart_write(" / ",3);
+				uart_write("Vset : ",6);
+				uart_writeNb((int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh);*/
+				uart_write("\r\n",2);
+			}
 		}
 	}
-	
+}
+
+void Car::Set_diff_speed(void){
 	//Calcul du diff
 	//We calculate the delta_speed of the rear wheels
 	//delta_speed=servo_angle*MOVEMENT_ENTRAXE_COEFF*Vset;
@@ -119,7 +128,14 @@ void Car::Set_speed(void){
 }
 
 void Car::Set_deplacement(void){
-	//##################### Changement ??????????????????????????????????????#########
+	//On active l'ESP
+	if (Vset>TURN_SPEED && abs(servo_angle)<2*MAX_ANGLE/3){
+		active_ESP=true;
+	}else{
+		active_ESP=false;
+	}
+	
+	//########### On actualise le déplacement #################
 	if (cam.edges_cnt>10){
 		Vset=0;
 		mode_speed=0;
@@ -142,9 +158,7 @@ void Car::Caculate_angle_wheel(void){
 	if (abs (cam.diff - cam.diff_old) > 50){
 		cam.diff = cam.diff_old;
 	}else{
-		//PID 
 		old_servo_angle=servo_angle;
-		//servo_angle=K*(float)cam.diff+(Ki*Te-K)*(float)cam.diff_old+servo_angle;
 		//PID Approx bilinéaire
 		servo_angle=servo_angle+(float)cam.diff*K_camdiff+(float)cam.diff_old*K_camdiffold;
 //##################### Changement valeurs  ##########################
@@ -154,12 +168,13 @@ void Car::Caculate_angle_wheel(void){
 }
 
 void Car::processESP(){
-	if (active_ESP){
+	if (active_ESP && !(enable_brake)){
 		//############## ESP #################
-		if (abs (servo_angle-old_servo_angle)>MAX_ANGLE/4 && sng(servo_angle)!=sng(old_servo_angle)){
+		if (abs (servo_angle)>MAX_ANGLE/COEFF_ANGLE_ESP && abs(old_servo_angle)>MAX_ANGLE/COEFF_ANGLE_ESP && sng(servo_angle)!=sng(old_servo_angle)){
 			ESP++;
 		}
 		
+		//On regarde si on a détecté une oscillation/ glissement sur T=10*10ms
 		if(c_ESP>10){
 			c_ESP=0;
 			if (ESP==old_ESP){
@@ -172,16 +187,22 @@ void Car::processESP(){
 				old_ESP=ESP;
 			}
 		}
+		//Action en fonction
 		if (detect_ESP){
 			if (mode_speed!=0){
-				Vset=300;
+				//On regarde si on est en ligne droite ou en virage
+				if (V_old>TURN_SPEED){
+					Vset=(TURN_SPEED+Vset)/2;
+				}else{
+					Vset=Vslow;
+				}
 			}
-			delta_speed=0;
-			if(ESP!=0){
-				uart_write("C_ESP : ",8);
-				uart_writeNb(c_ESP);
-				uart_write("\r\n",2);
-			}
+			
+			//Debug
+			uart_write("C_ESP : ",8);
+			uart_writeNb(c_ESP);
+			uart_write("\r\n",2);
+			
 			ESP=0;
 			old_ESP=0;
 		}
@@ -206,14 +227,9 @@ void Car::Car_handler(void){
 	Set_speed();
 	//ESP at the end because it changes Vset and delta_speed
 	processESP();
-	
-	//TEST si on est en marche arrière
-	if (Vset>0){
-		MOTOR_LEFT_FORWARD;
-		MOTOR_RIGHT_FORWARD;
-	}
-
-	
+	//Calcul du diff
+	Set_diff_speed();
+	//Debug
 	Aff_debug();
 	//We refresh the deplacement's parameters. Speed +wheels Angle
 	Set_deplacement();
