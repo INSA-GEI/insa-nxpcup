@@ -36,6 +36,7 @@ public:
 	
 	int ESP;
 	bool detect_ESP;
+	bool active_ESP;
 	
 	float delta_speed;//Value for the rear differential
 	
@@ -48,6 +49,7 @@ public:
 	void Car_debug(void);
 	void Car_handler(void);
 	void processESP(void);
+	void Braking(void);
 
 private:
 	void Set_speed(void);

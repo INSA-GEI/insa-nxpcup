@@ -30,7 +30,8 @@ void Movement::set(int speed, float angle) {
 
 void Movement::setSpeed(int speed) {
 	if(speed<0){
-		stop();
+		MOTOR_RIGHT_BACKWARD;
+		MOTOR_LEFT_BACKWARD;
 		return;
 	}
 	
@@ -41,8 +42,13 @@ void Movement::setSpeed(int speed) {
 }
 
 void Movement::setDiff(int speed,float delta) {
-	targetSpeedL=speed+delta;
-	targetSpeedR=speed-delta;
+	if (speed<0){
+		targetSpeedL=abs(speed);
+		targetSpeedR=abs(speed);
+	}else{
+		targetSpeedL=speed+delta;
+		targetSpeedR=speed-delta;
+	}
 }
 
 void Movement::setAngle(float angle) {

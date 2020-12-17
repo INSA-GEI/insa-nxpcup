@@ -4,7 +4,7 @@
 
 //#define SLOW_BLINK      (10000000)
 //#define FAST_BLINK      (1000000)
-
+int z=0;
 Car car;
 
 //void delay_time(int number);
@@ -30,13 +30,24 @@ void delay_time(int number){
 
 //############# handlers ##############
 void FTM1_IRQHandler() {
-	car.Car_handler();
+	car.Car_handler(); //Define Vset and servo_angle.
 }
 
 //Differential speed handlers
 void FTM2_IRQHandler() {//encoder interrupt 6kHz
 	car.myMovement.encoder.interruptHandler();
-	car.myMovement.regulate();
+	if (car.Vset>=0){
+		z=0;
+		car.myMovement.regulate(); //Applique la PWM correspond à la vitesse aux moteurs
+	}else{
+		if (z==0){
+			
+			z++;
+		}else{
+			car.Braking();
+			z++;
+		}
+	}
 
 }
 

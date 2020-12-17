@@ -8,7 +8,9 @@
 int c=0;
 int c_ESP=0;
 int old_ESP=0;
-float old_servo_angle=0;
+float old_servo_angle=0.0;
+float K_camdiff=0.0;
+float K_camdiffold=0.0;
 int n=0;//Allow us to use the debug with Putty
 
 int Count=0; //count how many time we were not to close to the black line
@@ -35,6 +37,10 @@ void Car::init(void){
 	mode_debug=0;
 	ESP=0;
 	detect_ESP=false;
+	active_ESP=false;
+	K_camdiff=(float)((2*K+Te*Ki)/2);
+	K_camdiffold=(float)((Te*Ki-2*K)/2);
+	
 }
 
 void Car::Set_speed(void){
@@ -61,20 +67,22 @@ void Car::Set_speed(void){
 			Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh;
 			//Test#####################################
 			if (Vset>V_old){
-				Vset=0.1*Vset+0.9*V_old; //Temps de montée max 100ms
+				Vset=0.01*Vset+0.99*V_old; //Temps de montée max 100ms
+			}else if(abs(Vset-V_old)>300){
+				Vset=-Vset;
 			}
 			/*uart_write("Vold : ",7);
 			uart_writeNb(V_old);
-			uart_write(" / ",3);
+			uart_write(" / ",3);*/
 			uart_write("Vset : ",7);
 			uart_writeNb(Vset);
-			uart_write(" / ",3);
+			/*uart_write(" / ",3);
 			uart_write("b : ",4);
 			uart_writeNb(Vhigh);
 			uart_write(" / ",3);
 			uart_write("Vset : ",6);
-			uart_writeNb((int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh);
-			uart_write("\r\n",2);*/
+			uart_writeNb((int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh);*/
+			uart_write("\r\n",2);
 		}
 	}
 	
@@ -98,6 +106,12 @@ void Car::Set_speed(void){
 	if (servo_angle<0){
 		delta_speed=-delta_speed;
 	}
+}
+
+void Car::Braking(void){
+	//Utiliser dans le main	
+	MOTOR_LEFT_BSPEED(200);
+	MOTOR_RIGHT_BSPEED(200);
 }
 
 void Car::Set_deplacement(void){
@@ -127,7 +141,8 @@ void Car::Caculate_angle_wheel(void){
 		//PID 
 		old_servo_angle=servo_angle;
 		servo_angle=K*(float)cam.diff+(Ki*Te-K)*(float)cam.diff_old+servo_angle;
-		
+		//PID Approx bilinéaire
+		//servo_angle=servo_angle+(float)cam.diff*K_camdiff+(float)cam.diff_old*K_camdiffold;
 //##################### Changement valeurs  ##########################
 		if(servo_angle<-MAX_ANGLE)servo_angle=(-MAX_ANGLE);
 		if(servo_angle>MAX_ANGLE)servo_angle=MAX_ANGLE;
@@ -135,35 +150,37 @@ void Car::Caculate_angle_wheel(void){
 }
 
 void Car::processESP(){
-	//############## ESP #################
-	if (abs (servo_angle-old_servo_angle)>MAX_ANGLE/4 && sng(servo_angle)!=sng(old_servo_angle)){
-		ESP++;
-	}
-	
-	if(c_ESP>10){
-		c_ESP=0;
-		if (ESP==old_ESP){
+	if (active_ESP){
+		//############## ESP #################
+		if (abs (servo_angle-old_servo_angle)>MAX_ANGLE/4 && sng(servo_angle)!=sng(old_servo_angle)){
+			ESP++;
+		}
+		
+		if(c_ESP>10){
+			c_ESP=0;
+			if (ESP==old_ESP){
+				ESP=0;
+				detect_ESP=false;
+				old_ESP=0;
+			}else if (ESP>LIMIT_ESP){
+				detect_ESP=true;
+				c_ESP=-TIME_ACTIVE_ESP;
+				old_ESP=ESP;
+			}
+		}
+		if (detect_ESP){
+			if (mode_speed!=0){
+				Vset=300;
+			}
+			delta_speed=0;
+			if(ESP!=0){
+				uart_write("C_ESP : ",8);
+				uart_writeNb(c_ESP);
+				uart_write("\r\n",2);
+			}
 			ESP=0;
-			detect_ESP=false;
 			old_ESP=0;
-		}else if (ESP>LIMIT_ESP){
-			detect_ESP=true;
-			c_ESP=-TIME_ACTIVE_ESP;
-			old_ESP=ESP;
 		}
-	}
-	if (detect_ESP){
-		if (mode_speed!=0){
-			Vset=300;
-		}
-		delta_speed=0;
-		if(ESP!=0){
-			uart_write("ESP : ",6);
-			uart_writeNb((int)detect_ESP);
-			uart_write("\r\n",2);
-		}
-		ESP=0;
-		old_ESP=0;
 	}
 }
 
@@ -171,7 +188,6 @@ void Car::processESP(){
 //################ Handler ##########################
 void Car::Car_handler(void){
 	//servo//rear motors interrupt, 100Hz => Te=10ms
-	
 	//
 	Caculate_angle_wheel();
 	
@@ -186,6 +202,14 @@ void Car::Car_handler(void){
 	Set_speed();
 	//ESP at the end because it changes Vset and delta_speed
 	processESP();
+	
+	//TEST si on est en marche arrière
+	if (Vset>0){
+		MOTOR_LEFT_FORWARD;
+		MOTOR_RIGHT_FORWARD;
+	}
+
+	
 	Aff_debug();
 	//We refresh the deplacement's parameters. Speed +wheels Angle
 	Set_deplacement();
@@ -289,7 +313,7 @@ void Car::Car_debug(void){
 					break;
 
 				case '-':	//decrement speed
-					if(n>0){
+					if(true){//n>0){
 						Vset-=250;
 						uart_write("Vset : ",7);
 						uart_writeNb(Vset);
@@ -310,7 +334,10 @@ void Car::Car_debug(void){
 						uart_write("speed_mano\n\r",12);
 					}
 					break;
-
+				case 'e':
+					uart_write("ESP actif\n\r",11);
+					active_ESP=true;
+					break;
 				case 'l':	//lights toggle
 					GPIOC_PTOR =DEBUG_CAM_LED_Pin;
 					break;
