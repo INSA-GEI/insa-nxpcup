@@ -24,8 +24,10 @@ float coeff_i_s=0.0;
 float coeff_d_1_s=0.0;
 float coeff_d_2_s=0.0;
 
+//Not implemented yet
 int Count=0; //count how many time we were not to close to the black line
 
+//Debug Flag
 bool FLAG_ENABLE_LOG_IMG=false;
 bool FLAG_ENABLE_LOG_SERVO=false;
 
@@ -77,11 +79,16 @@ void Car::Calculate_speed (void){
 	V_old=abs(Vset);
 	//Calcul rampe => commande
 	Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh;
+	
+	//If brake
+	if (enable_brake){
+		Vset=-V_old;
+	}
 	//PID
 	e=Vset-V_mes;
-	Ysi=Ysi+coeff_i_s*(e+e_old);
-	Ysd=coeff_d_1_s*Ysd+coeff_d_2_s*(e-e_old);
-	Vset=-K_s*e+Ysi+Ysd;
+	Ysi=Ysi+coeff_i_s*(e+e_old);//Integrale
+	Ysd=coeff_d_1_s*Ysd+coeff_d_2_s*(e-e_old);// dérivée
+	Vset=K_s*e+Ysi+Ysd;//PID
 }
 
 void Car::Set_speed(void){
@@ -102,13 +109,7 @@ void Car::Set_speed(void){
 			}
 		}*/
 		
-		//Linear mode
-
-		if (enable_brake){
-			Vset=-(Vhigh-Vset+Vslow);
-		}/*else if (Vset>V_old+INCREMENT_SPEED){
-			Vset=V_old+INCREMENT_SPEED; //Temps de montée max 100ms
-		}*/
+		Calculate_speed();
 	}
 }
 
@@ -117,10 +118,10 @@ void Car::Set_diff_speed(void){
 	//We calculate the delta_speed of the rear wheels
 	//delta_speed=servo_angle*MOVEMENT_ENTRAXE_COEFF*Vset;
 	//##################### Changement #########
-	if (abs(servo_angle)<MAX_ANGLE/3){
+	if (state_turn_car==0){
 		//Strait line
 		delta_speed=0;
-	}else if(abs(servo_angle)>2*MAX_ANGLE/3){
+	}else if(state_turn_car==2){
 		//Hard turn => turn with r=2*Entraxe
 		delta_speed=Vset/3;
 	}else{
@@ -203,7 +204,7 @@ void Car::processESP(){
 		if (detect_ESP){
 			if (mode_speed!=0){
 				//On regarde si on est en ligne droite ou en virage
-				if (state_turn_car==2){
+				if (state_turn_car!=2){
 					Vset=(Vslow+Vset)/2;
 				}else{
 					Vset=Vslow;
@@ -270,15 +271,12 @@ void Car::Car_handler(void){
 	//
 	Caculate_angle_wheel();
 	//if Vset=0 => stop
-	if (Vset!=0){
-		Calculate_speed();
-	
+	if (Vset!=0){	
 		Detect_state();
-		//ESP at the end because it changes Vset and delta_speed
-		processESP();
-		
-		//We apply a speed
+		//We calculate the speed
 		Set_speed();
+		//ESP at the end because it changes Vset
+		processESP();
 		//Calcul du diff en fonction
 		Set_diff_speed();
 	}

@@ -11,6 +11,8 @@
 #include "stdio.h"
 #include "stdlib.h"
 
+#define Plausibily_check 30 //For Roadmiddle
+
 #define CAM_DELAY				asm ("nop")				// minimal delay time
 #define	CAM_SI_HIGH				GPIOB_PDOR |= (1<<8)	// SI on PTB8
 #define	CAM_SI_LOW				GPIOB_PDOR &= ~(1<<8)	// SI on PTB8

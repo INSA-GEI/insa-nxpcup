@@ -145,7 +145,7 @@ void Img_Proc::process (void){
 					i--;
 				}
 			}
-			//Nb transistion
+			//Nb transistions
 			i=BlackLineLeft+1;
 			while (BlackLineRight==128 && i<BlackLineRight-1){
 				if (ImageDataDifference[i-1]!=ImageDataDifference[i+1]){
@@ -155,7 +155,7 @@ void Img_Proc::process (void){
 					i++;
 				}
 			}
-			display_camera_data();		
+			//display_camera_data();		
 
 		}
 		if (functionning_mode == 2){
@@ -254,18 +254,10 @@ void Img_Proc::calculateMiddle (void){
 	// Find middle of the road, 64 for strait road
 	RoadMiddle = (BlackLineLeft + BlackLineRight)/2;
 
-	// if a line is only on the the right side
-	/*if (BlackLineLeft < 3){
-		RoadMiddle = BlackLineRight - 50;
-	}
-	// if a line is only on the the left side
-	if (BlackLineRight > 124){
-		RoadMiddle = BlackLineLeft + 50;
-	}*/
+	
 	// if no line on left and right side
 	if (number_edges == 0){
 		RoadMiddle = RoadMiddle_old;
-		//for (i = 0 ; i < 1000000 ; i++);
 	}
 	if ((BlackLineRight > 124) && (BlackLineLeft < 3)){
 		RoadMiddle = RoadMiddle_old;		// we continue on the same trajectory as before 
@@ -276,7 +268,10 @@ void Img_Proc::calculateMiddle (void){
 	
 	// Find difference from real middle
 	diff = RoadMiddle - 64;						// calculate actual difference
-
+	
+	if (abs(diff-diff_old)>Plausibily_check){
+		diff=diff_old;
+	}
 }
 
 //You may need to adjust the values of "CompareData_high" by modifying the macro "THRESHOLD_high".
