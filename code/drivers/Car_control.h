@@ -59,15 +59,41 @@ public:
 	
 	//functions
 	void init(void);
-	void Caculate_angle_wheel(void);
-	void Set_deplacement(void);
-	void Car_debug(void);
-	void Car_handler(void);
+	
+	
 	void processESP(void);
+	
+	void Set_deplacement(void);
+	//Process every actions (set speed,angle wheels etc) for the car every 10ms
+	void Car_handler(void);
+	
+	//debug
+	void Car_debug(void); //Commande Putty
 
 private:
+	//PID direction
+	float Ywi;
+	float Ywd;
+	
+	//PID speed
+	float e;
+	float e_old;
+	float Ysi;
+	float Ysd;
+	
+	//########### wheels angle #############
+	void Caculate_angle_wheel(void);
+	//################ Speed ############
+	void Calculate_speed(void); //PID
 	void Set_speed(void);
 	void Set_diff_speed(void);
+	
+	//######### State of the car ###########
+	int state_turn_car; //2=>hard turn //1 soft turn //0=>strait line
+	void Detect_state(void); //Detect the turns //Detect slip (ie ESP) only in strait lines
+	
+	
+	//Debug
 	int mode_debug;
 	void Set_debug_mode(int i); //i=>0 : Cam+ange_servo  //i=>1 : Cam[i] //i=>2 : 
 	void Aff_debug(void);
@@ -77,9 +103,16 @@ int sng(int a);
 
 //####################### Wheels #################################
 
-#define K 								1.8 //2 //P of the PI
-#define Ki								1 //I of the PI
+#define K 								1.8 //1.8 //P of the PI
+#define Ki								1 //1 //I of the PI
+#define Kd								1 //D of PID
+#define N_Kd							10//filtre D PID
 
+//PID speed
+#define K_s 							1.8 //1.8 //P of the PI
+#define Ki_s							1 //1 //I of the PI
+#define Kd_s							1 //D of PID
+#define N_Kd_s							10//filtre D PID
 
 
 #endif /* CAR_CONTROL_H_ */
