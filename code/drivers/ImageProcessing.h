@@ -16,7 +16,7 @@
 #define	CAM_SI_LOW				GPIOB_PDOR &= ~(1<<8)	// SI on PTB8
 #define	CAM_CLK_HIGH			GPIOB_PDOR |= (1<<9)	// CLK on PTB9
 #define	CAM_CLK_LOW				GPIOB_PDOR &= ~(1<<9)	// CLK on PTB9
-
+#define CSV						true //display data
 
 // Define thresholds for Camera Black Line recognition
 #define THRESHOLD_high				140			// Higher threshold : does not capture noise but may not capture all maximums.
@@ -24,7 +24,7 @@
 
 #define THRESHOLD_classic			120			// standard threshold : used in the basic image processing function
 
-#define functionning_mode			2			// operating mode: from 1 to 3: algorithm more and more precise but heavy
+#define functionning_mode			1			// operating mode: from 1 to 3: algorithm more and more precise but heavy
 
 #define SIGMA_1	 					2			// square root of the variance for the first gaussian filter
 #define SIGMA_2 					2.5			// square root of the variance for the second gaussian filter. 

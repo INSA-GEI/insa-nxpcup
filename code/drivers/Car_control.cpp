@@ -1,6 +1,7 @@
 #include "Car_control.h"
 #include "Debug.h"
 
+/* RIO 2020-2021*/
 
 
 //#################################### Var ###################
@@ -72,6 +73,7 @@ void Car::Calculate_speed (void){
 	e_old=e;
 	V_mes=(myMovement.encoder.getLeftSpeed()+myMovement.encoder.getRightSpeed())/2;
 	//Negative speed => go back
+	//store old data
 	V_old=abs(Vset);
 	//Calcul rampe => commande
 	Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh;
@@ -136,10 +138,9 @@ void Car::Set_diff_speed(void){
 void Car::Set_deplacement(void){
 	
 	//########### On actualise le déplacement #################
-	if (cam.edges_cnt>10){
+	if (finish){
 		Vset=0;
 		mode_speed=0;
-		uart_write("Fin !",5);
 		servo_angle=0;
 	}else{
 		myMovement.set(Vset,servo_angle);
@@ -247,6 +248,12 @@ void Car::Detect_state(void){
 		active_ESP=true;
 	}else{
 		active_ESP=false;
+	}
+	
+	//######## Test finish ############
+	if ((cam.edges_cnt/2)>3){
+		finish=true;
+		uart_write("Fin !",5);
 	}
 }
 

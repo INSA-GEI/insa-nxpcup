@@ -96,7 +96,22 @@ void Img_Proc::differentiate(void){
 			for(i=1;i<=126;i++){	
 				ImageDataDifference[i] = abs (ImageData[i-1] + ImageData[i] + ImageData[i+1])/3;
 			}
+			ImageDataDifference[0] = ImageData[0];
+			ImageDataDifference[127] = ImageData[127];
+			threshold=0;
+			for(int i=0;i<=127;i++){
+				threshold+=ImageDataDifference[i];
+			}
+			threshold=threshold/128;
 			
+			//Test blanc ou noir
+			for(int i=0;i<=127;i++){
+				if (ImageDataDifference[i]>threshold){
+					ImageDataDifference[i]=1; //white
+				}else{
+					ImageDataDifference[i]=0;//black
+				}	
+			}
 		}
 		if (functionning_mode == 2){
 			for(i=1;i<=126;i++){							// using a gradient by direct differences (application of the filter : [-1 , 0 , 1] -> P(x) = -1*P(x-1)+0*P(x)+1*P(x+1))
@@ -109,7 +124,40 @@ void Img_Proc::differentiate(void){
 
 void Img_Proc::process (void){
 		number_edges = 0;		// reset the number of peaks to 0
-		
+		if (functionning_mode == 1){
+			BlackLineRight = 128;
+			BlackLineLeft = -1;
+			int i=0;
+			while (BlackLineLeft==-1 && i<127){
+				if (ImageDataDifference[i]==1){
+					BlackLineLeft=i;
+					number_edges++;
+				}else{
+					i++;
+				}
+			}
+			i=127;
+			while (BlackLineRight==128 && i>0){
+				if (ImageDataDifference[i]==1){
+					BlackLineLeft=i;
+					number_edges++;
+				}else{
+					i--;
+				}
+			}
+			//Nb transistion
+			i=BlackLineLeft+1;
+			while (BlackLineRight==128 && i<BlackLineRight-1){
+				if (ImageDataDifference[i-1]!=ImageDataDifference[i+1]){
+					number_edges++;
+					i+=4;
+				}else{
+					i++;
+				}
+			}
+			display_camera_data();		
+
+		}
 		if (functionning_mode == 2){
 			// Find black line on the right side
 
@@ -292,46 +340,64 @@ bool Img_Proc::test_FinishLine_Detection (void){
 
 //To add at the end of  process() in order to test the variation of the thresholds towards the number of edges detected.
 void Img_Proc::compute_data_threshold(void){
-	
-	if(number_edges >= 2 && not(finish)){
-		CompareData_high += 12;
-		threshold = CompareData_high;
-		CompareData_low += 10;
-		if (CompareData_high > 200) CompareData_high=200;
-		if (CompareData_low > 80) CompareData_low=80;
-	}
-	else if(number_edges > 0 || number_edges < 2){
-		CompareData_high -= 3;
-		threshold = CompareData_high;
-		CompareData_low -= 3;
-		if (CompareData_high < 20) CompareData_high=20;
-		if (CompareData_low < 5) CompareData_low=5;
-	}
-	else {
-		CompareData_high = THRESHOLD_high;
-		threshold = CompareData_high;
-		CompareData_low = THRESHOLD_low;
+	if (functionning_mode==1){
+		
+	}else{
+		if(number_edges >= 2 && not(finish)){
+			CompareData_high += 12;
+			threshold = CompareData_high;
+			CompareData_low += 10;
+			if (CompareData_high > 200) CompareData_high=200;
+			if (CompareData_low > 80) CompareData_low=80;
+		}
+		else if(number_edges > 0 || number_edges < 2){
+			CompareData_high -= 3;
+			threshold = CompareData_high;
+			CompareData_low -= 3;
+			if (CompareData_high < 20) CompareData_high=20;
+			if (CompareData_low < 5) CompareData_low=5;
+		}
+		else {
+			CompareData_high = THRESHOLD_high;
+			threshold = CompareData_high;
+			CompareData_low = THRESHOLD_low;
+		}
 	}
 }
 
 
 void Img_Proc::display_camera_data(void) {
 	//uart_write("Raw data : ",11);
-	for (int i=0;i<128;i++) {
-		uart_write("$",1);
-		uart_writeNb(ImageData[i]);
-		uart_write(" ",1);
-		uart_writeNb(ImageDataDifference[i]);
-		uart_write(";",1);
-	}
-	for (int i=0;i<40;i++) {
-			uart_write("$",1);
-			uart_writeNb(0);
-			uart_write(" ",1);
+	if (CSV){
+		for (int i=0;i<128;i++) {
+			uart_writeNb(ImageData[i]);
+			uart_write(";",1);
+			uart_writeNb(ImageDataDifference[i]);
+			uart_write("\r\n",2);
+		}
+		for (int i=0;i<40;i++) {
 			uart_writeNb(0);
 			uart_write(";",1);
+			uart_writeNb(0);
+			uart_write("\r\n",2);
+		}
+	}else{
+		for (int i=0;i<128;i++) {
+			uart_write("$",1);
+			uart_writeNb(ImageData[i]);
+			uart_write(" ",1);
+			uart_writeNb(ImageDataDifference[i]);
+			uart_write(";",1);
+		}
+		for (int i=0;i<40;i++) {
+				uart_write("$",1);
+				uart_writeNb(0);
+				uart_write(" ",1);
+				uart_writeNb(0);
+				uart_write(";",1);
+		}
+		uart_write("\r\n",2);
 	}
-	uart_write("\r\n",2);
 }
 
 void Img_Proc::display_gradient(void) {
