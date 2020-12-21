@@ -94,6 +94,7 @@ void Movement::regulate(void) {
 		actualSpeedR=targetSpeedR;
 		actualSpeedL=targetSpeedL;
 	}*/
+	//Maintenant le régulateur est un PID dans carControl.cpp
 	actualSpeedR=targetSpeedR;
 	actualSpeedL=targetSpeedL;
 	applySpeeds();

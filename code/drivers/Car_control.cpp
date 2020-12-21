@@ -122,7 +122,7 @@ void Car::Set_diff_speed(void){
 		//Strait line
 		delta_speed=0;
 	}else if(state_turn_car==2){
-		//Hard turn => turn with r=2*Entraxe
+		//Hard turn => turn with r=L_Entraxe
 		delta_speed=Vset/3;
 	}else{
 		//Soft turn
@@ -227,7 +227,7 @@ void Car::Detect_state(void){
 	//Test braking #####################################
 	if (Vset<V_old-T_BRAKE && abs(V_mes)>TURN_SPEED){
 		enable_brake=true;	
-	}else{
+	}else if(abs(V_mes)<abs(Vset)){
 		enable_brake=false;
 	}
 	
