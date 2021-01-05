@@ -26,7 +26,7 @@
 
 #define THRESHOLD_classic			120			// standard threshold : used in the basic image processing function
 
-#define functionning_mode			2			// operating mode: from 1 to 3: algorithm more and more precise but heavy
+#define functionning_mode			1			// operating mode: from 1 to 3: algorithm more and more precise but heavy
 
 #define SIGMA_1	 					2			// square root of the variance for the first gaussian filter
 #define SIGMA_2 					2.5			// square root of the variance for the second gaussian filter. 

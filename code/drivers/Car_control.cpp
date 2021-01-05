@@ -1,6 +1,7 @@
 #include "Car_control.h"
 #include "Debug.h"
 
+/* RIO 2020-2021*/
 
 
 //#################################### Var ###################
@@ -13,8 +14,20 @@ float K_camdiff=0.0;
 float K_camdiffold=0.0;
 int n=0;//Allow us to use the debug with Putty
 
+//PID wheels angle
+float coeff_i=0.0;
+float coeff_d_1=0.0;
+float coeff_d_2=0.0;
+
+//PID speed
+float coeff_i_s=0.0;
+float coeff_d_1_s=0.0;
+float coeff_d_2_s=0.0;
+
+//Not implemented yet
 int Count=0; //count how many time we were not to close to the black line
 
+//Debug Flag
 bool FLAG_ENABLE_LOG_IMG=false;
 bool FLAG_ENABLE_LOG_SERVO=false;
 
@@ -80,9 +93,7 @@ void Car::Calculate_speed(void){
 }
 
 void Car::Set_speed(void){
-	//On mesure la vitesse
-	V_mes=(myMovement.encoder.getLeftSpeed()+myMovement.encoder.getRightSpeed())/2;
-	//Negative speed => go back
+	
 	//We notice if we have been near the black lines or not
 	if (mode_speed!=0){
 		/*if (mode_speed==2){
@@ -126,11 +137,11 @@ void Car::Set_diff_speed(void){
 }
 
 void Car::Set_deplacement(void){
-//########### On actualise le déplacement #################
+	
+	//########### On actualise le déplacement #################
 	if (finish){
 		Vset=0;
 		mode_speed=0;
-		uart_write("Stop fin!",9);
 		servo_angle=0;
 		myMovement.set(Vset,servo_angle);
 		myMovement.setDiff(Vset,delta_speed);
@@ -163,13 +174,16 @@ void Car::Caculate_angle_wheel(void){
 		}
 		old_servo_angle=servo_angle;
 		//PI Approx bilinéaire
+
 		servo_angle=servo_angle+(float)aux_diff*K_camdiff+(float)cam.diff_old*K_camdiffold;
+
 //##################### Changement valeurs  ##########################
 		if(servo_angle<-MAX_ANGLE)servo_angle=(-MAX_ANGLE);
 		if(servo_angle>MAX_ANGLE)servo_angle=MAX_ANGLE;
 	}
 }
 
+//############### ESP (oscillation en ligne droite) ############
 void Car::processESP(){
 	if (active_ESP){
 		//############## ESP #################
@@ -196,8 +210,9 @@ void Car::processESP(){
 		if (detect_ESP){
 			if (mode_speed!=0){
 				//On regarde si on est en ligne droite ou en virage
+
 				if (state_turn_car==0){
-					Vset=(TURN_SPEED+Vset)/2;
+					Vset=(TURN_SPEED+Vset)/2;		
 				}else{
 					Vset=Vslow;
 				}
@@ -260,10 +275,46 @@ void Car::Detect_state(void){
 	}
 }
 
+//############# Test Turn? strait line? Brake? ##################
+void Car::Detect_state(void){
+	//Test braking #####################################
+	if (Vset<V_old-T_BRAKE && abs(V_mes)>TURN_SPEED){
+		enable_brake=true;	
+	}else if(abs(V_mes)<abs(Vset)){
+		enable_brake=false;
+	}
+	
+	//##################### Test Turn #########
+	if (abs(servo_angle)<MAX_ANGLE/3){
+		//Strait line
+		state_turn_car=0;
+	}else if(abs(servo_angle)>2*MAX_ANGLE/3 || cam.BlackLineRight==127 || cam.BlackLineLeft==0){
+		//Hard turn 
+		state_turn_car=2;
+	}else{
+		//Soft turn
+		state_turn_car=1;
+	}
+	
+	//Test ESP
+	//On active l'ESP
+	if (Vset>TURN_SPEED && (!(enable_brake)) ){
+		active_ESP=true;
+	}else{
+		active_ESP=false;
+	}
+	
+	//######## Test finish ############
+	if ((cam.edges_cnt/2)>3){
+		finish=true;
+		uart_write("Fin !",5);
+	}
+}
 
 //################ Handler ##########################
 void Car::Car_handler(void){
 	//servo//rear motors interrupt, 100Hz => Te=10ms	
+
 	//Debug
 	c++;
 	c_ESP++;
@@ -272,13 +323,18 @@ void Car::Car_handler(void){
 		FLAG_SEND_IMG=true;		
 	}
 	//
-	Detect_state();
+
 	Caculate_angle_wheel();
-	Set_speed();
-	//ESP at the end because it changes Vset and delta_speed
-	processESP();
-	//Calcul du diff
-	Set_diff_speed();
+	//if Vset=0 => stop
+	if (Vset!=0){	
+		Detect_state();
+		//We calculate the speed
+		Set_speed();
+		//ESP at the end because it changes Vset
+		processESP();
+		//Calcul du diff en fonction
+		Set_diff_speed();
+	}
 	//Debug
 	Aff_debug();
 	//We refresh the deplacement's parameters. Speed +wheels Angle
@@ -330,8 +386,26 @@ void Car::Aff_debug(void){
 		//uart_write(";",1);
 		uart_write("\n\r",2);
 	}
+	if (Vset<0){
+		/*uart_write("Vold : ",7);
+		uart_writeNb(V_old);
+		uart_write(" / ",3);*/
+		uart_write("Brake ! ",8);
+		uart_write("Vset : ",7);
+		uart_writeNb(Vset);
+		uart_write(" / ",3);
+		uart_write("Vold : ",7);
+		uart_writeNb(V_old);
+		/*uart_write("b : ",4);
+		uart_writeNb(Vhigh);
+		uart_write(" / ",3);
+		uart_write("Vset : ",6);
+		uart_writeNb((int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh);*/
+		uart_write("\r\n",2);
+	}
 	FLAG_SEND_IMG=false;
 }
+
 void Car::Car_debug(void){
 	char str[10];
 	
@@ -431,6 +505,8 @@ void Car::Car_debug(void){
 				}
 			}
 }
+
+//########### others ###############
 
 int sng(int a){
 	if (a<=0){

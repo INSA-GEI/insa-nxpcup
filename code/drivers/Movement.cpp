@@ -70,7 +70,7 @@ void Movement::stop(void) {
 
 
 void Movement::regulate(void) {
-	if (speed>0){
+	/*if (speed>0){
 		GPIOB_PTOR = DEBUG_RED_Pin;
 		int err=encoder.getLeftSpeed();
 		if(err<0){	//detect invalid speed readings
@@ -93,8 +93,10 @@ void Movement::regulate(void) {
 	}else{
 		actualSpeedR=targetSpeedR;
 		actualSpeedL=targetSpeedL;
-	}
-
+	}*/
+	//Maintenant le régulateur est un PID dans carControl.cpp
+	actualSpeedR=targetSpeedR;
+	actualSpeedL=targetSpeedL;
 	applySpeeds();
 }
 

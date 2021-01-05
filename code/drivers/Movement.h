@@ -19,8 +19,8 @@
 
 #define MOVEMENT_CORR_THRESHOLD 6 		// correct the speed only when we are more than 1 cm/s off target speed
 #define MOVEMENT_CORR_KP 1			// amount of error to correct each iteration
-#define SPEED_LIMIT 9000 				//	mm/s
- 
+#define SPEED_LIMIT 9000				//	mm/s
+#define Te_encoder 0.0002 //0.2ms
 
 class Movement{
 public:
