@@ -11,12 +11,14 @@
 #include "stdio.h"
 #include "stdlib.h"
 
+#define Plausibily_check 30 //For Roadmiddle
+
 #define CAM_DELAY				asm ("nop")				// minimal delay time
 #define	CAM_SI_HIGH				GPIOB_PDOR |= (1<<8)	// SI on PTB8
 #define	CAM_SI_LOW				GPIOB_PDOR &= ~(1<<8)	// SI on PTB8
 #define	CAM_CLK_HIGH			GPIOB_PDOR |= (1<<9)	// CLK on PTB9
 #define	CAM_CLK_LOW				GPIOB_PDOR &= ~(1<<9)	// CLK on PTB9
-
+#define CSV						true //display data
 
 // Define thresholds for Camera Black Line recognition
 #define THRESHOLD_high				140			// Higher threshold : does not capture noise but may not capture all maximums.
