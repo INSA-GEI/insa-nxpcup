@@ -51,62 +51,68 @@ public:
 	bool enable_ampli_turn;
 	
 	//######### Speed ###############
-	//Speed of the car
-	int Vset;//=0
-	int V_old;
-	int V_mes;
-	//Speed in turn
-	int Vslow;//=500
-	//Speed in strait line
-	int Vhigh;//=1500
-	bool enable_brake;
-	
-	float delta_speed;//Value for the rear differential
-	
-	int mode_speed;//Mode 0=>speed manual //1=> speed auto
+		//Speed of the car
+		int Vset;//=0
+		int V_old;
+		int V_mes;
+		//Speed in turn
+		int Vslow;//=500
+		//Speed in strait line
+		int Vhigh;//=1500
+		bool enable_brake;
+		
+		float delta_speed;//Value for the rear differential
+		
+		int mode_speed;//Mode 0=>speed manual //1=> speed auto
 	
 	//########## ESP #############
-	int ESP;
-	bool detect_ESP;
-	bool active_ESP;
+		int ESP;
+		bool detect_ESP;
+		bool active_ESP;
 	
 	
 	//############# functions #########################
-	void init(void);
-	
-	//Tente de détecter des oscillations dans les lignes droites dû au patinage des roues
-	//return : modifie Vset
-	void processESP(void);
-	
-	//Actualise le déplacement grâce à l'objet myMovement
-	//La vitesse peut être négative (si freiange) ou positive, tout est paramétré dans Movement.cpp
-	//Arg : finish :true/false <= màj dans Detect_state()
-	void Set_deplacement(void);
-	
-	//Process every actions (set speed,angle wheels etc) for the car every 10ms
-	void Car_handler(void);
-	
-	//choix des options de Putty
-	void Car_debug(void); //Commande Putty
+		void init(void);
+		
+		//Tente de détecter des oscillations dans les lignes droites dû au patinage des roues
+		//return : modifie Vset
+		void processESP(void);
+		
+		//Actualise le déplacement grâce à l'objet myMovement
+		//La vitesse peut être négative (si freiange) ou positive, tout est paramétré dans Movement.cpp
+		//Arg : finish :true/false <= màj dans Detect_state()
+		void Set_deplacement(void);
+		
+		//Process every actions (set speed,angle wheels etc) for the car every 10ms
+		void Car_handler(void);
+		
+		//choix des options de Putty
+		void Car_debug(void); //Commande Putty
 
 private:
 	
 	//########### wheels angle #############
-	void Caculate_angle_wheel(void);
+		//Calcul la commande des roues et opère un PI avant de stocker la valeur dans servo_angle
+		void Caculate_angle_wheel(void);
+	
 	//################ Speed ############
-	void Calculate_speed(void); 
-	void Set_speed(void);
-	void Set_diff_speed(void);
+		//Calcule la consigne de vitesse en fonction de l'angle des roues
+		//Le correcteur est présent dans Movement.cpp =>regulate()
+		void Calculate_speed(void); 
+		//Calcul Vslow et Vhigh (pas encore opérationnel) et renvoie à Calculate_speed
+		void Set_speed(void);
+		//Calcul et instancie la vitesse du différentiel
+		void Set_diff_speed(void);
 	
 	//######### State of the car ###########
-	int state_turn_car; //2=>hard turn //1 soft turn //0=>strait line
-	void Detect_state(void); //Detect the turns //Detect slip (ie ESP) only in strait lines
-	void Process_data(void);
-	
-	//Debug
-	int mode_debug;
-	void Set_debug_mode(int i); //i=>0 : Cam+ange_servo  //i=>1 : Cam[i] //i=>2 : 
-	void Aff_debug(void);
+		int state_turn_car; //2=>hard turn //1 soft turn //0=>strait line
+		void Detect_state(void); //Detect the turns //Detect slip (ie ESP) only in strait lines
+		void Process_data(void);
+		
+		//Debug
+		int mode_debug;
+		void Set_debug_mode(int i); //i=>0 : Cam+ange_servo  //i=>1 : Cam[i] //i=>2 : 
+		void Aff_debug(void);
 };
 
 int sng(int a);
