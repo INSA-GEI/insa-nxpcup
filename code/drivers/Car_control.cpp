@@ -51,6 +51,8 @@ void Car::init(void){
 	K_camdiffold=(float)((Te*Ki-2*K)/2);
 }
 
+//############### SPEED ########################
+
 //Calcule la consigne de vitesse en fonction de l'angle des roues
 //Le correcteur est présent dans Movement.cpp =>regulate()
 void Car::Calculate_speed(void){
