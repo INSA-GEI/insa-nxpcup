@@ -124,8 +124,8 @@ void Movement::applySpeeds(void) {
 	}else{
 		actualSpeedL*=2;
 		actualSpeedR*=2;
-		if(actualSpeedL>SPEED_LIMIT)actualSpeedL=SPEED_LIMIT;
-		if(actualSpeedR>SPEED_LIMIT)actualSpeedR=SPEED_LIMIT;
+		if(actualSpeedL<(-SPEED_LIMIT))actualSpeedL=-SPEED_LIMIT;
+		if(actualSpeedR<(-SPEED_LIMIT))actualSpeedR=-SPEED_LIMIT;
 		MOTOR_LEFT_BSPEED(actualSpeedL*MOTOR_CAL_SPEED);
 		MOTOR_RIGHT_BSPEED(actualSpeedR*MOTOR_CAL_SPEED);
 	}
