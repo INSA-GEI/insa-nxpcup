@@ -24,7 +24,7 @@
 #define THRESHOLD_high				140			// Higher threshold : does not capture noise but may not capture all maximums.
 #define THRESHOLD_low				50			// Lower threshold : May capture more maximums than High threshold but can capture noise too.
 
-#define THRESHOLD_classic			120			// standard threshold : used in the basic image processing function
+#define THRESHOLD_classic			130			// standard threshold : used in the basic image processing function
 
 #define functionning_mode			1			// operating mode: from 1 to 3: algorithm more and more precise but heavy
 
@@ -40,7 +40,8 @@
 #define BLACK_RECTANGLE_MIDDLE_2 88		//(550-(124+94/2))mm*128/550mm=379*128/550=88
 #define RECT_WIDTH 22				//(94*128)/550=22
 
-#define CST_RECAL_T 100
+#define CST_RECAL_T 200
+
 class Img_Proc{
 public:
 	uint16_t ImageData [128];				// array to store the LineScan image

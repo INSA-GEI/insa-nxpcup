@@ -143,10 +143,16 @@ void Car::Caculate_angle_wheel(void){
 		uart_write("\n\r",2);
 	}else{
 		if (enable_ampli_turn){
+			int aux=0;
+			if (state_turn_car==1){
+				aux=AMPLIFIE_TURN_1;
+			}else if(state_turn_car==2){
+				aux=AMPLIFIE_TURN_2;
+			}
 			if (cam.diff<0){
-				aux_diff-=AMPLIFIE_TURN;
+				aux_diff-=aux;
 			}else{
-				aux_diff+=AMPLIFIE_TURN;
+				aux_diff+=aux;
 			}
 		}
 		old_servo_angle=servo_angle;
@@ -220,6 +226,8 @@ void Car::Detect_state(void){
 		enable_brake=false;
 	}
 	
+	int old=state_turn_car;
+	
 	//##################### Test Turn #########
 	if (abs(cam.diff)<MAX_CAM_DIFF/3){
 		//Strait line
@@ -233,7 +241,7 @@ void Car::Detect_state(void){
 	}
 	
 	//Amplifie the turn in Calculate_angle_wheels
-	if (abs(cam.diff)>2*MAX_CAM_DIFF/3 && (cam.BlackLineRight==128 || cam.BlackLineLeft==-1) &&(!(cam.BlackLineRight==128 && cam.BlackLineLeft==-1))){
+	if ((old==state_turn_car && state_turn_car==2) || (cam.BlackLineRight==128 || cam.BlackLineLeft==-1)){
 		if (!(enable_ampli_turn)){
 			enable_ampli_turn=true;
 			uart_write("amp_turn !",10);

@@ -23,7 +23,8 @@
 #define T_BRAKE 300 //Threshold before braking
 #define INCREMENT_SPEED 30
 #define TURN_SPEED 1200
-#define AMPLIFIE_TURN 10
+#define AMPLIFIE_TURN_1 10
+#define AMPLIFIE_TURN_2 20
 
 
 #define Te 0.01 //sample time 10ms handler rear motors

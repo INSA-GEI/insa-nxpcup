@@ -101,6 +101,7 @@ void Img_Proc::differentiate(void){
 			
 			Imageflou[0] = ImageData[0];
 			Imageflou[127] = ImageData[127];
+			
 			if (c_t<CST_RECAL_T){
 				c_t=0;
 				threshold=0;
@@ -108,6 +109,7 @@ void Img_Proc::differentiate(void){
 					threshold+=Imageflou[i];
 				}
 				threshold=threshold/128;
+				if (threshold<THRESHOLD_classic)threshold=THRESHOLD_classic;
 			}
 			
 			//Test blanc ou noir
@@ -155,6 +157,7 @@ void Img_Proc::process (void){
 			i=BlackLineLeft+2;
 			while (i<BlackLineRight-2){
 				if (ImageDataDifference[i-1]!=ImageDataDifference[i+1]){
+				//if (ImageDataDifference[i-1]+ImageDataDifference[i]+ImageDataDifference[i+1]==2 && ImageDataDifference[i]==0){
 					number_edges++;
 					i+=4;
 				}else{
