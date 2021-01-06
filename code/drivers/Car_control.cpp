@@ -46,10 +46,13 @@ void Car::init(void){
 	active_ESP=false;
 	enable_ampli_turn=false;
 	enable_brake=false;
+	//Coeff PI servo_angle
 	K_camdiff=(float)((2*K+Te*Ki)/2);
 	K_camdiffold=(float)((Te*Ki-2*K)/2);
 }
 
+//Calcule la consigne de vitesse en fonction de l'angle des roues
+//Le correcteur est présent dans Movement.cpp =>regulate()
 void Car::Calculate_speed(void){
 	//Linear mode
 	V_old=abs(Vset);
@@ -68,6 +71,7 @@ void Car::Calculate_speed(void){
 	}
 }
 
+//Calcul Vslow et Vhigh et renvoie à Calculate_speed
 void Car::Set_speed(void){
 	
 	//We notice if we have been near the black lines or not
@@ -89,6 +93,7 @@ void Car::Set_speed(void){
 	}
 }
 
+//Calcul et instancie la vitesse du différentiel
 void Car::Set_diff_speed(void){
 	//Calcul du diff
 	//We calculate the delta_speed of the rear wheels

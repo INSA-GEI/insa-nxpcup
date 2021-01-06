@@ -94,7 +94,7 @@ private:
 	//########### wheels angle #############
 	void Caculate_angle_wheel(void);
 	//################ Speed ############
-	void Calculate_speed(void); //PID
+	void Calculate_speed(void); 
 	void Set_speed(void);
 	void Set_diff_speed(void);
 	
