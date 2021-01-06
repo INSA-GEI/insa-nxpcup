@@ -4,6 +4,7 @@
 //#include <stdio.h>
 
 int i,j;
+int c_t=0;//counter for the threshold
 
 void Img_Proc::init(){
 	
@@ -37,6 +38,7 @@ void Img_Proc::init(){
 	BlackLineLeft=0;
 	number_edges=0;
 	edges_cnt=0;
+	threshold=150;
 	finish=false;
 	CompareData_high = THRESHOLD_high;
 	CompareData_low = THRESHOLD_low;
@@ -94,16 +96,19 @@ void Img_Proc::capture(void){
 void Img_Proc::differentiate(void){
 		if (functionning_mode == 1){
 			for(i=1;i<=126;i++){	
-				Imageflou[i] = abs (ImageData[i-1] + ImageData[i] + ImageData[i+1])/3;
+				Imageflou[i] = abs (1.5*ImageData[i-1] + ImageData[i] + 1.5*ImageData[i+1])/4;
 			}
 			
 			Imageflou[0] = ImageData[0];
 			Imageflou[127] = ImageData[127];
-			threshold=0;
-			for(int i=0;i<=127;i++){
-				threshold+=Imageflou[i];
+			if (c_t<CST_RECAL_T){
+				c_t=0;
+				threshold=0;
+				for(int i=0;i<=127;i++){
+					threshold+=Imageflou[i];
+				}
+				threshold=threshold/128;
 			}
-			threshold=threshold/128;
 			
 			//Test blanc ou noir
 			for(int i=0;i<=127;i++){
@@ -147,7 +152,7 @@ void Img_Proc::process (void){
 				}
 			}
 			//Nb transistions
-			/*i=BlackLineLeft+2;
+			i=BlackLineLeft+2;
 			while (i<BlackLineRight-2){
 				if (ImageDataDifference[i-1]!=ImageDataDifference[i+1]){
 					number_edges++;
@@ -155,7 +160,7 @@ void Img_Proc::process (void){
 				}else{
 					i++;
 				}
-			}*/
+			}
 		}
 		
 	//################### mode 2 ##########################
@@ -165,7 +170,7 @@ void Img_Proc::process (void){
 			//CompareData_low = THRESHOLD_low;					// threshold_low
 			//CompareData_high = THRESHOLD_high;					// threshold_high
 
-			BlackLineRight = 127;
+			BlackLineRight = 128;
 			for(i=126;i>=64;i--){
 	   			if (ImageDataDifference[i] > CompareData_high){
 	   				//CompareData_high = ImageDataDifference[i];
@@ -206,7 +211,7 @@ void Img_Proc::process (void){
 			//CompareData_high = THRESHOLD_high;					// threshold_high
 
 			// image processing with the algorithm seen at the beginning. 
-			BlackLineLeft = 0;
+			BlackLineLeft = -1;
 			for(i=1;i<=64;i++){
 	   			if (ImageDataDifference[i] > CompareData_high){
 	   				//CompareData_high = ImageDataDifference[i];
@@ -460,6 +465,7 @@ void Img_Proc::gradient(void){
 
 
 void Img_Proc::processAll(void) {
+	c_t++;
 	capture();
 	differentiate();
 	process();

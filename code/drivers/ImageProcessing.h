@@ -39,6 +39,8 @@
 #define BLACK_RECTANGLE_MIDDLE_1 40		//(124+94/2)mm*128/550mm=171*128/550=40
 #define BLACK_RECTANGLE_MIDDLE_2 88		//(550-(124+94/2))mm*128/550mm=379*128/550=88
 #define RECT_WIDTH 22				//(94*128)/550=22
+
+#define CST_RECAL_T 100
 class Img_Proc{
 public:
 	uint16_t ImageData [128];				// array to store the LineScan image

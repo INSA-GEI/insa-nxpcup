@@ -119,6 +119,7 @@ void Car::Set_deplacement(void){
 	
 	//########### On actualise le déplacement #################
 	if (finish){
+		finish=false;
 		Vset=0;
 		mode_speed=0;
 		servo_angle=0;
@@ -223,7 +224,7 @@ void Car::Detect_state(void){
 	if (abs(cam.diff)<MAX_CAM_DIFF/3){
 		//Strait line
 		state_turn_car=0;
-	}else if(abs(cam.diff)>2*MAX_CAM_DIFF/3 || cam.BlackLineRight==127 || cam.BlackLineLeft==0){
+	}else if(abs(cam.diff)>2*MAX_CAM_DIFF/3 || cam.BlackLineRight==128 || cam.BlackLineLeft==-1){
 		//Hard turn 
 		state_turn_car=2;
 	}else{
@@ -232,7 +233,7 @@ void Car::Detect_state(void){
 	}
 	
 	//Amplifie the turn in Calculate_angle_wheels
-	if (abs(cam.diff)>2*MAX_CAM_DIFF/3 && (cam.BlackLineRight==127 || cam.BlackLineLeft==0) &&(!(cam.BlackLineRight==127 && cam.BlackLineLeft==0))){
+	if (abs(cam.diff)>2*MAX_CAM_DIFF/3 && (cam.BlackLineRight==128 || cam.BlackLineLeft==-1) &&(!(cam.BlackLineRight==128 && cam.BlackLineLeft==-1))){
 		if (!(enable_ampli_turn)){
 			enable_ampli_turn=true;
 			uart_write("amp_turn !",10);
@@ -251,7 +252,7 @@ void Car::Detect_state(void){
 	}
 	
 	//######## Test finish ############
-	if ((cam.edges_cnt/2)>3){
+	if ((cam.number_edges)>=6){//Nb de transistion blanc noir
 		finish=true;
 		uart_write("Fin !",5);
 	}
@@ -272,17 +273,19 @@ void Car::Car_handler(void){
 	Process_data();//Acquisition des données
 	//On regarde si on est en ligne droite ou non
 	Detect_state();
-	//On met à jour les param de la voiture
-	Caculate_angle_wheel();
-	//if Vset=0 => stop
-	if (Vset!=0){	
-		//We calculate the speed
-		Set_speed();
-		//ESP at the end because it changes Vset
-		processESP();
-		//Calcul du diff en fonction
-		Set_diff_speed();
-		
+	if (!(finish)){
+		//On met à jour les param de la voiture
+		Caculate_angle_wheel();
+		//if Vset=0 => stop
+		if (Vset!=0){	
+			//We calculate the speed
+			Set_speed();
+			//ESP at the end because it changes Vset
+			processESP();
+			//Calcul du diff en fonction
+			Set_diff_speed();
+			
+		}
 	}
 	//Debug
 	Aff_debug();
@@ -309,7 +312,7 @@ void Car::Aff_debug(void){
 			cam.display_camera_data();
 		}
 	}else if(FLAG_SEND_IMG && FLAG_ENABLE_LOG_SERVO){
-		//uart_write("$",1);
+		uart_write("#####car#####\n\r",15);
 		uart_write("Vset=",5);
 		uart_writeNb(Vset);
 		//uart_write(" ",1);
@@ -320,6 +323,10 @@ void Car::Aff_debug(void){
 		uart_write("servo=",6);
 		uart_writeNb((int)servo_angle);
 		uart_write(" / ",3);
+		uart_write("turn=",5);
+		uart_writeNb(state_turn_car);
+		uart_write("\n\r",2);
+		uart_write("#####cam#####\n\r",15);
 		uart_write("diff=",5);
 		uart_writeNb(cam.diff);
 		uart_write(" / ",3);
@@ -329,17 +336,21 @@ void Car::Aff_debug(void){
 		uart_write("R=",2);
 		uart_writeNb(cam.BlackLineRight);
 		uart_write(" / ",3);
-		uart_write("turn=",5);
-		uart_writeNb(state_turn_car);
+		uart_write("nb_cote=",8);
+		uart_writeNb(cam.number_edges);
+		uart_write(" / ",3);
+		uart_write("seuil=",6);
+		uart_writeNb(cam.threshold);
 		/*uart_write(" ",1);
 		uart_writeNb(cam.diff-cam.diff_old);
 		uart_write(" ",1);
 		uart_writeNb(cam.diff);
-		uart_write(" ",1);
-		uart_writeNb(cam.number_edges);
-		uart_write(" ",1);
-		uart_writeNb(cam.RoadMiddle);*/
+		uart_write(" ",1);*/
+		
+		//uart_write(" ",1);
+		//uart_writeNb(cam.RoadMiddle);
 		//uart_write(";",1);
+		uart_write("\n\r",2);
 		uart_write("\n\r",2);
 	}
 	if (Vset<0){
