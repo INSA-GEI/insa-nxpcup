@@ -41,10 +41,10 @@ public:
 	int actualSpeedR; //	mm/s
 	
 	//Pour regulate() pour le PI
-	int err_L=0;
-	int err_R=0;
-	int err_old_L=0;
-	int err_old_R=0;
+	int err_L;
+	int err_R;
+	int err_old_L;
+	int err_old_R;
 	
 private:
 	void applySpeeds(void);
