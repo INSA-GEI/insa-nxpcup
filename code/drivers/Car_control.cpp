@@ -242,11 +242,13 @@ void Car::Detect_state(void){
 	//Amplifie the turn in Calculate_angle_wheels
 	if ((old==state_turn_car && state_turn_car==2) || (cam.BlackLineRight==128 || cam.BlackLineLeft==-1)){
 		if (!(enable_ampli_turn)){
+			DEBUG_BLUE_ON;
 			enable_ampli_turn=true;
 			uart_write("amp_turn !",10);
 			uart_write("\n\r",2);
 		}
 	}else{
+		DEBUG_BLUE_OFF;
 		enable_ampli_turn=false;
 	}
 	
