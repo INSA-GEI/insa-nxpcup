@@ -113,26 +113,8 @@ void Car::Set_diff_speed(void){
 	}
 }
 
-
-
-void Car::Set_deplacement(void){
-	
-	//########### On actualise le déplacement #################
-	if (finish){
-		finish=false;
-		Vset=0;
-		mode_speed=0;
-		servo_angle=0;
-		myMovement.set(Vset,servo_angle);
-		myMovement.setDiff(Vset,delta_speed);
-	}else{
-		myMovement.set(Vset,servo_angle);
-		myMovement.setDiff(Vset,delta_speed);
-	}
-}
-
 //##################### Wheels ###############
-
+//Calcul la commande des roues et opère un PI avant de stocker la valeur dans servo_angle
 void Car::Caculate_angle_wheel(void){
 	
 	int aux_diff=cam.diff;
@@ -167,6 +149,8 @@ void Car::Caculate_angle_wheel(void){
 }
 
 //############### ESP (oscillation en ligne droite) ############
+//Tente de détecter des oscillations dans les lignes droites dû au patinage des roues
+//return : modifie Vset
 void Car::processESP(){
 	if (active_ESP){
 		//############## ESP #################
@@ -212,11 +196,19 @@ void Car::processESP(){
 	}
 }
 //############# Test Turn? strait line? Brake? ##################
+//Fait l'acquisition des données
+//return 	: 	V_mes
+//			:	cam (à jour)
 void Car::Process_data(void){
 	V_mes=(int)(myMovement.encoder.getLeftSpeed()+myMovement.encoder.getRightSpeed())/2;
 	cam.processAll();
 }
 
+//Permet la dectection de l'état et de où se trouve la voiture
+//return 	: state_car_turn : 0/1/2
+//			:enable_brake :true/false
+//			:enable_ampli_turn :true/false
+//			:active_ESP : true/false
 void Car::Detect_state(void){
 	
 	//Test braking #####################################
@@ -260,16 +252,34 @@ void Car::Detect_state(void){
 	}
 	
 	//######## Test finish ############
-	if ((cam.number_edges)>=6){//Nb de transistion blanc noir
+	if ((cam.number_edges)>=4){//Nb de bandes noires (+1 pour chaque côté)
 		finish=true;
 		uart_write("Fin !",5);
 	}
 }
 
-//################ Handler ##########################
-void Car::Car_handler(void){
-	//servo//rear motors interrupt, 100Hz => Te=10ms	
+//Actualise le déplacement grâce à l'objet myMovement
+//La vitesse peut être négative (si freiange) ou positive, tout est paramétré dans Movement.cpp
+//Arg : finish :true/false <= màj dans Detect_state()
+void Car::Set_deplacement(void){
+	
+	//########### On actualise le déplacement #################
+	if (finish){
+		finish=false;
+		Vset=0;
+		mode_speed=0;
+		servo_angle=0;
+		myMovement.set(Vset,servo_angle);
+		myMovement.setDiff(Vset,delta_speed);
+	}else{
+		myMovement.set(Vset,servo_angle);
+		myMovement.setDiff(Vset,delta_speed);
+	}
+}
 
+//################ Handler ##########################
+//servo//rear motors interrupt, 100Hz => Te=10ms
+void Car::Car_handler(void){
 	//Debug
 	c++;
 	c_ESP++;
@@ -302,7 +312,7 @@ void Car::Car_handler(void){
 }
 
 //#################### Debug ###############################
-
+//Permet de modifier le mode de débug et du coup l'affichage dans Putty
 void Car::Set_debug_mode(int i){
 	mode_debug=i;
 	if (mode_debug==0){
@@ -314,9 +324,11 @@ void Car::Set_debug_mode(int i){
 	}
 }
 
+//Affiche le débug
 void Car::Aff_debug(void){
 	if(FLAG_SEND_IMG && FLAG_ENABLE_LOG_IMG){
 		for(int i=0;i<128;i++){
+			// /!\ marche 1 fois sur 2 car on utilise en même temps les vecteurs pour stocker l'image si l'IT suivante est arrivée
 			cam.display_camera_data();
 		}
 	}else if(FLAG_SEND_IMG && FLAG_ENABLE_LOG_SERVO){
@@ -381,6 +393,7 @@ void Car::Aff_debug(void){
 	FLAG_SEND_IMG=false;
 }
 
+//On choisit les param de débug (ex x:mode_speed +:plus vite etc....)
 void Car::Car_debug(void){
 	char str[10];
 	

@@ -11,6 +11,10 @@
 #define MAX_ANGLE 30.0
 #define MAX_CAM_DIFF 20
 
+//####################### Wheels #################################
+#define K 								1.8 //2 //P of the PID
+#define Ki								1.0 //I of the PID
+
 //######### ESP ####################################
 #define LIMIT_ESP 4 //between 2 and 10
 #define TIME_ACTIVE_ESP	50 //+10)*10ms
@@ -41,7 +45,12 @@ public:
 	
 	//###### var #####
 	bool finish;//indicates if we are at the end of the circuit
+	
+	//############ angle wheels ###########
 	float servo_angle;
+	bool enable_ampli_turn;
+	
+	//######### Speed ###############
 	//Speed of the car
 	int Vset;//=0
 	int V_old;
@@ -50,30 +59,34 @@ public:
 	int Vslow;//=500
 	//Speed in strait line
 	int Vhigh;//=1500
-	
-	int ESP;
-	bool detect_ESP;
-	bool active_ESP;
-	
 	bool enable_brake;
-	
-	bool enable_ampli_turn;
 	
 	float delta_speed;//Value for the rear differential
 	
 	int mode_speed;//Mode 0=>speed manual //1=> speed auto
 	
-	//functions
+	//########## ESP #############
+	int ESP;
+	bool detect_ESP;
+	bool active_ESP;
+	
+	
+	//############# functions #########################
 	void init(void);
 	
-	
+	//Tente de détecter des oscillations dans les lignes droites dû au patinage des roues
+	//return : modifie Vset
 	void processESP(void);
 	
+	//Actualise le déplacement grâce à l'objet myMovement
+	//La vitesse peut être négative (si freiange) ou positive, tout est paramétré dans Movement.cpp
+	//Arg : finish :true/false <= màj dans Detect_state()
 	void Set_deplacement(void);
+	
 	//Process every actions (set speed,angle wheels etc) for the car every 10ms
 	void Car_handler(void);
 	
-	//debug
+	//choix des options de Putty
 	void Car_debug(void); //Commande Putty
 
 private:
@@ -97,10 +110,5 @@ private:
 };
 
 int sng(int a);
-
-//####################### Wheels #################################
-
-#define K 								1.8 //2 //P of the PID
-#define Ki								1.0 //I of the PID
 
 #endif /* CAR_CONTROL_H_ */
