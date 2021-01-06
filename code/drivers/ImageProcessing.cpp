@@ -154,11 +154,20 @@ void Img_Proc::process (void){
 				}
 			}
 			//Nb transistions
-			i=BlackLineLeft+2;
-			while (i<BlackLineRight-2){
+			i=BlackLineLeft+1+TAILLE_BANDE;
+			bool ok=false;
+			while (i<BlackLineRight-1-TAILLE_BANDE){
 				if (ImageDataDifference[i-1]!=ImageDataDifference[i+1]){
-				//if (ImageDataDifference[i-1]+ImageDataDifference[i]+ImageDataDifference[i+1]==2 && ImageDataDifference[i]==0){
-					number_edges++;
+					ok=true;
+					//On regarde les 4 pixels prochains
+					for (int j=i;j<(i+TAILLE_BANDE);j++){
+						if (ImageDataDifference[j]==0){
+							ok=false;
+						}
+					}
+					if (ok){
+						number_edges++;
+					}
 					i+=4;
 				}else{
 					i++;

@@ -41,6 +41,7 @@
 #define RECT_WIDTH 22				//(94*128)/550=22
 
 #define CST_RECAL_T 200
+#define TAILLE_BANDE 4 //taille bande noir en pixel
 
 class Img_Proc{
 public:
