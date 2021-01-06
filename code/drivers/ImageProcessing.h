@@ -20,6 +20,7 @@
 // Define thresholds for Camera Black Line recognition
 #define THRESHOLD_classic			130			// standard threshold : used in the basic image processing function
 
+//Mode de détection des lignes
 #define functionning_mode			1			// operating mode: from 1 to 3: algorithm more and more precise but heavy
 
 

@@ -91,13 +91,15 @@ void Img_Proc::capture(void){
 void Img_Proc::differentiate(void){
 		if (functionning_mode == 1){
 			for(i=1;i<=126;i++){	
-				Imageflou[i] = abs (1.5*ImageData[i-1] + ImageData[i] + 1.5*ImageData[i+1])/4;
+				Imageflou[i] = (uint16_t) abs (1.5*ImageData[i-1] + ImageData[i] + 1.5*ImageData[i+1])/4;
 			}
 			
 			Imageflou[0] = ImageData[0];
 			Imageflou[127] = ImageData[127];
 			
 			if (c_t<CST_RECAL_T){
+				//############### à enlever
+				DEBUG_GREEN_ON;
 				c_t=0;
 				threshold=0;
 				for(int i=0;i<=127;i++){
@@ -105,6 +107,9 @@ void Img_Proc::differentiate(void){
 				}
 				threshold=threshold/128;
 				if (threshold<THRESHOLD_classic)threshold=THRESHOLD_classic;
+			}else if (c_t<CST_RECAL_T/2){
+				//############### à enlever
+				DEBUG_GREEN_OFF;
 			}
 			
 			//Test blanc ou noir
@@ -375,6 +380,4 @@ void Img_Proc::processAll(void) {
 	process();
 	//uart_write("ok\n\r",4);
 	calculateMiddle();
-	//compute_data_threshold();
-	//test_FinishLine_Detection();
 }
