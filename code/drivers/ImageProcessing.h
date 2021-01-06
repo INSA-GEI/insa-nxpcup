@@ -26,7 +26,7 @@
 
 #define THRESHOLD_classic			120			// standard threshold : used in the basic image processing function
 
-#define functionning_mode			2			// operating mode: from 1 to 3: algorithm more and more precise but heavy
+#define functionning_mode			1			// operating mode: from 1 to 3: algorithm more and more precise but heavy
 
 #define SIGMA_1	 					2			// square root of the variance for the first gaussian filter
 #define SIGMA_2 					2.5			// square root of the variance for the second gaussian filter. 
@@ -43,6 +43,7 @@ class Img_Proc{
 public:
 	uint16_t ImageData [128];				// array to store the LineScan image
 	uint16_t ImageDataDifference [128];		// array to store the PineScan pixel difference
+	uint16_t Imageflou [128];		// array to store the PineScan pixel => blur
 	
 	bool finish;						//indicates if we are at the end of the circuit
 	int edges_cnt;						//counter when the edges are currently detected between 7 and 10
@@ -54,11 +55,11 @@ public:
 	int black_edge_left_pos_rect2;
 	int black_edge_right_pos_rect2;
 	
-	uint16_t RoadMiddle;						// calculated middle of the road
-	uint16_t RoadMiddle_old;					// save the last "Middle of the road" position
-	uint16_t BlackLineRight;					// position of the black line on the right side (127)
-	uint16_t BlackLineLeft;					// position of the black line on the left side
-	uint16_t number_edges;
+	int RoadMiddle;						// calculated middle of the road
+	int RoadMiddle_old;					// save the last "Middle of the road" position
+	int BlackLineRight;					// position of the black line on the right side (127)
+	int BlackLineLeft;					// position of the black line on the left side
+	int number_edges;
 
 	void init(void);					//initializes the camera
 	void capture(void);					//retrieves data from the camera

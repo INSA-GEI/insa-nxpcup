@@ -94,23 +94,24 @@ void Img_Proc::capture(void){
 void Img_Proc::differentiate(void){
 		if (functionning_mode == 1){
 			for(i=1;i<=126;i++){	
-				ImageDataDifference[i] = abs (ImageData[i-1] + ImageData[i] + ImageData[i+1])/3;
+				Imageflou[i] = abs (ImageData[i-1] + ImageData[i] + ImageData[i+1])/3;
 			}
-			ImageDataDifference[0] = ImageData[0];
-			ImageDataDifference[127] = ImageData[127];
+			
+			Imageflou[0] = ImageData[0];
+			Imageflou[127] = ImageData[127];
 			threshold=0;
 			for(int i=0;i<=127;i++){
-				threshold+=ImageDataDifference[i];
+				threshold+=Imageflou[i];
 			}
 			threshold=threshold/128;
 			
 			//Test blanc ou noir
 			for(int i=0;i<=127;i++){
-				if (ImageDataDifference[i]>threshold){
+				if (Imageflou[i]>threshold){
 					ImageDataDifference[i]=1; //white
 				}else{
 					ImageDataDifference[i]=0;//black
-				}	
+				}
 			}
 		}
 		if (functionning_mode == 2){
@@ -137,27 +138,27 @@ void Img_Proc::process (void){
 				}
 			}
 			i=127;
-			while (BlackLineRight==128 && i>0){
+			while (BlackLineRight==128 && (i>0 && i>BlackLineLeft)){
 				if (ImageDataDifference[i]==1){
-					BlackLineLeft=i;
+					BlackLineRight=i;
 					number_edges++;
 				}else{
 					i--;
 				}
 			}
 			//Nb transistions
-			i=BlackLineLeft+1;
-			while (BlackLineRight==128 && i<BlackLineRight-1){
+			/*i=BlackLineLeft+2;
+			while (i<BlackLineRight-2){
 				if (ImageDataDifference[i-1]!=ImageDataDifference[i+1]){
 					number_edges++;
 					i+=4;
 				}else{
 					i++;
 				}
-			}
-			//display_camera_data();		
-
+			}*/
 		}
+		
+	//################### mode 2 ##########################
 		if (functionning_mode == 2){
 			// Find black line on the right side
 
@@ -462,6 +463,7 @@ void Img_Proc::processAll(void) {
 	capture();
 	differentiate();
 	process();
+	//uart_write("ok\n\r",4);
 	calculateMiddle();
 	//compute_data_threshold();
 	//test_FinishLine_Detection();

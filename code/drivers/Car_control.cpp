@@ -14,12 +14,6 @@ float old_servo_angle=0.0;
 float K_camdiff=0.0;
 float K_camdiffold=0.0;
 
-//Speed PI
-int V_mes_old=0;
-float K_ek1=0.0;
-float K_ek0=0.0;
-
-
 int n=0;//Allow us to use the debug with Putty
 
 //Not implemented yet
@@ -54,8 +48,6 @@ void Car::init(void){
 	enable_brake=false;
 	K_camdiff=(float)((2*K+Te*Ki)/2);
 	K_camdiffold=(float)((Te*Ki-2*K)/2);
-	K_ek1=(K_s+(Ki_s*Te_s/2.0));
-	K_ek0=(-K_s+(Ki_s*Te_s/2.0));
 }
 
 void Car::Calculate_speed(void){
@@ -214,10 +206,10 @@ void Car::processESP(){
 }
 //############# Test Turn? strait line? Brake? ##################
 void Car::Process_data(void){
-	V_mes_old=V_mes;
 	V_mes=(int)(myMovement.encoder.getLeftSpeed()+myMovement.encoder.getRightSpeed())/2;
 	cam.processAll();
 }
+
 void Car::Detect_state(void){
 	
 	//Test braking #####################################
@@ -330,6 +322,12 @@ void Car::Aff_debug(void){
 		uart_write(" / ",3);
 		uart_write("diff=",5);
 		uart_writeNb(cam.diff);
+		uart_write(" / ",3);
+		uart_write("L=",2);
+		uart_writeNb(cam.BlackLineLeft);
+		uart_write(" / ",3);
+		uart_write("R=",2);
+		uart_writeNb(cam.BlackLineRight);
 		uart_write(" / ",3);
 		uart_write("turn=",5);
 		uart_writeNb(state_turn_car);

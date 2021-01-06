@@ -102,8 +102,4 @@ int sng(int a);
 #define K 								1.8 //2 //P of the PID
 #define Ki								1.0 //I of the PID
 
-//####################### Speed #################################
-#define K_s								1.0 //2 //P of the PID
-#define Ki_s							1.0 //I of the PID
-
 #endif /* CAR_CONTROL_H_ */
