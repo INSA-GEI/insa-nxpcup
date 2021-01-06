@@ -160,7 +160,7 @@ void Img_Proc::process (void){
 				if (ImageDataDifference[i-1]!=ImageDataDifference[i+1]){
 					ok=true;
 					//On regarde les 4 pixels prochains
-					for (int j=i;j<(i+TAILLE_BANDE);j++){
+					for (int j=i;j<=(i+TAILLE_BANDE);j++){
 						if (ImageDataDifference[j]==0){
 							ok=false;
 						}
