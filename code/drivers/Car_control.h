@@ -31,8 +31,7 @@
 #define AMPLIFIE_TURN_2 20 //Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff)
 
 
-#define Te 0.01 //sample time 10ms handler servos
-#define Te_s (float)1/6000 //sample time 6Khz handler rear motors
+#define Te 0.01 //sample time 10ms handler servos /!\ Te_s (sample time for rear motors is in Movement.h)
 #define DEG_TO_RAD 0.0175 //conversion Degré vers radian
 
 #define CARRE(x) ((x)*(x))

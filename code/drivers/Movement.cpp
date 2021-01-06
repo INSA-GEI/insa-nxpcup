@@ -8,6 +8,8 @@
 #include "math.h"
 
 int speed=0;
+int K_e_s=0;
+int K_e_s_old=0;
 
 Movement::Movement() {
 	targetSpeedL=0;
@@ -22,6 +24,14 @@ void Movement::init(void) {
 	encoder.init();
 	MOTOR_LEFT_ENABLE;
 	MOTOR_RIGHT_ENABLE;
+	//Coeff PI rear_motors
+	speed=0;
+	err_L=0;
+	err_R=0;
+	err_old_L=0;
+	err_old_R=0;
+	K_e_s=(int)((2*MOVEMENT_CORR_KP+Te_s*MOVEMENT_CORR_KI)/2);
+	K_e_s_old=(int)((Te_s*MOVEMENT_CORR_KI-2*MOVEMENT_CORR_KP)/2);
 }
 
 void Movement::set(int speed, float angle) {
@@ -72,24 +82,30 @@ void Movement::stop(void) {
 void Movement::regulate(void) {
 	if (speed>0){
 		GPIOB_PTOR = DEBUG_RED_Pin;
-		int err=encoder.getLeftSpeed();
-		if(err<0){	//detect invalid speed readings
-			err=0;
+		//LEFT
+		err_old_L=err_L;
+		err_L=encoder.getLeftSpeed();
+		if(err_L<0){	//detect invalid speed readings
+			err_L=0;
 		}
-		err=targetSpeedL-err;//calculate error
-		if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){//if error needs correction
-	
-			actualSpeedL=actualSpeedL+err*MOVEMENT_CORR_KP;//compensate real speed command
+		err_L=targetSpeedL-err_L;//calculate error
+		//if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){//if error needs correction
+			
+			actualSpeedL=actualSpeedL+(int)err_L*K_e_s+(int)err_old_L*K_e_s_old; //compensate real speed command
+			//actualSpeedL=actualSpeedL+err*MOVEMENT_CORR_KP;
+		//}
+		
+		//RIGHT
+		err_old_R=err_R;
+		err_R=encoder.getRightSpeed();
+		if(err_R<0){	//detect invalid speed readings
+			err_R=0;
 		}
-	
-		err=encoder.getRightSpeed();
-		if(err<0){	//detect invalid speed readings
-			err=0;
-		}
-		err=targetSpeedR-err;
-		if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){
-			actualSpeedR=actualSpeedR+err*MOVEMENT_CORR_KP;
-		}
+		err_R=targetSpeedR-err_R;
+		//if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){
+			actualSpeedR=actualSpeedR+(int)err_R*K_e_s+(int)err_old_R*K_e_s_old; //compensate real speed command
+			//actualSpeedR=actualSpeedR+err*MOVEMENT_CORR_KP;
+		//}
 	}else{
 		actualSpeedR=targetSpeedR;
 		actualSpeedL=targetSpeedL;
