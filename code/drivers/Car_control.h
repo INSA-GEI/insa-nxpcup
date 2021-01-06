@@ -25,15 +25,15 @@
 #define VHIGH 3500
 //#define VSET 0
 #define T_BRAKE 300 //Threshold before braking
-#define INCREMENT_SPEED 30
-#define TURN_SPEED 1200
-#define AMPLIFIE_TURN_1 10
-#define AMPLIFIE_TURN_2 20
+#define INCREMENT_SPEED 30 //Constante d'augmentation de la vitesse (évite le patinage)
+#define TURN_SPEED 1200 //Vitesse seuil dans les virages
+#define AMPLIFIE_TURN_1 10 //Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
+#define AMPLIFIE_TURN_2 20 //Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff)
 
 
-#define Te 0.01 //sample time 10ms handler rear motors
-#define Te_s (float)1/6000
-#define DEG_TO_RAD 0.0175
+#define Te 0.01 //sample time 10ms handler servos
+#define Te_s (float)1/6000 //sample time 6Khz handler rear motors
+#define DEG_TO_RAD 0.0175 //conversion Degré vers radian
 
 #define CARRE(x) ((x)*(x))
 
