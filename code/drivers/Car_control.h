@@ -20,13 +20,14 @@
 #define VSLOW 800
 #define VHIGH 3500
 //#define VSET 0
-#define T_BRAKE 200 //Threshold before braking
-#define INCREMENT_SPEED 40
+#define T_BRAKE 300 //Threshold before braking
+#define INCREMENT_SPEED 30
 #define TURN_SPEED 1200
 #define AMPLIFIE_TURN 10
 
 
 #define Te 0.01 //sample time 10ms handler rear motors
+#define Te_s (float)1/6000
 #define DEG_TO_RAD 0.0175
 
 #define CARRE(x) ((x)*(x))
@@ -48,9 +49,6 @@ public:
 	int Vslow;//=500
 	//Speed in strait line
 	int Vhigh;//=1500
-	
-	//Etat
-	int state_turn_car;
 	
 	int ESP;
 	bool detect_ESP;
@@ -78,58 +76,34 @@ public:
 	void Car_debug(void); //Commande Putty
 
 private:
-<<<<<<< HEAD
-	void Calculate_speed(void);
-=======
-	//PID direction
-	float Ywi;
-	float Ywd;
-	
-	//PID speed
-	float e;
-	float e_old;
-	float Ysi;
-	float Ysd;
 	
 	//########### wheels angle #############
 	void Caculate_angle_wheel(void);
 	//################ Speed ############
 	void Calculate_speed(void); //PID
->>>>>>> e2bb5fc9f22e2e7ce99f1449e2e55b72208af524
 	void Set_speed(void);
 	void Set_diff_speed(void);
 	
 	//######### State of the car ###########
 	int state_turn_car; //2=>hard turn //1 soft turn //0=>strait line
 	void Detect_state(void); //Detect the turns //Detect slip (ie ESP) only in strait lines
-	
+	void Process_data(void);
 	
 	//Debug
 	int mode_debug;
 	void Set_debug_mode(int i); //i=>0 : Cam+ange_servo  //i=>1 : Cam[i] //i=>2 : 
 	void Aff_debug(void);
-	void Detect_state(void);
 };
 
 int sng(int a);
 
 //####################### Wheels #################################
 
-<<<<<<< HEAD
 #define K 								1.8 //2 //P of the PID
 #define Ki								1.0 //I of the PID
-=======
-#define K 								1.8 //1.8 //P of the PI
-#define Ki								1 //1 //I of the PI
-#define Kd								1 //D of PID
-#define N_Kd							10//filtre D PID
 
-//PID speed
-#define K_s 							1.8 //1.8 //P of the PI
-#define Ki_s							1 //1 //I of the PI
-#define Kd_s							1 //D of PID
-#define N_Kd_s							10//filtre D PID
->>>>>>> e2bb5fc9f22e2e7ce99f1449e2e55b72208af524
-
+//####################### Speed #################################
+#define K_s								1.0 //2 //P of the PID
+#define Ki_s							1.0 //I of the PID
 
 #endif /* CAR_CONTROL_H_ */

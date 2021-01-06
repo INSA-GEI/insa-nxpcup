@@ -31,6 +31,7 @@ void delay_time(int number){
 //############# handlers ##############
 void FTM1_IRQHandler() {
 	car.Car_handler(); //Define Vset and servo_angle.
+	TPM1_SC |= TPM_SC_TOF_MASK;//Clear IT
 }
 
 //Differential speed handlers

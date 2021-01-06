@@ -10,19 +10,17 @@ int c=0;
 int c_ESP=0;
 int old_ESP=0;
 float old_servo_angle=0.0;
+//Wheel PI
 float K_camdiff=0.0;
 float K_camdiffold=0.0;
+
+//Speed PI
+int V_mes_old=0;
+float K_ek1=0.0;
+float K_ek0=0.0;
+
+
 int n=0;//Allow us to use the debug with Putty
-
-//PID wheels angle
-float coeff_i=0.0;
-float coeff_d_1=0.0;
-float coeff_d_2=0.0;
-
-//PID speed
-float coeff_i_s=0.0;
-float coeff_d_1_s=0.0;
-float coeff_d_2_s=0.0;
 
 //Not implemented yet
 int Count=0; //count how many time we were not to close to the black line
@@ -56,7 +54,10 @@ void Car::init(void){
 	enable_brake=false;
 	K_camdiff=(float)((2*K+Te*Ki)/2);
 	K_camdiffold=(float)((Te*Ki-2*K)/2);
+	K_ek1=(K_s+(Ki_s*Te_s/2.0));
+	K_ek0=(-K_s+(Ki_s*Te_s/2.0));
 }
+
 void Car::Calculate_speed(void){
 	//Linear mode
 	V_old=abs(Vset);
@@ -64,30 +65,13 @@ void Car::Calculate_speed(void){
 	if (Vset!=0){
 		Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh;		
 		if (enable_brake){
-			Vset=-(Vhigh-Vset+Vslow);
+			Vset=-(abs(Vset-V_old))-Vslow;
 		}else if (Vset>V_old+INCREMENT_SPEED){
-			if (((V_old<(Vhigh+Vset)/2) && (state_turn_car!=0)) || (V_old<TURN_SPEED+400)){
+			if ((V_old<(Vhigh+Vset)/2)){
 				Vset=V_old+(int)(INCREMENT_SPEED/3); //Temps de montée max 100ms//évite de glisser
 			}else{
 				Vset=V_old+INCREMENT_SPEED;
 			}
-		}
-		if (Vset<0){
-			/*uart_write("Vold : ",7);
-			uart_writeNb(V_old);
-			uart_write(" / ",3);*/
-			uart_write("Brake ! ",8);
-			/*uart_write("Vset : ",7);
-			uart_writeNb(Vset);
-			uart_write(" / ",3);
-			uart_write("Vold : ",7);
-			uart_writeNb(V_old);
-			/*uart_write("b : ",4);
-			uart_writeNb(Vhigh);
-			uart_write(" / ",3);
-			uart_write("Vset : ",6);
-			uart_writeNb((int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh);*/
-			uart_write("\r\n",2);
 		}
 	}
 }
@@ -117,17 +101,18 @@ void Car::Set_diff_speed(void){
 	//Calcul du diff
 	//We calculate the delta_speed of the rear wheels
 	//delta_speed=servo_angle*MOVEMENT_ENTRAXE_COEFF*Vset;
-	//##################### Changement #########
+	//##################### Changement ############
 	if (state_turn_car==0){
 		//Strait line
 		delta_speed=0;
 	}else if(state_turn_car==2){
-		//Hard turn => turn with r=2*Entraxe
-		delta_speed=Vset/3;
+		//Hard turn => 
+		float r=LENGHT_CAR/(abs(servo_angle)*DEG_TO_RAD); //r=radius of the turn
+		delta_speed=(Vset*L_ENTRAXE)/(1.5*r+L_ENTRAXE);//On l'aide à tourner
 	}else{
 		//Soft turn
 		float r=LENGHT_CAR/(abs(servo_angle)*DEG_TO_RAD); //r=radius of the turn
-		delta_speed=(Vset*L_ENTRAXE)/(2*r+L_ENTRAXE);
+		delta_speed=(Vset*L_ENTRAXE)/(2.0*r+L_ENTRAXE);//théorique 
 	}
 	
 	//Left turn servoangle<0
@@ -135,6 +120,8 @@ void Car::Set_diff_speed(void){
 		delta_speed=-delta_speed;
 	}
 }
+
+
 
 void Car::Set_deplacement(void){
 	
@@ -149,15 +136,12 @@ void Car::Set_deplacement(void){
 		myMovement.set(Vset,servo_angle);
 		myMovement.setDiff(Vset,delta_speed);
 	}
-	
-	
-	TPM1_SC |= TPM_SC_TOF_MASK;
 }
 
 //##################### Wheels ###############
 
 void Car::Caculate_angle_wheel(void){
-	cam.processAll();
+	
 	int aux_diff=cam.diff;
 	// plausibility check
 	if (abs (cam.diff - cam.diff_old) > 2*MAX_CAM_DIFF){
@@ -229,7 +213,13 @@ void Car::processESP(){
 	}
 }
 //############# Test Turn? strait line? Brake? ##################
+void Car::Process_data(void){
+	V_mes_old=V_mes;
+	V_mes=(int)(myMovement.encoder.getLeftSpeed()+myMovement.encoder.getRightSpeed())/2;
+	cam.processAll();
+}
 void Car::Detect_state(void){
+	
 	//Test braking #####################################
 	if (Vset<V_old-T_BRAKE && abs(V_mes)>TURN_SPEED){
 		enable_brake=true;	
@@ -250,7 +240,7 @@ void Car::Detect_state(void){
 	}
 	
 	//Amplifie the turn in Calculate_angle_wheels
-	if (abs(cam.diff)>2*MAX_CAM_DIFF/3 && (cam.BlackLineRight==127 || cam.BlackLineLeft==0)){
+	if (abs(cam.diff)>2*MAX_CAM_DIFF/3 && (cam.BlackLineRight==127 || cam.BlackLineLeft==0) &&(!(cam.BlackLineRight==127 && cam.BlackLineLeft==0))){
 		if (!(enable_ampli_turn)){
 			enable_ampli_turn=true;
 			uart_write("amp_turn !",10);
@@ -258,42 +248,6 @@ void Car::Detect_state(void){
 		}
 	}else{
 		enable_ampli_turn=false;
-	}
-	
-	//Test ESP
-	//On active l'ESP
-	if (Vset>TURN_SPEED && (!(enable_brake)) ){
-		active_ESP=true;
-	}else{
-		active_ESP=false;
-	}
-	
-	//######## Test finish ############
-	if ((cam.edges_cnt/2)>3){
-		finish=true;
-		uart_write("Fin !",5);
-	}
-}
-
-//############# Test Turn? strait line? Brake? ##################
-void Car::Detect_state(void){
-	//Test braking #####################################
-	if (Vset<V_old-T_BRAKE && abs(V_mes)>TURN_SPEED){
-		enable_brake=true;	
-	}else if(abs(V_mes)<abs(Vset)){
-		enable_brake=false;
-	}
-	
-	//##################### Test Turn #########
-	if (abs(servo_angle)<MAX_ANGLE/3){
-		//Strait line
-		state_turn_car=0;
-	}else if(abs(servo_angle)>2*MAX_ANGLE/3 || cam.BlackLineRight==127 || cam.BlackLineLeft==0){
-		//Hard turn 
-		state_turn_car=2;
-	}else{
-		//Soft turn
-		state_turn_car=1;
 	}
 	
 	//Test ESP
@@ -323,25 +277,26 @@ void Car::Car_handler(void){
 		FLAG_SEND_IMG=true;		
 	}
 	//
-
+	Process_data();//Acquisition des données
+	//On regarde si on est en ligne droite ou non
+	Detect_state();
+	//On met à jour les param de la voiture
 	Caculate_angle_wheel();
 	//if Vset=0 => stop
 	if (Vset!=0){	
-		Detect_state();
 		//We calculate the speed
 		Set_speed();
 		//ESP at the end because it changes Vset
 		processESP();
 		//Calcul du diff en fonction
 		Set_diff_speed();
+		
 	}
 	//Debug
 	Aff_debug();
 	//We refresh the deplacement's parameters. Speed +wheels Angle
 	Set_deplacement();
 }
-
-
 
 //#################### Debug ###############################
 
@@ -366,6 +321,9 @@ void Car::Aff_debug(void){
 		uart_write("Vset=",5);
 		uart_writeNb(Vset);
 		//uart_write(" ",1);
+		uart_write(" / ",3);
+		uart_write("V_mes=",6);
+		uart_writeNb(V_mes);
 		uart_write(" / ",3);
 		uart_write("servo=",6);
 		uart_writeNb((int)servo_angle);
