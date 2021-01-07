@@ -4,6 +4,10 @@
 //#include <stdio.h>
 
 int i,j;
+int c_t=0;//counter for the threshold
+int CompareData_high=140;
+int CompareData_low=100;
+
 
 void Img_Proc::init(){
 	
@@ -36,6 +40,7 @@ void Img_Proc::init(){
 	BlackLineRight=127;
 	BlackLineLeft=0;
 	number_edges=0;
+<<<<<<< HEAD
 	edges_cnt=0;
 	finish=false;
 	CompareData_high = THRESHOLD_high;
@@ -47,6 +52,9 @@ void Img_Proc::init(){
 	//Ajout Maty
 	number_gradient=0;
 	CompareData=THRESHOLD_high;
+=======
+	threshold=150;
+>>>>>>> int_team_1
 
 }
 
@@ -95,11 +103,43 @@ void Img_Proc::capture(void){
 }
 
 void Img_Proc::differentiate(void){
+<<<<<<< HEAD
 		if (functionning_mode == 1){ //Tout Pourri
 			for(i=1;i<=126;i++){	
 				ImageDataDifference[i] = abs (ImageData[i-1] + ImageData[i] + ImageData[i+1])/3;
+=======
+		if (functionning_mode == 1){
+			/*for(i=1;i<=126;i++){	
+				Imageflou[i] = (uint16_t) abs (0.5*ImageData[i-1] + ImageData[i] + 0.5*ImageData[i+1])/2;
 			}
 			
+			Imageflou[0] = ImageData[0];
+			Imageflou[127] = ImageData[127];*/
+			
+			if (c_t<CST_RECAL_T){
+				//############### à enlever
+				DEBUG_GREEN_ON;
+				c_t=0;
+				threshold=0;
+				for(int i=0;i<=127;i++){
+					threshold+=ImageData[i];
+				}
+				threshold=threshold/128;
+				if (threshold<THRESHOLD_classic)threshold=THRESHOLD_classic;
+			}else if (c_t>CST_RECAL_T/2){
+				//############### à enlever
+				DEBUG_GREEN_OFF;
+>>>>>>> int_team_1
+			}
+			
+			//Test blanc ou noir
+			for(int i=0;i<=127;i++){
+				if (ImageData[i]>threshold){
+					ImageDataDifference[i]=1; //white
+				}else{
+					ImageDataDifference[i]=0;//black
+				}
+			}
 		}
 		if (functionning_mode == 2){
 			for(i=1;i<=126;i++){							// using a gradient by direct differences (application of the filter : [-1 , 0 , 1] -> P(x) = -1*P(x-1)+0*P(x)+1*P(x+1))
@@ -112,10 +152,58 @@ void Img_Proc::differentiate(void){
 
 void Img_Proc::process (void){
 		number_edges = 0;		// reset the number of peaks to 0
+		if (functionning_mode == 1){
+			BlackLineRight = 128;
+			BlackLineLeft = -1;
+			int i=1;
+			while (BlackLineLeft==-1 && i<127){
+				if (ImageDataDifference[i]==1 && ImageDataDifference[i-1]==0){
+					BlackLineLeft=i;
+					number_edges++;
+				}else{
+					i++;
+				}
+			}
+			i=126;
+			while (BlackLineRight==128 && (i>0 && i>BlackLineLeft)){
+				if (ImageDataDifference[i]==1 && ImageDataDifference[i+1]==0){
+					BlackLineRight=i;
+					number_edges++;
+				}else{
+					i--;
+				}
+			}
+			//Nb transistions
+			i=BlackLineLeft+1+TAILLE_BANDE;
+			bool ok=false;
+			while (i<BlackLineRight-1-TAILLE_BANDE){
+				if (ImageDataDifference[i-1]!=ImageDataDifference[i]){
+					ok=true;
+					//On regarde les TAILLE_BANDE prochains pixels 
+					for (int j=i;j<=(i+TAILLE_BANDE);j++){
+						if (ImageDataDifference[j]==1){
+							ok=false;
+						}
+					}
+					if (ok){
+						number_edges++;
+					}
+					i+=4;
+				}else{
+					i++;
+				}
+			}
+		}
 		
+	//################### mode 2 ##########################
 		if (functionning_mode == 2){
 			// Find black line on the right side
+<<<<<<< HEAD
 			BlackLineRight = 127;
+=======
+
+			BlackLineRight = 128;
+>>>>>>> int_team_1
 			for(i=126;i>=64;i--){
 	   			if (ImageDataDifference[i] > CompareData_high){
 	   				//CompareData_high = ImageDataDifference[i];
@@ -152,9 +240,13 @@ void Img_Proc::process (void){
 			}	/* END for (i=126;i>=64;i--) */
 
 	   		// Find black line on the left side
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> int_team_1
 			// image processing with the algorithm seen at the beginning. 
-			BlackLineLeft = 0;
+			BlackLineLeft = -1;
 			for(i=1;i<=64;i++){
 	   			if (ImageDataDifference[i] > CompareData_high){
 	   				//CompareData_high = ImageDataDifference[i];
@@ -203,20 +295,12 @@ void Img_Proc::calculateMiddle (void){
 	// Find middle of the road, 64 for strait road
 	RoadMiddle = (BlackLineLeft + BlackLineRight)/2;
 
-	// if a line is only on the the right side
-	/*if (BlackLineLeft < 3){
-		RoadMiddle = BlackLineRight - 50;
-	}
-	// if a line is only on the the left side
-	if (BlackLineRight > 124){
-		RoadMiddle = BlackLineLeft + 50;
-	}*/
+	
 	// if no line on left and right side
 	if (number_edges == 0){
 		RoadMiddle = RoadMiddle_old;
-		//for (i = 0 ; i < 1000000 ; i++);
 	}
-	if ((BlackLineRight > 124) && (BlackLineLeft < 3)){
+	if ((BlackLineRight > 127) && (BlackLineLeft < 0)){
 		RoadMiddle = RoadMiddle_old;		// we continue on the same trajectory as before 
 	}
 
@@ -225,89 +309,9 @@ void Img_Proc::calculateMiddle (void){
 	
 	// Find difference from real middle
 	diff = RoadMiddle - 64;						// calculate actual difference
-
-}
-
-//You may need to adjust the values of "CompareData_high" by modifying the macro "THRESHOLD_high".
-bool Img_Proc::test_FinishLine_Detection (void){
 	
-	threshold = 60;	
-	
-	for (int i=BlackLineLeft+5;i<BlackLineRight-5;i++){
-			if (ImageDataDifference[i] >= threshold){
-				edges_cnt++;
-			}
-	}	
-	
-	//finish = false at the initialization
-	if (edges_cnt>=COUNTER_THRESHOLD_FINISH){
-		finish = true;
-	} 
-	edges_cnt=0;
-				
-	return finish;
-	/*black_edge_left_pos_rect1=BlackLineLeft+(124)*(BlackLineRight-BlackLineLeft+1)/530;
-	black_edge_right_pos_rect1=BlackLineLeft+(124+94)*(BlackLineRight-BlackLineLeft+1)/530;
-	black_edge_left_pos_rect2=BlackLineLeft+(124+94+74)*(BlackLineRight-BlackLineLeft+1)/530;
-	black_edge_right_pos_rect2=BlackLineLeft+(124+94+74+94)*(BlackLineRight-BlackLineLeft+1)/530;
-
-		for (int i=0;i<=10;i++){
-			if (ImageDataDifference[black_edge_left_pos_rect1+i] >= threshold || ImageDataDifference[black_edge_left_pos_rect1-i] >= threshold){
-				edges_cnt++;
-				i=10;
-			} else {edges_cnt=0;}
-		}	
-		for (int i=0;i<=10;i++){
-			if (ImageDataDifference[black_edge_right_pos_rect1+i] >= threshold || ImageDataDifference[black_edge_right_pos_rect1-i] >= threshold){
-				edges_cnt++;
-				i=20;
-			} else {edges_cnt=0;}
-}	
-		for (int i=0;i<=10;i++){
-			if (ImageDataDifference[black_edge_left_pos_rect2+i] >= threshold || ImageDataDifference[black_edge_left_pos_rect2-i] >= threshold){
-				edges_cnt++;
-				i=20;
-			} else {edges_cnt=0;}
-		}	
-		for (int i=0;i<=10;i++){
-			if (ImageDataDifference[black_edge_right_pos_rect2+i] >= threshold || ImageDataDifference[black_edge_right_pos_rect2-i] >= threshold){
-				edges_cnt++;
-				i=20;
-				} else {edges_cnt=0;}
-		}	
-	
-	//finish = false at the initialization
-	if (edges_cnt>=COUNTER_THRESHOLD_FINISH){
-		finish = true;
-		edges_cnt=0;
-	}
-	
-	return finish;
-	*/
-	
-}
-
-//To add at the end of  process() in order to test the variation of the thresholds towards the number of edges detected.
-void Img_Proc::compute_data_threshold(void){
-	
-	if(number_edges >= 2 && not(finish)){
-		CompareData_high += 12;
-		threshold = CompareData_high;
-		CompareData_low += 10;
-		if (CompareData_high > 200) CompareData_high=200;
-		if (CompareData_low > 80) CompareData_low=80;
-	}
-	else if(number_edges > 0 || number_edges < 2){
-		CompareData_high -= 3;
-		threshold = CompareData_high;
-		CompareData_low -= 3;
-		if (CompareData_high < 20) CompareData_high=20;
-		if (CompareData_low < 5) CompareData_low=5;
-	}
-	else {
-		CompareData_high = THRESHOLD_high;
-		threshold = CompareData_high;
-		CompareData_low = THRESHOLD_low;
+	if (abs(diff-diff_old)>Plausibily_check){
+		diff=diff_old;
 	}
 }
 
@@ -315,21 +319,36 @@ void Img_Proc::compute_data_threshold(void){
 
 void Img_Proc::display_camera_data(void) {
 	//uart_write("Raw data : ",11);
-	for (int i=0;i<128;i++) {
-		uart_write("$",1);
-		uart_writeNb(ImageData[i]);
-		uart_write(" ",1);
-		uart_writeNb(ImageDataDifference[i]);
-		uart_write(";",1);
-	}
-	for (int i=0;i<40;i++) {
-			uart_write("$",1);
-			uart_writeNb(0);
-			uart_write(" ",1);
+	if (CSV){
+		for (int i=0;i<128;i++) {
+			uart_writeNb(ImageData[i]);
+			uart_write(";",1);
+			uart_writeNb(ImageDataDifference[i]);
+			uart_write("\r\n",2);
+		}
+		for (int i=0;i<40;i++) {
 			uart_writeNb(0);
 			uart_write(";",1);
+			uart_writeNb(0);
+			uart_write("\r\n",2);
+		}
+	}else{
+		for (int i=0;i<128;i++) {
+			uart_write("$",1);
+			//uart_writeNb(ImageData[i]);
+			//uart_write(" ",1);
+			uart_writeNb(ImageDataDifference[i]);
+			uart_write(";",1);
+		}
+		for (int i=0;i<40;i++) {
+				uart_write("$",1);
+				uart_writeNb(0);
+				uart_write(" ",1);
+				uart_writeNb(0);
+				uart_write(";",1);
+		}
+		uart_write("\r\n",2);
 	}
-	uart_write("\r\n",2);
 }
 
 void Img_Proc::display_gradient(void) {
@@ -380,18 +399,6 @@ void Img_Proc::gradient(void){
 			}
 			ImageDataDifference[0] = abs (- ImageData[0] + ImageData[1]);	// first value doesnt have "gradient" for this method
 			ImageDataDifference[127] = abs (- ImageData[126] + ImageData[127]);	// last value doesnt have "gradient" for this method
-		}else if (functionning_mode == 3){ //Test non fructueux
-			for(i=1;i<=126;i++){
-				ImageDataDifference[i] = abs (-((ImageData[i-1])*(ImageData[i-1])) + ((ImageData[i+1])*(ImageData[i+1])));
-			}
-			ImageDataDifference[0] = abs (-((ImageData[0])*(ImageData[0])) + ((ImageData[1])*(ImageData[1])));	//first value
-			ImageDataDifference[127] = abs (-((ImageData[126])*(ImageData[126])) + ((ImageData[127])*(ImageData[127])));	//last value
-		}else if (functionning_mode == 4){
-			for(i=0;i<=127;i++){							// using the Gaussian difference method
-				gaussian1 = (1/(SIGMA_1 * sqrt(2*PI))) * exp(-(pow(i,2))/(2*pow(SIGMA_1,2)));
-				gaussian2 = (1/(SIGMA_2 * sqrt(2*PI))) * exp(-(pow(i,2))/(2*pow(SIGMA_2,2)));
-				ImageDataDifference[i] = abs ( (int) (round ( (ImageData[i] * gaussian1 - ImageData[i] * gaussian2) ) ) );
-			}
 		}
 	}	/*	End of function "Fill_ImageDataDifference"	*/
 
@@ -505,12 +512,13 @@ void Img_Proc::process_camera (void){
 
 
 void Img_Proc::processAll(void) {
+	c_t++;
 	capture();
 	differentiate();
 	//gradient();
 	//process_camera();
 	process();
+	//uart_write("ok\n\r",4);
 	calculateMiddle();
-	//compute_data_threshold();
-	//test_FinishLine_Detection();
+	
 }

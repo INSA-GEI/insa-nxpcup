@@ -5,8 +5,11 @@
  *      Author: Guest
  */
 #include "Movement.h"
+#include "math.h"
 
-
+int speed=0;
+float K_e_s=0.0;
+float K_e_s_old=0.0;
 
 Movement::Movement() {
 	targetSpeedL=0;
@@ -21,6 +24,14 @@ void Movement::init(void) {
 	encoder.init();
 	MOTOR_LEFT_ENABLE;
 	MOTOR_RIGHT_ENABLE;
+	//Coeff PI rear_motors
+	speed=0;
+	err_L=0;
+	err_R=0;
+	err_old_L=0;
+	err_old_R=0;
+	K_e_s=((2.0*MOVEMENT_CORR_KP+Te_s*MOVEMENT_CORR_KI)/2.0);
+	K_e_s_old=((Te_s*MOVEMENT_CORR_KI-2.0*MOVEMENT_CORR_KP)/2.0);
 }
 
 void Movement::set(int speed, float angle) {
@@ -30,19 +41,24 @@ void Movement::set(int speed, float angle) {
 
 void Movement::setSpeed(int speed) {
 	if(speed<0){
-		stop();
-		return;
+		MOTOR_RIGHT_BACKWARD;
+		MOTOR_LEFT_BACKWARD;
+	}else{
+		MOTOR_LEFT_FORWARD;
+		MOTOR_RIGHT_FORWARD;
 	}
-	
-	if(speed>SPEED_LIMIT)speed=SPEED_LIMIT;
-	MOTOR_LEFT_FORWARD;
-	MOTOR_RIGHT_FORWARD;
 	
 }
 
-void Movement::setDiff(int speed,float delta) {
-	targetSpeedL=speed+delta;
-	targetSpeedR=speed-delta;
+void Movement::setDiff(int v,float delta) {
+	speed=(int) v;
+	if (speed<0){
+		targetSpeedL=-speed-delta;
+		targetSpeedR=-speed+delta;
+	}else{
+		targetSpeedL=speed+delta;
+		targetSpeedR=speed-delta;
+	}
 }
 
 void Movement::setAngle(float angle) {
@@ -64,35 +80,53 @@ void Movement::stop(void) {
 
 
 void Movement::regulate(void) {
-	GPIOB_PTOR = DEBUG_RED_Pin;
-	int err=encoder.getLeftSpeed();
-	if(err<0){	//detect invalid speed readings
-		err=0;
+	if (speed!=0){
+		GPIOB_PTOR = DEBUG_RED_Pin;
+		//LEFT
+		err_old_L=err_L;
+		err_L=encoder.getLeftSpeed();
+		if(err_L<0){	//detect invalid speed readings
+			err_L=0;
+		}
+		err_L=targetSpeedL-err_L;//calculate error
+		//if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){//if error needs correction
+			
+			actualSpeedL=actualSpeedL+(int)err_L*K_e_s+(int)err_old_L*K_e_s_old; //compensate real speed command
+			//actualSpeedL=actualSpeedL+err_L*MOVEMENT_CORR_KP;
+		//}
+		
+		//RIGHT
+		err_old_R=err_R;
+		err_R=encoder.getRightSpeed();
+		if(err_R<0){	//detect invalid speed readings
+			err_R=0;
+		}
+		err_R=targetSpeedR-err_R;
+		//if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){
+			actualSpeedR=actualSpeedR+(int)(err_R*K_e_s)+(int)(err_old_R*K_e_s_old); //compensate real speed command
+			//actualSpeedR=actualSpeedR+err_R*MOVEMENT_CORR_KP;
+		//}
+	}else{
+		actualSpeedR=0;
+		actualSpeedL=0;
 	}
-	err=targetSpeedL-err;//calculate error
-	if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){//if error needs correction
-
-		actualSpeedL=actualSpeedL+err*MOVEMENT_CORR_KP;//compensate real speed command
-	}
-
-	err=encoder.getRightSpeed();
-	if(err<0){	//detect invalid speed readings
-		err=0;
-	}
-	err=targetSpeedR-err;
-	if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){
-		actualSpeedR=actualSpeedR+err*MOVEMENT_CORR_KP;
-	}
-
+	
 	applySpeeds();
 }
 
 void Movement::applySpeeds(void) {
-	if(actualSpeedL<0)actualSpeedL=0;
-	if(actualSpeedR<0)actualSpeedR=0;
 	if(actualSpeedL>SPEED_LIMIT)actualSpeedL=SPEED_LIMIT;
 	if(actualSpeedR>SPEED_LIMIT)actualSpeedR=SPEED_LIMIT;
-
-	MOTOR_LEFT_FSPEED(actualSpeedL*MOTOR_CAL_SPEED);
-	MOTOR_RIGHT_FSPEED(actualSpeedR*MOTOR_CAL_SPEED);
+	if(actualSpeedL<(-SPEED_LIMIT))actualSpeedL=-SPEED_LIMIT;
+	if(actualSpeedR<(-SPEED_LIMIT))actualSpeedR=-SPEED_LIMIT;
+	
+	if (speed>=0){
+		MOTOR_LEFT_FSPEED(actualSpeedL*MOTOR_CAL_SPEED);
+		MOTOR_RIGHT_FSPEED(actualSpeedR*MOTOR_CAL_SPEED);
+	}else{
+		//actualSpeedL*=2;
+		//actualSpeedR*=2;
+		MOTOR_LEFT_BSPEED(actualSpeedL*MOTOR_CAL_SPEED);
+		MOTOR_RIGHT_BSPEED(actualSpeedR*MOTOR_CAL_SPEED);
+	}
 }

@@ -3,57 +3,47 @@
 #define IMAGEPROCESSING_H_
 
 
-//#define SERVO_MAX_LEFT_ANGLE -30.0
-//#define SERVO_MAX_RIGHT_ANGLE 30.0
-
 #include <MKL25Z4.h>
 #include "math.h"
 #include "stdio.h"
 #include "stdlib.h"
+
+#define Plausibily_check 30 //For Roadmiddle
 
 #define CAM_DELAY				asm ("nop")				// minimal delay time
 #define	CAM_SI_HIGH				GPIOB_PDOR |= (1<<8)	// SI on PTB8
 #define	CAM_SI_LOW				GPIOB_PDOR &= ~(1<<8)	// SI on PTB8
 #define	CAM_CLK_HIGH			GPIOB_PDOR |= (1<<9)	// CLK on PTB9
 #define	CAM_CLK_LOW				GPIOB_PDOR &= ~(1<<9)	// CLK on PTB9
-
+#define CSV						false //display data
 
 // Define thresholds for Camera Black Line recognition
-#define THRESHOLD_high				140			// Higher threshold : does not capture noise but may not capture all maximums.
-#define THRESHOLD_low				50			// Lower threshold : May capture more maximums than High threshold but can capture noise too.
+#define THRESHOLD_classic			110			// standard threshold : used in the basic image processing function
 
+<<<<<<< HEAD
 #define Threshold_White				160
 
 #define THRESHOLD_classic			120			// standard threshold : used in the basic image processing function
+=======
+//Mode de détection des lignes
+#define functionning_mode			1			// operating mode: from 1 to 3: algorithm more and more precise but heavy
+>>>>>>> int_team_1
 
-#define functionning_mode			2			// operating mode: from 1 to 3: algorithm more and more precise but heavy
 
-#define SIGMA_1	 					2			// square root of the variance for the first gaussian filter
-#define SIGMA_2 					2.5			// square root of the variance for the second gaussian filter. 
+#define CST_RECAL_T 200
+#define TAILLE_BANDE 3 //taille bande noir en pixel
 
-#define PI							3.14159265358979323846	// value of PI
-
-#define THRESHOLD_FINISH_MIN 5				//Minimal threshold of edges for the finish 
-#define THRESHOLD_FINISH_MAX 9				//Maximal threshold of edges for the finish 
-#define COUNTER_THRESHOLD_FINISH 4			
-#define BLACK_RECTANGLE_MIDDLE_1 40		//(124+94/2)mm*128/550mm=171*128/550=40
-#define BLACK_RECTANGLE_MIDDLE_2 88		//(550-(124+94/2))mm*128/550mm=379*128/550=88
-#define RECT_WIDTH 22				//(94*128)/550=22
 class Img_Proc{
 public:
 	uint16_t ImageData [128];				// array to store the LineScan image
 	uint16_t ImageDataDifference [128];		// array to store the PineScan pixel difference
+	uint16_t Imageflou [128];		// array to store the PineScan pixel => blur
 	
-	bool finish;						//indicates if we are at the end of the circuit
-	int edges_cnt;						//counter when the edges are currently detected between 7 and 10
 	int diff;							// actual difference from line middle position
 	int diff_old;
 	int threshold;				// actual position of the servo relative to middle
-	int black_edge_left_pos_rect1;
-	int black_edge_right_pos_rect1;
-	int black_edge_left_pos_rect2;
-	int black_edge_right_pos_rect2;
 	
+<<<<<<< HEAD
 	uint16_t RoadMiddle;						// calculated middle of the road
 	uint16_t RoadMiddle_old;					// save the last "Middle of the road" position
 	uint16_t BlackLineRight;					// position of the black line on the right side (127)
@@ -61,6 +51,13 @@ public:
 	uint16_t number_edges;
 	
 	uint16_t number_gradient;			//Ajout Maty
+=======
+	int RoadMiddle;						// calculated middle of the road
+	int RoadMiddle_old;					// save the last "Middle of the road" position
+	int BlackLineRight;					// position of the black line on the right side (127)
+	int BlackLineLeft;					// position of the black line on the left side
+	int number_edges;
+>>>>>>> int_team_1
 
 	void init(void);					//initializes the camera
 	void capture(void);					//retrieves data from the camera
@@ -68,8 +65,6 @@ public:
 	void process(void);					//detects edges
 	void calculateMiddle(void);			//guesses the middle
 	void processAll(void);				//executes all camera related operations in order. Takes approx 940µs to complete
-	bool test_FinishLine_Detection(void);
-	void compute_data_threshold(void);
 	
 	/***** 2020 - 2021 *****/
 	void display_camera_data(void);
@@ -79,31 +74,16 @@ public:
 	void process_camera(void);					//detects gradient
 	
 private:
-	int CompareData_classic;			// set data for comparison to find max IN BASE ALGORITHM
-	int CompareData_low;				// set data for comparison to find max with low threshold
-	int CompareData_high;				// set data for comparison to find max with high threshold
 	int validate_gradient;				// used in image processing to validate some parameters
+<<<<<<< HEAD
 		
 	int CompareData;
 	
 	float gaussian1;					// gaussian filters used in gaussian differences method
 	float gaussian2;
+=======
+>>>>>>> int_team_1
 };
-
-
-void test_FinishLine_Detection (void);
-/*
-*	lights a blue LED if the program detects the pattern of the finish / start line
-*	total track width = 550 mm
-*	width of each black band on the sides = 20 mm
-*	width of the "white" part = 510 mm
-*
-*	finish line / start = 2 * rectangles of 94 mm side
-*	the rectangle starts 124 mm from the end of the black band (144 mm from the beginning of the track)
-*	There are 74 mm centred in the middle of the track between the two black rectangles of the finish/start line
-*
-*/
-
 
 /* PROCESS
 *	Retrieves the image, applies algorithms to find local maximums and thus define the position of black lines. 
