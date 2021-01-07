@@ -89,11 +89,11 @@ void Movement::regulate(void) {
 			err_L=0;
 		}
 		err_L=targetSpeedL-err_L;//calculate error
-		//if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){//if error needs correction
+		if(err_L>MOVEMENT_CORR_THRESHOLD || err_L<-MOVEMENT_CORR_THRESHOLD){//if error needs correction
 			
 			actualSpeedL=actualSpeedL+(int)err_L*K_e_s+(int)err_old_L*K_e_s_old; //compensate real speed command
 			//actualSpeedL=actualSpeedL+err_L*MOVEMENT_CORR_KP;
-		//}
+		}
 		
 		//RIGHT
 		err_old_R=err_R;
@@ -102,10 +102,10 @@ void Movement::regulate(void) {
 			err_R=0;
 		}
 		err_R=targetSpeedR-err_R;
-		//if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){
+		if(err_R>MOVEMENT_CORR_THRESHOLD || err_R<-MOVEMENT_CORR_THRESHOLD){
 			actualSpeedR=actualSpeedR+(int)(err_R*K_e_s)+(int)(err_old_R*K_e_s_old); //compensate real speed command
 			//actualSpeedR=actualSpeedR+err_R*MOVEMENT_CORR_KP;
-		//}
+		}
 	}else{
 		actualSpeedR=0;
 		actualSpeedL=0;
