@@ -13,10 +13,13 @@
 
 //####################### Wheels #################################
 #define K 								1.8 //2 //P of the PID
-#define Ki								1.0 //I of the PID
+#define Ki								0.9 //I of the PID
+
+#define AMPLIFIE_TURN_1 0 //Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
+#define AMPLIFIE_TURN_2 5 //Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff)
 
 //######### ESP ####################################
-#define LIMIT_ESP 4 //between 2 and 10
+#define LIMIT_ESP 3 //between 2 and 10
 #define TIME_ACTIVE_ESP	50 //+10)*10ms
 #define COEFF_ANGLE_ESP 5.0 //Angle = Max_angle/coeff_angle_esp
 
@@ -24,11 +27,10 @@
 #define VSLOW 800
 #define VHIGH 3500
 //#define VSET 0
-#define T_BRAKE 300 //Threshold before braking
+#define T_BRAKE 200 //Threshold before braking
 #define INCREMENT_SPEED 30 //Constante d'augmentation de la vitesse (évite le patinage)
 #define TURN_SPEED 1200 //Vitesse seuil dans les virages
-#define AMPLIFIE_TURN_1 10 //Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
-#define AMPLIFIE_TURN_2 20 //Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff)
+
 
 
 #define Te 0.01 //sample time 10ms handler servos /!\ Te_s (sample time for rear motors is in Movement.h)
@@ -43,6 +45,7 @@ public:
 	Img_Proc cam;
 	
 	//###### var #####
+	bool enable_finish;
 	bool finish;//indicates if we are at the end of the circuit
 	
 	//############ angle wheels ###########

@@ -90,12 +90,12 @@ void Img_Proc::capture(void){
 
 void Img_Proc::differentiate(void){
 		if (functionning_mode == 1){
-			for(i=1;i<=126;i++){	
-				Imageflou[i] = (uint16_t) abs (1.5*ImageData[i-1] + ImageData[i] + 1.5*ImageData[i+1])/4;
+			/*for(i=1;i<=126;i++){	
+				Imageflou[i] = (uint16_t) abs (0.5*ImageData[i-1] + ImageData[i] + 0.5*ImageData[i+1])/2;
 			}
 			
 			Imageflou[0] = ImageData[0];
-			Imageflou[127] = ImageData[127];
+			Imageflou[127] = ImageData[127];*/
 			
 			if (c_t<CST_RECAL_T){
 				//############### à enlever
@@ -103,18 +103,18 @@ void Img_Proc::differentiate(void){
 				c_t=0;
 				threshold=0;
 				for(int i=0;i<=127;i++){
-					threshold+=Imageflou[i];
+					threshold+=ImageData[i];
 				}
 				threshold=threshold/128;
 				if (threshold<THRESHOLD_classic)threshold=THRESHOLD_classic;
-			}else if (c_t<CST_RECAL_T/2){
+			}else if (c_t>CST_RECAL_T/2){
 				//############### à enlever
 				DEBUG_GREEN_OFF;
 			}
 			
 			//Test blanc ou noir
 			for(int i=0;i<=127;i++){
-				if (Imageflou[i]>threshold){
+				if (ImageData[i]>threshold){
 					ImageDataDifference[i]=1; //white
 				}else{
 					ImageDataDifference[i]=0;//black
@@ -135,18 +135,18 @@ void Img_Proc::process (void){
 		if (functionning_mode == 1){
 			BlackLineRight = 128;
 			BlackLineLeft = -1;
-			int i=0;
+			int i=1;
 			while (BlackLineLeft==-1 && i<127){
-				if (ImageDataDifference[i]==1){
+				if (ImageDataDifference[i]==1 && ImageDataDifference[i-1]==0){
 					BlackLineLeft=i;
 					number_edges++;
 				}else{
 					i++;
 				}
 			}
-			i=127;
+			i=126;
 			while (BlackLineRight==128 && (i>0 && i>BlackLineLeft)){
-				if (ImageDataDifference[i]==1){
+				if (ImageDataDifference[i]==1 && ImageDataDifference[i+1]==0){
 					BlackLineRight=i;
 					number_edges++;
 				}else{
@@ -157,11 +157,11 @@ void Img_Proc::process (void){
 			i=BlackLineLeft+1+TAILLE_BANDE;
 			bool ok=false;
 			while (i<BlackLineRight-1-TAILLE_BANDE){
-				if (ImageDataDifference[i-1]!=ImageDataDifference[i+1]){
+				if (ImageDataDifference[i-1]!=ImageDataDifference[i]){
 					ok=true;
-					//On regarde les 4 pixels prochains
+					//On regarde les TAILLE_BANDE prochains pixels 
 					for (int j=i;j<=(i+TAILLE_BANDE);j++){
-						if (ImageDataDifference[j]==0){
+						if (ImageDataDifference[j]==1){
 							ok=false;
 						}
 					}
@@ -306,8 +306,8 @@ void Img_Proc::display_camera_data(void) {
 	}else{
 		for (int i=0;i<128;i++) {
 			uart_write("$",1);
-			uart_writeNb(ImageData[i]);
-			uart_write(" ",1);
+			//uart_writeNb(ImageData[i]);
+			//uart_write(" ",1);
 			uart_writeNb(ImageDataDifference[i]);
 			uart_write(";",1);
 		}
@@ -380,4 +380,5 @@ void Img_Proc::processAll(void) {
 	process();
 	//uart_write("ok\n\r",4);
 	calculateMiddle();
+	
 }

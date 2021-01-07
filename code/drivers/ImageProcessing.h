@@ -15,17 +15,17 @@
 #define	CAM_SI_LOW				GPIOB_PDOR &= ~(1<<8)	// SI on PTB8
 #define	CAM_CLK_HIGH			GPIOB_PDOR |= (1<<9)	// CLK on PTB9
 #define	CAM_CLK_LOW				GPIOB_PDOR &= ~(1<<9)	// CLK on PTB9
-#define CSV						true //display data
+#define CSV						false //display data
 
 // Define thresholds for Camera Black Line recognition
-#define THRESHOLD_classic			130			// standard threshold : used in the basic image processing function
+#define THRESHOLD_classic			110			// standard threshold : used in the basic image processing function
 
 //Mode de détection des lignes
 #define functionning_mode			1			// operating mode: from 1 to 3: algorithm more and more precise but heavy
 
 
 #define CST_RECAL_T 200
-#define TAILLE_BANDE 4 //taille bande noir en pixel
+#define TAILLE_BANDE 3 //taille bande noir en pixel
 
 class Img_Proc{
 public:

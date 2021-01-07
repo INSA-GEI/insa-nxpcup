@@ -49,6 +49,8 @@ void Car::init(void){
 	//Coeff PI servo_angle
 	K_camdiff=(float)((2*K+Te*Ki)/2);
 	K_camdiffold=(float)((Te*Ki-2*K)/2);
+	
+	enable_finish=false;
 }
 
 //############### SPEED ########################
@@ -65,7 +67,7 @@ void Car::Calculate_speed(void){
 			Vset=-(abs(Vset-V_old))-Vslow;
 		}else if (Vset>V_old+INCREMENT_SPEED){
 			if ((V_old<(Vhigh+Vset)/2)){
-				Vset=V_old+(int)(INCREMENT_SPEED/3); //Temps de montée max 100ms//évite de glisser
+				Vset=V_old+(int)(INCREMENT_SPEED/2); //Temps de montée max 100ms//évite de glisser
 			}else{
 				Vset=V_old+INCREMENT_SPEED;
 			}
@@ -161,8 +163,10 @@ void Car::Caculate_angle_wheel(void){
 void Car::processESP(){
 	if (active_ESP){
 		//############## ESP #################
-		if (abs (servo_angle)>MAX_ANGLE/COEFF_ANGLE_ESP && abs(old_servo_angle)>MAX_ANGLE/COEFF_ANGLE_ESP && sng(servo_angle)!=sng(old_servo_angle)){
+		if (abs (servo_angle)>(MAX_ANGLE/COEFF_ANGLE_ESP) && abs(old_servo_angle)>(MAX_ANGLE/COEFF_ANGLE_ESP) && sng(servo_angle)!=sng(old_servo_angle)){
 			ESP++;
+			uart_write("ESP+",4);
+			uart_write("\r\n",2);
 		}
 		
 		//On regarde si on a détecté une oscillation/ glissement sur T=10*10ms
@@ -182,6 +186,7 @@ void Car::processESP(){
 		}
 		//Action en fonction
 		if (detect_ESP){
+			enable_ampli_turn=false;
 			if (mode_speed!=0){
 				//On regarde si on est en ligne droite ou en virage
 
@@ -193,9 +198,9 @@ void Car::processESP(){
 			}
 			
 			//Debug
-			/*uart_write("C_ESP : ",8);
+			uart_write("ESP! =",6);
 			uart_writeNb(c_ESP);
-			uart_write("\r\n",2);*/
+			uart_write("\r\n",2);
 			
 			ESP=0;
 			old_ESP=0;
@@ -221,7 +226,7 @@ void Car::Detect_state(void){
 	//Test braking #####################################
 	if (Vset<V_old-T_BRAKE && abs(V_mes)>TURN_SPEED){
 		enable_brake=true;	
-	}else if(abs(V_mes)<abs(Vset)){
+	}else if(abs(V_mes)<TURN_SPEED){
 		enable_brake=false;
 	}
 	
@@ -244,10 +249,10 @@ void Car::Detect_state(void){
 		if (!(enable_ampli_turn)){
 			DEBUG_BLUE_ON;
 			enable_ampli_turn=true;
-			uart_write("amp_turn !",10);
-			uart_write("\n\r",2);
+			//uart_write("amp_turn !",10);
+			//uart_write("\n\r",2);
 		}
-	}else{
+	}else if (state_turn_car==0 || Vset>TURN_SPEED){
 		DEBUG_BLUE_OFF;
 		enable_ampli_turn=false;
 	}
@@ -261,9 +266,11 @@ void Car::Detect_state(void){
 	}
 	
 	//######## Test finish ############
-	if ((cam.number_edges)>=4){//Nb de bandes noires (+1 pour chaque côté)
-		finish=true;
-		uart_write("Fin !",5);
+	if (enable_finish){
+		if ((cam.number_edges)>=4 && state_turn_car==0){//Nb de bandes noires (+1 pour chaque côté)
+			finish=true;
+			uart_write("Fin !",5);
+		}
 	}
 }
 
@@ -313,6 +320,8 @@ void Car::Car_handler(void){
 			Set_diff_speed();
 			
 		}
+	}else{
+		FLAG_SEND_IMG=true;
 	}
 	//Debug
 	Aff_debug();
@@ -354,6 +363,12 @@ void Car::Aff_debug(void){
 		uart_write(" / ",3);
 		uart_write("turn=",5);
 		uart_writeNb(state_turn_car);
+		uart_write(" / ",3);
+		uart_write("V_L=",4);
+		uart_writeNb(myMovement.actualSpeedL);
+		uart_write(" / ",3);
+		uart_write("V_R=",4);
+		uart_writeNb(myMovement.actualSpeedR);		
 		uart_write("\n\r",2);
 		uart_write("#####cam#####\n\r",15);
 		uart_write("diff=",5);
@@ -448,11 +463,10 @@ void Car::Car_debug(void){
 					uart_write("\r\n",2);
 					break;
 				case ' ':	//emergency stop
-					Vset=0;
-					mode_speed=0;
+					finish=true;
 					uart_write("Stop !",6);
 					n=0;
-					servo_angle=0;
+					Vset=0;
 					break;
 
 				case '-':	//decrement speed
@@ -496,6 +510,12 @@ void Car::Car_debug(void){
 					break;
 				case 'v':
 					FLAG_SEND_IMG=true;
+					break;
+				case 'f':
+					enable_finish=!(enable_finish);
+					uart_write("EN_finish=",10);
+					uart_writeNb(enable_finish);
+					uart_write("\r\n",2);
 					break;
 				default:
 					break;

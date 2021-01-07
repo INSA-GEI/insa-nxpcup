@@ -8,8 +8,8 @@
 #include "math.h"
 
 int speed=0;
-int K_e_s=0;
-int K_e_s_old=0;
+float K_e_s=0.0;
+float K_e_s_old=0.0;
 
 Movement::Movement() {
 	targetSpeedL=0;
@@ -30,8 +30,8 @@ void Movement::init(void) {
 	err_R=0;
 	err_old_L=0;
 	err_old_R=0;
-	K_e_s=(int)((2*MOVEMENT_CORR_KP+Te_s*MOVEMENT_CORR_KI)/2);
-	K_e_s_old=(int)((Te_s*MOVEMENT_CORR_KI-2*MOVEMENT_CORR_KP)/2);
+	K_e_s=((2.0*MOVEMENT_CORR_KP+Te_s*MOVEMENT_CORR_KI)/2.0);
+	K_e_s_old=((Te_s*MOVEMENT_CORR_KI-2.0*MOVEMENT_CORR_KP)/2.0);
 }
 
 void Movement::set(int speed, float angle) {
@@ -80,7 +80,7 @@ void Movement::stop(void) {
 
 
 void Movement::regulate(void) {
-	if (speed>0){
+	if (speed!=0){
 		GPIOB_PTOR = DEBUG_RED_Pin;
 		//LEFT
 		err_old_L=err_L;
@@ -92,7 +92,7 @@ void Movement::regulate(void) {
 		//if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){//if error needs correction
 			
 			actualSpeedL=actualSpeedL+(int)err_L*K_e_s+(int)err_old_L*K_e_s_old; //compensate real speed command
-			//actualSpeedL=actualSpeedL+err*MOVEMENT_CORR_KP;
+			//actualSpeedL=actualSpeedL+err_L*MOVEMENT_CORR_KP;
 		//}
 		
 		//RIGHT
@@ -103,29 +103,29 @@ void Movement::regulate(void) {
 		}
 		err_R=targetSpeedR-err_R;
 		//if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){
-			actualSpeedR=actualSpeedR+(int)err_R*K_e_s+(int)err_old_R*K_e_s_old; //compensate real speed command
-			//actualSpeedR=actualSpeedR+err*MOVEMENT_CORR_KP;
+			actualSpeedR=actualSpeedR+(int)(err_R*K_e_s)+(int)(err_old_R*K_e_s_old); //compensate real speed command
+			//actualSpeedR=actualSpeedR+err_R*MOVEMENT_CORR_KP;
 		//}
 	}else{
-		actualSpeedR=targetSpeedR;
-		actualSpeedL=targetSpeedL;
+		actualSpeedR=0;
+		actualSpeedL=0;
 	}
 	
 	applySpeeds();
 }
 
 void Movement::applySpeeds(void) {
+	if(actualSpeedL>SPEED_LIMIT)actualSpeedL=SPEED_LIMIT;
+	if(actualSpeedR>SPEED_LIMIT)actualSpeedR=SPEED_LIMIT;
+	if(actualSpeedL<(-SPEED_LIMIT))actualSpeedL=-SPEED_LIMIT;
+	if(actualSpeedR<(-SPEED_LIMIT))actualSpeedR=-SPEED_LIMIT;
 	
 	if (speed>=0){
-		if(actualSpeedL>SPEED_LIMIT)actualSpeedL=SPEED_LIMIT;
-		if(actualSpeedR>SPEED_LIMIT)actualSpeedR=SPEED_LIMIT;
 		MOTOR_LEFT_FSPEED(actualSpeedL*MOTOR_CAL_SPEED);
 		MOTOR_RIGHT_FSPEED(actualSpeedR*MOTOR_CAL_SPEED);
 	}else{
-		actualSpeedL*=2;
-		actualSpeedR*=2;
-		if(actualSpeedL<(-SPEED_LIMIT))actualSpeedL=-SPEED_LIMIT;
-		if(actualSpeedR<(-SPEED_LIMIT))actualSpeedR=-SPEED_LIMIT;
+		//actualSpeedL*=2;
+		//actualSpeedR*=2;
 		MOTOR_LEFT_BSPEED(actualSpeedL*MOTOR_CAL_SPEED);
 		MOTOR_RIGHT_BSPEED(actualSpeedR*MOTOR_CAL_SPEED);
 	}
