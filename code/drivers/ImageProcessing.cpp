@@ -44,8 +44,8 @@ void Img_Proc::init(){
 	black_edge_right_pos_rect1=0;
 	black_edge_left_pos_rect2=0;
 	black_edge_right_pos_rect2=0;
-	//Ajout Maty
-	//number_gradient=0;
+ 	/***** 2020 - 2021 *****/
+	number_gradient=0;
 	CompareData=THRESHOLD_high;
 
 }
@@ -67,7 +67,7 @@ void Img_Proc::capture(void){
 		for(i=1;i<128;i++){
 			CAM_DELAY;
 			CAM_CLK_HIGH;
-			 // inputs data from camera (one pixel each time through loop)
+			// inputs data from camera (one pixel each time through loop)
 			ADC0_SC1A  =  11;							// set ADC0 channel 11
 			while((ADC0_SC1A & ADC_SC1_COCO_MASK) == 0);// wait until ADC is ready
 			ImageData[i] = ADC0_RA;						// return value
@@ -80,18 +80,7 @@ void Img_Proc::capture(void){
 		CAM_DELAY;
 		CAM_DELAY;
 		CAM_CLK_LOW;
-		/*
-		//generating dummy data here
-		for(i=0;i<128;i++){
-			int data;
-			if((i>32 && i<48) || (i>80 && i<96)){
-				data=150+rand()%10;
-			}else{
-				data=50+rand()%10;
-			}
-			ImageData[i]=data;
-		}
-		*/
+		
 }
 
 void Img_Proc::differentiate(void){
@@ -99,13 +88,12 @@ void Img_Proc::differentiate(void){
 			for(i=1;i<=126;i++){	
 				ImageDataDifference[i] = abs (ImageData[i-1] + ImageData[i] + ImageData[i+1])/3;
 			}
-			
 		}
 		if (functionning_mode == 2){
-			for(i=1;i<=126;i++){							// using a gradient by direct differences (application of the filter : [-1 , 0 , 1] -> P(x) = -1*P(x-1)+0*P(x)+1*P(x+1))
+			for(i=1;i<=126;i++){						// using a gradient by direct differences (application of the filter : [-1 , 0 , 1] -> P(x) = -1*P(x-1)+0*P(x)+1*P(x+1))
 				ImageDataDifference[i] = abs (-ImageData[i-1] + ImageData[i+1]);
 			}
-			ImageDataDifference[0] = ImageData[0];	// first value doesnt have "gradient" for this method
+			ImageDataDifference[0] = ImageData[0];		// first value doesnt have "gradient" for this method
 			ImageDataDifference[127] = ImageData[127];	// last value doesnt have "gradient" for this method
 		}
 	}	/*	End of function "Fill_ImageDataDifference"	*/
@@ -386,19 +374,15 @@ void Img_Proc::gradient(void){
 			ImageDataDifference[0] = abs (- ImageData[0] + ImageData[1]);	// first value doesnt have "gradient" for this method
 			ImageDataDifference[127] = abs (- ImageData[126] + ImageData[127]);	// last value doesnt have "gradient" for this method
 		}else if (functionning_mode == 3){ //Test non fructueux
-			for(i=1;i<=126;i++){
-				ImageDataDifference[i] = abs (-((ImageData[i-1])*(ImageData[i-1])) + ((ImageData[i+1])*(ImageData[i+1])));
+			for(i=1;i<=126;i++){	
+				ImageDataDifference[i] = abs (ImageData[i-1] + ImageData[i] + ImageData[i+1])/3;
 			}
-			ImageDataDifference[0] = abs (-((ImageData[0])*(ImageData[0])) + ((ImageData[1])*(ImageData[1])));	//first value
-			ImageDataDifference[127] = abs (-((ImageData[126])*(ImageData[126])) + ((ImageData[127])*(ImageData[127])));	//last value
+			ImageDataDifference[0] = abs (ImageData[0] + ImageData[1])/2;	//first value
+			ImageDataDifference[127] = abs (ImageData[126] + ImageData[127])/2;	//last value
 		}else if (functionning_mode == 4){
-			for(i=0;i<=127;i++){							// using the Gaussian difference method
-				gaussian1 = (1/(SIGMA_1 * sqrt(2*PI))) * exp(-(pow(i,2))/(2*pow(SIGMA_1,2)));
-				gaussian2 = (1/(SIGMA_2 * sqrt(2*PI))) * exp(-(pow(i,2))/(2*pow(SIGMA_2,2)));
-				ImageDataDifference[i] = abs ( (int) (round ( (ImageData[i] * gaussian1 - ImageData[i] * gaussian2) ) ) );
-			}
+			// A remplir
 		}
-	}	/*	End of function "Fill_ImageDataDifference"	*/
+	}	/*	End of function "Gradient"	*/
 
 /* PROCESS_CAMERA 
  * Objectif : détecter les bords avec les gradients + regarder si à droite ou à gauche c'est du blanc ou du gris 
@@ -406,22 +390,122 @@ void Img_Proc::gradient(void){
  * 			  plus qu'un seul bord et elle ne sait pas si elle doit tourner à droite ou à gauche 
  */
 void Img_Proc::process_camera (void){
-	number_gradient = 0;		//reset the number of peaks to 0	
-	
-	for(i=126;i>=1;i--){		//on va de droite à gauche
-		if (ImageDataDifference[i] > CompareData){
+	number_gradient = 0;	//Reset the number of peaks to 0	
+	for(i=126;i>=1;i--){		//from right to left
+		if (ImageDataDifference[i] > CompareData){ //Vérifier si 140 est vraiment la bonne valeur seuil pour le pic GRADIENT ?
 			(number_gradient)++;
 			if (ImageData[i-3]>Threshold_White){	//Je prends i-3 pour sortir de la ligne noire
 				//C'est le côté droit
 				BlackLineRight=i;				
 			} else if (ImageData[i+3]>Threshold_White){
-				//C'est le côté droit
+				//C'est le côté gauche
 				BlackLineLeft=i;
 			}
 		}
 	}
 }	
 
+/* PROCESS_CAM
+ * Objectif : détecter les bords avec les gradients + regarder si à droite ou à gauche c'est du blanc ou du gris 
+ * 			  pour dire si on détecte un côté droit ou gauche car parfois quand la voiture tourne trop on ne détecte 
+ * 			  plus qu'un seul bord et elle ne sait pas si elle doit tourner à droite ou à gauche 
+ * */
+void Img_Proc::process_cam (void){
+	number_gradient = 0;	//Reset the number of peaks to 0	
+	int last_gradient = 130; //127+3 avec tolérance de 3 entre deux gradients
+	
+	
+	int j = 1; //incrément pour l'affectation des bords
+	BlackLineRight = 127; 	//Default value: we suppose that the black line on the right is at pixel 127
+	BlackLineLeft = 0; 		//Default value: we suppose that the black line on the left is at pixel 0
+	
+	//Recherche des gradients forts : on les compte, on stocke leur emplacement dans GradientPosition
+	//last_gradient permet de ne pas détecter deux fois une même ligne
+	for(i=126;i>=1;i--){		//from right to left
+		//Vérifier si CompareData = 140 est vraiment la bonne valeur seuil pour le pic GRADIENT ?
+		if (ImageDataDifference[i] > CompareData && last_gradient > i + 3 ){ 
+			(number_gradient)++;
+			GradientPosition[i]=2; //Valeur 2 : gradient ici
+			last_gradient = i;
+		}
+	}			
+	
+	// Pour afficher le tableau des gradients trouvés et leurs places
+	print_tab128(GradientPosition);
+	
+	//On affecte la valeur de l'emplacement de la bordure gauche
+	j = 1;
+	while (GradientPosition[j] != 2 && j < 64){
+		j++;
+	}
+	BlackLineLeft = j;
+	
+	//On affecte la valeur de l'emplacement de la bordure droite
+	j = 126;
+	while (GradientPosition[j] != 2 && j >= 64){
+		j--;
+	}
+	BlackLineRight = j;
+
+}
+
+void Img_Proc::detectFinishLine (void){
+	
+	threshold = 60;	
+	
+	for (int i=BlackLineLeft+5;i<BlackLineRight-5;i++){
+			if (ImageDataDifference[i] >= threshold){
+				edges_cnt++;
+			}
+	}	
+	
+	//finish = false at the initialization
+	if (edges_cnt>=COUNTER_THRESHOLD_FINISH){
+		finish = true;
+	} 
+	edges_cnt=0;
+				
+	return finish;
+	/*black_edge_left_pos_rect1=BlackLineLeft+(124)*(BlackLineRight-BlackLineLeft+1)/530;
+	black_edge_right_pos_rect1=BlackLineLeft+(124+94)*(BlackLineRight-BlackLineLeft+1)/530;
+	black_edge_left_pos_rect2=BlackLineLeft+(124+94+74)*(BlackLineRight-BlackLineLeft+1)/530;
+	black_edge_right_pos_rect2=BlackLineLeft+(124+94+74+94)*(BlackLineRight-BlackLineLeft+1)/530;
+
+		for (int i=0;i<=10;i++){
+			if (ImageDataDifference[black_edge_left_pos_rect1+i] >= threshold || ImageDataDifference[black_edge_left_pos_rect1-i] >= threshold){
+				edges_cnt++;
+				i=10;
+			} else {edges_cnt=0;}
+		}	
+		for (int i=0;i<=10;i++){
+			if (ImageDataDifference[black_edge_right_pos_rect1+i] >= threshold || ImageDataDifference[black_edge_right_pos_rect1-i] >= threshold){
+				edges_cnt++;
+				i=20;
+			} else {edges_cnt=0;}
+}	
+		for (int i=0;i<=10;i++){
+			if (ImageDataDifference[black_edge_left_pos_rect2+i] >= threshold || ImageDataDifference[black_edge_left_pos_rect2-i] >= threshold){
+				edges_cnt++;
+				i=20;
+			} else {edges_cnt=0;}
+		}	
+		for (int i=0;i<=10;i++){
+			if (ImageDataDifference[black_edge_right_pos_rect2+i] >= threshold || ImageDataDifference[black_edge_right_pos_rect2-i] >= threshold){
+				edges_cnt++;
+				i=20;
+				} else {edges_cnt=0;}
+		}	
+	
+	//finish = false at the initialization
+	if (edges_cnt>=COUNTER_THRESHOLD_FINISH){
+		finish = true;
+		edges_cnt=0;
+	}
+	
+	return finish;
+	*/
+	
+}
 
 void Img_Proc::processAll(void) {
 	capture();
@@ -434,3 +518,27 @@ void Img_Proc::processAll(void) {
 	//test_FinishLine_Detection();
 	//display_camera_data();
 }
+
+/*** PRIVATE ***/
+
+void Img_Proc::print_tab128(uint16_t tableau[]){
+	int mode = 1; //Putty = 1 ; Serial port plotter = 2
+	if (mode == 1){
+		uart_write("Tab :",5);
+		for (i=0;i<128;i++){
+			uart_write(" ",1);
+			uart_writeNb(tableau[i]);
+			uart_write(" ",1);
+		}
+		uart_write(";\r\n",1);
+	} else if (mode == 2){
+		for (int i=0;i<128;i++) {
+			uart_write("$",1);
+			uart_writeNb(tableau[i]);
+			uart_write(";",1);
+		}
+		uart_write("\r\n",2);
+	}
+}
+
+

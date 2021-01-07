@@ -71,13 +71,15 @@ public:
 	
 	/*** 2020 - 2021 ***/
 	uint16_t number_gradient;			//Ajout Maty
+	uint16_t BlackLinePosition [128]; 	//Array to store the position of the detected lines
 	
 	void display_camera_data(void);
 	void display_gradient(void);
 	//void export_raw_data(void);
 	void gradient(void);
 	void process_camera(void);					//detects gradient
-
+	void process_cam (void);
+	void detectFinishLine (void);
 	
 	
 private:
@@ -91,7 +93,8 @@ private:
 
 	/*** 2020 - 2021 ***/
 	int CompareData;
-
+	uint16_t GradientPosition [128]; //INITIALISER A 0 : Array to store the position where the sufficient gradients are detected
+	void print_tab128(uint16_t tableau[]);
 };
 
 
