@@ -117,8 +117,8 @@ void Movement::regulate(void) {
 void Movement::applySpeeds(void) {
 	if(actualSpeedL>SPEED_LIMIT)actualSpeedL=SPEED_LIMIT;
 	if(actualSpeedR>SPEED_LIMIT)actualSpeedR=SPEED_LIMIT;
-	if(actualSpeedL<(-SPEED_LIMIT))actualSpeedL=-SPEED_LIMIT;
-	if(actualSpeedR<(-SPEED_LIMIT))actualSpeedR=-SPEED_LIMIT;
+	if(actualSpeedL<0)actualSpeedL=0;
+	if(actualSpeedR<0)actualSpeedR=0;
 	
 	if (speed>=0){
 		MOTOR_LEFT_FSPEED(actualSpeedL*MOTOR_CAL_SPEED);

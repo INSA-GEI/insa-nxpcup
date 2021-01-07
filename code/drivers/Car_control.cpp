@@ -140,7 +140,7 @@ void Car::Caculate_angle_wheel(void){
 			}else if(state_turn_car==2){
 				aux=AMPLIFIE_TURN_2;
 			}
-			if (cam.diff<0){
+			if (servo_angle<0){
 				aux_diff-=aux;
 			}else{
 				aux_diff+=aux;
@@ -249,8 +249,8 @@ void Car::Detect_state(void){
 		if (!(enable_ampli_turn)){
 			DEBUG_BLUE_ON;
 			enable_ampli_turn=true;
-			//uart_write("amp_turn !",10);
-			//uart_write("\n\r",2);
+			uart_write("amp_turn !",10);
+			uart_write("\n\r",2);
 		}
 	}else if (state_turn_car==0 || Vset>TURN_SPEED){
 		DEBUG_BLUE_OFF;
@@ -259,7 +259,7 @@ void Car::Detect_state(void){
 	
 	//Test ESP
 	//On active l'ESP
-	if (Vset>TURN_SPEED && (!(enable_brake)) ){
+	if (!(enable_brake)){
 		active_ESP=true;
 	}else{
 		active_ESP=false;
@@ -302,7 +302,7 @@ void Car::Car_handler(void){
 	c_ESP++;
 	if(c>500){
 		c=0;
-		FLAG_SEND_IMG=true;		
+		//FLAG_SEND_IMG=true;		
 	}
 	//
 	Process_data();//Acquisition des données
