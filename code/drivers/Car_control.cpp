@@ -285,6 +285,7 @@ void Car::Set_deplacement(void){
 		Vset=0;
 		mode_speed=0;
 		servo_angle=0;
+		delta_speed=0;
 		myMovement.set(Vset,servo_angle);
 		myMovement.setDiff(Vset,delta_speed);
 	}else{
@@ -470,7 +471,7 @@ void Car::Car_debug(void){
 					break;
 
 				case '-':	//decrement speed
-					if(true){//n>0){
+					if(n>0){
 						Vset-=250;
 						uart_write("Vset : ",7);
 						uart_writeNb(Vset);
