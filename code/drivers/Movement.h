@@ -18,9 +18,9 @@
 #define L_ENTRAXE 150 //en mm 
 
 #define MOVEMENT_CORR_THRESHOLD 6 		// correct the speed only when we are more than 1 cm/s off target speed
-#define MOVEMENT_CORR_KP 2.0			//1.0 P
-#define MOVEMENT_CORR_KI 0.0// I
-#define SPEED_LIMIT 9000				//	mm/s
+#define MOVEMENT_CORR_KP 7.0			//1.0 P
+#define MOVEMENT_CORR_KI 10000.0		// I
+#define SPEED_LIMIT 6000 //9000				//	mm/s
 #define Te_s (float)1/6000 //sample time 6Khz handler rear motors 0.2ms
 
 class Movement{
@@ -45,6 +45,8 @@ public:
 	int err_R;
 	int err_old_L;
 	int err_old_R;
+	int v_L;
+	int v_R;
 	
 private:
 	void applySpeeds(void);

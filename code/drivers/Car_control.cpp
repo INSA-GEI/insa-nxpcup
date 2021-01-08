@@ -267,7 +267,7 @@ void Car::Detect_state(void){
 	
 	//######## Test finish ############
 	if (enable_finish){
-		if ((cam.number_edges)>=4 && state_turn_car==0){//Nb de bandes noires (+1 pour chaque côté)
+		if ((cam.number_edges)>=4 && state_turn_car!=2){//Nb de bandes noires (+1 pour chaque côté)
 			finish=true;
 			uart_write("Fin !",5);
 		}
@@ -369,7 +369,13 @@ void Car::Aff_debug(void){
 		uart_writeNb(myMovement.actualSpeedL);
 		uart_write(" / ",3);
 		uart_write("V_R=",4);
-		uart_writeNb(myMovement.actualSpeedR);		
+		uart_writeNb(myMovement.actualSpeedR);
+		uart_write(" / ",3);
+		uart_write("V_mesL=",7);
+		uart_writeNb(myMovement.v_L);
+		uart_write(" / ",3);
+		uart_write("V_mesR=",7);
+		uart_writeNb(myMovement.v_R);
 		uart_write("\n\r",2);
 		uart_write("#####cam#####\n\r",15);
 		uart_write("diff=",5);
@@ -471,7 +477,7 @@ void Car::Car_debug(void){
 					break;
 
 				case '-':	//decrement speed
-					if(n>0){
+					if(true){//n>0){
 						Vset-=250;
 						uart_write("Vset : ",7);
 						uart_writeNb(Vset);

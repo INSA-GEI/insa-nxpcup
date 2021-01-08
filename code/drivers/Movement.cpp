@@ -30,6 +30,8 @@ void Movement::init(void) {
 	err_R=0;
 	err_old_L=0;
 	err_old_R=0;
+	v_L=0;
+	v_R=0;
 	K_e_s=((2.0*MOVEMENT_CORR_KP+Te_s*MOVEMENT_CORR_KI)/2.0);
 	K_e_s_old=((Te_s*MOVEMENT_CORR_KI-2.0*MOVEMENT_CORR_KP)/2.0);
 }
@@ -84,28 +86,28 @@ void Movement::regulate(void) {
 		GPIOB_PTOR = DEBUG_RED_Pin;
 		//LEFT
 		err_old_L=err_L;
-		err_L=encoder.getLeftSpeed();
-		if(err_L<0){	//detect invalid speed readings
+		v_L=encoder.getLeftSpeed();
+		if(v_L<0){	//detect invalid speed readings
 			err_L=0;
 		}
-		err_L=targetSpeedL-err_L;//calculate error
-		if(err_L>MOVEMENT_CORR_THRESHOLD || err_L<-MOVEMENT_CORR_THRESHOLD){//if error needs correction
+		err_L=targetSpeedL-v_L;//calculate error
+		//if(err_L>MOVEMENT_CORR_THRESHOLD || err_L<-MOVEMENT_CORR_THRESHOLD){//if error needs correction
 			
-			actualSpeedL=actualSpeedL+(int)err_L*K_e_s+(int)err_old_L*K_e_s_old; //compensate real speed command
+			actualSpeedL=actualSpeedL+(int)(err_L*K_e_s)+(int)(err_old_L*K_e_s_old); //compensate real speed command
 			//actualSpeedL=actualSpeedL+err_L*MOVEMENT_CORR_KP;
-		}
+		//}
 		
 		//RIGHT
 		err_old_R=err_R;
-		err_R=encoder.getRightSpeed();
-		if(err_R<0){	//detect invalid speed readings
+		v_R=encoder.getRightSpeed();
+		if(v_R<0){	//detect invalid speed readings
 			err_R=0;
 		}
-		err_R=targetSpeedR-err_R;
-		if(err_R>MOVEMENT_CORR_THRESHOLD || err_R<-MOVEMENT_CORR_THRESHOLD){
+		err_R=targetSpeedR-v_R;
+		//if(err_R>MOVEMENT_CORR_THRESHOLD || err_R<-MOVEMENT_CORR_THRESHOLD){
 			actualSpeedR=actualSpeedR+(int)(err_R*K_e_s)+(int)(err_old_R*K_e_s_old); //compensate real speed command
 			//actualSpeedR=actualSpeedR+err_R*MOVEMENT_CORR_KP;
-		}
+		//}
 	}else{
 		actualSpeedR=0;
 		actualSpeedL=0;
@@ -124,8 +126,6 @@ void Movement::applySpeeds(void) {
 		MOTOR_LEFT_FSPEED(actualSpeedL*MOTOR_CAL_SPEED);
 		MOTOR_RIGHT_FSPEED(actualSpeedR*MOTOR_CAL_SPEED);
 	}else{
-		//actualSpeedL*=2;
-		//actualSpeedR*=2;
 		MOTOR_LEFT_BSPEED(actualSpeedL*MOTOR_CAL_SPEED);
 		MOTOR_RIGHT_BSPEED(actualSpeedR*MOTOR_CAL_SPEED);
 	}

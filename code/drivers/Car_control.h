@@ -24,12 +24,12 @@
 #define COEFF_ANGLE_ESP 5.0 //Angle = Max_angle/coeff_angle_esp
 
 //#################### SPEED #############################
-#define VSLOW 800
-#define VHIGH 3500
+#define VSLOW 1000
+#define VHIGH 3000
 //#define VSET 0
 #define T_BRAKE 200 //Threshold before braking
 #define INCREMENT_SPEED 30 //Constante d'augmentation de la vitesse (évite le patinage)
-#define TURN_SPEED 1200 //Vitesse seuil dans les virages
+#define TURN_SPEED 1300 //Vitesse seuil dans les virages
 
 
 
