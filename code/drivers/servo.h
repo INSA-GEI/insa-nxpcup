@@ -12,7 +12,7 @@
 
 
 #define SERVO_MASK_TPM1_PRESCALER 3	//3=(11)2 => clock divided by 8 (see datasheet p553)
-#define SERVO_TPM1_ARR 60000			//Value of the auto-reload of the TIMER
+#define SERVO_TPM1_ARR 60000 //60000			//Value of the auto-reload of the TIMER
 
 #define SERVO_SET_CHANNEL_0 0x28 		//Set these bits to configure channel 0 on "Edge-aligned PWM" with "high true pulses" configuration
 

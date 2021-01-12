@@ -19,6 +19,8 @@ int n=0;//Allow us to use the debug with Putty
 //Not implemented yet
 int Count=0; //count how many time we were not to close to the black line
 
+int C_finish=0;
+
 //Debug Flag
 bool FLAG_ENABLE_LOG_IMG=false;
 bool FLAG_ENABLE_LOG_SERVO=false;
@@ -37,7 +39,7 @@ void Car::init(void){
 	V_old=0;
 	Vslow=VSLOW;
 	Vhigh=VHIGH;
-	mode_speed=0;
+	mode_speed=1;
 	delta_speed=0;
 	mode_debug=0;
 	ESP=0;
@@ -51,6 +53,7 @@ void Car::init(void){
 	K_camdiffold=(float)((Te*Ki-2*K)/2);
 	
 	enable_finish=false;
+	stop=true;
 }
 
 //############### SPEED ########################
@@ -61,17 +64,18 @@ void Car::Calculate_speed(void){
 	//Linear mode
 	V_old=abs(Vset);
 				
-	if (Vset!=0){
-		Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh;		
-		if (enable_brake){
-			Vset=-(abs(Vset-V_old))-Vslow;
-		}else if (Vset>V_old+INCREMENT_SPEED){
-			if ((V_old<(Vhigh+Vset)/2)){
-				Vset=V_old+(int)(INCREMENT_SPEED/2); //Temps de montée max 100ms//évite de glisser
-			}else{
-				Vset=V_old+INCREMENT_SPEED;
-			}
+	Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh;		
+	if (enable_brake){
+		Vset=-(abs(Vset-V_old))-Vslow;
+	}else if (Vset>V_old+INCREMENT_SPEED){
+		if ((V_old<(Vhigh+Vset)/2)){
+			Vset=V_old+(int)(INCREMENT_SPEED/DIV_1_SPEED); //Temps de montée max 100ms//évite de glisser
+		}else{
+			Vset=V_old+INCREMENT_SPEED;
 		}
+	}
+	if (state_turn_car==3){
+		Vset=Vslow;
 	}
 }
 
@@ -190,11 +194,12 @@ void Car::processESP(){
 			if (mode_speed!=0){
 				//On regarde si on est en ligne droite ou en virage
 
-				if (state_turn_car==0){
+				/*if (state_turn_car==0){
 					Vset=(TURN_SPEED+Vset)/2;		
-				}else{
+				}else{*/
+					enable_brake=true;
 					Vset=Vslow;
-				}
+				//}
 			}
 			
 			//Debug
@@ -243,14 +248,17 @@ void Car::Detect_state(void){
 		//Soft turn
 		state_turn_car=1;
 	}
+	if ((cam.number_edges)==0){
+		state_turn_car=3;
+	}
 	
 	//Amplifie the turn in Calculate_angle_wheels
 	if ((old==state_turn_car && state_turn_car==2) || (cam.BlackLineRight==128 || cam.BlackLineLeft==-1)){
 		if (!(enable_ampli_turn)){
 			DEBUG_BLUE_ON;
 			enable_ampli_turn=true;
-			uart_write("amp_turn !",10);
-			uart_write("\n\r",2);
+			//uart_write("amp_turn !",10);
+			//uart_write("\n\r",2);
 		}
 	}else if (state_turn_car==0 || Vset>TURN_SPEED){
 		DEBUG_BLUE_OFF;
@@ -267,7 +275,7 @@ void Car::Detect_state(void){
 	
 	//######## Test finish ############
 	if (enable_finish){
-		if ((cam.number_edges)>=4 && state_turn_car!=2){//Nb de bandes noires (+1 pour chaque côté)
+		if ((cam.number_edges)==4 && state_turn_car!=2){//Nb de bandes noires (+1 pour chaque côté)
 			finish=true;
 			uart_write("Fin !",5);
 		}
@@ -277,20 +285,27 @@ void Car::Detect_state(void){
 //Actualise le déplacement grâce à l'objet myMovement
 //La vitesse peut être négative (si freiange) ou positive, tout est paramétré dans Movement.cpp
 //Arg : finish :true/false <= màj dans Detect_state()
+
 void Car::Set_deplacement(void){
-	
 	//########### On actualise le déplacement #################
-	if (finish){
+	if (stop){
+		C_finish=0;
 		finish=false;
 		Vset=0;
-		mode_speed=0;
 		servo_angle=0;
 		delta_speed=0;
 		myMovement.set(Vset,servo_angle);
 		myMovement.setDiff(Vset,delta_speed);
 	}else{
-		myMovement.set(Vset,servo_angle);
-		myMovement.setDiff(Vset,delta_speed);
+		if (finish){
+			C_finish++;
+			if (C_finish>CST_FINISH_TIME){
+				stop=true;
+			}
+		}else{
+			myMovement.set(Vset,servo_angle);
+			myMovement.setDiff(Vset,delta_speed);
+		}
 	}
 }
 
@@ -301,28 +316,23 @@ void Car::Car_handler(void){
 	c++;
 	c_ESP++;
 	if(c>500){
-		c=0;
-		//FLAG_SEND_IMG=true;		
+		c=0;		
 	}
 	//
 	Process_data();//Acquisition des données
 	//On regarde si on est en ligne droite ou non
 	Detect_state();
-	if (!(finish)){
+	if (!(stop)){
 		//On met à jour les param de la voiture
-		Caculate_angle_wheel();
-		//if Vset=0 => stop
-		if (Vset!=0){	
-			//We calculate the speed
-			Set_speed();
-			//ESP at the end because it changes Vset
-			processESP();
-			//Calcul du diff en fonction
-			Set_diff_speed();
-			
-		}
+		Caculate_angle_wheel();	
+		//We calculate the speed
+		Set_speed();
+		//ESP at the end because it changes Vset
+		processESP();
+		//Calcul du diff en fonction
+		Set_diff_speed();
 	}else{
-		FLAG_SEND_IMG=true;
+		//FLAG_SEND_IMG=true;
 	}
 	//Debug
 	Aff_debug();
@@ -404,23 +414,18 @@ void Car::Aff_debug(void){
 		uart_write("\n\r",2);
 		uart_write("\n\r",2);
 	}
-	if (Vset<0){
-		/*uart_write("Vold : ",7);
-		uart_writeNb(V_old);
-		uart_write(" / ",3);*/
+	/*if (Vset<0){
 		uart_write("Brake ! ",8);
 		uart_write("Vset : ",7);
 		uart_writeNb(Vset);
 		uart_write(" / ",3);
 		uart_write("Vold : ",7);
 		uart_writeNb(V_old);
-		/*uart_write("b : ",4);
-		uart_writeNb(Vhigh);
 		uart_write(" / ",3);
-		uart_write("Vset : ",6);
-		uart_writeNb((int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh);*/
+		uart_write("V_mes : ",7);
+		uart_writeNb(V_mes);
 		uart_write("\r\n",2);
-	}
+	}*/
 	FLAG_SEND_IMG=false;
 }
 
@@ -470,10 +475,18 @@ void Car::Car_debug(void){
 					uart_write("\r\n",2);
 					break;
 				case ' ':	//emergency stop
-					finish=true;
-					uart_write("Stop !",6);
+					stop=1;
+					uart_write("Arret!",6);
+					uart_write("\r\n",2);
 					n=0;
-					Vset=0;
+					break;
+				case 13:	//GO! touche entrée
+					stop=0;
+					uart_write("Demarre!  ",10);
+					Aff_debug_init();
+					uart_write("Vset : ",7);
+					uart_writeNb(Vset);
+					n=0;
 					break;
 
 				case '-':	//decrement speed
@@ -528,6 +541,33 @@ void Car::Car_debug(void){
 					break;
 				}
 			}
+}
+
+void Car::Aff_debug_init(void){
+	uart_write("Vset : ",7);
+	uart_writeNb(Vset);
+	uart_write(" / ",3);
+	
+	uart_write("Vhigh : ",7);
+	uart_writeNb(Vhigh);
+	uart_write(" / ",3);
+	
+	uart_write("Vslow : ",7);
+	uart_writeNb(Vslow);
+	uart_write("\r\n",2);
+	
+	if(mode_speed==0){
+		uart_write("speed_mano\n\r",12);
+		
+	}else if(mode_speed==1){
+		uart_write("speed_auto\n\r",12);
+	}else{
+		uart_write("speed_auto_incr\n\r",17);		
+	}
+
+	uart_write("EN_finish=",10);
+	uart_writeNb(enable_finish);
+	uart_write("\r\n",2);
 }
 
 //########### others ###############

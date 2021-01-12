@@ -8,7 +8,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 
-#define Plausibily_check 30 //For Roadmiddle
+#define Plausibily_check 40 //For Roadmiddle
 
 #define CAM_DELAY				asm ("nop")				// minimal delay time
 #define	CAM_SI_HIGH				GPIOB_PDOR |= (1<<8)	// SI on PTB8
@@ -21,7 +21,7 @@
 #define THRESHOLD_classic			110			// standard threshold : used in the basic image processing function
 
 //Mode de détection des lignes
-#define functionning_mode			1			// operating mode: from 1 to 3: algorithm more and more precise but heavy
+#define functionning_mode			1			// operating mode: from 1 to 2
 
 
 #define CST_RECAL_T 200
