@@ -152,9 +152,8 @@ void Car::Caculate_angle_wheel(void){
 		}
 		old_servo_angle=servo_angle;
 		//PI Approx bilinéaire
-
 		servo_angle=servo_angle+(float)aux_diff*K_camdiff+(float)cam.diff_old*K_camdiffold;
-
+		
 //##################### Changement valeurs  ##########################
 		if(servo_angle<-MAX_ANGLE)servo_angle=(-MAX_ANGLE);
 		if(servo_angle>MAX_ANGLE)servo_angle=MAX_ANGLE;
@@ -169,8 +168,6 @@ void Car::processESP(){
 		//############## ESP #################
 		if (abs (servo_angle)>(MAX_ANGLE/COEFF_ANGLE_ESP) && abs(old_servo_angle)>(MAX_ANGLE/COEFF_ANGLE_ESP) && sng(servo_angle)!=sng(old_servo_angle)){
 			ESP++;
-			uart_write("ESP+",4);
-			uart_write("\r\n",2);
 		}
 		
 		//On regarde si on a détecté une oscillation/ glissement sur T=10*10ms
@@ -181,6 +178,7 @@ void Car::processESP(){
 				detect_ESP=false;
 				old_ESP=0;
 			}else if (ESP>LIMIT_ESP){
+				uart_write("ESP!",4);
 				detect_ESP=true;
 				uart_write("ESP !",5);
 				uart_write("\r\n",2);
@@ -191,21 +189,21 @@ void Car::processESP(){
 		//Action en fonction
 		if (detect_ESP){
 			enable_ampli_turn=false;
-			if (mode_speed!=0){
+			/*if (mode_speed!=0){
 				//On regarde si on est en ligne droite ou en virage
 
-				/*if (state_turn_car==0){
+				if (state_turn_car==0){
 					Vset=(TURN_SPEED+Vset)/2;		
 				}else{*/
 					enable_brake=true;
 					Vset=Vslow;
-				//}
-			}
+				/*}
+			}*/
 			
 			//Debug
-			uart_write("ESP! =",6);
+			/*uart_write("ESP! =",6);
 			uart_writeNb(c_ESP);
-			uart_write("\r\n",2);
+			uart_write("\r\n",2);*/
 			
 			ESP=0;
 			old_ESP=0;

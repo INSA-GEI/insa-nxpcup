@@ -13,19 +13,19 @@
 #define MAX_CAM_DIFF 20
 
 //####################### Wheels #################################
-#define K 								1.5 //entre 1.3 et 1.8 //P of the PID
-#define Ki								0.8 //entre K/2 et 1.5 max	 //I of the PID
+#define K 								1.6 //entre 1.3 et 1.8 //P of the PID
+#define Ki								0.9 //entre K/2 et 1.5 max	 //I of the PID
 
 #define AMPLIFIE_TURN_1 0 //Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
-#define AMPLIFIE_TURN_2 5 //Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff)
+#define AMPLIFIE_TURN_2 0 //Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff)
 
 //######### ESP ####################################
-#define LIMIT_ESP 3 //between 2 and 10
+#define LIMIT_ESP 10 //between 2 and 10
 #define TIME_ACTIVE_ESP	50 //+10)*10ms
 #define COEFF_ANGLE_ESP 6.0 //Angle = Max_angle/coeff_angle_esp
 
 //#################### SPEED #############################
-#define VSLOW 1000
+#define VSLOW 1100
 #define VHIGH 3000
 //#define VSET 0
 #define T_BRAKE 200 //Threshold before braking
