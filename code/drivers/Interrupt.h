@@ -10,9 +10,11 @@
 
 #include <MKL25Z4.h>
 
-#define SYS_RELOAD 479999			//48000 fois le clock du processeur => 1kHz
+#define F_CPU 48000000.0 				//Fréquence CPU 48MHz
 
-void Timer_init (void);
+//#define SYS_RELOAD 479999			//48000 fois le clock du processeur => 1kHz
+
+void Timer_init (float Te);
 
 
 #endif /* INTERRUPT_H_ */

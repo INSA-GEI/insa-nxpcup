@@ -4,6 +4,7 @@
 /* RIO 2020-2021*/
 #include "Movement.h"
 #include "ImageProcessing.h"
+#include "Interrupt.h"
 
 #define CST_FINISH_TIME 100 //100*10ms=>1s
 
@@ -34,8 +35,6 @@
 #define TURN_SPEED 1300 //Vitesse seuil dans les virages
 
 
-
-#define Te 0.01 //sample time 10ms handler servos /!\ Te_s (sample time for rear motors is in Movement.h)
 #define DEG_TO_RAD 0.0175 //conversion Degré vers radian
 
 #define CARRE(x) ((x)*(x))
@@ -78,7 +77,7 @@ public:
 	
 	
 	//############# functions #########################
-		void init(void);
+		void init(float Te);
 		
 		//Tente de détecter des oscillations dans les lignes droites dû au patinage des roues
 		//return : modifie Vset

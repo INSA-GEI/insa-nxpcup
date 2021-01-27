@@ -30,7 +30,7 @@ bool FLAG_SEND_IMG=false;
 
 //################## Functions ####################
 
-void Car::init(void){
+void Car::init(float Te){
 	myMovement.init();
 	cam.init();
 	myMovement.set(Vset,0.0);

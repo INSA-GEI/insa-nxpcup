@@ -7,6 +7,8 @@
 int z=0;
 Car car;
 
+#define Te 0.01 //sample time 10ms Car_handler/!\ Te_s (sample time for rear motors is in Movement.h)
+
 //void delay_time(int number);
 
 int main(){
@@ -14,7 +16,8 @@ int main(){
 	debug_init();
 	debug_displaySendNb((GPIOE_PDIR & 0x003C)>>2);
 	DEBUG_CAM_LED_OFF;
-	car.init();
+	Timer_init (Te);
+	car.init(Te);
 	
 	for(;;) {
 		car.Car_debug();
@@ -36,6 +39,11 @@ void FTM2_IRQHandler() {//encoder interrupt 6kHz
 	
 	car.myMovement.encoder.interruptHandler();
 	car.myMovement.regulate(); //Applique la PWM correspond à la vitesse aux moteurs
+}
+
+//
+void SysTick_Handler(){
+	
 }
 
 
