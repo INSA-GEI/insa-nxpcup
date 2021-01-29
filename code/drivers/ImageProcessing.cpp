@@ -40,7 +40,7 @@ void Img_Proc::init(){
 	BlackLineRight=127;
 	BlackLineLeft=0;
 	number_edges=0;
-	threshold=150;
+	threshold=THRESHOLD_classic;
 
 }
 

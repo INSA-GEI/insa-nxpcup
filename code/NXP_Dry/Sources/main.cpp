@@ -43,7 +43,9 @@ void FTM2_IRQHandler() {//encoder interrupt 6kHz
 
 //
 void SysTick_Handler(){
-	Process_data();
+	car.Car_handler(); //Define Vset and servo_angle.
+	
+	SYST_CSR &=0xFFFEFFFF; //Clear IT
 }
 
 

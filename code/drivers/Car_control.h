@@ -65,6 +65,12 @@ public:
 		
 		//choix des options de Putty
 		void Car_debug(void); //Commande Putty
+		
+		//Debug
+		int mode_debug;
+		void Set_debug_mode(int i); //i=>0 : Cam+ange_servo  //i=>1 : Cam[i] //i=>2 : 
+		void Aff_debug(void);
+		void Aff_debug_init(void);
 
 private:
 		//###### var #####
@@ -114,11 +120,7 @@ private:
 		int state_turn_car; //2=>hard turn //1 soft turn //0=>strait line
 		void Detect_state(void); //Detect the turns //Detect slip (ie ESP) only in strait lines
 		
-		//Debug
-		int mode_debug;
-		void Set_debug_mode(int i); //i=>0 : Cam+ange_servo  //i=>1 : Cam[i] //i=>2 : 
-		void Aff_debug(void);
-		void Aff_debug_init(void);
+		
 };
 
 int sng(int a);
