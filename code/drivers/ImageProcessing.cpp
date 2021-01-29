@@ -295,15 +295,6 @@ void Img_Proc::calculateMiddle (void){
 	// Find middle of the road, 64 for strait road
 	RoadMiddle = (BlackLineLeft + BlackLineRight)/2;
 
-	
-	// if no line on left and right side
-	if (number_edges == 0){
-		RoadMiddle = RoadMiddle_old;
-	}
-	if ((BlackLineRight > 127) && (BlackLineLeft < 0)){
-		RoadMiddle = RoadMiddle_old;		// we continue on the same trajectory as before 
-	}
-
 	// Store old value
 	diff_old = diff;							// store old difference
 	

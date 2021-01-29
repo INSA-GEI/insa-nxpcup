@@ -8,7 +8,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 
-#define Plausibily_check 30 //For Roadmiddle
+#define Plausibily_check 40 //For Roadmiddle
 
 #define CAM_DELAY				asm ("nop")				// minimal delay time
 #define	CAM_SI_HIGH				GPIOB_PDOR |= (1<<8)	// SI on PTB8
@@ -20,14 +20,12 @@
 // Define thresholds for Camera Black Line recognition
 #define THRESHOLD_classic			110			// standard threshold : used in the basic image processing function
 
-<<<<<<< HEAD
-#define Threshold_White				160
 
-#define THRESHOLD_classic			120			// standard threshold : used in the basic image processing function
-=======
 //Mode de détection des lignes
+
 #define functionning_mode			1			// operating mode: from 1 to 3: algorithm more and more precise but heavy
->>>>>>> int_team_1
+
+#define functionning_mode			1			// operating mode: from 1 to 2
 
 
 #define CST_RECAL_T 200
@@ -43,21 +41,12 @@ public:
 	int diff_old;
 	int threshold;				// actual position of the servo relative to middle
 	
-<<<<<<< HEAD
-	uint16_t RoadMiddle;						// calculated middle of the road
-	uint16_t RoadMiddle_old;					// save the last "Middle of the road" position
-	uint16_t BlackLineRight;					// position of the black line on the right side (127)
-	uint16_t BlackLineLeft;					// position of the black line on the left side
-	uint16_t number_edges;
-	
-	uint16_t number_gradient;			//Ajout Maty
-=======
+
 	int RoadMiddle;						// calculated middle of the road
 	int RoadMiddle_old;					// save the last "Middle of the road" position
 	int BlackLineRight;					// position of the black line on the right side (127)
 	int BlackLineLeft;					// position of the black line on the left side
 	int number_edges;
->>>>>>> int_team_1
 
 	void init(void);					//initializes the camera
 	void capture(void);					//retrieves data from the camera
@@ -75,14 +64,12 @@ public:
 	
 private:
 	int validate_gradient;				// used in image processing to validate some parameters
-<<<<<<< HEAD
-		
+
 	int CompareData;
 	
 	float gaussian1;					// gaussian filters used in gaussian differences method
 	float gaussian2;
-=======
->>>>>>> int_team_1
+
 };
 
 /* PROCESS
