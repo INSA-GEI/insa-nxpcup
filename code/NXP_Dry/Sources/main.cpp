@@ -29,7 +29,7 @@ int main(){
 //############# handlers ##############
 //100Hz
 void FTM1_IRQHandler() {
-	car.Car_handler(); //Define Vset and servo_angle.
+	//car.Car_handler(); //Define Vset and servo_angle.
 	TPM1_SC |= TPM_SC_TOF_MASK;//Clear IT
 }
 
@@ -43,7 +43,7 @@ void FTM2_IRQHandler() {//encoder interrupt 6kHz
 
 //
 void SysTick_Handler(){
-	
+	Process_data();
 }
 
 

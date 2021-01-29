@@ -43,41 +43,13 @@ class Car{
 public:
 	//Objects
 	Movement myMovement;
-	Img_Proc cam;
-	
-	//###### var #####
-	bool enable_finish;
-	bool finish;//indicates if we are at the end of the circuit
-	
-	bool stop;
-	
-	//############ angle wheels ###########
-	float servo_angle;
-	bool enable_ampli_turn;
-	
-	//######### Speed ###############
-		//Speed of the car
-		int Vset;//=0
-		int V_old;
-		int V_mes;
-		//Speed in turn
-		int Vslow;//=500
-		//Speed in strait line
-		int Vhigh;//=1500
-		bool enable_brake;
-		
-		float delta_speed;//Value for the rear differential
-		
-		int mode_speed;//Mode 0=>speed manual //1=> speed auto
-	
-	//########## ESP #############
-		int ESP;
-		bool detect_ESP;
-		bool active_ESP;
-	
+	Img_Proc cam;	
 	
 	//############# functions #########################
 		void init(float Te);
+		
+		//Process acquisiton des données
+		void Process_data(void);
 		
 		//Tente de détecter des oscillations dans les lignes droites dû au patinage des roues
 		//return : modifie Vset
@@ -95,6 +67,35 @@ public:
 		void Car_debug(void); //Commande Putty
 
 private:
+		//###### var #####
+			bool enable_finish;
+			bool finish;//indicates if we are at the end of the circuit
+			
+			bool stop;
+			
+			//############ angle wheels ###########
+			float servo_angle;
+			bool enable_ampli_turn;
+			
+			//######### Speed ###############
+				//Speed of the car
+				int Vset;//=0
+				int V_old;
+				int V_mes;
+				//Speed in turn
+				int Vslow;//=500
+				//Speed in strait line
+				int Vhigh;//=1500
+				bool enable_brake;
+				
+				float delta_speed;//Value for the rear differential
+				
+				int mode_speed;//Mode 0=>speed manual //1=> speed auto
+			
+			//########## ESP #############
+				int ESP;
+				bool detect_ESP;
+				bool active_ESP;
 	
 	//########### wheels angle #############
 		//Calcul la commande des roues et opère un PI avant de stocker la valeur dans servo_angle
@@ -112,7 +113,6 @@ private:
 	//######### State of the car ###########
 		int state_turn_car; //2=>hard turn //1 soft turn //0=>strait line
 		void Detect_state(void); //Detect the turns //Detect slip (ie ESP) only in strait lines
-		void Process_data(void);
 		
 		//Debug
 		int mode_debug;
