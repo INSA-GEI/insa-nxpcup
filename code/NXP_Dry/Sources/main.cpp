@@ -7,14 +7,33 @@
 int z=0;
 Car car;
 
-#define Te 0.01 //sample time 10ms Car_handler/!\ Te_s (sample time for rear motors is in Movement.h)
+#define Te 0.002 //sample time 10ms Car_handler/!\ Te_s (sample time for rear motors is in Movement.h)
 
+int MODE=-1;
 //void delay_time(int number);
 
 int main(){
 	//int p=0; //???? pour l'affichage
 	debug_init();
-	debug_displaySendNb((GPIOE_PDIR & 0x003C)>>2);
+	//
+	//debug_displaySendNb((GPIOE_PDIR & 0x003C)>>2);
+	
+
+
+	/**A Mettre dans le main**/
+	//Mode gestion :
+	        //The mode number chosen on the display is given by the next function
+	        //debug_getRotarySW();
+	        MODE=((GPIOE_PDIR & 0x003C)>>2);
+	        
+	        if (MODE>3 && MODE==0) {
+	        	debug_displaySendNb(16);
+	        	MODE=-1;
+	        } //affichage de la barre du milieu
+	        else {
+	            debug_displaySendNb(MODE);
+	        }
+
 	DEBUG_CAM_LED_OFF;
 	Timer_init (Te);
 	car.init(Te);

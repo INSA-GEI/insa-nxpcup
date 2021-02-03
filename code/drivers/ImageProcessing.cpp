@@ -51,7 +51,7 @@ void Img_Proc::capture(void){
 		CAM_CLK_HIGH;
 		CAM_DELAY;
 		CAM_SI_LOW;
-		CAM_DELAY;
+		//CAM_DELAY;
 		// inputs data from camera (first pixel)
 		ADC0_SC1A  =  11;							// set ADC0 channel 11
 		while((ADC0_SC1A & ADC_SC1_COCO_MASK) == 0);// wait until ADC is ready
@@ -59,33 +59,20 @@ void Img_Proc::capture(void){
 		CAM_CLK_LOW;
 
 		for(i=1;i<128;i++){
-			CAM_DELAY;
 			CAM_CLK_HIGH;
 			 // inputs data from camera (one pixel each time through loop)
 			ADC0_SC1A  =  11;							// set ADC0 channel 11
 			while((ADC0_SC1A & ADC_SC1_COCO_MASK) == 0);// wait until ADC is ready
-			ImageData[i] = ADC0_RA;						// return value
 			CAM_CLK_LOW;
+			ImageData[i] = ADC0_RA;						// return value
 		}
 	
-		CAM_DELAY;
+		/*CAM_DELAY;
 		CAM_DELAY;
 		CAM_CLK_HIGH;
 		CAM_DELAY;
 		CAM_DELAY;
-		CAM_CLK_LOW;
-		/*
-		//generating dummy data here
-		for(i=0;i<128;i++){
-			int data;
-			if((i>32 && i<48) || (i>80 && i<96)){
-				data=150+rand()%10;
-			}else{
-				data=50+rand()%10;
-			}
-			ImageData[i]=data;
-		}
-		*/
+		CAM_CLK_LOW;*/
 }
 
 void Img_Proc::differentiate(void){
@@ -96,6 +83,13 @@ void Img_Proc::differentiate(void){
 			
 			Imageflou[0] = ImageData[0];
 			Imageflou[127] = ImageData[127];*/
+			/*uart_write("IMG=",4);
+			uart_writeNb(ImageData[0]);
+			uart_write(";",1);
+			uart_writeNb(ImageData[64]);
+			uart_write(";",1);
+			uart_writeNb(ImageData[127]);
+			uart_write("\n\r",2);*/
 			
 			if (c_t<CST_RECAL_T){
 				//############### à enlever
@@ -121,13 +115,13 @@ void Img_Proc::differentiate(void){
 				}
 			}
 		}
-		if (functionning_mode == 2){
+		/*if (functionning_mode == 2){
 			for(i=1;i<=126;i++){							// using a gradient by direct differences (application of the filter : [-1 , 0 , 1] -> P(x) = -1*P(x-1)+0*P(x)+1*P(x+1))
 				ImageDataDifference[i] = abs (-ImageData[i-1] + ImageData[i+1]);
 			}
 			ImageDataDifference[0] = ImageData[0];	// first value doesnt have "gradient" for this method
 			ImageDataDifference[127] = ImageData[127];	// last value doesnt have "gradient" for this method
-		}
+		}*/
 	}	/*	End of function "Fill_ImageDataDifference"	*/
 
 void Img_Proc::process (void){
@@ -137,7 +131,7 @@ void Img_Proc::process (void){
 			BlackLineLeft = -1;
 			int i=1;
 			while (BlackLineLeft==-1 && i<127){
-				if (ImageDataDifference[i]==1 && ImageDataDifference[i-1]==0){
+				if (ImageData[i]>=threshold && ImageData[i-1]<threshold){
 					BlackLineLeft=i;
 					number_edges++;
 				}else{
@@ -146,22 +140,23 @@ void Img_Proc::process (void){
 			}
 			i=126;
 			while (BlackLineRight==128 && (i>0 && i>BlackLineLeft)){
-				if (ImageDataDifference[i]==1 && ImageDataDifference[i+1]==0){
+				if (ImageData[i]>=threshold && ImageData[i+1]<threshold){
 					BlackLineRight=i;
 					number_edges++;
 				}else{
 					i--;
 				}
 			}
+			
 			//Nb transistions
 			i=BlackLineLeft+1+TAILLE_BANDE;
 			bool ok=false;
 			while (i<BlackLineRight-1-TAILLE_BANDE){
-				if (ImageDataDifference[i-1]!=ImageDataDifference[i]){
+				if (ImageData[i]<threshold){
 					ok=true;
 					//On regarde les TAILLE_BANDE prochains pixels 
 					for (int j=i;j<=(i+TAILLE_BANDE);j++){
-						if (ImageDataDifference[j]==1){
+						if (ImageData[j]>=threshold){
 							ok=false;
 						}
 					}

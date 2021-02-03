@@ -14,7 +14,7 @@
 #define MAX_CAM_DIFF 20
 
 //####################### Wheels #################################
-#define K 								1.6 //entre 1.3 et 1.8 //P of the PID
+#define K 								1.8 //entre 1.3 et 1.8 //P of the PID
 #define Ki								0.9 //entre K/2 et 1.5 max	 //I of the PID
 
 #define AMPLIFIE_TURN_1 0 //Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
