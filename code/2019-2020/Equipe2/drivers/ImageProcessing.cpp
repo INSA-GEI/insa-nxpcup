@@ -97,8 +97,7 @@ void Img_Proc::differentiate(void){
 			Imageflou[0] = ImageData[0];
 			Imageflou[127] = ImageData[127];*/
 			
-			if (c_t<CST_RECAL_T){
-				//############### à enlever
+			/*if (c_t<CST_RECAL_T){
 				DEBUG_GREEN_ON;
 				c_t=0;
 				threshold=0;
@@ -108,9 +107,8 @@ void Img_Proc::differentiate(void){
 				threshold=threshold/128;
 				if (threshold<THRESHOLD_classic)threshold=THRESHOLD_classic;
 			}else if (c_t>CST_RECAL_T/2){
-				//############### à enlever
 				DEBUG_GREEN_OFF;
-			}
+			}*/
 			
 			//Test blanc ou noir
 			for(int i=0;i<=127;i++){
@@ -122,11 +120,13 @@ void Img_Proc::differentiate(void){
 			}
 		}
 		if (functionning_mode == 2){
-			for(i=1;i<=126;i++){							// using a gradient by direct differences (application of the filter : [-1 , 0 , 1] -> P(x) = -1*P(x-1)+0*P(x)+1*P(x+1))
-				ImageDataDifference[i] = abs (-ImageData[i-1] + ImageData[i+1]);
+			for(i=2;i<=125;i++){							// using a gradient by direct differences (application of the filter : [-2, -1 ,0 ,1 , 2] -> P(x) = -2*P(x-2)-1*P(x-1)+0*P(x)+1*P(x+1)+2*P(x-2)
+				ImageDataDifference[i] = abs (-2*ImageData[i-2] - ImageData[i-1] + ImageData[i+1] + 2*ImageData[i+2]);
 			}
-			ImageDataDifference[0] = ImageData[0];	// first value doesnt have "gradient" for this method
-			ImageDataDifference[127] = ImageData[127];	// last value doesnt have "gradient" for this method
+			ImageDataDifference[0] = ImageData[0];	// first value does not have "gradient" for this method
+			ImageDataDifference[1] = ImageData[1];
+			ImageDataDifference[126] = ImageData[126];
+			ImageDataDifference[127] = ImageData[127];	// last value does not have "gradient" for this method
 		}
 	}	/*	End of function "Fill_ImageDataDifference"	*/
 

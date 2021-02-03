@@ -21,7 +21,7 @@
 #define THRESHOLD_classic			110			// standard threshold : used in the basic image processing function
 
 //Mode de détection des lignes
-#define functionning_mode			1			// operating mode: from 1 to 2
+#define functionning_mode			(GPIOE_PDIR & 0x003C)>>2			// operating mode: from 1 to 2
 
 
 #define CST_RECAL_T 200

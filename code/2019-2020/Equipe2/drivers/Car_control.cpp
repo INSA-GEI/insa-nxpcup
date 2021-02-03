@@ -252,7 +252,7 @@ void Car::Detect_state(void){
 		state_turn_car=3;
 	}
 	
-	//Amplifie the turn in Calculate_angle_wheels
+	//Amplify the turn in Calculate_angle_wheels
 	if ((old==state_turn_car && state_turn_car==2) || (cam.BlackLineRight==128 || cam.BlackLineLeft==-1)){
 		if (!(enable_ampli_turn)){
 			DEBUG_BLUE_ON;
@@ -484,31 +484,28 @@ void Car::Car_debug(void){
 				case ' ':	//Start & Stop
 					if (stop == 0) {
 						stop=1;
-						uart_write("Arret!",6);
-						uart_write("\r\n",2);
+						uart_write("Arret!\r\n",10);
 						n=0;
 					}
 					else {
 						stop=0;
-						uart_write("Demarre!  ",10);
-						uart_write("\r\n",2);
+						uart_write("Demarre!\r\n",12);
+						Vset=500;
 						Aff_debug_init();
-						uart_write("Vset : ",7);
-						uart_writeNb(Vset);
 						n=0;
 					}
 					break;
 				case 'x':	//Change speed mode
 					if(mode_speed==0){
 						mode_speed=1;
-						uart_write("Speed auto\n\r",12);
+						uart_write("Speed auto\r\n",12);
 					}else if(mode_speed==1){
 						mode_speed=2;
-						uart_write("Speed auto incr\n\r",17);
+						uart_write("Speed auto incr\r\n",17);
 					}else{
 						mode_speed=0;
 						Vset=Vslow;
-						uart_write("Speed manu\n\r",12);
+						uart_write("Speed manu\r\n",12);
 					}
 					break;
 				/*case 'e':
@@ -546,7 +543,7 @@ void Car::Car_debug(void){
 void Car::Aff_debug_init(void){
 	uart_write("Vset : ",7);
 	uart_writeNb(Vset);
-	uart_write("\r\n",2);
+	uart_write("\r\n",4);
 	
 	uart_write("Vhigh : ",7);
 	uart_writeNb(Vhigh);
@@ -557,11 +554,11 @@ void Car::Aff_debug_init(void){
 	uart_write("\r\n",4);
 	
 	if(mode_speed==0){
-		uart_write("Speed manu\n\r",12);
+		uart_write("Speed manu\r\n",12);
 	}else if(mode_speed==1){
-		uart_write("Speed auto\n\r",12);
+		uart_write("Speed auto\r\n",12);
 	}else{
-		uart_write("Speed auto incr\n\r",17);		
+		uart_write("Speed auto incr\r\n",17);		
 	}
 
 	//uart_write("EN_finish=",10);
