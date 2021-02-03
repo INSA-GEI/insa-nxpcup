@@ -299,6 +299,13 @@ void BatteryVoltage(void) {
 	uart_write("Battery level : ", 16);
 	uart_writeNb(BattMeasurement);
 	uart_write("mV.\r\n", 5);
+	uart_write("Mode : ", 7);
+	uart_writeNb((GPIOE_PDIR & 0x003C)>>2);
+	uart_write("\r\n", 2);
+	if (BattMeasurement<7300){
+		uart_write("Batterie faible!\r\n", 18);
+	}
+	
 	ADC0_SC1A  =  11;	//For the camera
 }
 

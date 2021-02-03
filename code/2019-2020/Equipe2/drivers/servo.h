@@ -12,16 +12,16 @@
 
 
 #define SERVO_MASK_TPM1_PRESCALER 3	//3=(11)2 => clock divided by 8 (see datasheet p553)
-#define SERVO_TPM1_ARR 60000			//Value of the auto-reload of the TIMER
+#define SERVO_TPM1_ARR 60000 //60000			//Value of the auto-reload of the TIMER
 
-#define SERVO_SET_CHANNEL_0 0x28 		//Set these bits to configure channel 0 on "Edge-aligned PWM" with "high true pulses" configuration
+#define SERVO_SET_CHANNEL_0 0x28 	// Set these bits to configure channel 0 on "Edge-aligned PWM" with "high true pulses" configuration
 
-#define  SERVO_CENTER_POS 7454		// initial servo position (center)
-#define SERVO_HARD_LEFT 8579
-#define SERVO_HARD_RIGHT 6373
+#define SERVO_CENTER_POS 7455		// Initial servo position (center)
+#define SERVO_HARD_LEFT 8310
+#define SERVO_HARD_RIGHT 6310
 
-#define SERVO_MAX_LEFT_ANGLE -40.0
-#define SERVO_MAX_RIGHT_ANGLE 54.5
+#define SERVO_MAX_LEFT_ANGLE -22.0 //Avant -22
+#define SERVO_MAX_RIGHT_ANGLE 29.0 //Avant 29
 //Configuration of the pins/clock
 void servo_init(void);
 
