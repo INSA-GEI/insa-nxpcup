@@ -14,8 +14,10 @@
 #define MAX_CAM_DIFF 20
 
 //####################### Wheels #################################
-#define K 								1.8 //entre 1.3 et 1.8 //P of the PID
-#define Ki								0.9 //entre K/2 et 1.5 max	 //I of the PID
+#define Kp 								2.0 	//PI=1.8 //entre 1.3 et 2.0 //P of the PID
+#define Ki								0.05		//PI=0.9 //entre K/2 et 1.5 max	 //I of the PID
+#define Kd								0.2
+#define N								7.0 	//Filtre dérivée
 
 #define AMPLIFIE_TURN_1 0 //Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
 #define AMPLIFIE_TURN_2 0 //Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff)
@@ -26,11 +28,13 @@
 #define COEFF_ANGLE_ESP 6.0 //Angle = Max_angle/coeff_angle_esp
 
 //#################### SPEED #############################
+#define Te_calc_speed 	0.01 //100Hz Consigne Vset
+
 #define VSLOW 1100
-#define VHIGH 3000
-//#define VSET 0
+#define VHIGH 3500
+
 #define T_BRAKE 200 //Threshold before braking
-#define INCREMENT_SPEED 40 //Constante d'augmentation de la vitesse (évite le patinage)
+#define INCREMENT_SPEED 100 //Constante d'augmentation de la vitesse (évite le patinage)
 #define DIV_1_SPEED 3 //Divise la consigne de vitesse pour éviter le patinage sur la premiere moitié Vmes=[Vslow,Vhigh/2]
 #define TURN_SPEED 1300 //Vitesse seuil dans les virages
 

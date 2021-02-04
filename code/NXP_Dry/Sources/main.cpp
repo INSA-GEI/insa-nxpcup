@@ -13,7 +13,6 @@ int MODE=-1;
 //void delay_time(int number);
 
 int main(){
-	//int p=0; //???? pour l'affichage
 	debug_init();
 	//
 	//debug_displaySendNb((GPIOE_PDIR & 0x003C)>>2);

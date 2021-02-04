@@ -10,6 +10,7 @@ int c=0;
 int c_ESP=0;
 int old_ESP=0;
 float old_servo_angle=0.0;
+int N_calc_speed=0;
 //Wheel PI
 float K_camdiff=0.0;
 float K_camdiffold=0.0;
@@ -27,6 +28,16 @@ bool FLAG_ENABLE_LOG_SERVO=false;
 
 //############## Wheel var #################
 bool FLAG_SEND_IMG=false;
+
+//PID VAR
+float ypk=0.0;
+float yik=0.0;
+float yikold=0.0;
+float ydk=0.0;
+float ydkold=0.0;
+float Kyd=0.0;
+float Ked=0.0;
+float Kei=0.0;
 
 //################## Functions ####################
 
@@ -49,11 +60,20 @@ void Car::init(float Te){
 	enable_ampli_turn=false;
 	enable_brake=false;
 	//Coeff PI servo_angle
-	K_camdiff=(float)((2*K+Te*Ki)/2);
-	K_camdiffold=(float)((Te*Ki-2*K)/2);
+	//K_camdiff=(float)((2*Kp+Te*Ki)/2);
+	//K_camdiffold=(float)((Te*Ki-2*Kp)/2);
+	
+	Kyd=(2.0*Kd-Te*N)/(2.0*Kd+Te*N);
+	Ked=2.0*N*Kd;
+	Kei=(Te/2.0)*Ki;
+	
+	
 	
 	enable_finish=false;
 	stop=true;
+	
+	//Calcul nb itération avant le calcul de la vitesse
+	N_calc_speed=(int)(Te_calc_speed/Te)+1;
 }
 
 //############### SPEED ########################
@@ -129,6 +149,9 @@ void Car::Set_diff_speed(void){
 //##################### Wheels ###############
 //Calcul la commande des roues et opère un PI avant de stocker la valeur dans servo_angle
 void Car::Caculate_angle_wheel(void){
+	//cam.diff=ek
+	yikold=yik;
+	ydkold=ydk;
 	
 	int aux_diff=cam.diff;
 	// plausibility check
@@ -152,7 +175,12 @@ void Car::Caculate_angle_wheel(void){
 		}
 		old_servo_angle=servo_angle;
 		//PI Approx bilinéaire
-		servo_angle=servo_angle+(float)aux_diff*K_camdiff+(float)cam.diff_old*K_camdiffold;
+		//servo_angle=servo_angle+(float)aux_diff*K_camdiff+(float)cam.diff_old*K_camdiffold;
+		//PID
+		ypk=Kp*cam.diff;
+		yik=yikold+Kei*(cam.diff+cam.diff_old);
+		ydk=Kyd*ydkold+Ked*(cam.diff-cam.diff_old);
+		servo_angle=ypk+yik+ydk;
 		
 //##################### Changement valeurs  ##########################
 		if(servo_angle<-MAX_ANGLE)servo_angle=(-MAX_ANGLE);
@@ -228,7 +256,8 @@ void Car::Detect_state(void){
 	
 	//Test braking #####################################
 	if (Vset<V_old-T_BRAKE && abs(V_mes)>TURN_SPEED){
-		enable_brake=true;	
+		enable_brake=true;
+		uart_write("Brake ! ",8);
 	}else if(abs(V_mes)<TURN_SPEED){
 		enable_brake=false;
 	}
@@ -265,11 +294,11 @@ void Car::Detect_state(void){
 	
 	//Test ESP
 	//On active l'ESP
-	if (!(enable_brake)){
+	/*if (!(enable_brake)){
 		active_ESP=true;
 	}else{
 		active_ESP=false;
-	}
+	}*/
 	
 	//######## Test finish ############
 	if (enable_finish){
@@ -313,9 +342,7 @@ void Car::Car_handler(void){
 	//Debug
 	c++;
 	c_ESP++;
-	if(c>500){
-		c=0;		
-	}
+	
 	//
 	Process_data();//Acquisition des données
 	//On regarde si on est en ligne droite ou non
@@ -323,12 +350,15 @@ void Car::Car_handler(void){
 	if (!(stop)){
 		//On met à jour les param de la voiture
 		Caculate_angle_wheel();	
-		//We calculate the speed
-		Set_speed();
-		//ESP at the end because it changes Vset
-		processESP();
-		//Calcul du diff en fonction
-		Set_diff_speed();
+		if(c>N_calc_speed){
+			c=0;
+			//We calculate the speed
+			Set_speed();
+			//ESP at the end because it changes Vset
+			processESP();
+			//Calcul du diff en fonction
+			Set_diff_speed();
+		}
 	}else{
 		//FLAG_SEND_IMG=true;
 	}

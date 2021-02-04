@@ -51,7 +51,6 @@ void Img_Proc::capture(void){
 		CAM_CLK_HIGH;
 		CAM_DELAY;
 		CAM_SI_LOW;
-		//CAM_DELAY;
 		// inputs data from camera (first pixel)
 		ADC0_SC1A  =  11;							// set ADC0 channel 11
 		while((ADC0_SC1A & ADC_SC1_COCO_MASK) == 0);// wait until ADC is ready
@@ -67,12 +66,6 @@ void Img_Proc::capture(void){
 			ImageData[i] = ADC0_RA;						// return value
 		}
 	
-		/*CAM_DELAY;
-		CAM_DELAY;
-		CAM_CLK_HIGH;
-		CAM_DELAY;
-		CAM_DELAY;
-		CAM_CLK_LOW;*/
 }
 
 void Img_Proc::differentiate(void){
