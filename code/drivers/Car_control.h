@@ -16,7 +16,7 @@
 //####################### Wheels #################################
 #define Kp 								2.0 	//PI=1.8 //entre 1.3 et 2.0 //P of the PID
 #define Ki								0.05		//PI=0.9 //entre K/2 et 1.5 max	 //I of the PID
-#define Kd								0.2
+#define Kd								0.2		//Dérivée
 #define N								7.0 	//Filtre dérivée
 
 #define AMPLIFIE_TURN_1 0 //Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
