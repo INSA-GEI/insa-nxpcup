@@ -87,7 +87,7 @@ void Car::Calculate_speed(void){
 				
 	Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle_moy))+Vhigh;		
 	if (enable_brake){
-		Vset=-(abs(Vset-V_old))-Vslow;
+		Vset=-(abs(Vset-V_mes))-VBRAKE_min;
 	}else if (Vset>V_old+INCREMENT_SPEED){
 		if ((V_old<(Vhigh+Vset)/2)){
 			Vset=V_old+(int)(INCREMENT_SPEED/DIV_1_SPEED); //Temps de montée max 100ms//évite de glisser
@@ -127,16 +127,15 @@ void Car::Set_diff_speed(void){
 	//Calcul du diff
 	//We calculate the delta_speed of the rear wheels
 	//##################### Changement ############
-	if (state_turn_car==0){
+	if (enable_brake){
+		float r=LENGHT_CAR/(abs(servo_angle_moy)*DEG_TO_RAD); //r=radius of the turn
+		delta_speed=(Vset*L_ENTRAXE)/(0.6*r+L_ENTRAXE);//On l'aide à tourner
+	}else if (state_turn_car==0){
 		//Strait line
 		delta_speed=0;
-	}else if(state_turn_car==2){
-		//Hard turn => 
-		float r=LENGHT_CAR/(abs(servo_angle)*DEG_TO_RAD); //r=radius of the turn
-		delta_speed=(Vset*L_ENTRAXE)/(1.5*r+L_ENTRAXE);//On l'aide à tourner
 	}else{
 		//Soft turn
-		float r=LENGHT_CAR/(abs(servo_angle)*DEG_TO_RAD); //r=radius of the turn
+		float r=LENGHT_CAR/(abs(servo_angle_moy)*DEG_TO_RAD); //r=radius of the turn
 		delta_speed=(Vset*L_ENTRAXE)/(2.0*r+L_ENTRAXE);//théorique 
 	}
 	
