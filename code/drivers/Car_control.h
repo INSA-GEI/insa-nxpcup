@@ -15,17 +15,9 @@
 
 //####################### Wheels #################################
 #define Kp 								2.0 	//PI=1.8 //entre 1.3 et 2.0 //P of the PID
-#define Ki								0.05		//PI=0.9 //entre K/2 et 1.5 max	 //I of the PID
-#define Kd								0.2		//Dérivée
-#define N								7.0 	//Filtre dérivée
-
-#define AMPLIFIE_TURN_1 0 //Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
-#define AMPLIFIE_TURN_2 0 //Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff)
-
-//######### ESP ####################################
-#define LIMIT_ESP 10 //between 2 and 10
-#define TIME_ACTIVE_ESP	50 //+10)*10ms
-#define COEFF_ANGLE_ESP 6.0 //Angle = Max_angle/coeff_angle_esp
+#define Ki								0.1//0.05		//PI=0.9 //entre K/2 et 1.5 max	 //I of the PID
+#define Kd								0.2//0.2		//Dérivée
+#define N								10.0 	//Filtre dérivée
 
 //#################### SPEED #############################
 #define Te_calc_speed 	0.01 //100Hz Consigne Vset
@@ -34,7 +26,7 @@
 #define VHIGH 3500
 
 #define T_BRAKE 200 //Threshold before braking
-#define INCREMENT_SPEED 100 //Constante d'augmentation de la vitesse (évite le patinage)
+#define INCREMENT_SPEED 90 //Constante d'augmentation de la vitesse (évite le patinage)
 #define DIV_1_SPEED 3 //Divise la consigne de vitesse pour éviter le patinage sur la premiere moitié Vmes=[Vslow,Vhigh/2]
 #define TURN_SPEED 1300 //Vitesse seuil dans les virages
 
@@ -54,10 +46,6 @@ public:
 		
 		//Process acquisiton des données
 		void Process_data(void);
-		
-		//Tente de détecter des oscillations dans les lignes droites dû au patinage des roues
-		//return : modifie Vset
-		void processESP(void);
 		
 		//Actualise le déplacement grâce à l'objet myMovement
 		//La vitesse peut être négative (si freiange) ou positive, tout est paramétré dans Movement.cpp
@@ -85,6 +73,7 @@ private:
 			
 			//############ angle wheels ###########
 			float servo_angle;
+			float servo_angle_moy;
 			bool enable_ampli_turn;
 			
 			//######### Speed ###############

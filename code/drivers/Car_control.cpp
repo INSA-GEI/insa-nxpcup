@@ -24,7 +24,7 @@ int C_finish=0;
 
 //Debug Flag
 bool FLAG_ENABLE_LOG_IMG=false;
-bool FLAG_ENABLE_LOG_SERVO=false;
+bool FLAG_ENABLE_LOG_SERVO=true;
 
 //############## Wheel var #################
 bool FLAG_SEND_IMG=false;
@@ -46,6 +46,7 @@ void Car::init(float Te){
 	cam.init();
 	myMovement.set(Vset,0.0);
 	servo_angle=0;
+	servo_angle_moy=0.0;
 	Vset=0;
 	V_old=0;
 	Vslow=VSLOW;
@@ -84,7 +85,7 @@ void Car::Calculate_speed(void){
 	//Linear mode
 	V_old=abs(Vset);
 				
-	Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle))+Vhigh;		
+	Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle_moy))+Vhigh;		
 	if (enable_brake){
 		Vset=-(abs(Vset-V_old))-Vslow;
 	}else if (Vset>V_old+INCREMENT_SPEED){
@@ -125,7 +126,6 @@ void Car::Set_speed(void){
 void Car::Set_diff_speed(void){
 	//Calcul du diff
 	//We calculate the delta_speed of the rear wheels
-	//delta_speed=servo_angle*MOVEMENT_ENTRAXE_COEFF*Vset;
 	//##################### Changement ############
 	if (state_turn_car==0){
 		//Strait line
@@ -153,26 +153,12 @@ void Car::Caculate_angle_wheel(void){
 	yikold=yik;
 	ydkold=ydk;
 	
-	int aux_diff=cam.diff;
 	// plausibility check
 	if (abs (cam.diff - cam.diff_old) > 2*MAX_CAM_DIFF){
 		cam.diff = cam.diff_old;
 		uart_write("pb_detect !",11);
 		uart_write("\n\r",2);
 	}else{
-		if (enable_ampli_turn){
-			int aux=0;
-			if (state_turn_car==1){
-				aux=AMPLIFIE_TURN_1;
-			}else if(state_turn_car==2){
-				aux=AMPLIFIE_TURN_2;
-			}
-			if (servo_angle<0){
-				aux_diff-=aux;
-			}else{
-				aux_diff+=aux;
-			}
-		}
 		old_servo_angle=servo_angle;
 		//PI Approx bilinéaire
 		//servo_angle=servo_angle+(float)aux_diff*K_camdiff+(float)cam.diff_old*K_camdiffold;
@@ -188,56 +174,6 @@ void Car::Caculate_angle_wheel(void){
 	}
 }
 
-//############### ESP (oscillation en ligne droite) ############
-//Tente de détecter des oscillations dans les lignes droites dû au patinage des roues
-//return : modifie Vset
-void Car::processESP(){
-	if (active_ESP){
-		//############## ESP #################
-		if (abs (servo_angle)>(MAX_ANGLE/COEFF_ANGLE_ESP) && abs(old_servo_angle)>(MAX_ANGLE/COEFF_ANGLE_ESP) && sng(servo_angle)!=sng(old_servo_angle)){
-			ESP++;
-		}
-		
-		//On regarde si on a détecté une oscillation/ glissement sur T=10*10ms
-		if(c_ESP>10){
-			c_ESP=0;
-			if (ESP==old_ESP){
-				ESP=0;
-				detect_ESP=false;
-				old_ESP=0;
-			}else if (ESP>LIMIT_ESP){
-				uart_write("ESP!",4);
-				detect_ESP=true;
-				uart_write("ESP !",5);
-				uart_write("\r\n",2);
-				c_ESP=-TIME_ACTIVE_ESP;
-				old_ESP=ESP;
-			}
-		}
-		//Action en fonction
-		if (detect_ESP){
-			enable_ampli_turn=false;
-			/*if (mode_speed!=0){
-				//On regarde si on est en ligne droite ou en virage
-
-				if (state_turn_car==0){
-					Vset=(TURN_SPEED+Vset)/2;		
-				}else{*/
-					enable_brake=true;
-					Vset=Vslow;
-				/*}
-			}*/
-			
-			//Debug
-			/*uart_write("ESP! =",6);
-			uart_writeNb(c_ESP);
-			uart_write("\r\n",2);*/
-			
-			ESP=0;
-			old_ESP=0;
-		}
-	}
-}
 //############# Test Turn? strait line? Brake? ##################
 //Fait l'acquisition des données
 //return 	: 	V_mes
@@ -262,8 +198,6 @@ void Car::Detect_state(void){
 		enable_brake=false;
 	}
 	
-	int old=state_turn_car;
-	
 	//##################### Test Turn #########
 	if (abs(cam.diff)<MAX_CAM_DIFF/3){
 		//Strait line
@@ -278,27 +212,6 @@ void Car::Detect_state(void){
 	if ((cam.number_edges)==0){
 		state_turn_car=3;
 	}
-	
-	//Amplifie the turn in Calculate_angle_wheels
-	if ((old==state_turn_car && state_turn_car==2) || (cam.BlackLineRight==128 || cam.BlackLineLeft==-1)){
-		if (!(enable_ampli_turn)){
-			DEBUG_BLUE_ON;
-			enable_ampli_turn=true;
-			//uart_write("amp_turn !",10);
-			//uart_write("\n\r",2);
-		}
-	}else if (state_turn_car==0 || Vset>TURN_SPEED){
-		DEBUG_BLUE_OFF;
-		enable_ampli_turn=false;
-	}
-	
-	//Test ESP
-	//On active l'ESP
-	/*if (!(enable_brake)){
-		active_ESP=true;
-	}else{
-		active_ESP=false;
-	}*/
 	
 	//######## Test finish ############
 	if (enable_finish){
@@ -328,6 +241,9 @@ void Car::Set_deplacement(void){
 			C_finish++;
 			if (C_finish>CST_FINISH_TIME){
 				stop=true;
+			}else{
+				myMovement.set(Vset,servo_angle);
+				myMovement.setDiff(Vset,delta_speed);
 			}
 		}else{
 			myMovement.set(Vset,servo_angle);
@@ -349,15 +265,16 @@ void Car::Car_handler(void){
 	Detect_state();
 	if (!(stop)){
 		//On met à jour les param de la voiture
-		Caculate_angle_wheel();	
+		Caculate_angle_wheel();
+		servo_angle_moy+=servo_angle;
 		if(c>N_calc_speed){
 			c=0;
+			servo_angle_moy=servo_angle_moy/N_calc_speed;
 			//We calculate the speed
 			Set_speed();
-			//ESP at the end because it changes Vset
-			processESP();
 			//Calcul du diff en fonction
 			Set_diff_speed();
+			servo_angle_moy=0;
 		}
 	}else{
 		//FLAG_SEND_IMG=true;
@@ -442,18 +359,7 @@ void Car::Aff_debug(void){
 		uart_write("\n\r",2);
 		uart_write("\n\r",2);
 	}
-	/*if (Vset<0){
-		uart_write("Brake ! ",8);
-		uart_write("Vset : ",7);
-		uart_writeNb(Vset);
-		uart_write(" / ",3);
-		uart_write("Vold : ",7);
-		uart_writeNb(V_old);
-		uart_write(" / ",3);
-		uart_write("V_mes : ",7);
-		uart_writeNb(V_mes);
-		uart_write("\r\n",2);
-	}*/
+	
 	FLAG_SEND_IMG=false;
 }
 
@@ -552,8 +458,12 @@ void Car::Car_debug(void){
 					FLAG_ENABLE_LOG_SERVO=false;
 					break;
 				case 's':
-					uart_write("debug_servo\n\r",13);
 					FLAG_ENABLE_LOG_SERVO=!FLAG_ENABLE_LOG_SERVO;
+					if (FLAG_ENABLE_LOG_SERVO){
+						uart_write("debug_servo_on\n\r",16);
+					}else{
+						uart_write("debug_servo_off\n\r",17);
+					}
 					FLAG_ENABLE_LOG_IMG=false;
 					break;
 				case 'v':
