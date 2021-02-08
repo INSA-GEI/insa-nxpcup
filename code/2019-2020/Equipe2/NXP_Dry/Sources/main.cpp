@@ -7,6 +7,9 @@
 int z=0;
 Car car;
 
+int BP_SW4 = 0;
+int BP_SW4_old = 0;
+
 //void delay_time(int number);
 
 int main(){

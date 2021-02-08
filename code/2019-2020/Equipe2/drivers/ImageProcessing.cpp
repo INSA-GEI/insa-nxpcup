@@ -7,6 +7,10 @@ int i,j;
 int c_t=0;//counter for the threshold
 int CompareData_high=140;
 int CompareData_low=100;
+int dejafait = 0;
+int StartData = 14; // Valeur a laquelle on considère les infos pertinentes /!\ +-2
+int StopData = 112;
+int threshold;		// Valeur a partir de laquelle on considère que c'est du noir
 
 
 void Img_Proc::init(){
@@ -119,7 +123,7 @@ void Img_Proc::differentiate(void){
 				}
 			}
 		}
-		if (functionning_mode == 2){
+		if (functionning_mode == 0xA){
 			for(i=2;i<=125;i++){							// using a gradient by direct differences (application of the filter : [-2, -1 ,0 ,1 , 2] -> P(x) = -2*P(x-2)-1*P(x-1)+0*P(x)+1*P(x+1)+2*P(x-2)
 				ImageDataDifference[i] = abs (-2*ImageData[i-2] - ImageData[i-1] + ImageData[i+1] + 2*ImageData[i+2]);
 			}
@@ -256,7 +260,45 @@ void Img_Proc::process (void){
 	   			}		/* END else if ... */
 	   		}	/* END for (i=64;i>=1;i--) */
 		}	/* END of "(IF mfunctionning_mod == 2 " */
-			
+		
+		
+		//################### mode A ##########################
+		if (functionning_mode == 0xA){
+			if (dejafait == 0) {
+				int maximum = 0;
+				int minimum = 100;
+				capture();
+				uart_write("CAPTURE OK",10);
+				uart_write("\r\n",2);
+				// Affichage
+				for (int W=StartData;W<StopData;W+=2) {
+					uart_writeNb(ImageData[W]);
+					uart_write(";",1);
+					if (maximum < ImageData[W]) maximum = ImageData[W];
+					if (minimum > ImageData[W]) minimum = ImageData[W];
+				}
+				threshold = maximum-2;
+				uart_write("\r\n",2);
+				for (int W=StartData;W<StopData;W+=2) {
+					if (ImageData[W] < threshold) uart_write("_",1);
+					else uart_write("*",1);
+				}
+				uart_write("\r\n",2);
+				uart_write("Threshold : ", 12);
+				uart_writeNb(threshold);
+				uart_write(" // ",4);
+				uart_write("MAX : ",6);
+				uart_writeNb(maximum);
+				uart_write(" // ",4);
+				uart_write("MIN : ",6);
+				uart_writeNb(minimum);
+				uart_write("\r\n",2);
+				dejafait = 1;
+			}
+			else if (dejafait < 25) dejafait++;
+			else dejafait = 0;
+		}
+		
 	}	/*	END of the function "Image_Processing"	*/
 
 void Img_Proc::calculateMiddle (void){
@@ -382,3 +424,4 @@ void Img_Proc::processAll(void) {
 	calculateMiddle();
 	
 }
+

@@ -15,7 +15,7 @@
 #define	CAM_SI_LOW				GPIOB_PDOR &= ~(1<<8)	// SI on PTB8
 #define	CAM_CLK_HIGH			GPIOB_PDOR |= (1<<9)	// CLK on PTB9
 #define	CAM_CLK_LOW				GPIOB_PDOR &= ~(1<<9)	// CLK on PTB9
-#define CSV						false //display data
+#define CSV						true //display data
 
 // Define thresholds for Camera Black Line recognition
 #define THRESHOLD_classic			110			// standard threshold : used in the basic image processing function
@@ -55,6 +55,7 @@ public:
 	void display_gradient(void);
 	//void export_raw_data(void);
 	void gradient(void);
+	
 	
 	
 private:

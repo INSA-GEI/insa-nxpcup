@@ -39,7 +39,7 @@ void Car::init(void){
 	V_old=0;
 	Vslow=VSLOW;
 	Vhigh=VHIGH;
-	mode_speed=0;
+	mode_speed=0; //0 : manu, 1: auto, 2 : auto incr
 	delta_speed=0;
 	mode_debug=0;
 	ESP=0;
@@ -53,7 +53,7 @@ void Car::init(void){
 	K_camdiffold=(float)((Te*Ki-2*K)/2);
 	
 	enable_finish=false;
-	stop=true;
+	stop=false;
 }
 
 //############### SPEED ########################
