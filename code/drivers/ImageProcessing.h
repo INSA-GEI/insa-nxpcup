@@ -53,8 +53,6 @@ public:
 	/*** 2020 - 2021 ***/
 	void display_camera_data(void);
 	void display_gradient(void);
-	//void export_raw_data(void);
-	void gradient(void);
 	
 	
 private:
