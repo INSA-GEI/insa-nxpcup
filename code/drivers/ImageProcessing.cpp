@@ -5,9 +5,6 @@
 
 int i,j;
 int c_t=0;//counter for the threshold
-int CompareData_high=140;
-int CompareData_low=100;
-
 
 void Img_Proc::init(){
 	
@@ -108,13 +105,6 @@ void Img_Proc::differentiate(void){
 				}
 			}
 		}
-		/*if (functionning_mode == 2){
-			for(i=1;i<=126;i++){							// using a gradient by direct differences (application of the filter : [-1 , 0 , 1] -> P(x) = -1*P(x-1)+0*P(x)+1*P(x+1))
-				ImageDataDifference[i] = abs (-ImageData[i-1] + ImageData[i+1]);
-			}
-			ImageDataDifference[0] = ImageData[0];	// first value doesnt have "gradient" for this method
-			ImageDataDifference[127] = ImageData[127];	// last value doesnt have "gradient" for this method
-		}*/
 	}	/*	End of function "Fill_ImageDataDifference"	*/
 
 void Img_Proc::process (void){
@@ -162,88 +152,6 @@ void Img_Proc::process (void){
 				}
 			}
 		}
-		
-	//################### mode 2 ##########################
-		if (functionning_mode == 2){
-			// Find black line on the right side
-
-			BlackLineRight = 128;
-			for(i=126;i>=64;i--){
-	   			if (ImageDataDifference[i] > CompareData_high){
-	   				//CompareData_high = ImageDataDifference[i];
-	   				BlackLineRight = i;
-	   				(number_edges) ++;
-	   			}else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high ){
-	   				if (i >= 67 && i < 124){
-	   					j = 1;
-	   					validate_gradient = 0;
-						while (j <= 3){
-	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high){
-	   							BlackLineRight = i;
-	   							(number_edges) ++;
-	   							//CompareData_high = ImageDataDifference[i+j];	
-	   							validate_gradient = 1;
-	   						}
-	   						j++;
-	   					}
-	   				}
-	   				if (validate_gradient != 1){
-	   					if (i >= 69 && i < 122){
-	   						j=1;
-	   						while (j <= 5){
-	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high)){
-	   								BlackLineRight = i;
-	   								(number_edges) ++;
-	   								//CompareData_low = ImageDataDifference[i];	 
-	   							}
-	   							j++;
-	   						}
-	   					}
-	   				}
-	   			}		/* END else if ... */
-			}	/* END for (i=126;i>=64;i--) */
-
-	   		// Find black line on the left side
-
-			// image processing with the algorithm seen at the beginning. 
-			BlackLineLeft = -1;
-			for(i=1;i<=64;i++){
-	   			if (ImageDataDifference[i] > CompareData_high){
-	   				//CompareData_high = ImageDataDifference[i];
-	   				BlackLineLeft = i;
-	   				(number_edges) ++;
-	   			}else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high ){
-	   				if (i > 3 && i <= 61){
-	   					j = 1;
-	   					validate_gradient = 0;
-						while (j <= 3){
-	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high){
-	   							BlackLineLeft = i;
-	   							(number_edges) ++;
-	   							//CompareData_high = ImageDataDifference[i+j];
-	   							//CompareData_low = ImageDataDifference[i];	   		
-	   							validate_gradient = 1;				
-	   						}
-	   						j++;
-	   					}
-	   				}
-	   				if (validate_gradient != 1){
-	   					if (i > 5 && i <= 59){
-	   						j=1;
-	   						while (j <= 5){
-	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high)){
-	   								BlackLineLeft = i;
-	   								(number_edges) ++;
-	   								//CompareData_high = ImageDataDifference[i+j];
-	   								//CompareData_low = ImageDataDifference[i];	 
-	   							}
-	   							j++;
-	   						}
-	   					}
-	   				}
-	   			}		/* END else if ... */
-	   		}	/* END for (i=64;i>=1;i--) */
-		}	/* END of "(IF mfunctionning_mod == 2 " */
 			
 	}	/*	END of the function "Image_Processing"	*/
 
