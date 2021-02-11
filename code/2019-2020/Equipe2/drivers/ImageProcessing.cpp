@@ -264,25 +264,40 @@ void Img_Proc::process (void){
 		
 		//################### mode A ##########################
 		if (functionning_mode == 0xA){
+			// On veut pouvoir régler la fréquence à laquelle la fonction est appelée
+			// De base, c'est l'IT FTM1 qui est à 100Hz, mais avec if (dejafait < x) on peut diviser x fois la frequence
 			if (dejafait == 0) {
+				dejafait = 1;
+				
+				// On met des valeurs max et min pour être sûr qu'elles seront effacées
 				int maximum = 0;
 				int minimum = 100;
+				// Lancement de la capture caméra
 				capture();
 				uart_write("CAPTURE OK",10);
 				uart_write("\r\n",2);
+				
 				// Affichage
+					// On est obligé de faire 1 pixel sur 2 car sinon on rentre dans un HardFault
 				for (int W=StartData;W<StopData;W+=2) {
 					uart_writeNb(ImageData[W]);
 					uart_write(";",1);
 					if (maximum < ImageData[W]) maximum = ImageData[W];
 					if (minimum > ImageData[W]) minimum = ImageData[W];
 				}
-				threshold = maximum-2;
 				uart_write("\r\n",2);
+				
+				// Calcul du threshold entre banc et noir
+				threshold = maximum-2;	// TEST DE FONCTION -> PEUT ETRE REMPLACE
+				
+				// Affichage grâce au treshold calculé : si la voiture est au milieu, on devrait avoir quelque chose comme :
+				// **__*********__**
 				for (int W=StartData;W<StopData;W+=2) {
-					if (ImageData[W] < threshold) uart_write("_",1);
-					else uart_write("*",1);
+					if (ImageData[W] < threshold) uart_write("_",1);	// Noir
+					else uart_write("*",1);								// Blanc
 				}
+				
+				// Affichage des différentes valeurs calculées pour pouvoir comparer
 				uart_write("\r\n",2);
 				uart_write("Threshold : ", 12);
 				uart_writeNb(threshold);
@@ -293,7 +308,6 @@ void Img_Proc::process (void){
 				uart_write("MIN : ",6);
 				uart_writeNb(minimum);
 				uart_write("\r\n",2);
-				dejafait = 1;
 			}
 			else if (dejafait < 25) dejafait++;
 			else dejafait = 0;
