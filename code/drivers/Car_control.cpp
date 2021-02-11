@@ -129,14 +129,14 @@ void Car::Set_diff_speed(void){
 	//##################### Changement ############
 	if (enable_brake){
 		float r=LENGHT_CAR/(abs(servo_angle_moy)*DEG_TO_RAD); //r=radius of the turn
-		delta_speed=(Vset*L_ENTRAXE)/(0.6*r+L_ENTRAXE);//On l'aide à tourner
+		delta_speed=(abs(Vset)*L_ENTRAXE)/(0.1*r+L_ENTRAXE);//On l'aide à tourner
 	}else if (state_turn_car==0){
 		//Strait line
 		delta_speed=0;
 	}else{
 		//Soft turn
 		float r=LENGHT_CAR/(abs(servo_angle_moy)*DEG_TO_RAD); //r=radius of the turn
-		delta_speed=(Vset*L_ENTRAXE)/(2.0*r+L_ENTRAXE);//théorique 
+		delta_speed=(abs(Vset)*L_ENTRAXE)/(2.0*r+L_ENTRAXE);//théorique 
 	}
 	
 	//Left turn servoangle<0
@@ -178,7 +178,7 @@ void Car::Caculate_angle_wheel(void){
 //return 	: 	V_mes
 //			:	cam (à jour)
 void Car::Process_data(void){
-	V_mes=(int)(myMovement.encoder.getLeftSpeed()+myMovement.encoder.getRightSpeed())/2;
+	V_mes=(int)(myMovement.v_R+myMovement.v_L)/2;
 	cam.processAll();
 }
 
@@ -190,11 +190,12 @@ void Car::Process_data(void){
 void Car::Detect_state(void){
 	
 	//Test braking #####################################
-	if (Vset<V_old-T_BRAKE && abs(V_mes)>TURN_SPEED){
+	if (Vset<V_old-T_BRAKE && V_mes>SPEED_BRAKE_BEG){
 		enable_brake=true;
-		uart_write("Brake ! ",8);
-	}else if(abs(V_mes)<TURN_SPEED){
+	}else if((V_mes<SPEED_BRAKE_END)&&enable_brake){
 		enable_brake=false;
+		uart_writeNb(V_mes);
+		uart_write("\n\r",2);
 	}
 	
 	//##################### Test Turn #########

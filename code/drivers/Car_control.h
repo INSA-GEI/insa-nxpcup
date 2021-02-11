@@ -17,7 +17,7 @@
 #define Kp 								1.5 	//PI=1.8 //entre 1.3 et 2.0 //P of the PID
 #define Ki								0.05//0.05		//PI=0.9 //entre K/2 et 1.5 max	 //I of the PID
 #define Kd								0.15//0.2		//Dérivée
-#define N								10.0 	//Filtre dérivée
+#define N								7.0 	//Filtre dérivée
 
 //#################### SPEED #############################
 #define Te_calc_speed 	0.01 //100Hz Consigne Vset
@@ -29,7 +29,8 @@
 #define T_BRAKE 200 //Threshold before braking
 #define INCREMENT_SPEED 60 //Constante d'augmentation de la vitesse (évite le patinage)
 #define DIV_1_SPEED 3 //Divise la consigne de vitesse pour éviter le patinage sur la premiere moitié Vmes=[Vslow,Vhigh/2]
-#define TURN_SPEED 1300 //Vitesse seuil dans les virages
+#define SPEED_BRAKE_BEG 1300 //Vitesse seuil dans les virages
+#define SPEED_BRAKE_END 100 //Vitesse seuil dans les virages
 
 
 #define DEG_TO_RAD 0.0175 //conversion Degré vers radian

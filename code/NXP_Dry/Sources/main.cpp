@@ -4,7 +4,6 @@
 
 //#define SLOW_BLINK      (10000000)
 //#define FAST_BLINK      (1000000)
-int z=0;
 Car car;
 
 #define Te 0.002 //sample time 10ms Car_handler/!\ Te_s (sample time for rear motors is in Movement.h)

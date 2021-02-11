@@ -67,12 +67,6 @@ void Img_Proc::capture(void){
 
 void Img_Proc::differentiate(void){
 		if (functionning_mode == 1){
-			/*for(i=1;i<=126;i++){	
-				Imageflou[i] = (uint16_t) abs (0.5*ImageData[i-1] + ImageData[i] + 0.5*ImageData[i+1])/2;
-			}
-			
-			Imageflou[0] = ImageData[0];
-			Imageflou[127] = ImageData[127];*/
 			/*uart_write("IMG=",4);
 			uart_writeNb(ImageData[0]);
 			uart_write(";",1);
@@ -81,7 +75,7 @@ void Img_Proc::differentiate(void){
 			uart_writeNb(ImageData[127]);
 			uart_write("\n\r",2);*/
 			
-			if (c_t<CST_RECAL_T){
+			if (c_t>CST_RECAL_T){
 				//############### à enlever
 				DEBUG_GREEN_ON;
 				c_t=0;
@@ -94,15 +88,6 @@ void Img_Proc::differentiate(void){
 			}else if (c_t>CST_RECAL_T/2){
 				//############### à enlever
 				DEBUG_GREEN_OFF;
-			}
-			
-			//Test blanc ou noir
-			for(int i=0;i<=127;i++){
-				if (ImageData[i]>threshold){
-					ImageDataDifference[i]=1; //white
-				}else{
-					ImageDataDifference[i]=0;//black
-				}
 			}
 		}
 	}	/*	End of function "Fill_ImageDataDifference"	*/
@@ -224,7 +209,6 @@ void Img_Proc::processAll(void) {
 	capture();
 	differentiate();
 	process();
-	//uart_write("ok\n\r",4);
 	calculateMiddle();
 	
 }
