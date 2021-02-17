@@ -67,16 +67,21 @@ void Img_Proc::capture(void){
 
 void Img_Proc::differentiate(void){
 		if (functionning_mode == 1){
-			/*uart_write("IMG=",4);
-			uart_writeNb(ImageData[0]);
-			uart_write(";",1);
-			uart_writeNb(ImageData[64]);
-			uart_write(";",1);
-			uart_writeNb(ImageData[127]);
-			uart_write("\n\r",2);*/
 			
 			if (c_t>CST_RECAL_T){
 				//############### à enlever
+				/*uart_write("IMG=",4);
+				uart_writeNb(ImageData[0]);
+				uart_write(";",1);
+				uart_writeNb(ImageData[32]);
+				uart_write(";",1);
+				uart_writeNb(ImageData[64]);
+				uart_write(";",1);
+				uart_writeNb(ImageData[96]);
+				uart_write(";",1);
+				uart_writeNb(ImageData[127]);
+				uart_write("\n\r",2);*/
+				
 				DEBUG_GREEN_ON;
 				c_t=0;
 				threshold=0;
@@ -129,6 +134,7 @@ void Img_Proc::process (void){
 						}
 					}
 					if (ok){
+						//Regarder s'il y a bien du blanc jusqu'à un max
 						number_edges++;
 					}
 					i+=4;

@@ -10,6 +10,7 @@
 
 #include <MKL25Z4.h>
 #include "Debug.h"
+//Infos input capture mode p564
 //wheel diameter = 6.5cm
 // 360/(Pi*D) fronts/m.s
 

@@ -45,20 +45,20 @@ int main(){
 
 //############# handlers ##############
 //100Hz
+//Servo handler
 void FTM1_IRQHandler() {
-	//car.Car_handler(); //Define Vset and servo_angle.
+	
 	TPM1_SC |= TPM_SC_TOF_MASK;//Clear IT
 }
 
-//Differential speed handlers
-//6Khz
-void FTM2_IRQHandler() {//encoder interrupt 6kHz
+//speed handlers
+void FTM2_IRQHandler() {//encoder interrupt à max 6Hz
 	
 	car.myMovement.encoder.interruptHandler();
 	car.myMovement.regulate(); //Applique la PWM correspond à la vitesse aux moteurs
 }
 
-//
+//Calcul var de la voiture + MAJ
 void SysTick_Handler(){
 	car.Car_handler(); //Define Vset and servo_angle.
 	

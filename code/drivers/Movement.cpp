@@ -82,34 +82,18 @@ void Movement::regulate(void) {
 		GPIOB_PTOR = DEBUG_RED_Pin;
 		//LEFT
 		err_old_L=err_L;
-		v_L=encoder.getLeftSpeed();
-		if(v_L<0){	//detect invalid speed readings
-			err_L=0;
-		}
-		if (actualSpeedL<0){
-			v_L=-v_L;
-		}
-		err_L=targetSpeedL-v_L;//calculate error
-		//if(err_L>MOVEMENT_CORR_THRESHOLD || err_L<-MOVEMENT_CORR_THRESHOLD){//if error needs correction
-			
-			actualSpeedL=actualSpeedL+(int)(err_L*K_e_s)+(int)(err_old_L*K_e_s_old); //compensate real speed command
-			//actualSpeedL=actualSpeedL+err_L*MOVEMENT_CORR_KP;
-		//}
+		v_L=encoder.getLeftSpeed();		
+		err_L=targetSpeedL-v_L;//calculate error	
+		
+		actualSpeedL=actualSpeedL+(int)(err_L*K_e_s)+(int)(err_old_L*K_e_s_old); //compensate real speed command
 		
 		//RIGHT
 		err_old_R=err_R;
 		v_R=encoder.getRightSpeed();
-		if(v_R<0){	//detect invalid speed readings
-			err_R=0;
-		}
-		if (actualSpeedR<0){
-			v_R=-v_R;
-		}
 		err_R=targetSpeedR-v_R;
-		//if(err_R>MOVEMENT_CORR_THRESHOLD || err_R<-MOVEMENT_CORR_THRESHOLD){
-			actualSpeedR=actualSpeedR+(int)(err_R*K_e_s)+(int)(err_old_R*K_e_s_old); //compensate real speed command
-			//actualSpeedR=actualSpeedR+err_R*MOVEMENT_CORR_KP;
-		//}
+		
+		actualSpeedR=actualSpeedR+(int)(err_R*K_e_s)+(int)(err_old_R*K_e_s_old); //compensate real speed command
+			
 	}else{
 		stop();
 	}
