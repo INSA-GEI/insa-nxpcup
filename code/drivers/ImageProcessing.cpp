@@ -67,6 +67,16 @@ void Img_Proc::capture(void){
 
 void Img_Proc::differentiate(void){
 		if (functionning_mode == 1){
+			//On vérifie qu'il n'y est pas d'éblouissement si oui, on recentre l'image
+			int diff=0;
+			for(int i=0;i<127;i++){
+				diff=ImageData[i]-ImageData[i+1];
+				if (diff>MAX_DIFF_VALUE){
+					ImageData[i]-=diff;
+				}else if (diff<-MAX_DIFF_VALUE){
+					ImageData[i+1]-=diff;
+				}
+			}
 			
 			if (c_t>CST_RECAL_T){
 				//############### à enlever
@@ -82,13 +92,21 @@ void Img_Proc::differentiate(void){
 				uart_writeNb(ImageData[127]);
 				uart_write("\n\r",2);*/
 				
-				DEBUG_GREEN_ON;
+				DEBUG_GREEN_ON; //On calcul la moyenne
 				c_t=0;
 				threshold=0;
-				for(int i=0;i<=127;i++){
-					threshold+=ImageData[i];
+				int x_d=0;
+				int moy=0;
+				int i=1;
+				//Effets de bords bizarres
+				for(i=1;i<127;i++){
+					moy+=ImageData[i];
+					x_d+=ImageData[i]*ImageData[i];
 				}
-				threshold=threshold/128;
+				moy/=(i-1);
+				x_d/=(i-1);
+				//threshold=sqrt(x_d+(moy*moy));
+				threshold=moy;
 				if (threshold<THRESHOLD_classic)threshold=THRESHOLD_classic;
 			}else if (c_t>CST_RECAL_T/2){
 				//############### à enlever
