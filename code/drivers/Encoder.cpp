@@ -36,6 +36,18 @@ void Encoder::init(void){
 	PORTB_PCR2 |= PORT_PCR_MUX(3);				// ENC_SIG_A1 PTB2 TPM2_CH0
 	PORTB_PCR3 |= PORT_PCR_MUX(3);				// ENC_SIG_A2 PTB3 TPM2_CH1
 	
+	//Configures the individual port pins for input or output
+	GPIOB_PDDR |= (1<<2);
+	GPIOB_PDDR |= (1<<3); 
+	
+	// enable interrupts 19 (TPM = FTM2)  in NVIC, no interrupt levels
+	NVIC_ICPR |= (1 << 19);			// clear pending interrupt 19
+	NVIC_ISER |= (1 << 19);			// enable interrupt 19
+}
+
+void Encoder::init_SENS(void){
+	//for(int i=0;i<ONE_SECOND;i++){asm ("nop");};
+	SIM_SCGC5 = SIM_SCGC5_PORTA_MASK;
 	//On regarde les 2nd canaux
 	//ENC_SIG_B1 PTA 1
 	//ENC_SIG_B2 PTA 2
@@ -43,16 +55,6 @@ void Encoder::init(void){
 	PORTA_PCR1 |= PORT_PCR_MUX(1);
 	PORTA_PCR2 |= PORT_PCR_MUX(1);
 	//On peut maintenant lire leur valeur dans GPIOx_PDIR (par défaut les pins sont à 0 = input)
-	
-	//Configures the individual port pins for input or output
-	GPIOB_PDDR |= (1<<2);
-	GPIOB_PDDR |= (1<<3); 
-	
-	
-	// enable interrupts 19 (TPM = FTM2)  in NVIC, no interrupt levels
-	NVIC_ICPR |= (1 << 19);			// clear pending interrupt 19
-	NVIC_ISER |= (1 << 19);			// enable interrupt 19
-	
 }
 
 int Encoder::getLeftSpeed(void){
@@ -67,7 +69,7 @@ int Encoder::getRightSpeed(void){
 
 
 void Encoder::interruptHandler(void){
-	
+
 	if ((TPM2_SC & TPM_SC_TOF_MASK)) {//Clear the bit flag of the overflow interrupt FTM2
 		TPM2_SC |= TPM_SC_TOF_MASK;
 		OVF_cnt1++;
@@ -81,8 +83,8 @@ void Encoder::interruptHandler(void){
 		
 		delta1 = ccr1 - prev_ccr1 + OVF_cnt1*ENCODER_MOD;
 		//On regarde le sens
-		if (((GPIOA_PDIR>>1) & 0x1)){
-			delta1=-delta1;
+		if (!((GPIOA_PDIR>>1) & 0x1)){
+			delta1=-delta1; //ok
 		}
 		//MAJ car le TMP continue de compter cf p(564)
 		prev_ccr1 = ccr1;
@@ -95,7 +97,7 @@ void Encoder::interruptHandler(void){
 		delta2 = ccr2 - prev_ccr2 + OVF_cnt2*ENCODER_MOD;
 		//On regarde le sens
 		if (((GPIOA_PDIR>>2) & 0x1)){
-			delta2=-delta2;		
+			delta2=-delta2; //ok	
 		}
 		//MAJ car le TMP continue de compter cf p(564)
 		prev_ccr2 = ccr2;

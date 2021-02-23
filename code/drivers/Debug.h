@@ -11,6 +11,7 @@
 #include <MKL25Z4.h>
 
 #define CORE_CLOCK 48000000UL
+#define ONE_SECOND 48000000
 
 #ifndef BAUDRATE
 	#define BAUDRATE 115200

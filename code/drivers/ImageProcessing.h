@@ -24,7 +24,7 @@
 #define functionning_mode			1			// operating mode: from 1 to 2
 
 
-#define CST_RECAL_T 50
+#define CST_RECAL_T 0
 #define TAILLE_BANDE 5 //taille bande noir en pixel
 
 class Img_Proc{

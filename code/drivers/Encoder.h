@@ -36,6 +36,7 @@ public:
 	Encoder(void);
 	/* This function initialises both encoders*/
 	void init(void);
+	void init_SENS(void);
 	int getLeftSpeed(void);//in cm/s
 	int getRightSpeed(void);//in cm/s
 	void interruptHandler(void);
