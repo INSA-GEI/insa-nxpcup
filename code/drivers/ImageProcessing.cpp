@@ -6,6 +6,19 @@
 int i,j;
 int c_t=0;//counter for the threshold
 
+Img_Proc::Img_Proc(){
+	diff=0;
+	diff_old=0;
+	RoadMiddle=0;
+	RoadMiddle_old=0;
+	BlackLineRight=127;
+	BlackLineLeft=0;
+	number_edges=0;
+	threshold=THRESHOLD_classic;
+	threshold_old=MAX_DIFF_THRESHOLD;
+	detect_sun=false;
+}
+
 void Img_Proc::init(){
 	
 	// turn on ADC0 clock
@@ -28,16 +41,6 @@ void Img_Proc::init(){
 
 	// ADC0 conversion mode
 	ADC0_SC3 = 0x00;				// single conversion mode
-	
-	
-	diff=0;
-	diff_old=0;
-	RoadMiddle=0;
-	RoadMiddle_old=0;
-	BlackLineRight=127;
-	BlackLineLeft=0;
-	number_edges=0;
-	threshold=THRESHOLD_classic;
 
 }
 
@@ -67,15 +70,8 @@ void Img_Proc::capture(void){
 
 void Img_Proc::differentiate(void){
 		if (functionning_mode == 1){
-			//On vérifie qu'il n'y est pas d'éblouissement si oui, on recentre l'image
-			int diff=0;
-			for(int i=0;i<127;i++){
-				diff=ImageData[i]-ImageData[i+1];
-				if (diff>MAX_DIFF_VALUE){
-					ImageData[i]-=diff;
-				}else if (diff<-MAX_DIFF_VALUE){
-					ImageData[i+1]-=diff;
-				}
+			if (detect_sun){
+				Process_sun();
 			}
 			
 			if (c_t>CST_RECAL_T){
@@ -94,6 +90,7 @@ void Img_Proc::differentiate(void){
 				
 				DEBUG_GREEN_ON; //On calcul la moyenne
 				c_t=0;
+				threshold_old=threshold;
 				threshold=0;
 				int x_d=0;
 				int moy=0;
@@ -108,6 +105,10 @@ void Img_Proc::differentiate(void){
 				//threshold=sqrt(x_d+(moy*moy));
 				threshold=moy;
 				if (threshold<THRESHOLD_classic)threshold=THRESHOLD_classic;
+				//sun 
+				if ((threshold-threshold_old)>MAX_DIFF_THRESHOLD){
+					detect_sun=true;
+				}
 			}else if (c_t>CST_RECAL_T/2){
 				//############### à enlever
 				DEBUG_GREEN_OFF;
@@ -183,6 +184,33 @@ void Img_Proc::calculateMiddle (void){
 	}
 }
 
+void Img_Proc::Process_sun(void){
+	//process_sun
+	//On vérifie qu'il n'y est pas d'éblouissement si oui, on recentre l'image
+	int diff=0;
+	int diff_seuil=0;
+	for(int i=0;i<127;i++){
+		diff=ImageData[i]-ImageData[i+1];
+		if (diff>MAX_DIFF_VALUE){
+			int aux=i;
+			diff_seuil=abs(diff);
+			//On regarde tant qu'on est en zone de soleil
+			while(aux>0 && ImageData[aux]>(threshold+MAX_DIFF_VALUE)){
+				ImageData[aux]-=diff_seuil;
+				aux--;
+			}
+		}else if (diff<-MAX_DIFF_VALUE){
+			diff_seuil=abs(diff);
+			i++;
+			//On regarde tant qu'on est en zone de soleil
+			while(i<127 && ImageData[i]>(threshold+MAX_DIFF_VALUE)){
+				ImageData[i]-=diff_seuil;
+				i++;
+			}
+		}
+	}
+	detect_sun=false;
+}
 
 void Img_Proc::display_camera_data(void) {
 	//uart_write("Raw data : ",11);

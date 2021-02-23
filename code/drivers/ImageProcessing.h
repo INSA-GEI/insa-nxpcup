@@ -20,6 +20,8 @@
 // Define thresholds for Camera Black Line recognition
 #define THRESHOLD_classic			0			// standard threshold : used in the basic image processing function
 #define MAX_DIFF_VALUE				150
+#define MAX_DIFF_THRESHOLD			150
+
 //Mode de détection des lignes
 #define functionning_mode			1			// operating mode: from 1 to 2
 
@@ -29,6 +31,9 @@
 
 class Img_Proc{
 public:
+	//constructeur
+	Img_Proc();
+	
 	uint16_t ImageData [128];				// array to store the LineScan image
 	uint16_t ImageDataDifference [128];		// array to store the PineScan pixel difference
 	uint16_t Imageflou [128];		// array to store the PineScan pixel => blur
@@ -36,6 +41,7 @@ public:
 	int diff;							// actual difference from line middle position
 	int diff_old;
 	int threshold;				// actual position of the servo relative to middle
+	int threshold_old;
 	
 	int RoadMiddle;						// calculated middle of the road
 	int RoadMiddle_old;					// save the last "Middle of the road" position
@@ -57,6 +63,8 @@ public:
 	
 private:
 	int validate_gradient;				// used in image processing to validate some parameters
+	bool detect_sun;
+	void Process_sun(void);
 };
 
 /* PROCESS
