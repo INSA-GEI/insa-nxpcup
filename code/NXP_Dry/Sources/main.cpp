@@ -13,15 +13,8 @@ int MODE=-1;
 
 int main(){
 	debug_init();
-	//
-	//debug_displaySendNb((GPIOE_PDIR & 0x003C)>>2);
 	
-
-
-	/**A Mettre dans le main**/
-	//Mode gestion :
-	//The mode number chosen on the display is given by the next function
-	//debug_getRotarySW();
+	//########## Choix MODE ########
 	MODE=((GPIOE_PDIR & 0x003C)>>2);
 			
 	if (MODE>3 && MODE==0) {
@@ -31,12 +24,14 @@ int main(){
 	} else {
 		debug_displaySendNb(MODE);
 	}
-
+	
+	//######## INIT ###########
 	DEBUG_CAM_LED_OFF;
 	car.init(Te);
 	Timer_init (Te);
 	car.myMovement.encoder.init_SENS(); //ATTENTION à laisser en dernier!!
 	
+	//######## While (1) pour débug #########
 	for(;;) {
 		car.Car_debug();
 	}
