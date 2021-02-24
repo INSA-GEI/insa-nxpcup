@@ -15,7 +15,8 @@ Img_Proc::Img_Proc(){
 	BlackLineLeft=0;
 	number_edges=0;
 	threshold=THRESHOLD_classic;
-	threshold_old=MAX_DIFF_THRESHOLD;
+	//threshold_old=MAX_DIFF_THRESHOLD;
+	delta=0;
 	detect_sun=false;
 }
 
@@ -68,13 +69,46 @@ void Img_Proc::capture(void){
 	
 }
 
-void Img_Proc::differentiate(void){
-		if (functionning_mode == 1){
-			if (detect_sun){
-				Process_sun();
+void Img_Proc::Process_seuil(void){
+	threshold=0;
+	int x_d=0;
+	int moy=0;
+	int i=1;
+	int count=0;
+	int count_sun=0;
+	threshold_sun=0;
+		for(int i=1;i<127;i++){
+			if(ImageData[i]>MAX_VALUE){
+				
 			}
+		}
+		threshold_sun/=count;
+	//Effets de bords bizarres
+	for(i=1;i<127;i++){
+		if(ImageData[i]<MAX_VALUE){
+			moy+=ImageData[i];
+			count++;
+		}else{
+			threshold_sun+=ImageData[i];
+			count_sun++;
+		}
+		x_d+=ImageData[i]*ImageData[i];
+	}
+	moy/=count;
+	x_d/=(i-1);
+	delta=sqrt(x_d-(moy*moy))/2;
+	threshold=moy;
+	threshold_sun/=count_sun;
+	if (threshold<THRESHOLD_classic)threshold=THRESHOLD_classic;
+}
+
+void Img_Proc::differentiate(void){
+		if (functionning_mode == 1){			
+			//On calcul la moyenne
+			Process_seuil();
 			
 			if (c_t>CST_RECAL_T){
+				c_t=0;
 				//############### à enlever
 				/*uart_write("IMG=",4);
 				uart_writeNb(ImageData[0]);
@@ -86,32 +120,22 @@ void Img_Proc::differentiate(void){
 				uart_writeNb(ImageData[96]);
 				uart_write(";",1);
 				uart_writeNb(ImageData[127]);
+				uart_write("\n\r",2);
+				uart_write("T=",2);
+				uart_writeNb(threshold);
+				uart_write("; T_old=",8);
+				uart_writeNb(threshold_old);
 				uart_write("\n\r",2);*/
 				
-				DEBUG_GREEN_ON; //On calcul la moyenne
-				c_t=0;
-				threshold_old=threshold;
-				threshold=0;
-				int x_d=0;
-				int moy=0;
-				int i=1;
-				//Effets de bords bizarres
-				for(i=1;i<127;i++){
-					moy+=ImageData[i];
-					x_d+=ImageData[i]*ImageData[i];
-				}
-				moy/=(i-1);
-				x_d/=(i-1);
-				//threshold=sqrt(x_d+(moy*moy));
-				threshold=moy;
-				if (threshold<THRESHOLD_classic)threshold=THRESHOLD_classic;
 				//sun 
-				if ((threshold-threshold_old)>MAX_DIFF_THRESHOLD){
+				/*if ((threshold-threshold_old)>MAX_DIFF_THRESHOLD && !(detect_sun)){
 					detect_sun=true;
+					uart_write("sun_detect!",11);
+					uart_write("\n\r",2);
 				}
-			}else if (c_t>CST_RECAL_T/2){
-				//############### à enlever
-				DEBUG_GREEN_OFF;
+				
+				//On met à jour threshold_old
+				threshold_old=threshold;*/
 			}
 		}
 	}	/*	End of function "Fill_ImageDataDifference"	*/
@@ -123,18 +147,40 @@ void Img_Proc::process (void){
 			BlackLineLeft = -1;
 			int i=1;
 			while (BlackLineLeft==-1 && i<127){
-				if (ImageData[i]>=threshold && ImageData[i-1]<threshold){
-					BlackLineLeft=i;
-					number_edges++;
+				if (ImageData[i]<MAX_VALUE && ImageData[i+1]<MAX_VALUE){
+					if (ImageData[i]>=threshold && ImageData[i-1]<threshold){
+						BlackLineLeft=i;
+						number_edges++;
+					}else{
+						i++;
+					}
+				}else if (ImageData[i]>MAX_VALUE && ImageData[i+1]>MAX_VALUE){
+					if (ImageData[i]>=threshold_sun && ImageData[i-1]<threshold_sun){
+						BlackLineLeft=i;
+						number_edges++;
+					}else{
+						i++;
+					}
 				}else{
 					i++;
 				}
 			}
 			i=126;
 			while (BlackLineRight==128 && (i>0 && i>BlackLineLeft)){
-				if (ImageData[i]>=threshold && ImageData[i+1]<threshold){
-					BlackLineRight=i;
-					number_edges++;
+				if (ImageData[i]<MAX_VALUE && ImageData[i+1]<MAX_VALUE){
+					if (ImageData[i]>=threshold && ImageData[i+1]<threshold){
+						BlackLineRight=i;
+						number_edges++;
+					}else{
+						i--;
+					}
+				}else if (ImageData[i]>MAX_VALUE && ImageData[i+1]>MAX_VALUE){
+					if (ImageData[i]>=threshold_sun && ImageData[i+1]<threshold_sun){
+						BlackLineRight=i;
+						number_edges++;
+					}else{
+						i--;
+					}
 				}else{
 					i--;
 				}
@@ -144,7 +190,7 @@ void Img_Proc::process (void){
 			i=BlackLineLeft+1+TAILLE_BANDE;
 			bool ok=false;
 			while (i<BlackLineRight-1-TAILLE_BANDE){
-				if (ImageData[i]<threshold){
+				if (ImageData[i]<threshold && ImageData[i]<MAX_VALUE){
 					ok=true;
 					//On regarde les TAILLE_BANDE prochains pixels 
 					for (int j=i;j<=(i+TAILLE_BANDE);j++){
@@ -182,34 +228,6 @@ void Img_Proc::calculateMiddle (void){
 	if (abs(diff-diff_old)>Plausibily_check){
 		diff=diff_old;
 	}
-}
-
-void Img_Proc::Process_sun(void){
-	//process_sun
-	//On vérifie qu'il n'y est pas d'éblouissement si oui, on recentre l'image
-	int diff=0;
-	int diff_seuil=0;
-	for(int i=0;i<127;i++){
-		diff=ImageData[i]-ImageData[i+1];
-		if (diff>MAX_DIFF_VALUE){
-			int aux=i;
-			diff_seuil=abs(diff);
-			//On regarde tant qu'on est en zone de soleil
-			while(aux>0 && ImageData[aux]>(threshold+MAX_DIFF_VALUE)){
-				ImageData[aux]-=diff_seuil;
-				aux--;
-			}
-		}else if (diff<-MAX_DIFF_VALUE){
-			diff_seuil=abs(diff);
-			i++;
-			//On regarde tant qu'on est en zone de soleil
-			while(i<127 && ImageData[i]>(threshold+MAX_DIFF_VALUE)){
-				ImageData[i]-=diff_seuil;
-				i++;
-			}
-		}
-	}
-	detect_sun=false;
 }
 
 void Img_Proc::display_camera_data(void) {

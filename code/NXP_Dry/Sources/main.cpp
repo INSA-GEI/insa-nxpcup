@@ -11,21 +11,11 @@ Car car;
 int MODE=-1;
 //void delay_time(int number);
 
-int main(){
-	debug_init();
-	
-	//########## Choix MODE ########
-	MODE=((GPIOE_PDIR & 0x003C)>>2);
-			
-	if (MODE>3 && MODE==0) {
-		debug_displaySendNb(16);
-		//affichage de la barre du milieu
-		MODE=-1;
-	} else {
-		debug_displaySendNb(MODE);
-	}
-	
+//La led rouge indique qu'il faut changer la batterie, on affiche aussi B sur l'afficheur 7seg;
+
+int main(){	
 	//######## INIT ###########
+	MODE=debug_init(); 		//retourne le mode
 	DEBUG_CAM_LED_OFF;
 	car.init(Te);
 	Timer_init (Te);
@@ -40,6 +30,10 @@ int main(){
 }
 
 //############# handlers ##############
+void PORTD_IRQHandler(void){
+	car.Demarre();
+}
+
 //100Hz
 //Servo handler
 void FTM1_IRQHandler() {

@@ -19,14 +19,13 @@
 
 // Define thresholds for Camera Black Line recognition
 #define THRESHOLD_classic			0			// standard threshold : used in the basic image processing function
-#define MAX_DIFF_VALUE				150
-#define MAX_DIFF_THRESHOLD			150
+#define MAX_VALUE					100
 
 //Mode de détection des lignes
 #define functionning_mode			1			// operating mode: from 1 to 2
 
 
-#define CST_RECAL_T 0
+#define CST_RECAL_T 100
 #define TAILLE_BANDE 5 //taille bande noir en pixel
 
 class Img_Proc{
@@ -39,8 +38,10 @@ public:
 	uint16_t Imageflou [128];		// array to store the PineScan pixel => blur
 	
 	int diff;							// actual difference from line middle position
-	int diff_old;
-	int threshold;				// actual position of the servo relative to middle
+	int diff_old;						//
+	int threshold;						//Moyenne des échantillons
+	int threshold_sun;						//Moyenne des échantillons soleil
+	int delta;						//Ecart-type peut servir pour savoir si on est en dehors de la route ou pas		
 	int threshold_old;
 	
 	int RoadMiddle;						// calculated middle of the road
@@ -63,8 +64,9 @@ public:
 	
 private:
 	int validate_gradient;				// used in image processing to validate some parameters
-	bool detect_sun;
-	void Process_sun(void);
+	bool detect_sun;					//Un rayon de soleil est détecté
+	void Process_sun(void);				//On corrige les échantillons (/!\ à un Te de retard)
+	void Process_seuil(void);			//Calcul le seuil
 };
 
 /* PROCESS

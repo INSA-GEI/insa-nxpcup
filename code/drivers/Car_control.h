@@ -15,8 +15,8 @@
 
 //####################### Wheels #################################
 #define Kp 								1.5 	//PI=1.8 //entre 1.3 et 2.0 //P of the PID
-#define Ki								0.05//0.05		//PI=0.9 //entre K/2 et 1.5 max	 //I of the PID
-#define Kd								0.15//0.2		//Dérivée
+#define Ki								0.05//0.05		//PI=0.9 // 1.5 max	 //I of the PID
+#define Kd								0.15//0.15		//Dérivée
 #define N								7.0 	//Filtre dérivée
 
 //#################### SPEED #############################
@@ -41,7 +41,9 @@ class Car{
 public:
 	//Objects
 	Movement myMovement;
-	Img_Proc cam;	
+	Img_Proc cam;
+	
+	Car();
 	
 	//############# functions #########################
 		void init(float Te);
@@ -65,6 +67,8 @@ public:
 		void Set_debug_mode(int i); //i=>0 : Cam+ange_servo  //i=>1 : Cam[i] //i=>2 : 
 		void Aff_debug(void);
 		void Aff_debug_init(void);
+		
+		void Demarre(void);
 
 private:
 		//###### var #####

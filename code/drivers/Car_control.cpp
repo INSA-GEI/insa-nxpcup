@@ -39,12 +39,7 @@ float Kyd=0.0;
 float Ked=0.0;
 float Kei=0.0;
 
-//################## Functions ####################
-
-void Car::init(float Te){
-	myMovement.init();
-	cam.init();
-	myMovement.set(Vset,0.0);
+Car::Car(){
 	servo_angle=0;
 	servo_angle_moy=0.0;
 	Vset=0;
@@ -60,6 +55,17 @@ void Car::init(float Te){
 	active_ESP=false;
 	enable_ampli_turn=false;
 	enable_brake=false;
+	enable_finish=false;
+	stop=true;
+}
+
+//################## Functions ####################
+
+void Car::init(float Te){
+	myMovement.init();
+	cam.init();
+	myMovement.set(Vset,0.0);
+
 	//Coeff PI servo_angle
 	//K_camdiff=(float)((2*Kp+Te*Ki)/2);
 	//K_camdiffold=(float)((Te*Ki-2*Kp)/2);
@@ -67,11 +73,6 @@ void Car::init(float Te){
 	Kyd=(2.0*Kd-Te*N)/(2.0*Kd+Te*N);
 	Ked=2.0*N*Kd;
 	Kei=(Te/2.0)*Ki;
-	
-	
-	
-	enable_finish=false;
-	stop=true;
 	
 	//Calcul nb itération avant le calcul de la vitesse
 	N_calc_speed=(int)(Te_calc_speed/Te)+1;
@@ -87,7 +88,7 @@ void Car::Calculate_speed(void){
 				
 	Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle_moy))+Vhigh;		
 	if (enable_brake){
-		Vset=-(abs(Vset-V_mes))-VBRAKE_min;
+		Vset=-VBRAKE_min;
 	}else if (Vset>V_old+INCREMENT_SPEED){
 		if ((V_old<(Vhigh+Vset)/2)){
 			Vset=V_old+(int)(INCREMENT_SPEED/DIV_1_SPEED); //Temps de montée max 100ms//évite de glisser
@@ -129,7 +130,7 @@ void Car::Set_diff_speed(void){
 	//##################### Changement ############
 	if (enable_brake){
 		float r=LENGHT_CAR/(abs(servo_angle_moy)*DEG_TO_RAD); //r=radius of the turn
-		delta_speed=(abs(Vset)*L_ENTRAXE)/(0.1*r+L_ENTRAXE);//On l'aide à tourner
+		delta_speed=(abs(Vset)*L_ENTRAXE)/(0.5*r+L_ENTRAXE);//On l'aide à tourner
 	}else if (state_turn_car==0){
 		//Strait line
 		delta_speed=0;
@@ -347,6 +348,9 @@ void Car::Aff_debug(void){
 		uart_write(" / ",3);
 		uart_write("seuil=",6);
 		uart_writeNb(cam.threshold);
+		uart_write(" / ",3);
+		uart_write("delta=",6);
+		uart_writeNb(cam.delta);
 		/*uart_write(" ",1);
 		uart_writeNb(cam.diff-cam.diff_old);
 		uart_write(" ",1);
@@ -506,6 +510,13 @@ void Car::Aff_debug_init(void){
 	uart_write("EN_finish=",10);
 	uart_writeNb(enable_finish);
 	uart_write("\r\n",2);
+}
+
+//################ IT ###################
+void Car::Demarre(void){
+	for (int i=0; i<3*ONE_SECOND;i++){asm("nop");};
+	mode_speed=1;
+	stop=0;
 }
 
 //########### others ###############

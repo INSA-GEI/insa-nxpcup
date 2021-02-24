@@ -47,7 +47,7 @@
 #define LPTMR_ARR 65535
 
 
-void debug_init();
+int debug_init();
 void clock_init();
 
 //input stuff
@@ -108,6 +108,7 @@ void lptmr_conf(void);
 
 void BatteryVoltage(void);
 void ADC_init(void);
+void IT_PORTD_init(void);
 
 
 #endif /* DEBUG_H_ */

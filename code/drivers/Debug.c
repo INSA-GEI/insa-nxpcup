@@ -12,7 +12,7 @@
 //											0			1			2			3			4			5			6			7			8			9			A			B			C			D			E			F			-
 const unsigned int debugDisplayNbMap[17]={0b11111100, 0b01100000, 0b11011010, 0b11110010, 0b01100110, 0b10110110, 0b10111110, 0b11100000, 0b11111110, 0b11110110, 0b11101110, 0b00111110, 0b10011100, 0b01111010, 0b10011110, 0b10001110 ,0b00000010};
 
-void debug_init(){
+int debug_init(){
 	
 	clock_init();
 	
@@ -68,7 +68,25 @@ void debug_init(){
 	uart_init(BAUDRATE);
 	uart_write("Car started\r\n",13);
 	ADC_init();
+	
+	//########## Choix MODE ########
+	int MODE=(int)((GPIOE_PDIR & 0x003C)>>2);
+				
+	if (MODE>3 || MODE==0) {
+		debug_displaySendNb(16);
+		//affichage de la barre du milieu
+		MODE=-1;
+	} else {
+		debug_displaySendNb(MODE);
+	}
+	uart_write("MODE=",5);
+	uart_writeNb(MODE);
+	uart_write("\n\r",2);
+	
 	BatteryVoltage();
+	IT_PORTD_init();
+	
+	return MODE;
 }
 unsigned char debug_getRotarySW(){
 	//return (GPIOE_PDIR & 0x003C)>>2;
@@ -289,7 +307,7 @@ void ADC_init(void){
 }
 
 void BatteryVoltage(void) {
-
+	DEBUG_RED_OFF;
 	uint16_t BattMeasurement;
 	ADC0_CFG2 |= 0x10;							// select B side of the MUX
 	//ADC0_SC1A |= ADC_SC1_AIEN_MASK;				//Interruption enabled
@@ -299,10 +317,10 @@ void BatteryVoltage(void) {
 	uart_write("Battery level : ", 16);
 	uart_writeNb(BattMeasurement);
 	uart_write("mV.\r\n", 5);
-	uart_write("Mode : ", 7);
-	uart_writeNb((GPIOE_PDIR & 0x003C)>>2);
 	uart_write("\r\n", 2);
 	if (BattMeasurement<7300){
+		DEBUG_RED_ON;
+		debug_displaySendNb(11);
 		uart_write("Batterie faible!\r\n", 18);
 	}
 	
@@ -366,4 +384,17 @@ void clock_init(){
 	//    External reference clock for FLL (IREFS=0)
 	MCG_C1 = MCG_C1_FRDIV(0x03);
 	while((MCG_S & MCG_S_CLKST_MASK) != 0x0CU);  // Wait until PLL output
+}
+
+/********* Bouton PORT D *********/
+void IT_PORTD_init(void){
+	//IT dans main.cpp => pour démarrer la voiture
+	//IT sur le SW_user1 => SW3 => PTD3
+	SIM_SCGC5 = SIM_SCGC5_PORTD_MASK; 	//init clock
+	PORTD_PCR3=0;
+	PORTD_PCR3 |= PORT_PCR_MUX(1); 		//On est en GPIO
+	PORTD_PCR3 |= PORT_PCR_IRQC(0x9); 	//IT on rising edge cf doc chap 11
+	
+	NVIC_ICPR |= (1 << 31);			// clear pending interrupt 31 PORTD
+	NVIC_ISER |= (1 << 31);			// enable interrupt 31 PORTD
 }
