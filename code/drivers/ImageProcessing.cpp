@@ -71,78 +71,123 @@ void Img_Proc::capture(void){
 
 void Img_Proc::Process_seuil(void){
 	threshold=0;
-	int x_d=0;
-	int moy=0;
-	int i=1;
-	int count=0;
-	int count_sun=0;
-	threshold_sun=0;
-		for(int i=1;i<127;i++){
-			if(ImageData[i]>MAX_VALUE){
-				
-			}
-		}
-		threshold_sun/=count;
-	//Effets de bords bizarres
-	for(i=1;i<127;i++){
-		if(ImageData[i]<MAX_VALUE){
+	if (functionning_mode == 1){
+		int x_d=0;
+		int moy=0;
+		int i=1;
+		//Effets de bords bizarres
+		for(i=1;i<127;i++){
 			moy+=ImageData[i];
-			count++;
-		}else{
-			threshold_sun+=ImageData[i];
-			count_sun++;
+			x_d+=ImageData[i]*ImageData[i];
 		}
-		x_d+=ImageData[i]*ImageData[i];
+		moy/=(i-1);
+		x_d/=(i-1);
+		delta=sqrt(x_d-(moy*moy))/2;
+		threshold=moy;
+	}else if (functionning_mode == 2){
+		int x_d=0;
+		int moy=0;
+		int i=1;
+		int count=0;
+		int count_sun=0;
+		threshold_sun=0;
+			for(int i=1;i<127;i++){
+				if(ImageData[i]>MAX_VALUE){
+					
+				}
+			}
+			threshold_sun/=count;
+		//Effets de bords bizarres
+		for(i=1;i<127;i++){
+			if(ImageData[i]<MAX_VALUE){
+				moy+=ImageData[i];
+				count++;
+			}else{
+				threshold_sun+=ImageData[i];
+				count_sun++;
+			}
+			x_d+=ImageData[i]*ImageData[i];
+		}
+		moy/=count;
+		x_d/=(i-1);
+		delta=sqrt(x_d-(moy*moy))/2;
+		threshold=moy;
+		threshold_sun/=count_sun;
 	}
-	moy/=count;
-	x_d/=(i-1);
-	delta=sqrt(x_d-(moy*moy))/2;
-	threshold=moy;
-	threshold_sun/=count_sun;
 	if (threshold<THRESHOLD_classic)threshold=THRESHOLD_classic;
 }
 
 void Img_Proc::differentiate(void){
-		if (functionning_mode == 1){			
-			//On calcul la moyenne
-			Process_seuil();
-			
-			if (c_t>CST_RECAL_T){
-				c_t=0;
-				//############### à enlever
-				/*uart_write("IMG=",4);
-				uart_writeNb(ImageData[0]);
-				uart_write(";",1);
-				uart_writeNb(ImageData[32]);
-				uart_write(";",1);
-				uart_writeNb(ImageData[64]);
-				uart_write(";",1);
-				uart_writeNb(ImageData[96]);
-				uart_write(";",1);
-				uart_writeNb(ImageData[127]);
-				uart_write("\n\r",2);
-				uart_write("T=",2);
-				uart_writeNb(threshold);
-				uart_write("; T_old=",8);
-				uart_writeNb(threshold_old);
-				uart_write("\n\r",2);*/
-				
-				//sun 
-				/*if ((threshold-threshold_old)>MAX_DIFF_THRESHOLD && !(detect_sun)){
-					detect_sun=true;
-					uart_write("sun_detect!",11);
-					uart_write("\n\r",2);
-				}
-				
-				//On met à jour threshold_old
-				threshold_old=threshold;*/
-			}
+					
+		//On calcul la moyenne
+		Process_seuil();
+		
+		if (c_t>CST_RECAL_T){
+			c_t=0;
+			//############### à enlever
+			/*uart_write("IMG=",4);
+			uart_writeNb(ImageData[0]);
+			uart_write(";",1);
+			uart_writeNb(ImageData[32]);
+			uart_write(";",1);
+			uart_writeNb(ImageData[64]);
+			uart_write(";",1);
+			uart_writeNb(ImageData[96]);
+			uart_write(";",1);
+			uart_writeNb(ImageData[127]);
+			uart_write("\n\r",2);
+			*/
 		}
 	}	/*	End of function "Fill_ImageDataDifference"	*/
 
 void Img_Proc::process (void){
 		number_edges = 0;		// reset the number of peaks to 0
 		if (functionning_mode == 1){
+			BlackLineRight = 128;
+			BlackLineLeft = -1;
+			int i=1;
+			while (BlackLineLeft==-1 && i<127){
+				if (ImageData[i]>=threshold && ImageData[i-1]<threshold){
+					BlackLineLeft=i;
+					number_edges++;
+				}else{
+					i++;
+				}
+			}
+			i=126;
+			while (BlackLineRight==128 && (i>0 && i>BlackLineLeft)){	
+				if (ImageData[i]>=threshold && ImageData[i+1]<threshold){						
+					BlackLineRight=i;
+					number_edges++;
+				}else{
+					i--;
+				}
+				
+			}
+			
+			//Nb transistions
+			i=BlackLineLeft+1+TAILLE_BANDE;
+			bool ok=false;
+			while (i<BlackLineRight-1-TAILLE_BANDE){
+				if (ImageData[i]<threshold){
+					ok=true;
+					//On regarde les TAILLE_BANDE prochains pixels 
+					for (int j=i;j<=(i+TAILLE_BANDE);j++){
+						if (ImageData[j]>=threshold){
+							ok=false;
+						}
+					}
+					if (ok){
+						//Regarder s'il y a bien du blanc jusqu'à un max
+						number_edges++;
+					}
+					i+=4;
+				}else{
+					i++;
+				}
+			}
+		}else if (functionning_mode == 2){
+			//####### MODE 2 ######## SUN #############
 			BlackLineRight = 128;
 			BlackLineLeft = -1;
 			int i=1;
@@ -208,6 +253,8 @@ void Img_Proc::process (void){
 				}
 			}
 		}
+			
+	}
 			
 	}	/*	END of the function "Image_Processing"	*/
 
