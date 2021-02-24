@@ -64,7 +64,7 @@ void Img_Proc::capture(void){
 			ADC0_SC1A  =  11;							// set ADC0 channel 11
 			while((ADC0_SC1A & ADC_SC1_COCO_MASK) == 0);// wait until ADC is ready
 			CAM_CLK_LOW;
-			ImageData[i] = ADC0_RA;						// return value
+			ImageData[i] = sqrt(ADC0_RA)*32;						// return value //On éclaircit l'image
 		}
 	
 }

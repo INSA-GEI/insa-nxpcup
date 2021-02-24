@@ -20,7 +20,7 @@
 #define N								7.0 	//Filtre dérivée
 
 //#################### SPEED #############################
-#define Te_calc_speed 	0.01 //100Hz Consigne Vset
+#define Te_calc_speed 	0.01 //100Hz Consigne Vset //Frequence du calcul de vitesse
 
 #define VSLOW 1000
 #define VHIGH 2500
