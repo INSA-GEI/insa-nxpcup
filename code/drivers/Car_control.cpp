@@ -181,6 +181,10 @@ void Car::Caculate_angle_wheel(void){
 void Car::Process_data(void){
 	V_mes=(int)(myMovement.v_R+myMovement.v_L)/2;
 	cam.processAll();
+	if (cam.threshold==-1 && !(stop)){
+		uart_write("Sortie !",8);
+		stop=true;
+	}
 }
 
 //Permet la dectection de l'état et de où se trouve la voiture
@@ -195,7 +199,6 @@ void Car::Detect_state(void){
 		enable_brake=true;
 	}else if((V_mes<SPEED_BRAKE_END)&&enable_brake){
 		enable_brake=false;
-		uart_writeNb(V_mes);
 		uart_write("\n\r",2);
 	}
 	
@@ -216,7 +219,7 @@ void Car::Detect_state(void){
 	
 	//######## Test finish ############
 	if (enable_finish){
-		if ((cam.number_edges)==4 && state_turn_car!=2){//Nb de bandes noires (+1 pour chaque côté)
+		if ((cam.number_edges_old)==4 && (cam.number_edges)==4 && state_turn_car!=2){//Nb de bandes noires (+1 pour chaque côté)
 			finish=true;
 			uart_write("Fin !",5);
 		}
@@ -242,10 +245,11 @@ void Car::Set_deplacement(void){
 			C_finish++;
 			if (C_finish>CST_FINISH_TIME){
 				stop=true;
-			}else{
-				myMovement.set(Vset,servo_angle);
-				myMovement.setDiff(Vset,delta_speed);
+			}else if (C_finish>CST_FINISH_TIME/10){
+				enable_brake=true;
 			}
+			myMovement.set(Vset,servo_angle);
+			myMovement.setDiff(Vset,delta_speed);
 		}else{
 			myMovement.set(Vset,servo_angle);
 			myMovement.setDiff(Vset,delta_speed);
@@ -514,8 +518,8 @@ void Car::Aff_debug_init(void){
 
 //################ IT ###################
 void Car::Demarre(void){
-	for (int i=0; i<3*ONE_SECOND;i++){asm("nop");};
 	mode_speed=1;
+	enable_finish=true;
 	stop=0;
 }
 

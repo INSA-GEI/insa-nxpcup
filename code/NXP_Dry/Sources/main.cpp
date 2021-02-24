@@ -20,7 +20,7 @@ int main(){
 	car.init(Te);
 	Timer_init (Te);
 	car.myMovement.encoder.init_SENS(); //ATTENTION à laisser en dernier!!
-	
+	IT_PORTD_init();
 	//######## While (1) pour débug #########
 	for(;;) {
 		car.Car_debug();
@@ -30,13 +30,25 @@ int main(){
 }
 
 //############# handlers ##############
+int count_dem=0;
 void PORTD_IRQHandler(void){
-	car.Demarre();
+	PORTD_PCR3 |= 1<<24;
+	count_dem++;
+	
 }
 
 //100Hz
 //Servo handler
 void FTM1_IRQHandler() {
+	if (count_dem>0){
+		count_dem++;
+		//2 secondes
+		if (count_dem>200){
+			count_dem=0;
+			uart_write("OK\n\r",4);
+			car.Demarre();
+		}
+	}
 	
 	TPM1_SC |= TPM_SC_TOF_MASK;//Clear IT
 }

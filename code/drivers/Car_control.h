@@ -27,7 +27,7 @@
 #define VBRAKE_min 8000
 
 #define T_BRAKE 200 //Threshold before braking
-#define INCREMENT_SPEED 40 //Constante d'augmentation de la vitesse (évite le patinage)
+#define INCREMENT_SPEED 30 //Constante d'augmentation de la vitesse (évite le patinage)
 #define DIV_1_SPEED 3 //Divise la consigne de vitesse pour éviter le patinage sur la premiere moitié Vmes=[Vslow,Vhigh/2]
 #define SPEED_BRAKE_BEG 1300 //Vitesse seuil dans les virages
 #define SPEED_BRAKE_END 100 //Vitesse seuil dans les virages

@@ -20,6 +20,7 @@
 // Define thresholds for Camera Black Line recognition
 #define THRESHOLD_classic			0			// standard threshold : used in the basic image processing function
 #define MAX_VALUE					100
+#define DELTA_OUT					2.0
 
 //Mode de détection des lignes
 #define functionning_mode			1			// operating mode: from 1 to 2
@@ -41,7 +42,7 @@ public:
 	int diff_old;						//
 	int threshold;						//Moyenne des échantillons
 	int threshold_sun;						//Moyenne des échantillons soleil
-	int delta;						//Ecart-type peut servir pour savoir si on est en dehors de la route ou pas		
+	float delta;						//Ecart-type peut servir pour savoir si on est en dehors de la route ou pas		
 	int threshold_old;
 	
 	int RoadMiddle;						// calculated middle of the road
@@ -49,6 +50,7 @@ public:
 	int BlackLineRight;					// position of the black line on the right side (127)
 	int BlackLineLeft;					// position of the black line on the left side
 	int number_edges;
+	int number_edges_old;
 
 	void init(void);					//initializes the camera
 	void capture(void);					//retrieves data from the camera

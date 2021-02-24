@@ -47,7 +47,7 @@ void Encoder::init(void){
 
 void Encoder::init_SENS(void){
 	//for(int i=0;i<ONE_SECOND;i++){asm ("nop");};
-	SIM_SCGC5 = SIM_SCGC5_PORTA_MASK;
+	SIM_SCGC5 = SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK | SIM_SCGC5_PORTC_MASK | SIM_SCGC5_PORTD_MASK | SIM_SCGC5_PORTE_MASK;
 	//On regarde les 2nd canaux
 	//ENC_SIG_B1 PTA 1
 	//ENC_SIG_B2 PTA 2

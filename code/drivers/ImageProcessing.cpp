@@ -14,8 +14,8 @@ Img_Proc::Img_Proc(){
 	BlackLineRight=127;
 	BlackLineLeft=0;
 	number_edges=0;
+	number_edges_old=0;
 	threshold=THRESHOLD_classic;
-	//threshold_old=MAX_DIFF_THRESHOLD;
 	delta=0;
 	detect_sun=false;
 }
@@ -64,7 +64,7 @@ void Img_Proc::capture(void){
 			ADC0_SC1A  =  11;							// set ADC0 channel 11
 			while((ADC0_SC1A & ADC_SC1_COCO_MASK) == 0);// wait until ADC is ready
 			CAM_CLK_LOW;
-			ImageData[i] = sqrt(ADC0_RA)*32;						// return value //On éclaircit l'image
+			ImageData[i] = ADC0_RA;						// return value e
 		}
 	
 }
@@ -115,10 +115,14 @@ void Img_Proc::Process_seuil(void){
 		threshold_sun/=count_sun;
 	}
 	if (threshold<THRESHOLD_classic)threshold=THRESHOLD_classic;
+	if (delta<DELTA_OUT)threshold=-1;
 }
 
 void Img_Proc::differentiate(void){
-					
+		//On éclaircit l'image
+		/*for (int n=0;n<128;n++){
+			ImageData[n]=32*sqrt(ImageData[n]);
+		}*/
 		//On calcul la moyenne
 		Process_seuil();
 		
@@ -141,6 +145,7 @@ void Img_Proc::differentiate(void){
 	}	/*	End of function "Fill_ImageDataDifference"	*/
 
 void Img_Proc::process (void){
+		number_edges_old=number_edges;
 		number_edges = 0;		// reset the number of peaks to 0
 		if (functionning_mode == 1){
 			BlackLineRight = 128;
@@ -252,10 +257,7 @@ void Img_Proc::process (void){
 					i++;
 				}
 			}
-		}
-			
-	}
-			
+		}			
 	}	/*	END of the function "Image_Processing"	*/
 
 void Img_Proc::calculateMiddle (void){

@@ -84,7 +84,7 @@ int debug_init(){
 	uart_write("\n\r",2);
 	
 	BatteryVoltage();
-	IT_PORTD_init();
+	
 	
 	return MODE;
 }
@@ -390,10 +390,12 @@ void clock_init(){
 void IT_PORTD_init(void){
 	//IT dans main.cpp => pour démarrer la voiture
 	//IT sur le SW_user1 => SW3 => PTD3
-	SIM_SCGC5 = SIM_SCGC5_PORTD_MASK; 	//init clock
+	//init clock dans l'encoder
 	PORTD_PCR3=0;
 	PORTD_PCR3 |= PORT_PCR_MUX(1); 		//On est en GPIO
+	GPIOD_PDDR &=~ (1<<3); 				//Conf en input
 	PORTD_PCR3 |= PORT_PCR_IRQC(0x9); 	//IT on rising edge cf doc chap 11
+	
 	
 	NVIC_ICPR |= (1 << 31);			// clear pending interrupt 31 PORTD
 	NVIC_ISER |= (1 << 31);			// enable interrupt 31 PORTD
