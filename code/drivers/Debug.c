@@ -68,6 +68,7 @@ int debug_init(){
 	uart_init(BAUDRATE);
 	uart_write("Car started\r\n",13);
 	ADC_init();
+	DEBUG_CAM_LED_OFF;
 	
 	//########## Choix MODE ########
 	int MODE=(int)((GPIOE_PDIR & 0x003C)>>2);
@@ -81,10 +82,7 @@ int debug_init(){
 	}
 	uart_write("MODE=",5);
 	uart_writeNb(MODE);
-	uart_write("\n\r",2);
-	
-	BatteryVoltage();
-	
+	uart_write("\n\r",2);	
 	
 	return MODE;
 }
@@ -306,7 +304,7 @@ void ADC_init(void){
 	ADC0_SC3 = 0x00;				// single conversion mode
 }
 
-void BatteryVoltage(void) {
+int BatteryVoltage(void) {
 	DEBUG_RED_OFF;
 	uint16_t BattMeasurement;
 	ADC0_CFG2 |= 0x10;							// select B side of the MUX
@@ -319,12 +317,11 @@ void BatteryVoltage(void) {
 	uart_write("mV.\r\n", 5);
 	uart_write("\r\n", 2);
 	if (BattMeasurement<7300){
-		DEBUG_RED_ON;
-		debug_displaySendNb(11);
-		uart_write("Batterie faible!\r\n", 18);
+		return 1;
 	}
 	
 	ADC0_SC1A  =  11;	//For the camera
+	return 0;
 }
 
 

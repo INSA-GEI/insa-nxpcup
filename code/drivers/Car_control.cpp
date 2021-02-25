@@ -49,19 +49,22 @@ Car::Car(){
 	mode_speed=1;
 	delta_speed=0;
 	mode_debug=0;
-	ESP=0;
 	state_turn_car=0;
-	detect_ESP=false;
-	active_ESP=false;
-	enable_ampli_turn=false;
 	enable_brake=false;
 	enable_finish=false;
 	stop=true;
+	low_batt=false;
 }
 
 //################## Functions ####################
 
 void Car::init(float Te){
+	low_batt=BatteryVoltage();
+	if (low_batt){
+		DEBUG_RED_ON;
+		debug_displaySendNb(11);
+		uart_write("Batterie faible!\r\n", 18);
+	}
 	myMovement.init();
 	cam.init();
 	myMovement.set(Vset,0.0);
@@ -452,10 +455,6 @@ void Car::Car_debug(void){
 						Vset=Vslow;
 						uart_write("speed_mano\n\r",12);
 					}
-					break;
-				case 'e':
-					uart_write("ESP actif\n\r",11);
-					active_ESP=true;
 					break;
 				case 'l':	//lights toggle
 					GPIOC_PTOR =DEBUG_CAM_LED_Pin;

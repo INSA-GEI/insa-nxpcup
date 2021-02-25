@@ -12,15 +12,17 @@ int MODE=-1;
 //void delay_time(int number);
 
 //La led rouge indique qu'il faut changer la batterie, on affiche aussi B sur l'afficheur 7seg;
-
-int main(){	
+int Init_tot(void){
 	//######## INIT ###########
 	MODE=debug_init(); 		//retourne le mode
-	DEBUG_CAM_LED_OFF;
 	car.init(Te);
 	Timer_init (Te);
 	car.myMovement.encoder.init_SENS(); //ATTENTION à laisser en dernier!!
 	IT_PORTD_init();
+}
+
+int main(){	
+	Init_tot();
 	//######## While (1) pour débug #########
 	for(;;) {
 		car.Car_debug();

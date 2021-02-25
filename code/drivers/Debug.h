@@ -106,7 +106,7 @@ void lptmr_conf(void);
 #define BATT_SEUIL VBATT * ADC_RESOLUTION *0.5	//50% of battery
 
 
-void BatteryVoltage(void);
+int BatteryVoltage(void);
 void ADC_init(void);
 void IT_PORTD_init(void);
 

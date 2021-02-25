@@ -43,10 +43,14 @@ public:
 	Movement myMovement;
 	Img_Proc cam;
 	
-	Car();
+	Car(); //CONSTRUCTEUR
 	
+	// ############ VAR ETAT ################
+		bool low_batt;
+		
 	//############# functions #########################
 		void init(float Te);
+		void Demarre(void);
 		
 		//Process acquisiton des données
 		void Process_data(void);
@@ -63,63 +67,59 @@ public:
 		void Car_debug(void); //Commande Putty
 		
 		//Debug
-		int mode_debug;
 		void Set_debug_mode(int i); //i=>0 : Cam+ange_servo  //i=>1 : Cam[i] //i=>2 : 
 		void Aff_debug(void);
 		void Aff_debug_init(void);
 		
-		void Demarre(void);
-
 private:
-		//###### var #####
+	//###### var #####
+		// ###### Etat #########
 			bool enable_finish;
 			bool finish;//indicates if we are at the end of the circuit
-			
 			bool stop;
 			
-			//############ angle wheels ###########
+			
+		//############ angle wheels ###########
 			float servo_angle;
 			float servo_angle_moy;
-			bool enable_ampli_turn;
-			
-			//######### Speed ###############
-				//Speed of the car
-				int Vset;//=0
-				int V_old;
-				int V_mes;
-				//Speed in turn
-				int Vslow;//=500
-				//Speed in strait line
-				int Vhigh;//=1500
-				bool enable_brake;
-				
-				float delta_speed;//Value for the rear differential
-				
-				int mode_speed;//Mode 0=>speed manual //1=> speed auto
-			
-			//########## ESP #############
-				int ESP;
-				bool detect_ESP;
-				bool active_ESP;
-	
-	//########### wheels angle #############
-		//Calcul la commande des roues et opère un PI avant de stocker la valeur dans servo_angle
-		void Caculate_angle_wheel(void);
-	
-	//################ Speed ############
-		//Calcule la consigne de vitesse en fonction de l'angle des roues
-		//Le correcteur est présent dans Movement.cpp =>regulate()
-		void Calculate_speed(void); 
-		//Calcul Vslow et Vhigh (pas encore opérationnel) et renvoie à Calculate_speed
-		void Set_speed(void);
-		//Calcul et instancie la vitesse du différentiel
-		void Set_diff_speed(void);
-	
-	//######### State of the car ###########
-		int state_turn_car; //2=>hard turn //1 soft turn //0=>strait line
-		void Detect_state(void); //Detect the turns //Detect slip (ie ESP) only in strait lines
 		
+		//######### Speed ###############
+			//Speed of the car
+			int Vset;//=0
+			int V_old;
+			int V_mes;
+			//Speed in turn
+			int Vslow;//=500
+			//Speed in strait line
+			int Vhigh;//=1500
+			bool enable_brake;
+			
+			float delta_speed;//Value for the rear differential
+			
+			int mode_speed;//Mode 0=>speed manual //1=> speed auto
 		
+		//######### State of the car ###########
+			int state_turn_car; //2=>hard turn //1 soft turn //0=>strait line
+			
+		//############ Debug #################
+			int mode_debug;
+			
+	//############# FONCTIONS ###############
+		//########### wheels angle #############
+			//Calcul la commande des roues et opère un PI avant de stocker la valeur dans servo_angle
+			void Caculate_angle_wheel(void);
+		
+		//################ Speed ############
+			//Calcule la consigne de vitesse en fonction de l'angle des roues
+			//Le correcteur est présent dans Movement.cpp =>regulate()
+			void Calculate_speed(void); 
+			//Calcul Vslow et Vhigh (pas encore opérationnel) et renvoie à Calculate_speed
+			void Set_speed(void);
+			//Calcul et instancie la vitesse du différentiel
+			void Set_diff_speed(void);
+		
+		//######### State of the car ###########
+			void Detect_state(void); //Detect the turns //Detect slip (ie ESP) only in strait lines
 };
 
 int sng(int a);
