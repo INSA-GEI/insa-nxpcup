@@ -82,24 +82,30 @@ void Img_Proc::differentiate(void){
 		}
 		moy/=(i-1);
 		x_d/=(i-1);
-		delta=sqrt(x_d-(moy*moy))/2;
+		delta=sqrt(x_d-(moy*moy));
 		threshold=moy;
+		if (delta<DELTA_OUT)threshold=-1;
 	}else if (functionning_mode == 2){
 		//Algo pour éviter le soleil
+		int moy=0;
+		int x_d=0;
+		int count=0;
 		ImageDataDifference[0]=0;
 		ImageDataDifference[127]=0;
-		int moy=0;
-		int count=0;
-		for(i=1;i<127;i++){
-			ImageDataDifference[i]=ImageData[i+1]-ImageData[i-1]; //opérateur de Sobel
-			//moyenne quadratique
+		ImageDataDifference[126]=0;
+		for(i=1;i<126;i++){
+			ImageDataDifference[i]=abs(ImageData[i+1]-ImageData[i-1]); //filtre de Sobel
+			//moyenne
 			moy+=ImageDataDifference[i];
+			x_d+=ImageDataDifference[i]*ImageDataDifference[i];
 			count++;
 		}
 		moy/=count;
-		threshold=moy;
+		x_d/=count;
+		delta=sqrt(x_d-(moy*moy));
+		threshold=moy+4*delta;
 	}
-		
+	
 	if (c_t>CST_RECAL_T){
 		c_t=0;
 		//############### à enlever
@@ -178,12 +184,14 @@ void Img_Proc::process (void){
 						BlackLineRight=i;
 					}
 					i+=TAILLE_BANDE;
+					number_edges++;
 				}else{
 					i++;
 				}
 			}
+			
 			i=126;
-			while (BlackLineLeft==-1 && BlackLineRight==128 && (i>0 && i>BlackLineLeft)){
+			while (BlackLineRight==128 && (i>0 && i>BlackLineLeft)){
 				if (ImageDataDifference[i]>threshold){
 					if (ImageData[i-1]<ImageData[i+1]){
 						BlackLineLeft=i;
@@ -191,10 +199,12 @@ void Img_Proc::process (void){
 						BlackLineRight=i;
 					}
 					i-=TAILLE_BANDE;
+					number_edges++;
 				}else{
 					i--;
 				}
 			}
+		
 			
 			//Nb transistions
 			i=BlackLineLeft+1+TAILLE_BANDE;

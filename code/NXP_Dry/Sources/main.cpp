@@ -6,7 +6,7 @@
 //#define FAST_BLINK      (1000000)
 Car car;
 
-#define Te 0.002 //sample time 2ms Car_handler/!\ Te_s (sample time for rear motors is in Movement.h)
+#define Te 0.002//sample time 2ms Car_handler/!\ Te_s (sample time for rear motors is in Movement.h)
 
 int MODE=-1;
 //void delay_time(int number);

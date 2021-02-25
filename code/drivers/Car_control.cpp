@@ -199,7 +199,6 @@ void Car::Detect_state(void){
 		enable_brake=true;
 	}else if((V_mes<SPEED_BRAKE_END)&&enable_brake){
 		enable_brake=false;
-		uart_write("\n\r",2);
 	}
 	
 	//##################### Test Turn #########
