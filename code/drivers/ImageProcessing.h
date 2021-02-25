@@ -20,10 +20,10 @@
 // Define thresholds for Camera Black Line recognition
 #define THRESHOLD_classic			0			// standard threshold : used in the basic image processing function
 #define MAX_VALUE					100
-#define DELTA_OUT					2.0
+#define DELTA_OUT					3.5
 
 //Mode de détection des lignes
-#define functionning_mode			1			// operating mode: from 1 to 2
+#define functionning_mode			2				// operating mode: from 1 to 2
 
 
 #define CST_RECAL_T 100
@@ -35,9 +35,9 @@ public:
 	//constructeur
 	Img_Proc();
 	
-	uint16_t ImageData [128];				// array to store the LineScan image
-	uint16_t ImageDataDifference [128];		// array to store the PineScan pixel difference
-	uint16_t Imageflou [128];		// array to store the PineScan pixel => blur
+	int ImageData [128];				// array to store the LineScan image
+	int ImageDataDifference [128];		// array to store the PineScan pixel difference
+	int Imageflou [128];		// array to store the PineScan pixel => blur
 	
 	int diff;							// actual difference from line middle position
 	int diff_old;						//
