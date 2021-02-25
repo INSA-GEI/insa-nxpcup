@@ -28,6 +28,7 @@
 
 #define CST_RECAL_T 100
 #define TAILLE_BANDE 5 //taille bande noir en pixel
+#define TAILLE_BANDE_MAX 30
 
 class Img_Proc{
 public:
@@ -49,7 +50,7 @@ public:
 	int RoadMiddle_old;					// save the last "Middle of the road" position
 	int BlackLineRight;					// position of the black line on the right side (127)
 	int BlackLineLeft;					// position of the black line on the left side
-	int number_edges;
+	int number_edges;					// Nombre de lignes
 	int number_edges_old;
 
 	void init(void);					//initializes the camera
@@ -67,8 +68,6 @@ public:
 private:
 	int validate_gradient;				// used in image processing to validate some parameters
 	bool detect_sun;					//Un rayon de soleil est détecté
-	void Process_sun(void);				//On corrige les échantillons (/!\ à un Te de retard)
-	void Process_seuil(void);			//Calcul le seuil
 };
 
 /* PROCESS
