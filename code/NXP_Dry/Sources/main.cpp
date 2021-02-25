@@ -15,10 +15,18 @@ int MODE=-1;
 int Init_tot(void){
 	//######## INIT ###########
 	MODE=debug_init(); 		//retourne le mode
+	car.myMovement.init();
+	int f_mode=MODE;
+	if (f_mode==-1){
+		f_mode=1;
+	}
+	car.cam.init(f_mode);
 	car.init(Te);
 	Timer_init (Te);
 	car.myMovement.encoder.init_SENS(); //ATTENTION à laisser en dernier!!
 	IT_PORTD_init();
+	
+	return 0;
 }
 
 int main(){	

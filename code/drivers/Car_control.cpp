@@ -65,8 +65,7 @@ void Car::init(float Te){
 		debug_displaySendNb(11);
 		uart_write("Batterie faible!\r\n", 18);
 	}
-	myMovement.init();
-	cam.init();
+	
 	myMovement.set(Vset,0.0);
 
 	//Coeff PI servo_angle
@@ -133,7 +132,7 @@ void Car::Set_diff_speed(void){
 	//##################### Changement ############
 	if (enable_brake){
 		float r=LENGHT_CAR/(abs(servo_angle_moy)*DEG_TO_RAD); //r=radius of the turn
-		delta_speed=(abs(Vset)*L_ENTRAXE)/(0.5*r+L_ENTRAXE);//On l'aide à tourner
+		delta_speed=(abs(Vset)*L_ENTRAXE)/(1.5*r+L_ENTRAXE);//On l'aide à tourner
 	}else if (state_turn_car==0){
 		//Strait line
 		delta_speed=0;
@@ -197,13 +196,6 @@ void Car::Process_data(void){
 //			:active_ESP : true/false
 void Car::Detect_state(void){
 	
-	//Test braking #####################################
-	if (Vset<V_old-T_BRAKE && V_mes>SPEED_BRAKE_BEG){
-		enable_brake=true;
-	}else if((V_mes<SPEED_BRAKE_END)&&enable_brake){
-		enable_brake=false;
-	}
-	
 	//##################### Test Turn #########
 	if (abs(cam.diff)<MAX_CAM_DIFF/3){
 		//Strait line
@@ -225,6 +217,13 @@ void Car::Detect_state(void){
 			finish=true;
 			uart_write("Fin !",5);
 		}
+	}
+	
+	//Test braking #####################################
+	if (Vset<V_old-T_BRAKE && V_mes>SPEED_BRAKE_BEG){
+		enable_brake=true;
+	}else if(V_mes<SPEED_BRAKE_END && enable_brake){
+		enable_brake=false;
 	}
 }
 

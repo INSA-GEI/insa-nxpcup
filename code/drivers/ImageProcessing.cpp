@@ -18,10 +18,10 @@ Img_Proc::Img_Proc(){
 	threshold=THRESHOLD_classic;
 	delta=1024; //maximum value
 	detect_sun=false;
-	functionning_mode=1;
+	functionning_mode=0;
 }
 
-void Img_Proc::init(){
+void Img_Proc::init(int f_mode){
 	
 	// turn on ADC0 clock
 	SIM_SCGC6 |= SIM_SCGC6_ADC0_MASK;
@@ -43,6 +43,8 @@ void Img_Proc::init(){
 
 	// ADC0 conversion mode
 	ADC0_SC3 = 0x00;				// single conversion mode
+	
+	functionning_mode=f_mode;
 
 }
 

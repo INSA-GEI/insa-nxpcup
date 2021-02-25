@@ -30,8 +30,6 @@ class Img_Proc{
 public:
 	//constructeur
 	Img_Proc();
-	//Mode de détection des lignes
-	int functionning_mode;
 	
 	int ImageData [128];				// array to store the LineScan image
 	int ImageDataDifference [128];		// array to store the PineScan pixel difference
@@ -51,7 +49,7 @@ public:
 	int number_edges;					// Nombre de lignes
 	int number_edges_old;
 
-	void init(void);					//initializes the camera
+	void init(int f_mode);					//initializes the camera
 	void capture(void);					//retrieves data from the camera
 	void differentiate(void);			//computes differential
 	void process(void);					//detects edges
@@ -64,6 +62,9 @@ public:
 	
 	
 private:
+	//Mode de détection des lignes
+	int functionning_mode;
+	
 	int validate_gradient;				// used in image processing to validate some parameters
 	bool detect_sun;					//Un rayon de soleil est détecté
 };
