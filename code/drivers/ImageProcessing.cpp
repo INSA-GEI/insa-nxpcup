@@ -18,6 +18,7 @@ Img_Proc::Img_Proc(){
 	threshold=THRESHOLD_classic;
 	delta=1024; //maximum value
 	detect_sun=false;
+	functionning_mode=1;
 }
 
 void Img_Proc::init(){
