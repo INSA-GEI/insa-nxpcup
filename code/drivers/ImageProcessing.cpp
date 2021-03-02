@@ -128,14 +128,14 @@ void Img_Proc::differentiate(void){
 	if (c_t>CST_RECAL_T){
 		c_t=0;
 		//############### à enlever
-		uart_write("IMG=",4);
+		/*uart_write("IMG=",4);
 		for (int j=0; j<127;j++){
 			if (j%2==0){
 				uart_writeNb(LBP[j]);
 				uart_write(";",1);
 			}
 		}
-		uart_write("\n\r",2);
+		uart_write("\n\r",2);*/
 	}
 }	/*	End of function "Fill_ImageDataDifference"	*/
 

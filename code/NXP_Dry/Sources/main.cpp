@@ -16,7 +16,7 @@ int Init_tot(void){
 	//######## INIT ###########
 	MODE=debug_init(); 		//retourne le mode
 	car.myMovement.init();
-	int f_mode=MODE;
+	int f_mode=1;//MODE; 	//Définit le functionning mode
 	if (f_mode==-1){
 		f_mode=1;
 	}

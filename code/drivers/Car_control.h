@@ -8,7 +8,7 @@
 
 #define CST_FINISH_TIME 100 //100*10ms=>1s
 
-#define INCREASE_SPEED_MAX_MIN 400//Nb of time ok before we increase the speed handler every 10ms
+#define INCREASE_SPEED_MAX_MIN 400	//Nb of time ok before we increase the speed handler every 10ms
 #define MAX_DIFF_BEFORE_SLOWDOWN 10 
 #define MAX_ANGLE 30.0
 #define MAX_CAM_DIFF 20
@@ -27,7 +27,7 @@
 #define VBRAKE_min 8000
 
 #define T_BRAKE 200 //Threshold before braking
-#define INCREMENT_SPEED 30 //Constante d'augmentation de la vitesse (évite le patinage)
+#define INCREMENT_SPEED 60 //Constante d'augmentation de la vitesse (évite le patinage)
 #define DIV_1_SPEED 3 //Divise la consigne de vitesse pour éviter le patinage sur la premiere moitié Vmes=[Vslow,Vhigh/2]
 #define SPEED_BRAKE_BEG 1300 //Vitesse seuil dans les virages
 #define SPEED_BRAKE_END 100 //Vitesse seuil dans les virages
