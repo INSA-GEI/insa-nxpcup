@@ -22,7 +22,7 @@
 #define MAX_VALUE					100
 #define DELTA_OUT					3.5
 
-#define CST_RECAL_T 100
+#define CST_RECAL_T 500
 #define TAILLE_BANDE 5 //taille bande noir en pixel
 #define TAILLE_BANDE_MAX 30
 
@@ -33,7 +33,8 @@ public:
 	
 	int ImageData [128];				// array to store the LineScan image
 	int ImageDataDifference [128];		// array to store the PineScan pixel difference
-	int Imageflou [128];		// array to store the PineScan pixel => blur
+	int Imageflou [128];				// array to store the PineScan pixel => blur
+	int LBP[128];						//
 	
 	int diff;							// actual difference from line middle position
 	int diff_old;						//

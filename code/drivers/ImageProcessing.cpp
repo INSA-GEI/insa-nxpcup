@@ -90,40 +90,52 @@ void Img_Proc::differentiate(void){
 		if (delta<DELTA_OUT)threshold=-1;
 	}else if (functionning_mode == 2){
 		//Algo pour éviter le soleil
+		//Motif Binaire Local
 		int moy=0;
-		int x_d=0;
 		int count=0;
+		int x_d=0;
+		int x_pre=0;
+		int x_post=0;
+		int aux_delta=delta/3;
 		ImageDataDifference[0]=0;
 		ImageDataDifference[127]=0;
-		ImageDataDifference[126]=0;
-		for(i=1;i<126;i++){
-			ImageDataDifference[i]=abs(ImageData[i+1]-ImageData[i-1]); //filtre de Sobel
+		LBP[0]=0;
+		LBP[127]=0;
+		for(i=1;i<=126;i++){
+			//Diff
+			if (ImageData[i]-ImageData[i-1]>aux_delta){
+				x_pre=1;
+			}else{
+				x_pre=0;
+			}
+			if (ImageData[i]-ImageData[i+1]>aux_delta){
+				x_post=1;
+			}else{
+				x_post=0;
+			}
+			LBP[i]=x_pre+2*x_post;
 			//moyenne
-			moy+=ImageDataDifference[i];
-			x_d+=ImageDataDifference[i]*ImageDataDifference[i];
+			moy+=ImageData[i];
+			x_d+=ImageData[i]*ImageData[i];
 			count++;
 		}
 		moy/=count;
 		x_d/=count;
 		delta=sqrt(x_d-(moy*moy));
-		threshold=moy+4*delta;
+		threshold=moy+delta;
 	}
 	
 	if (c_t>CST_RECAL_T){
 		c_t=0;
 		//############### à enlever
-		/*uart_write("IMG=",4);
-		uart_writeNb(ImageData[0]);
-		uart_write(";",1);
-		uart_writeNb(ImageData[32]);
-		uart_write(";",1);
-		uart_writeNb(ImageData[64]);
-		uart_write(";",1);
-		uart_writeNb(ImageData[96]);
-		uart_write(";",1);
-		uart_writeNb(ImageData[127]);
+		uart_write("IMG=",4);
+		for (int j=0; j<127;j++){
+			if (j%2==0){
+				uart_writeNb(LBP[j]);
+				uart_write(";",1);
+			}
+		}
 		uart_write("\n\r",2);
-		*/
 	}
 }	/*	End of function "Fill_ImageDataDifference"	*/
 
@@ -179,54 +191,23 @@ void Img_Proc::process (void){
 			BlackLineRight = 128;
 			BlackLineLeft = -1;
 			int i=1;
-			while (BlackLineLeft==-1 && BlackLineRight==128 && i<127){
-				if (ImageDataDifference[i]>threshold){
-					if (ImageData[i-1]<ImageData[i+1]){
-						BlackLineLeft=i;
-					}else{
-						BlackLineRight=i;
-					}
-					i+=TAILLE_BANDE;
+			while (BlackLineLeft==-1 && i<127){
+				if (LBP[i]==1){
+					BlackLineLeft=i;
 					number_edges++;
 				}else{
 					i++;
 				}
 			}
-			
 			i=126;
-			while (BlackLineRight==128 && (i>0 && i>BlackLineLeft)){
-				if (ImageDataDifference[i]>threshold){
-					if (ImageData[i-1]<ImageData[i+1]){
-						BlackLineLeft=i;
-					}else{
-						BlackLineRight=i;
-					}
-					i-=TAILLE_BANDE;
+			while (BlackLineRight==128 && (i>0 && i>BlackLineLeft)){	
+				if (LBP[i]==2){						
+					BlackLineRight=i;
 					number_edges++;
 				}else{
 					i--;
 				}
-			}
-		
-			
-			//Nb transistions
-			i=BlackLineLeft+1+TAILLE_BANDE;
-			bool ok=false;
-			while (i<BlackLineRight-1-TAILLE_BANDE){
-				if (ImageDataDifference[i]>threshold){
-					//On regarde s'il y a un autre gradient
-					int aux=i;
-					while (i<=(aux+TAILLE_BANDE_MAX) && i<BlackLineRight-1-TAILLE_BANDE && !(ok)){
-						if (ImageDataDifference[i]>threshold){
-							ok=true;
-						}
-					}
-					if (ok){
-						//Regarder s'il y a bien du blanc jusqu'à un max
-						number_edges++;
-					}
-				}
-				i++;
+				
 			}
 		}			
 	}	/*	END of the function "Image_Processing"	*/
