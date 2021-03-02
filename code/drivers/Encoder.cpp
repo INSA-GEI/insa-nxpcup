@@ -19,7 +19,7 @@ Encoder::Encoder(void){
     OVF_cnt2=0;
 }
 void Encoder::init(void){
-	SIM_SCGC5 = SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK | SIM_SCGC5_PORTD_MASK; //Enable the clock of PORTA, PORTB, PORTD
+	SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK | SIM_SCGC5_PORTD_MASK; //Enable the clock of PORTA, PORTB, PORTD
 	SIM_SCGC6 |= SIM_SCGC6_TPM2_MASK; //Enable the clock of TPM2 
 	
 	TPM2_SC = ENCODER_MASK_TPM2_PRESCALER;		// prescaler for TPM2 
@@ -47,7 +47,7 @@ void Encoder::init(void){
 
 void Encoder::init_SENS(void){
 	//for(int i=0;i<ONE_SECOND;i++){asm ("nop");};
-	SIM_SCGC5 = SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK | SIM_SCGC5_PORTC_MASK | SIM_SCGC5_PORTD_MASK | SIM_SCGC5_PORTE_MASK;
+	SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK | SIM_SCGC5_PORTC_MASK | SIM_SCGC5_PORTD_MASK | SIM_SCGC5_PORTE_MASK;
 	//On regarde les 2nd canaux
 	//ENC_SIG_B1 PTA 1
 	//ENC_SIG_B2 PTA 2

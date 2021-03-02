@@ -66,6 +66,10 @@ void Movement::setAngle(float angle) {
 }
 
 void Movement::stop(void) {
+	err_L=0;
+	err_R=0;
+	err_old_L=0;
+	err_old_R=0;
 	targetSpeedL=0;
 	targetSpeedR=0;
 	actualSpeedL=0;
