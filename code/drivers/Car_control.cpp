@@ -92,11 +92,7 @@ void Car::Calculate_speed(void){
 	if (enable_brake){
 		Vset=-VBRAKE_min;
 	}else if (Vset>V_old+INCREMENT_SPEED){
-		if ((V_old<(Vhigh+Vset)/2)){
-			Vset=V_old+(int)(INCREMENT_SPEED/DIV_1_SPEED); //Temps de montée max 100ms//évite de glisser
-		}else{
-			Vset=V_old+INCREMENT_SPEED;
-		}
+		Vset=V_old+INCREMENT_SPEED;
 	}
 	if (state_turn_car==3){
 		Vset=Vslow;
@@ -213,7 +209,7 @@ void Car::Detect_state(void){
 	
 	//######## Test finish ############
 	if (enable_finish){
-		if ((cam.number_edges_old)==4 && (cam.number_edges)==4 && state_turn_car!=2){//Nb de bandes noires (+1 pour chaque côté)
+		if ((cam.number_edges_old)==4 && (cam.number_edges)==4 && state_turn_car==0){//Nb de bandes noires (+1 pour chaque côté)
 			finish=true;
 			uart_write("Fin !",5);
 		}
@@ -236,9 +232,13 @@ void Car::Set_deplacement(void){
 	if (stop){
 		C_finish=0;
 		finish=false;
-		Vset=0;
-		servo_angle=0;
-		delta_speed=0;
+		if (V_mes<10){
+			Vset=0;
+			servo_angle=0;
+			delta_speed=0;
+		}else{
+			Vset=-VBRAKE_min;
+		}
 		myMovement.set(Vset,servo_angle);
 		myMovement.setDiff(Vset,delta_speed);
 	}else{
