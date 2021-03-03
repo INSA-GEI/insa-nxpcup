@@ -10,7 +10,7 @@
 
 #include <MKL25Z4.h>
 
-#define MOTOR_CAL_SPEED 0.058//	de mm/s -> PWM value
+#define MOTOR_CAL_SPEED 0.116//0.058//	de mm/s -> PWM value
 
 #define MOTOR_LEFT_ENABLE		(GPIOC_PSOR=(1<<0))
 #define MOTOR_LEFT_DISABLE		(GPIOC_PCOR=(1<<0))

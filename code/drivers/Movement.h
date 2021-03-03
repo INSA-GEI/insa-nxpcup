@@ -18,8 +18,8 @@
 #define L_ENTRAXE 150 //en mm 
 
 #define MOVEMENT_CORR_THRESHOLD 6 		// correct the speed only when we are more than 1 cm/s off target speed
-#define MOVEMENT_CORR_KP 1.0		//8.0			//1.0 P
-#define MOVEMENT_CORR_KI 2000.0		//10000.0		// I
+#define MOVEMENT_CORR_KP 0.5//1.0					//1.0 P
+#define MOVEMENT_CORR_KI 2.5//2000.0					// I
 #define SPEED_LIMIT 9000 // /!\ Le système sature vers 4000				//	mm/s
 #define Te_s (float)1/6000 //sample time 6Khz handler rear motors 0.2ms
 
