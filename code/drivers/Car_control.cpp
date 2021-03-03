@@ -91,6 +91,8 @@ void Car::Calculate_speed(void){
 	Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle_moy))+Vhigh;		
 	if (enable_brake){
 		Vset=-VBRAKE_min;
+	}else if (V_mes<Vslow/2){
+		Vset=Vslow;
 	}else if (Vset>V_old+INCREMENT_SPEED){
 		Vset=V_old+INCREMENT_SPEED;
 	}
@@ -126,16 +128,16 @@ void Car::Set_diff_speed(void){
 	//Calcul du diff
 	//We calculate the delta_speed of the rear wheels
 	//##################### Changement ############
-	if (enable_brake){
+	if (enable_brake && !(finish)){
 		float r=LENGHT_CAR/(abs(servo_angle_moy)*DEG_TO_RAD); //r=radius of the turn
-		delta_speed=(abs(Vset)*L_ENTRAXE)/(1.5*r+L_ENTRAXE);//On l'aide à tourner
+		delta_speed=(abs(Vset)*L_ENTRAXE)/(1.0*r+L_ENTRAXE);//On l'aide à tourner
 	}else if (state_turn_car==0){
 		//Strait line
 		delta_speed=0;
 	}else{
 		//Soft turn
 		float r=LENGHT_CAR/(abs(servo_angle_moy)*DEG_TO_RAD); //r=radius of the turn
-		delta_speed=(abs(Vset)*L_ENTRAXE)/(2.0*r+L_ENTRAXE);//théorique 
+		delta_speed=(abs(Vset)*L_ENTRAXE)/(1.5*r+L_ENTRAXE);//théorique avec 2.0*r
 	}
 	
 	//Left turn servoangle<0
@@ -243,12 +245,17 @@ void Car::Set_deplacement(void){
 		myMovement.setDiff(Vset,delta_speed);
 	}else{
 		if (finish){
+			if(state_turn_car==2){
+				finish=false;
+				C_finish=0;
+			}
 			C_finish++;
 			if (C_finish>CST_FINISH_TIME){
 				stop=true;
 			}else if (C_finish>CST_FINISH_TIME/10){
 				enable_brake=true;
 			}
+			
 			myMovement.set(Vset,servo_angle);
 			myMovement.setDiff(Vset,delta_speed);
 		}else{
