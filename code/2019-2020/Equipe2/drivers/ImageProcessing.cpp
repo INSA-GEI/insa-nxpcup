@@ -5,18 +5,10 @@ int i,j;
 int c_t=0;//counter for the threshold
 int CompareData_high=140;
 int CompareData_low=100;
-int dejafait = 0;
+int dejafait = 1;
 // Valeurs de calibration
-int calibree = 0;
-int bande_blanche_totale = 0;
-int bande_noire_gauche[2] = {30,40};
-int milieu[2] = {40,80};
-int bande_noire_droite[2] = {80,90};
-int threshold_noir_gauche = 0;
-int threshold_blanc = 0;
-int threshold_noir_droit = 0;
 int threshold = 50;
-bool ok;
+bool intersection = false;
 
 void Img_Proc::init(){
 	
@@ -84,218 +76,12 @@ void Img_Proc::capture(void){
 		CAM_CLK_LOW;
 }
 
-
-
-/**
-  * @brief	Differencie le blanc du noir
-  * @param  None
-  * @retval None
-  */
 void Img_Proc::differentiate(void){
-	threshold_noir_gauche = ImageData[bande_noire_gauche[0]];
-	for (i=bande_noire_gauche[0];i<bande_noire_gauche[1];i++) {
-		threshold_noir_gauche = (threshold_noir_gauche + ImageData[i+1])/2;
-	}
-	
-//	threshold_blanc = ImageData[milieu[0]];
-//	for (i=milieu[0];i<milieu[1];i++) {
-//		threshold_blanc = (threshold_blanc + ImageData[i+1])/2;
-//	}
-	
-	threshold_noir_droit = ImageData[bande_noire_droite[0]];
-	for (i=bande_noire_droite[0];i<bande_noire_droite[1];i++) {
-		threshold_noir_droit = (threshold_noir_droit + ImageData[i+1])/2;
-	}
-	
-	threshold = (threshold_noir_gauche+threshold_noir_droit + threshold_blanc)/3;
-	
-//	threshold = ImageData[bande_noire_gauche[0]];
-//	for (i=bande_noire_gauche[0]; i<bande_noire_droite[1]; i++) {
-//		threshold = (threshold + ImageData[i+1])/2;
-//	}
-	
-	
-}	/*	End of function "differentiate"	*/
+}
 
-
-
-
-/**
-  * @brief	Selection des diffents process, comme un case
-  * 		int_team_1 = [0-9]
-  * 		int_team_2 = [A-F]
-  * 			Functioning mode A - Romain, voiture fonctionnelle mais merite des improvements sur le PI
-  * @param  None
-  * @retval None
-  */
-void Img_Proc::process (void){		
-	//################### mode 2 ##########################
-		if (functioning_mode == 2){
-			// Find black line on the right side
-
-			BlackLineRight = 128;
-			for(i=126;i>=64;i--){
-	   			if (ImageDataDifference[i] > CompareData_high){
-	   				//CompareData_high = ImageDataDifference[i];
-	   				BlackLineRight = i;
-	   				(number_edges) ++;
-	   			}else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high ){
-	   				if (i >= 67 && i < 124){
-	   					j = 1;
-	   					validate_gradient = 0;
-						while (j <= 3){
-	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high){
-	   							BlackLineRight = i;
-	   							(number_edges) ++;
-	   							//CompareData_high = ImageDataDifference[i+j];	
-	   							validate_gradient = 1;
-	   						}
-	   						j++;
-	   					}
-	   				}
-	   				if (validate_gradient != 1){
-	   					if (i >= 69 && i < 122){
-	   						j=1;
-	   						while (j <= 5){
-	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high)){
-	   								BlackLineRight = i;
-	   								(number_edges) ++;
-	   								//CompareData_low = ImageDataDifference[i];	 
-	   							}
-	   							j++;
-	   						}
-	   					}
-	   				}
-	   			}
-			}
-
-	   		// Find black line on the left side
-
-			// image processing with the algorithm seen at the beginning. 
-			BlackLineLeft = -1;
-			for(i=1;i<=64;i++){
-	   			if (ImageDataDifference[i] > CompareData_high){
-	   				//CompareData_high = ImageDataDifference[i];
-	   				BlackLineLeft = i;
-	   				(number_edges) ++;
-	   			}else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high ){
-	   				if (i > 3 && i <= 61){
-	   					j = 1;
-	   					validate_gradient = 0;
-						while (j <= 3){
-	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high){
-	   							BlackLineLeft = i;
-	   							(number_edges) ++;
-	   							//CompareData_high = ImageDataDifference[i+j];
-	   							//CompareData_low = ImageDataDifference[i];	   		
-	   							validate_gradient = 1;				
-	   						}
-	   						j++;
-	   					}
-	   				}
-	   				if (validate_gradient != 1){
-	   					if (i > 5 && i <= 59){
-	   						j=1;
-	   						while (j <= 5){
-	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high)){
-	   								BlackLineLeft = i;
-	   								(number_edges) ++;
-	   								//CompareData_high = ImageDataDifference[i+j];
-	   								//CompareData_low = ImageDataDifference[i];	 
-	   							}
-	   							j++;
-	   						}
-	   					}
-	   				}
-	   			}
-	   		}
-		}
-		
-		
-		//################### mode A ##########################
-		if (functioning_mode == 0xA){
-				
-			// On veut pouvoir régler la fréquence à laquelle la fonction est appelée
-			// De base, c'est l'IT FTM1 qui est à 100Hz, mais avec if (dejafait < x) on peut diviser x fois la frequence
-			/*if (dejafait == 0) {
-				dejafait = 1;
-				
-				// On met des valeurs max et min pour être sûr qu'elles seront effacées
-				int maximum = 0;
-				int minimum = 100;
-				// Lancement de la capture caméra
-				capture();
-				
-				// Calcul de la moyenne
-				for(i=1;i<=126;i++){							// using a gradient by direct differences (application of the filter : [-2, -1 ,0 ,1 , 2] -> P(x) = -2*P(x-2)-1*P(x-1)+0*P(x)+1*P(x+1)+2*P(x-2)
-					ImageData[i] = (ImageData[i-1] + ImageData[i] + ImageData[i+1])/3;
-				}
-				
-				// Calibration une seule fois des valeurs de la camera
-				if (calibree == 0) {
-					calibree = 1;
-					threshold_noir_gauche = ImageData[bande_noire_gauche[0]];
-					threshold_blanc = ImageData[milieu[0]];
-					threshold_noir_droit = ImageData[bande_noire_droite[0]];
-					
-					for (i=bande_noire_gauche[0];i<bande_noire_gauche[1];i++) {
-						threshold_noir_gauche = (threshold_noir_gauche + ImageData[i+1])/2;
-					}
-					for (i=milieu[0];i<milieu[1];i++) {
-						threshold_blanc = (threshold_blanc + ImageData[i+1])/2;
-					}
-					for (i=bande_noire_droite[0];i<bande_noire_droite[1];i++) {
-						threshold_noir_droit = (threshold_noir_droit + ImageData[i+1])/2;
-					}
-				}
-				
-				// Affichage
-					// On est obligé de faire 1 pixel sur 2 car sinon on rentre dans un HardFault
-				for (i=0;i<128;i+=2) {
-					uart_writeNb(ImageData[i]);
-					uart_write(";",1);
-					if (maximum < ImageData[i]) maximum = ImageData[i];
-					if (minimum > ImageData[i]) minimum = ImageData[i];
-				}
-				uart_write("\r\n",2);*/
-				
-				// Affichage grâce au treshold calculé : si la voiture est au milieu, on devrait avoir quelque chose comme :
-				// **__*********__**
-				/*for (i = 0;i<128;i+=2) {
-					if ((ImageData[i] < threshold_noir_droit) || (ImageData[i] < threshold_noir_gauche)) uart_write("_",1);	// Noir
-					else {
-						uart_write("*",1);	// Blanc
-						bande_blanche_totale++;
-					}
-				}
-				if (bande_blanche_totale < 10) calibree = 0;
-				bande_blanche_totale = 0;
-				uart_write("\r\n",2);*/
-				
-				// Affichage des différentes valeurs calculées pour pouvoir comparer
-				/*uart_write("\r\n",2);
-				uart_write("Threshold : ", 12);
-				uart_writeNb(threshold);
-				uart_write(" // ",4);
-				uart_write("MAX : ",6);
-				uart_writeNb(maximum);
-				uart_write(" // ",4);
-				uart_write("MIN : ",6);
-				uart_writeNb(minimum);
-				uart_write("\r\n",2);*/
-			/*}
-			else if (dejafait < 25) dejafait++;
-			else dejafait = 0;*/
-			
-			for(int i=0;i<=127;i++){
-				if (ImageData[i]>threshold){
-					ImageDataDifference[i]=1; //white
-				}
-				else{
-					ImageDataDifference[i]=0;//black
-				}
-			}
-			
+void Img_Proc::process (void){
+		number_edges = 0;		// reset the number of peaks to 0
+		if (functioning_mode == 1){
 			BlackLineRight = 128;
 			BlackLineLeft = -1;
 			int i=1;
@@ -336,11 +122,217 @@ void Img_Proc::process (void){
 					i++;
 				}
 			}
-	}
+		}
+		
+	//################### mode 2 ##########################
+		if (functioning_mode == 2){
+			// Find black line on the right side
 
-}	/*	END of the function "Image_Processing"	*/
+			BlackLineRight = 128;
+			for(i=126;i>=64;i--){
+	   			if (ImageDataDifference[i] > CompareData_high){
+	   				//CompareData_high = ImageDataDifference[i];
+	   				BlackLineRight = i;
+	   				(number_edges) ++;
+	   			}else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high ){
+	   				if (i >= 67 && i < 124){
+	   					j = 1;
+	   					validate_gradient = 0;
+						while (j <= 3){
+	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high){
+	   							BlackLineRight = i;
+	   							(number_edges) ++;
+	   							//CompareData_high = ImageDataDifference[i+j];	
+	   							validate_gradient = 1;
+	   						}
+	   						j++;
+	   					}
+	   				}
+	   				if (validate_gradient != 1){
+	   					if (i >= 69 && i < 122){
+	   						j=1;
+	   						while (j <= 5){
+	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high)){
+	   								BlackLineRight = i;
+	   								(number_edges) ++;
+	   								//CompareData_low = ImageDataDifference[i];	 
+	   							}
+	   							j++;
+	   						}
+	   					}
+	   				}
+	   			}		/* END else if ... */
+			}	/* END for (i=126;i>=64;i--) */
 
+	   		// Find black line on the left side
 
+			// image processing with the algorithm seen at the beginning. 
+			BlackLineLeft = -1;
+			for(i=1;i<=64;i++){
+	   			if (ImageDataDifference[i] > CompareData_high){
+	   				//CompareData_high = ImageDataDifference[i];
+	   				BlackLineLeft = i;
+	   				(number_edges) ++;
+	   			}else if (ImageDataDifference[i] > CompareData_low && ImageDataDifference[i] < CompareData_high ){
+	   				if (i > 3 && i <= 61){
+	   					j = 1;
+	   					validate_gradient = 0;
+						while (j <= 3){
+	   						if (ImageDataDifference[i+j] > CompareData_high || ImageDataDifference[i-j] > CompareData_high){
+	   							BlackLineLeft = i;
+	   							(number_edges) ++;
+	   							//CompareData_high = ImageDataDifference[i+j];
+	   							//CompareData_low = ImageDataDifference[i];	   		
+	   							validate_gradient = 1;				
+	   						}
+	   						j++;
+	   					}
+	   				}
+	   				if (validate_gradient != 1){
+	   					if (i > 5 && i <= 59){
+	   						j=1;
+	   						while (j <= 5){
+	   							if ((ImageDataDifference[i+j] > CompareData_low && ImageDataDifference[i+j] < CompareData_high) || (ImageDataDifference[i-j] > CompareData_low && ImageDataDifference[i-j] < CompareData_high)){
+	   								BlackLineLeft = i;
+	   								(number_edges) ++;
+	   								//CompareData_high = ImageDataDifference[i+j];
+	   								//CompareData_low = ImageDataDifference[i];	 
+	   							}
+	   							j++;
+	   						}
+	   					}
+	   				}
+	   			}		/* END else if ... */
+	   		}	/* END for (i=64;i>=1;i--) */
+		}	/* END of "(IF mfunctioning_mod == 2 " */
+		
+		
+		//################### mode A ##########################
+		if (functioning_mode == 0xA){
+			// Inversement de la camera
+			for(i=0;i<=127;i++) ImageDataBuff[i] = ImageData[i];
+			for(i=127; i>=0; i--) ImageData[i] = ImageDataBuff[127-i];
+			
+			// Calcul du threshold entre noir & blanc : moyennage
+			for(i=1;i<=127;i++) threshold += ImageData[i];
+			threshold /= 128;
+			
+			// Si on detecte une intersection, que du blanc, moyenne en dessous de 35
+			/*intersection = false;
+			if (threshold < 35) {
+				intersection = true;
+				servo_angle=0;
+				delta_speed=0;
+				myMovement.set(Vset,servo_angle);
+				myMovement.setDiff(Vset,delta_speed);
+			}
+			else {*/
+				// Détection du noir et du blanc
+				for(i=0;i<=127;i++){
+					if (ImageData[i]>threshold){
+						ImageDataDifference[i]=1; //white
+					}
+					else{
+						ImageDataDifference[i]=0;//black
+					}
+				}
+				
+				BlackLineRight = 128;
+				BlackLineLeft = -1;
+				i=1;
+				while (BlackLineLeft==-1 && i<127){
+					if (ImageDataDifference[i]==1 && ImageDataDifference[i-1]==0){
+						BlackLineLeft=i;
+						number_edges++;
+					}else{
+						i++;
+					}
+				}
+				i=126;
+				while (BlackLineRight==128 && (i>0 && i>BlackLineLeft)){
+					if (ImageDataDifference[i]==1 && ImageDataDifference[i+1]==0){
+						BlackLineRight=i;
+						number_edges++;
+					}else{
+						i--;
+					}
+				}
+				//Nb transistions
+				i=BlackLineLeft+1+TAILLE_BANDE;
+				bool ok=false;
+				while (i<BlackLineRight-1-TAILLE_BANDE){
+					if (ImageDataDifference[i-1]!=ImageDataDifference[i]){
+						ok=true;
+						//On regarde les TAILLE_BANDE prochains pixels 
+						for (int j=i;j<=(i+TAILLE_BANDE);j++){
+							if (ImageDataDifference[j]==1){
+								ok=false;
+							}
+						}
+						if (ok){
+							number_edges++;
+						}
+						i+=4;
+					}else{
+						i++;
+					}
+				}
+			//}
+		}
+		
+		if (functioning_mode == 0xF) {
+			
+			// On veut pouvoir régler la fréquence à laquelle la fonction est appelée
+			// De base, c'est l'IT FTM1 qui est à 100Hz, mais avec if (dejafait < x) on peut diviser x fois la frequence
+			if (dejafait == 0) {
+				dejafait = 1;
+				
+				// On met des valeurs max et min pour être sûr qu'elles seront effacées
+				int maximum = 0;
+				int minimum = 100;
+				// Lancement de la capture caméra
+				capture();
+				
+				// Affichage
+					// On est obligé de faire 1 pixel sur 2 car sinon on rentre dans un HardFault
+				for (i=0;i<128;i+=2) {
+					uart_writeNb(ImageData[i]);
+					uart_write(";",1);
+					if (maximum < ImageData[i]) maximum = ImageData[i];
+					if (minimum > ImageData[i]) minimum = ImageData[i];
+				}
+				uart_write("\r\n",2);
+				
+				// Affichage grâce au treshold calculé : si la voiture est au milieu, on devrait avoir quelque chose comme :
+				// **__*********__**
+				/*for (i = 0;i<128;i+=2) {
+					if ((ImageData[i] < threshold_noir_droit) || (ImageData[i] < threshold_noir_gauche)) uart_write("_",1);	// Noir
+					else {
+						uart_write("*",1);	// Blanc
+						bande_blanche_totale++;
+					}
+				}
+				if (bande_blanche_totale < 10) calibree = 0;
+				bande_blanche_totale = 0;
+				uart_write("\r\n",2);*/
+				
+				// Affichage des différentes valeurs calculées pour pouvoir comparer
+				/*uart_write("\r\n",2);
+				uart_write("Threshold : ", 12);
+				uart_writeNb(threshold);
+				uart_write(" // ",4);
+				uart_write("MAX : ",6);
+				uart_writeNb(maximum);
+				uart_write(" // ",4);
+				uart_write("MIN : ",6);
+				uart_writeNb(minimum);
+				uart_write("\r\n",2);*/
+			}
+			else if (dejafait < 25) dejafait++;
+			else dejafait = 0;
+		}
+		
+	}	/*	END of the function "Image_Processing"	*/
 
 void Img_Proc::calculateMiddle (void){
 

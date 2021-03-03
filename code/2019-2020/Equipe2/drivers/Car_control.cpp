@@ -417,7 +417,7 @@ void Car::Car_debug(void){
 					else {
 						stop=0;
 						uart_write("Demarre!\r\n",12);
-						Vset = (Vslow+Vhigh)/2;
+						Vset = 1000;
 						Aff_debug_init();
 						n=0;
 					}

@@ -25,6 +25,7 @@
 class Img_Proc{
 public:
 	uint16_t ImageData [128];				// array to store the LineScan image
+	uint16_t ImageDataBuff[128];				// array to store the LineScan image
 	uint16_t ImageDataDifference [128];		// array to store the PineScan pixel difference
 	
 	int diff;								// actual difference from line middle position

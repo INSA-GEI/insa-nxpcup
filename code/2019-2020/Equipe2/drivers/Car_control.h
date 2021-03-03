@@ -11,14 +11,14 @@
 #define Ki								1 	//I of the PI -> Vitesse à laquelle il va tourner  - 1 Original
 
 #define AMPLIFIE_TURN_1 1	// Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
-#define AMPLIFIE_TURN_2 5	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
-#define MAX_CAM_DIFF 20		// 20 Original
+#define AMPLIFIE_TURN_2 4	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
+#define MAX_CAM_DIFF 30		// 20 Original
 #define MAX_ANGLE 30.0		// 30 Original
 
 
 //#################### SPEED #############################
 #define VSLOW 1000	// 1000 Original
-#define VHIGH 1500	// 3000 Original
+#define VHIGH 2500	// 2500 Original
 #define T_BRAKE 200 //Threshold before braking - 200 Original
 #define INCREMENT_SPEED 40 //Constante d'augmentation de la vitesse (évite le patinage)
 #define DIV_1_SPEED 3 //Divise la consigne de vitesse pour éviter le patinage sur la premiere moitié Vmes=[Vslow,Vhigh/2]	- 3 Original
