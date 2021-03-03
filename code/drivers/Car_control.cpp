@@ -289,6 +289,7 @@ void Car::Car_handler(void){
 	Aff_debug();
 	//We refresh the deplacement's parameters. Speed +wheels Angle
 	Set_deplacement();
+	myMovement.regulate(); //Applique la PWM correspond à la vitesse aux moteurs
 }
 
 //#################### Debug ###############################

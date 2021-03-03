@@ -26,7 +26,7 @@ Movement::Movement() {
 	v_R=0;
 }
 
-void Movement::init(void) {
+void Movement::init(float Te_s) {
 	motor_init();
 	servo_init();
 	encoder.init();

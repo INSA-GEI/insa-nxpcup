@@ -15,7 +15,7 @@ int MODE=-1;
 int Init_tot(void){
 	//######## INIT ###########
 	MODE=debug_init(); 		//retourne le mode
-	car.myMovement.init();
+	car.myMovement.init(Te);
 	int f_mode=1;//MODE; 	//Définit le functionning mode
 	if (f_mode==-1){
 		f_mode=1;
@@ -67,7 +67,7 @@ void FTM1_IRQHandler() {
 void FTM2_IRQHandler() {//encoder interrupt à max 6Hz
 	
 	car.myMovement.encoder.interruptHandler();
-	car.myMovement.regulate(); //Applique la PWM correspond à la vitesse aux moteurs
+	
 }
 
 //Calcul var de la voiture + MAJ

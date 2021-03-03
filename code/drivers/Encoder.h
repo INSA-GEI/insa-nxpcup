@@ -24,7 +24,7 @@
 #define ENCODER_MOD 65535
 
 //Encoder cal speed=(100*FCPU*D*Pi/360/ENCODER_PRECALER)
-#define ENCODER_CAL_SPEED (212712) //coeff de conversion : delta -> speed(mm/s)
+#define ENCODER_CAL_SPEED 121785//(212712) //coeff de conversion : delta -> speed(mm/s)
 //the resolution is approx <6 counts.
 
 #define MAX_OVF 6 //If no pulse for 1sec, reset speed count to invalid.
