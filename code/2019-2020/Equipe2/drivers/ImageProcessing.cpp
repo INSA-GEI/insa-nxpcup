@@ -1,7 +1,5 @@
 #include "ImageProcessing.h"
 #include "Debug.h"
-//#include <stdlib.h>
-//#include <stdio.h>
 
 int i,j;
 int c_t=0;//counter for the threshold
@@ -18,6 +16,7 @@ int threshold_noir_gauche = 0;
 int threshold_blanc = 0;
 int threshold_noir_droit = 0;
 int threshold = 50;
+bool ok;
 
 void Img_Proc::init(){
 	
@@ -50,7 +49,6 @@ void Img_Proc::init(){
 	BlackLineRight=127;
 	BlackLineLeft=0;
 	number_edges=0;
-	threshold=150;
 
 }
 
@@ -84,103 +82,55 @@ void Img_Proc::capture(void){
 		CAM_DELAY;
 		CAM_DELAY;
 		CAM_CLK_LOW;
-		/*
-		//generating dummy data here
-		for(i=0;i<128;i++){
-			int data;
-			if((i>32 && i<48) || (i>80 && i<96)){
-				data=150+rand()%10;
-			}else{
-				data=50+rand()%10;
-			}
-			ImageData[i]=data;
-		}
-		*/
 }
 
-void Img_Proc::differentiate(void){
-		if (functionning_mode == 1){
-			/*for(i=1;i<=126;i++){	
-				Imageflou[i] = (uint16_t) abs (0.5*ImageData[i-1] + ImageData[i] + 0.5*ImageData[i+1])/2;
-			}
-			
-			Imageflou[0] = ImageData[0];
-			Imageflou[127] = ImageData[127];*/
-			
-			/*if (c_t<CST_RECAL_T){
-				DEBUG_GREEN_ON;
-				c_t=0;
-				threshold=0;
-				for(int i=0;i<=127;i++){
-					threshold+=ImageData[i];
-				}
-				threshold=threshold/128;
-				if (threshold<THRESHOLD_classic)threshold=THRESHOLD_classic;
-			}else if (c_t>CST_RECAL_T/2){
-				DEBUG_GREEN_OFF;
-			}*/
-			
-			//Test blanc ou noir
-			for(int i=0;i<=127;i++){
-				if (ImageData[i]>threshold){
-					ImageDataDifference[i]=1; //white
-				}else{
-					ImageDataDifference[i]=0;//black
-				}
-			}
-		}
-		if (functionning_mode == 0xA){
-			
-		}
-	}	/*	End of function "Fill_ImageDataDifference"	*/
 
-void Img_Proc::process (void){
-		number_edges = 0;		// reset the number of peaks to 0
-		if (functionning_mode == 1){
-			BlackLineRight = 128;
-			BlackLineLeft = -1;
-			int i=1;
-			while (BlackLineLeft==-1 && i<127){
-				if (ImageDataDifference[i]==1 && ImageDataDifference[i-1]==0){
-					BlackLineLeft=i;
-					number_edges++;
-				}else{
-					i++;
-				}
-			}
-			i=126;
-			while (BlackLineRight==128 && (i>0 && i>BlackLineLeft)){
-				if (ImageDataDifference[i]==1 && ImageDataDifference[i+1]==0){
-					BlackLineRight=i;
-					number_edges++;
-				}else{
-					i--;
-				}
-			}
-			//Nb transistions
-			i=BlackLineLeft+1+TAILLE_BANDE;
-			bool ok=false;
-			while (i<BlackLineRight-1-TAILLE_BANDE){
-				if (ImageDataDifference[i-1]!=ImageDataDifference[i]){
-					ok=true;
-					//On regarde les TAILLE_BANDE prochains pixels 
-					for (int j=i;j<=(i+TAILLE_BANDE);j++){
-						if (ImageDataDifference[j]==1){
-							ok=false;
-						}
-					}
-					if (ok){
-						number_edges++;
-					}
-					i+=4;
-				}else{
-					i++;
-				}
-			}
-		}
-		
+
+/**
+  * @brief	Differencie le blanc du noir
+  * @param  None
+  * @retval None
+  */
+void Img_Proc::differentiate(void){
+	threshold_noir_gauche = ImageData[bande_noire_gauche[0]];
+	for (i=bande_noire_gauche[0];i<bande_noire_gauche[1];i++) {
+		threshold_noir_gauche = (threshold_noir_gauche + ImageData[i+1])/2;
+	}
+	
+//	threshold_blanc = ImageData[milieu[0]];
+//	for (i=milieu[0];i<milieu[1];i++) {
+//		threshold_blanc = (threshold_blanc + ImageData[i+1])/2;
+//	}
+	
+	threshold_noir_droit = ImageData[bande_noire_droite[0]];
+	for (i=bande_noire_droite[0];i<bande_noire_droite[1];i++) {
+		threshold_noir_droit = (threshold_noir_droit + ImageData[i+1])/2;
+	}
+	
+	threshold = (threshold_noir_gauche+threshold_noir_droit + threshold_blanc)/3;
+	
+//	threshold = ImageData[bande_noire_gauche[0]];
+//	for (i=bande_noire_gauche[0]; i<bande_noire_droite[1]; i++) {
+//		threshold = (threshold + ImageData[i+1])/2;
+//	}
+	
+	
+}	/*	End of function "differentiate"	*/
+
+
+
+
+/**
+  * @brief	Selection des diffents process, comme un case
+  * 		int_team_1 = [0-9]
+  * 		int_team_2 = [A-F]
+  * 			Functioning mode A - Romain, voiture fonctionnelle mais merite des improvements sur le PI
+  * @param  None
+  * @retval None
+  */
+void Img_Proc::process (void){		
 	//################### mode 2 ##########################
-		if (functionning_mode == 2){
+		if (functioning_mode == 2){
 			// Find black line on the right side
 
 			BlackLineRight = 128;
@@ -216,8 +166,8 @@ void Img_Proc::process (void){
 	   						}
 	   					}
 	   				}
-	   			}		/* END else if ... */
-			}	/* END for (i=126;i>=64;i--) */
+	   			}
+			}
 
 	   		// Find black line on the left side
 
@@ -257,13 +207,13 @@ void Img_Proc::process (void){
 	   						}
 	   					}
 	   				}
-	   			}		/* END else if ... */
-	   		}	/* END for (i=64;i>=1;i--) */
-		}	/* END of "(IF mfunctionning_mod == 2 " */
+	   			}
+	   		}
+		}
 		
 		
 		//################### mode A ##########################
-		if (functionning_mode == 0xA){
+		if (functioning_mode == 0xA){
 				
 			// On veut pouvoir régler la fréquence à laquelle la fonction est appelée
 			// De base, c'est l'IT FTM1 qui est à 100Hz, mais avec if (dejafait < x) on peut diviser x fois la frequence
@@ -337,22 +287,6 @@ void Img_Proc::process (void){
 			else if (dejafait < 25) dejafait++;
 			else dejafait = 0;*/
 			
-			threshold_noir_gauche = ImageData[bande_noire_gauche[0]];
-			for (i=bande_noire_gauche[0];i<bande_noire_gauche[1];i++) {
-				threshold_noir_gauche = (threshold_noir_gauche + ImageData[i+1])/2;
-			}
-			
-			threshold_blanc = ImageData[milieu[0]];
-			for (i=milieu[0];i<milieu[1];i++) {
-				threshold_blanc = (threshold_blanc + ImageData[i+1])/2;
-			}
-			
-			threshold_noir_droit = ImageData[bande_noire_droite[0]];
-			for (i=bande_noire_droite[0];i<bande_noire_droite[1];i++) {
-				threshold_noir_droit = (threshold_noir_droit + ImageData[i+1])/2;
-			}
-			
-			threshold = ((threshold_noir_gauche+threshold_noir_droit)/2 + threshold_blanc)/2;
 			for(int i=0;i<=127;i++){
 				if (ImageData[i]>threshold){
 					ImageDataDifference[i]=1; //white
@@ -363,48 +297,50 @@ void Img_Proc::process (void){
 			}
 			
 			BlackLineRight = 128;
-						BlackLineLeft = -1;
-						int i=1;
-						while (BlackLineLeft==-1 && i<127){
-							if (ImageDataDifference[i]==1 && ImageDataDifference[i-1]==0){
-								BlackLineLeft=i;
-								number_edges++;
-							}else{
-								i++;
-							}
+			BlackLineLeft = -1;
+			int i=1;
+			while (BlackLineLeft==-1 && i<127){
+				if (ImageDataDifference[i]==1 && ImageDataDifference[i-1]==0){
+					BlackLineLeft=i;
+					number_edges++;
+				}else{
+					i++;
+				}
+			}
+			i=126;
+			while (BlackLineRight==128 && (i>0 && i>BlackLineLeft)){
+				if (ImageDataDifference[i]==1 && ImageDataDifference[i+1]==0){
+					BlackLineRight=i;
+					number_edges++;
+				}else{
+					i--;
+				}
+			}
+			//Nb transistions
+			i=BlackLineLeft+1+TAILLE_BANDE;
+			bool ok=false;
+			while (i<BlackLineRight-1-TAILLE_BANDE){
+				if (ImageDataDifference[i-1]!=ImageDataDifference[i]){
+					ok=true;
+					//On regarde les TAILLE_BANDE prochains pixels 
+					for (int j=i;j<=(i+TAILLE_BANDE);j++){
+						if (ImageDataDifference[j]==1){
+							ok=false;
 						}
-						i=126;
-						while (BlackLineRight==128 && (i>0 && i>BlackLineLeft)){
-							if (ImageDataDifference[i]==1 && ImageDataDifference[i+1]==0){
-								BlackLineRight=i;
-								number_edges++;
-							}else{
-								i--;
-							}
-						}
-						//Nb transistions
-						i=BlackLineLeft+1+TAILLE_BANDE;
-						bool ok=false;
-						while (i<BlackLineRight-1-TAILLE_BANDE){
-							if (ImageDataDifference[i-1]!=ImageDataDifference[i]){
-								ok=true;
-								//On regarde les TAILLE_BANDE prochains pixels 
-								for (int j=i;j<=(i+TAILLE_BANDE);j++){
-									if (ImageDataDifference[j]==1){
-										ok=false;
-									}
-								}
-								if (ok){
-									number_edges++;
-								}
-								i+=4;
-							}else{
-								i++;
-							}
-						}
-		}
-		
-	}	/*	END of the function "Image_Processing"	*/
+					}
+					if (ok){
+						number_edges++;
+					}
+					i+=4;
+				}else{
+					i++;
+				}
+			}
+	}
+
+}	/*	END of the function "Image_Processing"	*/
+
+
 
 void Img_Proc::calculateMiddle (void){
 
@@ -433,91 +369,6 @@ void Img_Proc::calculateMiddle (void){
 		diff=diff_old;
 	}
 }
-
-
-void Img_Proc::display_camera_data(void) {
-	//uart_write("Raw data : ",11);
-	if (CSV){
-		for (int i=0;i<128;i++) {
-			uart_writeNb(ImageData[i]);
-			uart_write(";",1);
-			uart_writeNb(ImageDataDifference[i]);
-			uart_write("\r\n",2);
-		}
-		for (int i=0;i<40;i++) {
-			uart_writeNb(0);
-			uart_write(";",1);
-			uart_writeNb(0);
-			uart_write("\r\n",2);
-		}
-	}else{
-		for (int i=0;i<128;i++) {
-			uart_write("$",1);
-			//uart_writeNb(ImageData[i]);
-			//uart_write(" ",1);
-			uart_writeNb(ImageDataDifference[i]);
-			uart_write(";",1);
-		}
-		for (int i=0;i<40;i++) {
-				uart_write("$",1);
-				uart_writeNb(0);
-				uart_write(" ",1);
-				uart_writeNb(0);
-				uart_write(";",1);
-		}
-		uart_write("\r\n",2);
-	}
-}
-
-void Img_Proc::display_gradient(void) {
-	//uart_write("Gradient : ",11);
-	for (int i=0;i<128;i++) {
-		uart_write("$",1);
-		uart_writeNb(ImageDataDifference[i]);
-		uart_write(";",1);
-	}
-	uart_write("\r\n",2);
-}
-
-/*void Img_Proc::export_raw_data(void) {
-    FILE* fichier = NULL;
-	
-	fichier = fopen("camera_raw_data.txt", "w+");
-	// si on veut que le fichier ne soit pas écrasé à chaque fois : 
-	// fichier = fopen("camera_raw_data.txt", "a+");
-	if (fichier != NULL)
-	{
-		//Ecriture des data brutes dans le fichier
-		fputs("START\n", fichier);
-		for (int i=0;i<128;i++) {
-	 		fprintf(fichier, "%d ", ImageData[i]);
-		}
-		fputs(" ;\nSTOP\n", fichier);
-		fclose(fichier);
-	}
-	else
-	{
-		uart_write("Erreur enregistrement des données brutes de la caméra",42);
-	}
-	    
-}*/
-
-void Img_Proc::gradient(void){
-
-		if (functionning_mode == 1){
-			for(i=1;i<=126;i++){	// différence simple
-				ImageDataDifference[i] = abs (-ImageData[i] + ImageData[i+1]);
-			}
-			ImageDataDifference[0] = abs (- ImageData[0] + ImageData[1]);	// first value doesnt have "gradient" for this method
-			ImageDataDifference[127] = abs (- ImageData[126] + ImageData[127]);	// last value doesnt have "gradient" for this method
-		}else if (functionning_mode == 2){
-			for(i=1;i<=126;i++){	// using a gradient by direct differences (application of the filter : [-1 , 0 , 1] -> P(x) = -1*P(x-1)+0*P(x)+1*P(x+1))
-				ImageDataDifference[i] = abs (-ImageData[i-1] + ImageData[i+1]);
-			}
-			ImageDataDifference[0] = abs (- ImageData[0] + ImageData[1]);	// first value doesnt have "gradient" for this method
-			ImageDataDifference[127] = abs (- ImageData[126] + ImageData[127]);	// last value doesnt have "gradient" for this method
-		}
-	}	/*	End of function "Fill_ImageDataDifference"	*/
 
 
 void Img_Proc::processAll(void) {

@@ -13,10 +13,6 @@ void motor_init(void){
 	SIM_SCGC6 |= SIM_SCGC6_TPM0_MASK | SIM_SCGC6_TPM1_MASK | SIM_SCGC6_TPM2_MASK;
 	SIM_SCGC5 = SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTC_MASK;
 
-	//should be right by clock_init
-	//SIM_SOPT2 &= ~SIM_SOPT2_TPMSRC_MASK;
-	//SIM_SOPT2 |= SIM_SOPT2_TPMSRC(1);
-
 	TPM0_SC |= 3; 					// prescaler
 	TPM0_MOD = 600; 				// frequency modulo
 	TPM0_SC |= TPM_SC_CMOD(1); 		// enable timer

@@ -1,4 +1,3 @@
-
 #ifndef IMAGEPROCESSING_H_
 #define IMAGEPROCESSING_H_
 
@@ -15,13 +14,9 @@
 #define	CAM_SI_LOW				GPIOB_PDOR &= ~(1<<8)	// SI on PTB8
 #define	CAM_CLK_HIGH			GPIOB_PDOR |= (1<<9)	// CLK on PTB9
 #define	CAM_CLK_LOW				GPIOB_PDOR &= ~(1<<9)	// CLK on PTB9
-#define CSV						true //display data
-
-// Define thresholds for Camera Black Line recognition
-#define THRESHOLD_classic			110			// standard threshold : used in the basic image processing function
 
 //Mode de détection des lignes
-#define functionning_mode			(GPIOE_PDIR & 0x003C)>>2			// operating mode: from 1 to 2
+#define functioning_mode			(GPIOE_PDIR & 0x003C)>>2			// operating mode: from 1 to 2
 
 
 #define CST_RECAL_T 200
@@ -31,11 +26,10 @@ class Img_Proc{
 public:
 	uint16_t ImageData [128];				// array to store the LineScan image
 	uint16_t ImageDataDifference [128];		// array to store the PineScan pixel difference
-	uint16_t Imageflou [128];		// array to store the PineScan pixel => blur
 	
-	int diff;							// actual difference from line middle position
+	int diff;								// actual difference from line middle position
 	int diff_old;
-	int threshold;				// actual position of the servo relative to middle
+	int threshold;							// actual position of the servo relative to middle
 	
 	int RoadMiddle;						// calculated middle of the road
 	int RoadMiddle_old;					// save the last "Middle of the road" position
@@ -48,13 +42,8 @@ public:
 	void differentiate(void);			//computes differential
 	void process(void);					//detects edges
 	void calculateMiddle(void);			//guesses the middle
+	void sendDataExcel(void);			// Sends the camera data in different formats
 	void processAll(void);				//executes all camera related operations in order. Takes approx 940µs to complete
-	
-	/*** 2020 - 2021 ***/
-	void display_camera_data(void);
-	void display_gradient(void);
-	//void export_raw_data(void);
-	void gradient(void);
 	
 	
 	

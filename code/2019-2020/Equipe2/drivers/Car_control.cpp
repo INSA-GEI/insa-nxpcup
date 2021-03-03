@@ -1,9 +1,6 @@
 #include "Car_control.h"
 #include "Debug.h"
 
-/* RIO 2020-2021*/
-
-
 //#################################### Var ###################
 //################ var aux #############
 int c=0;
@@ -12,10 +9,7 @@ float old_servo_angle=0.0;
 float K_camdiff=0.0;
 float K_camdiffold=0.0;
 
-int n=0;//Allow us to use the debug with Putty
-
-//Not implemented yet
-int Count=0; //count how many time we were not to close to the black line
+int n=0;	//Allow us to use the debug with Putty/XCTU
 
 int C_finish=0;
 
@@ -219,7 +213,7 @@ void Car::Detect_state(void){
 }
 
 //Actualise le déplacement grâce à l'objet myMovement
-//La vitesse peut être négative (si freiange) ou positive, tout est paramétré dans Movement.cpp
+//La vitesse peut être négative (si freinage) ou positive, tout est paramétré dans Movement.cpp
 //Arg : finish :true/false <= màj dans Detect_state()
 
 void Car::Set_deplacement(void){
@@ -291,9 +285,9 @@ void Car::Aff_debug(void){
 	if(FLAG_SEND_IMG && FLAG_ENABLE_LOG_IMG){
 		for(int i=0;i<128;i++){
 			// /!\ marche 1 fois sur 2 car on utilise en même temps les vecteurs pour stocker l'image si l'IT suivante est arrivée
-			cam.display_camera_data();
 		}
-	}else if(FLAG_SEND_IMG && FLAG_ENABLE_LOG_SERVO){
+	}
+	else if(FLAG_SEND_IMG && FLAG_ENABLE_LOG_SERVO){
 		uart_write("#####car#####\n\r",15);
 		uart_write("Vset=",5);
 		uart_writeNb(Vset);
@@ -423,7 +417,7 @@ void Car::Car_debug(void){
 					else {
 						stop=0;
 						uart_write("Demarre!\r\n",12);
-						Vset = 1250;
+						Vset = (Vslow+Vhigh)/2;
 						Aff_debug_init();
 						n=0;
 					}

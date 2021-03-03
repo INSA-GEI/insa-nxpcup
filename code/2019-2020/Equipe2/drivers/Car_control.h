@@ -1,33 +1,28 @@
-
 #ifndef CAR_CONTROL_H_
 #define CAR_CONTROL_H_
-/* RIO 2020-2021*/
+
 #include "Movement.h"
 #include "ImageProcessing.h"
 
 #define CST_FINISH_TIME 100 //100*10ms=>1s
 
-#define INCREASE_SPEED_MAX_MIN 400//Nb of time ok before we increase the speed handler every 10ms
-#define MAX_DIFF_BEFORE_SLOWDOWN 10 
-#define MAX_ANGLE 30.0
-#define MAX_CAM_DIFF 20
-
 //####################### Wheels #################################
-#define K 								1.7 //entre 1.3 et 1.8		//P of the PID
-#define Ki								0.9 //entre K/2 et 1.5 max	//I of the PID
+#define K 								1.6	//P of the PI -> Vitesse vers le point d'équilibre - 1.6 Original
+#define Ki								1 	//I of the PI -> Vitesse à laquelle il va tourner  - 1 Original
 
-#define AMPLIFIE_TURN_1 0 //Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
-#define AMPLIFIE_TURN_2 5 //Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff)
+#define AMPLIFIE_TURN_1 1	// Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
+#define AMPLIFIE_TURN_2 5	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
+#define MAX_CAM_DIFF 20		// 20 Original
+#define MAX_ANGLE 30.0		// 30 Original
 
 
 //#################### SPEED #############################
-#define VSLOW 1000
-#define VHIGH 3000
-//#define VSET 0
-#define T_BRAKE 200 //Threshold before braking
+#define VSLOW 1000	// 1000 Original
+#define VHIGH 1500	// 3000 Original
+#define T_BRAKE 200 //Threshold before braking - 200 Original
 #define INCREMENT_SPEED 40 //Constante d'augmentation de la vitesse (évite le patinage)
-#define DIV_1_SPEED 3 //Divise la consigne de vitesse pour éviter le patinage sur la premiere moitié Vmes=[Vslow,Vhigh/2]
-#define TURN_SPEED 1300 //Vitesse seuil dans les virages
+#define DIV_1_SPEED 3 //Divise la consigne de vitesse pour éviter le patinage sur la premiere moitié Vmes=[Vslow,Vhigh/2]	- 3 Original
+#define TURN_SPEED 1300 //Vitesse seuil dans les virages - 1300 Original
 
 
 
