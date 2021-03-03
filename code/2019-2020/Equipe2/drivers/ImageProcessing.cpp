@@ -8,10 +8,16 @@ int c_t=0;//counter for the threshold
 int CompareData_high=140;
 int CompareData_low=100;
 int dejafait = 0;
-int StartData = 14; // Valeur a laquelle on considère les infos pertinentes /!\ +-2
-int StopData = 112;
-int threshold;		// Valeur a partir de laquelle on considère que c'est du noir
-
+// Valeurs de calibration
+int calibree = 0;
+int bande_blanche_totale = 0;
+int bande_noire_gauche[2] = {30,40};
+int milieu[2] = {40,80};
+int bande_noire_droite[2] = {80,90};
+int threshold_noir_gauche = 0;
+int threshold_blanc = 0;
+int threshold_noir_droit = 0;
+int threshold = 50;
 
 void Img_Proc::init(){
 	
@@ -19,7 +25,7 @@ void Img_Proc::init(){
 	SIM_SCGC6 |= SIM_SCGC6_ADC0_MASK;
 	SIM_SCGC5 = SIM_SCGC5_PORTC_MASK | SIM_SCGC5_PORTB_MASK;
 	
-	PORTC_PCR2  |= PORT_PCR_MUX(0);		// Camera 1 PTC2 ADC0_SE11
+	PORTC_PCR2  |= PORT_PCR_MUX(0);	// Camera 1 PTC2 ADC0_SE11
 	
 	PORTB_PCR8  |= PORT_PCR_MUX(1);	// PTB8 Camera SI
 	PORTB_PCR9  |= PORT_PCR_MUX(1);	// PTB9 Camera Clock
@@ -124,13 +130,7 @@ void Img_Proc::differentiate(void){
 			}
 		}
 		if (functionning_mode == 0xA){
-			for(i=2;i<=125;i++){							// using a gradient by direct differences (application of the filter : [-2, -1 ,0 ,1 , 2] -> P(x) = -2*P(x-2)-1*P(x-1)+0*P(x)+1*P(x+1)+2*P(x-2)
-				ImageDataDifference[i] = abs (-2*ImageData[i-2] - ImageData[i-1] + ImageData[i+1] + 2*ImageData[i+2]);
-			}
-			ImageDataDifference[0] = ImageData[0];	// first value does not have "gradient" for this method
-			ImageDataDifference[1] = ImageData[1];
-			ImageDataDifference[126] = ImageData[126];
-			ImageDataDifference[127] = ImageData[127];	// last value does not have "gradient" for this method
+			
 		}
 	}	/*	End of function "Fill_ImageDataDifference"	*/
 
@@ -264,9 +264,10 @@ void Img_Proc::process (void){
 		
 		//################### mode A ##########################
 		if (functionning_mode == 0xA){
+				
 			// On veut pouvoir régler la fréquence à laquelle la fonction est appelée
 			// De base, c'est l'IT FTM1 qui est à 100Hz, mais avec if (dejafait < x) on peut diviser x fois la frequence
-			if (dejafait == 0) {
+			/*if (dejafait == 0) {
 				dejafait = 1;
 				
 				// On met des valeurs max et min pour être sûr qu'elles seront effacées
@@ -274,31 +275,55 @@ void Img_Proc::process (void){
 				int minimum = 100;
 				// Lancement de la capture caméra
 				capture();
-				uart_write("CAPTURE OK",10);
-				uart_write("\r\n",2);
+				
+				// Calcul de la moyenne
+				for(i=1;i<=126;i++){							// using a gradient by direct differences (application of the filter : [-2, -1 ,0 ,1 , 2] -> P(x) = -2*P(x-2)-1*P(x-1)+0*P(x)+1*P(x+1)+2*P(x-2)
+					ImageData[i] = (ImageData[i-1] + ImageData[i] + ImageData[i+1])/3;
+				}
+				
+				// Calibration une seule fois des valeurs de la camera
+				if (calibree == 0) {
+					calibree = 1;
+					threshold_noir_gauche = ImageData[bande_noire_gauche[0]];
+					threshold_blanc = ImageData[milieu[0]];
+					threshold_noir_droit = ImageData[bande_noire_droite[0]];
+					
+					for (i=bande_noire_gauche[0];i<bande_noire_gauche[1];i++) {
+						threshold_noir_gauche = (threshold_noir_gauche + ImageData[i+1])/2;
+					}
+					for (i=milieu[0];i<milieu[1];i++) {
+						threshold_blanc = (threshold_blanc + ImageData[i+1])/2;
+					}
+					for (i=bande_noire_droite[0];i<bande_noire_droite[1];i++) {
+						threshold_noir_droit = (threshold_noir_droit + ImageData[i+1])/2;
+					}
+				}
 				
 				// Affichage
 					// On est obligé de faire 1 pixel sur 2 car sinon on rentre dans un HardFault
-				for (int W=StartData;W<StopData;W+=2) {
-					uart_writeNb(ImageData[W]);
+				for (i=0;i<128;i+=2) {
+					uart_writeNb(ImageData[i]);
 					uart_write(";",1);
-					if (maximum < ImageData[W]) maximum = ImageData[W];
-					if (minimum > ImageData[W]) minimum = ImageData[W];
+					if (maximum < ImageData[i]) maximum = ImageData[i];
+					if (minimum > ImageData[i]) minimum = ImageData[i];
 				}
-				uart_write("\r\n",2);
-				
-				// Calcul du threshold entre banc et noir
-				threshold = maximum-2;	// TEST DE FONCTION -> PEUT ETRE REMPLACE
+				uart_write("\r\n",2);*/
 				
 				// Affichage grâce au treshold calculé : si la voiture est au milieu, on devrait avoir quelque chose comme :
 				// **__*********__**
-				for (int W=StartData;W<StopData;W+=2) {
-					if (ImageData[W] < threshold) uart_write("_",1);	// Noir
-					else uart_write("*",1);								// Blanc
+				/*for (i = 0;i<128;i+=2) {
+					if ((ImageData[i] < threshold_noir_droit) || (ImageData[i] < threshold_noir_gauche)) uart_write("_",1);	// Noir
+					else {
+						uart_write("*",1);	// Blanc
+						bande_blanche_totale++;
+					}
 				}
+				if (bande_blanche_totale < 10) calibree = 0;
+				bande_blanche_totale = 0;
+				uart_write("\r\n",2);*/
 				
 				// Affichage des différentes valeurs calculées pour pouvoir comparer
-				uart_write("\r\n",2);
+				/*uart_write("\r\n",2);
 				uart_write("Threshold : ", 12);
 				uart_writeNb(threshold);
 				uart_write(" // ",4);
@@ -307,10 +332,76 @@ void Img_Proc::process (void){
 				uart_write(" // ",4);
 				uart_write("MIN : ",6);
 				uart_writeNb(minimum);
-				uart_write("\r\n",2);
-			}
+				uart_write("\r\n",2);*/
+			/*}
 			else if (dejafait < 25) dejafait++;
-			else dejafait = 0;
+			else dejafait = 0;*/
+			
+			threshold_noir_gauche = ImageData[bande_noire_gauche[0]];
+			for (i=bande_noire_gauche[0];i<bande_noire_gauche[1];i++) {
+				threshold_noir_gauche = (threshold_noir_gauche + ImageData[i+1])/2;
+			}
+			
+			threshold_blanc = ImageData[milieu[0]];
+			for (i=milieu[0];i<milieu[1];i++) {
+				threshold_blanc = (threshold_blanc + ImageData[i+1])/2;
+			}
+			
+			threshold_noir_droit = ImageData[bande_noire_droite[0]];
+			for (i=bande_noire_droite[0];i<bande_noire_droite[1];i++) {
+				threshold_noir_droit = (threshold_noir_droit + ImageData[i+1])/2;
+			}
+			
+			threshold = ((threshold_noir_gauche+threshold_noir_droit)/2 + threshold_blanc)/2;
+			for(int i=0;i<=127;i++){
+				if (ImageData[i]>threshold){
+					ImageDataDifference[i]=1; //white
+				}
+				else{
+					ImageDataDifference[i]=0;//black
+				}
+			}
+			
+			BlackLineRight = 128;
+						BlackLineLeft = -1;
+						int i=1;
+						while (BlackLineLeft==-1 && i<127){
+							if (ImageDataDifference[i]==1 && ImageDataDifference[i-1]==0){
+								BlackLineLeft=i;
+								number_edges++;
+							}else{
+								i++;
+							}
+						}
+						i=126;
+						while (BlackLineRight==128 && (i>0 && i>BlackLineLeft)){
+							if (ImageDataDifference[i]==1 && ImageDataDifference[i+1]==0){
+								BlackLineRight=i;
+								number_edges++;
+							}else{
+								i--;
+							}
+						}
+						//Nb transistions
+						i=BlackLineLeft+1+TAILLE_BANDE;
+						bool ok=false;
+						while (i<BlackLineRight-1-TAILLE_BANDE){
+							if (ImageDataDifference[i-1]!=ImageDataDifference[i]){
+								ok=true;
+								//On regarde les TAILLE_BANDE prochains pixels 
+								for (int j=i;j<=(i+TAILLE_BANDE);j++){
+									if (ImageDataDifference[j]==1){
+										ok=false;
+									}
+								}
+								if (ok){
+									number_edges++;
+								}
+								i+=4;
+							}else{
+								i++;
+							}
+						}
 		}
 		
 	}	/*	END of the function "Image_Processing"	*/
@@ -434,8 +525,6 @@ void Img_Proc::processAll(void) {
 	capture();
 	differentiate();
 	process();
-	//uart_write("ok\n\r",4);
 	calculateMiddle();
-	
 }
 

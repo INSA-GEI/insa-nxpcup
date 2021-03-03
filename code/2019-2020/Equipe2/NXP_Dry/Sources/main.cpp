@@ -2,18 +2,9 @@
 #include "Debug.h"
 #include "Car_control.h"
 
-//#define SLOW_BLINK      (10000000)
-//#define FAST_BLINK      (1000000)
-int z=0;
 Car car;
 
-int BP_SW4 = 0;
-int BP_SW4_old = 0;
-
-//void delay_time(int number);
-
 int main(){
-	//int p=0; //???? pour l'affichage
 	debug_init();
 	debug_displaySendNb((GPIOE_PDIR & 0x003C)>>2);
 	DEBUG_CAM_LED_OFF;

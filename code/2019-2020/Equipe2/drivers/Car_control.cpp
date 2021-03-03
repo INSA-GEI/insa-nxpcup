@@ -7,8 +7,6 @@
 //#################################### Var ###################
 //################ var aux #############
 int c=0;
-int c_ESP=0;
-int old_ESP=0;
 float old_servo_angle=0.0;
 //Wheel PI
 float K_camdiff=0.0;
@@ -39,21 +37,19 @@ void Car::init(void){
 	V_old=0;
 	Vslow=VSLOW;
 	Vhigh=VHIGH;
-	mode_speed=0; //0 : manu, 1: auto, 2 : auto incr
+	mode_speed=1; //0 : manu, 1: auto, 2: auto incr
 	delta_speed=0;
 	mode_debug=0;
-	ESP=0;
 	state_turn_car=0;
-	detect_ESP=false;
-	active_ESP=false;
 	enable_ampli_turn=false;
 	enable_brake=false;
+	
 	//Coeff PI servo_angle
 	K_camdiff=(float)((2*K+Te*Ki)/2);
 	K_camdiffold=(float)((Te*Ki-2*K)/2);
 	
 	enable_finish=false;
-	stop=false;
+	stop=true;
 }
 
 //############### SPEED ########################
@@ -161,57 +157,6 @@ void Car::Caculate_angle_wheel(void){
 	}
 }
 
-//############### ESP (oscillation en ligne droite) ############
-//Tente de détecter des oscillations dans les lignes droites dû au patinage des roues
-//return : modifie Vset
-void Car::processESP(){
-	if (active_ESP){
-		//############## ESP #################
-		if (abs (servo_angle)>(MAX_ANGLE/COEFF_ANGLE_ESP) && abs(old_servo_angle)>(MAX_ANGLE/COEFF_ANGLE_ESP) && sng(servo_angle)!=sng(old_servo_angle)){
-			ESP++;
-			uart_write("ESP+",4);
-			uart_write("\r\n",2);
-		}
-		
-		//On regarde si on a détecté une oscillation/ glissement sur T=10*10ms
-		if(c_ESP>10){
-			c_ESP=0;
-			if (ESP==old_ESP){
-				ESP=0;
-				detect_ESP=false;
-				old_ESP=0;
-			}else if (ESP>LIMIT_ESP){
-				detect_ESP=true;
-				uart_write("ESP !",5);
-				uart_write("\r\n",2);
-				c_ESP=-TIME_ACTIVE_ESP;
-				old_ESP=ESP;
-			}
-		}
-		//Action en fonction
-		if (detect_ESP){
-			enable_ampli_turn=false;
-			if (mode_speed!=0){
-				//On regarde si on est en ligne droite ou en virage
-
-				/*if (state_turn_car==0){
-					Vset=(TURN_SPEED+Vset)/2;		
-				}else{*/
-					enable_brake=true;
-					Vset=Vslow;
-				//}
-			}
-			
-			//Debug
-			uart_write("ESP! =",6);
-			uart_writeNb(c_ESP);
-			uart_write("\r\n",2);
-			
-			ESP=0;
-			old_ESP=0;
-		}
-	}
-}
 //############# Test Turn? strait line? Brake? ##################
 //Fait l'acquisition des données
 //return 	: 	V_mes
@@ -225,7 +170,6 @@ void Car::Process_data(void){
 //return 	: state_car_turn : 0/1/2
 //			:enable_brake :true/false
 //			:enable_ampli_turn :true/false
-//			:active_ESP : true/false
 void Car::Detect_state(void){
 	
 	//Test braking #####################################
@@ -263,14 +207,6 @@ void Car::Detect_state(void){
 	}else if (state_turn_car==0 || Vset>TURN_SPEED){
 		DEBUG_BLUE_OFF;
 		enable_ampli_turn=false;
-	}
-	
-	//Test ESP
-	//On active l'ESP
-	if (!(enable_brake)){
-		active_ESP=true;
-	}else{
-		active_ESP=false;
 	}
 	
 	//######## Test finish ############
@@ -314,7 +250,6 @@ void Car::Set_deplacement(void){
 void Car::Car_handler(void){
 	//Debug
 	c++;
-	c_ESP++;
 	if(c>500){
 		c=0;		
 	}
@@ -327,8 +262,6 @@ void Car::Car_handler(void){
 		Caculate_angle_wheel();	
 		//We calculate the speed
 		Set_speed();
-		//ESP at the end because it changes Vset
-		processESP();
 		//Calcul du diff en fonction
 		Set_diff_speed();
 	}else{
@@ -490,7 +423,7 @@ void Car::Car_debug(void){
 					else {
 						stop=0;
 						uart_write("Demarre!\r\n",12);
-						Vset=500;
+						Vset = 1250;
 						Aff_debug_init();
 						n=0;
 					}
@@ -508,10 +441,7 @@ void Car::Car_debug(void){
 						uart_write("Speed manu\r\n",12);
 					}
 					break;
-				/*case 'e':
-					uart_write("ESP actif\n\r",11);
-					active_ESP=true;
-					break;
+				/*
 				case 'l':	//lights toggle
 					GPIOC_PTOR =DEBUG_CAM_LED_Pin;
 					break;
