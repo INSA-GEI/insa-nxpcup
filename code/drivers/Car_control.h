@@ -26,7 +26,7 @@
 #define VHIGH 2500
 #define VBRAKE_min 4000
 
-#define T_BRAKE 200 //Threshold before braking
+#define T_BRAKE 400 //Threshold before braking
 #define INCREMENT_SPEED 10 //Constante d'augmentation de la vitesse (évite le patinage)
 #define SPEED_BRAKE_BEG 1000 //Vitesse seuil dans les virages
 #define SPEED_BRAKE_END 100 //Vitesse seuil dans les virages

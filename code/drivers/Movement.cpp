@@ -66,6 +66,8 @@ void Movement::setAngle(float angle) {
 }
 
 void Movement::stop(void) {
+	v_L=0;
+	v_R=0;
 	err_L=0;
 	err_R=0;
 	err_old_L=0;
@@ -76,8 +78,6 @@ void Movement::stop(void) {
 	actualSpeedR=0;
 	MOTOR_LEFT_FSPEED(0);
 	MOTOR_RIGHT_FSPEED(0);
-	//MOTOR_LEFT_DISABLE;
-	//MOTOR_RIGHT_DISABLE;
 }
 
 
