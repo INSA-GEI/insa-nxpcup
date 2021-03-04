@@ -73,7 +73,7 @@ int debug_init(){
 	//########## Choix MODE ########
 	int MODE=(int)((GPIOE_PDIR & 0x003C)>>2);
 				
-	if (MODE>3 || MODE==0) {
+	if (MODE>5) {
 		debug_displaySendNb(16);
 		//affichage de la barre du milieu
 		MODE=-1;

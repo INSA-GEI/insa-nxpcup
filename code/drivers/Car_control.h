@@ -6,7 +6,7 @@
 #include "ImageProcessing.h"
 #include "Interrupt.h"
 
-#define CST_FINISH_TIME 200 //100*10ms=>1s
+#define CST_FINISH_TIME 100 //100*10ms=>1s
 
 #define INCREASE_SPEED_MAX_MIN 400	//Nb of time ok before we increase the speed handler every 10ms
 #define MAX_DIFF_BEFORE_SLOWDOWN 10 
@@ -23,13 +23,13 @@
 #define Te_calc_speed 	0.01 //100Hz Consigne Vset //Frequence du calcul de vitesse
 
 #define VSLOW 800
-#define VHIGH 2500
+#define VHIGH 2000
 #define VBRAKE_min 4000
 
-#define T_BRAKE 400 //Threshold before braking
-#define INCREMENT_SPEED 10 //Constante d'augmentation de la vitesse (évite le patinage)
+#define T_BRAKE 600 //Threshold before braking
+#define INCREMENT_SPEED 12 //Constante d'augmentation de la vitesse (évite le patinage)
 #define SPEED_BRAKE_BEG 1000 //Vitesse seuil dans les virages
-#define SPEED_BRAKE_END 100 //Vitesse seuil dans les virages
+#define SPEED_BRAKE_END 500 //Vitesse seuil dans les virages
 
 
 #define DEG_TO_RAD 0.0175 //conversion Degré vers radian
@@ -46,9 +46,11 @@ public:
 	
 	// ############ VAR ETAT ################
 		bool low_batt;
+		int Increment_speed;
+		int MODE_car;
 		
 	//############# functions #########################
-		void init(float Te);
+		void init(float Te,int MODE);
 		void Demarre(void);
 		
 		//Process acquisiton des données

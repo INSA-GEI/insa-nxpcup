@@ -21,7 +21,7 @@ int Init_tot(void){
 		f_mode=1;
 	}
 	car.cam.init(f_mode);
-	car.init(Te);
+	car.init(Te,MODE);
 	Timer_init (Te);
 	car.myMovement.encoder.init_SENS(); //ATTENTION à laisser en dernier!!
 	IT_PORTD_init();

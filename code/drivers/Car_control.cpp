@@ -54,11 +54,14 @@ Car::Car(){
 	enable_finish=false;
 	stop=true;
 	low_batt=false;
+	Increment_speed=INCREMENT_SPEED;
+	MODE_car=0;
 }
 
 //################## Functions ####################
 
-void Car::init(float Te){
+void Car::init(float Te,int MODE){
+	MODE_car=MODE;
 	low_batt=BatteryVoltage();
 	if (low_batt){
 		DEBUG_RED_ON;
@@ -78,6 +81,17 @@ void Car::init(float Te){
 	
 	//Calcul nb itération avant le calcul de la vitesse
 	N_calc_speed=(int)(Te_calc_speed/Te)+1;
+	
+	//######## MODE #########
+	if (MODE==0){
+		Increment_speed-=3;
+	}else if (MODE==2){
+		Increment_speed+=2;
+	}else if(MODE==3){
+		Increment_speed+=5;
+	}else if(MODE==4){
+		Increment_speed+=20;
+	}
 }
 
 //############### SPEED ########################
@@ -91,10 +105,10 @@ void Car::Calculate_speed(void){
 	Vset=(int)((-(Vhigh-Vslow))/MAX_ANGLE)*(abs(servo_angle_moy))+Vhigh;		
 	if (enable_brake){
 		Vset=-VBRAKE_min;
-	}else if (V_mes<Vslow/2){
+	}else if (V_mes<Vslow){
 		Vset=Vslow;
-	}else if (Vset>V_old+INCREMENT_SPEED){
-		Vset=V_old+INCREMENT_SPEED;
+	}else if (Vset>V_old+Increment_speed){
+		Vset=V_old+Increment_speed;
 	}
 	if (state_turn_car==3){
 		Vset=Vslow;
@@ -211,7 +225,7 @@ void Car::Detect_state(void){
 	
 	//######## Test finish ############
 	if (enable_finish){
-		if ((cam.number_edges_old)==4 && (cam.number_edges)==4 && state_turn_car==0){//Nb de bandes noires (+1 pour chaque côté)
+		if ((cam.number_edges)==4 && state_turn_car<2){// && (cam.number_edges_old)==4){//Nb de bandes noires (+1 pour chaque côté)
 			finish=true;
 			uart_write("Fin !",5);
 		}
@@ -234,18 +248,18 @@ void Car::Set_deplacement(void){
 	if (stop){
 		C_finish=0;
 		finish=false;
-		if (V_mes<10){
-			Vset=0;
+		if (V_mes>0){
+			Vset=-VBRAKE_min;
 			servo_angle=0;
 			delta_speed=0;
 		}else{
-			Vset=-VBRAKE_min;
+			Vset=0;
+			servo_angle=0;
+			delta_speed=0;
 		}
-		myMovement.set(Vset,servo_angle);
-		myMovement.setDiff(Vset,delta_speed);
 	}else{
 		if (finish){
-			if(state_turn_car==2){
+			if(state_turn_car>=2){
 				finish=false;
 				C_finish=0;
 			}
@@ -255,14 +269,10 @@ void Car::Set_deplacement(void){
 			}else if (C_finish>CST_FINISH_TIME/10){
 				enable_brake=true;
 			}
-			
-			myMovement.set(Vset,servo_angle);
-			myMovement.setDiff(Vset,delta_speed);
-		}else{
-			myMovement.set(Vset,servo_angle);
-			myMovement.setDiff(Vset,delta_speed);
 		}
 	}
+	myMovement.set(Vset,servo_angle);
+	myMovement.setDiff(Vset,delta_speed);
 }
 
 //################ Handler ##########################
