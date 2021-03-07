@@ -6,7 +6,7 @@
 #include "ImageProcessing.h"
 #include "Interrupt.h"
 
-#define CST_FINISH_TIME 100 //100*10ms=>1s
+#define CST_FINISH_TIME 50 //100*10ms=>1s
 
 #define INCREASE_SPEED_MAX_MIN 400	//Nb of time ok before we increase the speed handler every 10ms
 #define MAX_DIFF_BEFORE_SLOWDOWN 10 
@@ -22,8 +22,8 @@
 //#################### SPEED #############################
 #define Te_calc_speed 	0.01 //100Hz Consigne Vset //Frequence du calcul de vitesse
 
-#define VSLOW 800
-#define VHIGH 2000
+#define VSLOW 900
+#define VHIGH 1800
 #define VBRAKE_min 4000
 
 #define T_BRAKE 600 //Threshold before braking
@@ -52,6 +52,7 @@ public:
 	//############# functions #########################
 		void init(float Te,int MODE);
 		void Demarre(void);
+		void Stop(void);
 		
 		//Process acquisiton des données
 		void Process_data(void);

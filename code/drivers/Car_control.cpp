@@ -225,7 +225,7 @@ void Car::Detect_state(void){
 	
 	//######## Test finish ############
 	if (enable_finish){
-		if ((cam.number_edges)==4 && state_turn_car<2){// && (cam.number_edges_old)==4){//Nb de bandes noires (+1 pour chaque côté)
+		if ((cam.number_edges)==4 && state_turn_car<2 && (cam.number_edges_old)==4){//Nb de bandes noires (+1 pour chaque côté)
 			finish=true;
 			uart_write("Fin !",5);
 		}
@@ -253,12 +253,11 @@ void Car::Set_deplacement(void){
 			servo_angle=0;
 			delta_speed=0;
 		}else{
-			Vset=0;
-			servo_angle=0;
-			delta_speed=0;
+			Stop();
 		}
 	}else{
 		if (finish){
+			//Vset=-V_mes;
 			if(state_turn_car>=2){
 				finish=false;
 				C_finish=0;
@@ -266,13 +265,12 @@ void Car::Set_deplacement(void){
 			C_finish++;
 			if (C_finish>CST_FINISH_TIME){
 				stop=true;
-			}else if (C_finish>CST_FINISH_TIME/10){
-				enable_brake=true;
 			}
 		}
 	}
 	myMovement.set(Vset,servo_angle);
 	myMovement.setDiff(Vset,delta_speed);
+	myMovement.regulate(); //Applique la PWM correspond à la vitesse aux moteurs
 }
 
 //################ Handler ##########################
@@ -306,7 +304,6 @@ void Car::Car_handler(void){
 	Aff_debug();
 	//We refresh the deplacement's parameters. Speed +wheels Angle
 	Set_deplacement();
-	myMovement.regulate(); //Applique la PWM correspond à la vitesse aux moteurs
 }
 
 //#################### Debug ###############################
@@ -536,6 +533,21 @@ void Car::Demarre(void){
 	mode_speed=1;
 	enable_finish=true;
 	stop=0;
+}
+
+void Car::Stop(void){
+	servo_angle=0;
+	servo_angle_moy=0.0;
+	Vset=0;
+	V_old=0;
+	delta_speed=0;
+	state_turn_car=0;
+	enable_brake=false;
+	ypk=0.0;
+	yik=0.0;
+	yikold=0.0;
+	ydk=0.0;
+	ydkold=0.0;
 }
 
 //########### others ###############
