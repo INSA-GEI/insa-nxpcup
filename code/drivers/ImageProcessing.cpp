@@ -15,10 +15,10 @@ void Img_Proc::init(){
 	SIM_SCGC6 |= SIM_SCGC6_ADC0_MASK;
 	SIM_SCGC5 = SIM_SCGC5_PORTC_MASK | SIM_SCGC5_PORTB_MASK;
 	
-	PORTC_PCR2  |= PORT_PCR_MUX(0);		// Camera 1 PTC2 ADC0_SE11
+	PORTC_PCR2 |= PORT_PCR_MUX(0);		// Camera 1 PTC2 ADC0_SE11
 	
-	PORTB_PCR8  |= PORT_PCR_MUX(1);	// PTB8 Camera SI
-	PORTB_PCR9  |= PORT_PCR_MUX(1);	// PTB9 Camera Clock
+	PORTB_PCR8 |= PORT_PCR_MUX(1);	// PTB8 Camera SI
+	PORTB_PCR9 |= PORT_PCR_MUX(1);	// PTB9 Camera Clock
 	GPIOB_PDDR |= (1<<8);			// PTB8 Camera SI
 	GPIOB_PDDR |= (1<<9);			// PTB9 Camera Clock
 	
