@@ -6,12 +6,16 @@
 #include "ImageProcessing.h"
 #include "Interrupt.h"
 
-#define CST_FINISH_TIME 50 //100*10ms=>1s
+#define CST_FINISH_TIME 100 //X*10ms=>
 
-#define INCREASE_SPEED_MAX_MIN 400	//Nb of time ok before we increase the speed handler every 10ms
-#define MAX_DIFF_BEFORE_SLOWDOWN 10 
-#define MAX_ANGLE 30.0
-#define MAX_CAM_DIFF 20
+#define INCREASE_SPEED_MAX_MIN 		400	//Nb of time ok before we increase the speed handler every 10ms
+#define MAX_DIFF_BEFORE_SLOWDOWN 	10 
+#define MAX_ANGLE 					30.0
+#define MAX_CAM_DIFF 				20
+#define NB_LIGNES_FIN 				4
+#define NB_LIGNES_NORMAL			2
+#define NB_LIGNES_MAX_PB 			5
+#define NB_LIGNES_MIN_PB			1
 
 //####################### Wheels #################################
 #define Kp 								1.5 	//PI=1.8 //entre 1.3 et 2.0 //P of the PID
@@ -24,7 +28,7 @@
 
 #define VSLOW 900
 #define VHIGH 1800
-#define VBRAKE_min 4000
+#define VBRAKE_min 1500
 
 #define T_BRAKE 600 //Threshold before braking
 #define INCREMENT_SPEED 12 //Constante d'augmentation de la vitesse (évite le patinage)
@@ -53,6 +57,7 @@ public:
 		void init(float Te,int MODE);
 		void Demarre(void);
 		void Stop(void);
+		void Reset(void);
 		
 		//Process acquisiton des données
 		void Process_data(void);
@@ -79,6 +84,7 @@ private:
 			bool enable_finish;
 			bool finish;//indicates if we are at the end of the circuit
 			bool stop;
+			bool reset;
 			
 			
 		//############ angle wheels ###########
@@ -90,6 +96,7 @@ private:
 			int Vset;//=0
 			int V_old;
 			int V_mes;
+			int V_apply;
 			//Speed in turn
 			int Vslow;//=500
 			//Speed in strait line
