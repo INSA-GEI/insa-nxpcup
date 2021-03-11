@@ -547,7 +547,7 @@ int c_stop=0;
 void Car::Stop(void){
 	C_finish=0;
 	finish=true;
-	if (V_mes>0){
+	if (V_mes>100){
 		V_apply=-VBRAKE_min;
 		delta_speed=0;
 	}else{

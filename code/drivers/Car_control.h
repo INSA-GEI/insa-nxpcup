@@ -6,7 +6,7 @@
 #include "ImageProcessing.h"
 #include "Interrupt.h"
 
-#define CST_FINISH_TIME 100 //X*10ms=>
+#define CST_FINISH_TIME 20 //X*10ms=>
 
 #define INCREASE_SPEED_MAX_MIN 		400	//Nb of time ok before we increase the speed handler every 10ms
 #define MAX_DIFF_BEFORE_SLOWDOWN 	10 
