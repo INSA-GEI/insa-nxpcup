@@ -245,7 +245,7 @@ void Car::Detect_state(void){
 		if (state_turn_car==3 || (cam.number_edges_old)>=NB_LIGNES_MAX_PB || (cam.number_edges_old)<=NB_LIGNES_MIN_PB){
 			C_finish=0;
 			finish=false;
-			debug_displaySendNb(16);// => -
+			debug_displaySendNb(MODE_car);// => -
 			uart_write("Fausse fin !",12);
 		}
 	}
