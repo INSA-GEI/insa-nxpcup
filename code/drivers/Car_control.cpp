@@ -235,7 +235,6 @@ void Car::Detect_state(void){
 		if ((cam.number_edges)==NB_LIGNES_FIN && state_turn_car<2){//Nb de bandes noires (+1 pour chaque côté)
 			C_finish=0;
 			finish=true;
-			enable_brake=true;
 			//On affiche F pour fin
 			debug_displaySendNb(15); //=> F
 			uart_write("Fin !",5);
@@ -551,7 +550,10 @@ void Car::Stop(void){
 	if (V_mes>0){
 		V_apply=-VBRAKE_min;
 		delta_speed=0;
-	}else if (abs(V_mes)<100){
+	}else{
+		V_apply=0;
+	}
+	if (abs(V_mes)<100){
 		c_stop++;
 		if (c_stop>5){
 			c_stop=0;
