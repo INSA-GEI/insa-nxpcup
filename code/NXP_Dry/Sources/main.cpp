@@ -42,6 +42,7 @@ int main(){
 //############# handlers ##############
 int count_dem=0;
 void PORTD_IRQHandler(void){
+	DEBUG_GREEN_ON;
 	PORTD_PCR3 |= 1<<24;
 	count_dem++;
 	

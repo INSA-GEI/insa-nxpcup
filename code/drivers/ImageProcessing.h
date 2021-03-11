@@ -23,7 +23,7 @@
 #define DELTA_OUT					3.5
 
 #define CST_RECAL_T 500
-#define TAILLE_BANDE 5 //taille bande noir en pixel
+#define TAILLE_BANDE 10 //taille bande noir en pixel
 #define TAILLE_BANDE_MAX 30
 
 class Img_Proc{

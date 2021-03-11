@@ -14,7 +14,7 @@
 #define MAX_CAM_DIFF 				20
 #define NB_LIGNES_FIN 				4
 #define NB_LIGNES_NORMAL			2
-#define NB_LIGNES_MAX_PB 			5
+#define NB_LIGNES_MAX_PB 			7
 #define NB_LIGNES_MIN_PB			1
 
 //####################### Wheels #################################

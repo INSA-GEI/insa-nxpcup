@@ -9,8 +9,8 @@
 #include "Debug.h"
 
 // bit order : A-G+DP, map for digits 0-9,A-F and '-' for out of range nb
-//											0			1			2			3			4			5			6			7			8			9			A			B			C			D			E			F			-		-.=>sortie
-const unsigned int debugDisplayNbMap[18]={0b11111100, 0b01100000, 0b11011010, 0b11110010, 0b01100110, 0b10110110, 0b10111110, 0b11100000, 0b11111110, 0b11110110, 0b11101110, 0b00111110, 0b10011100, 0b01111010, 0b10011110, 0b10001110 ,0b00000010,0b00000011};
+//											0			1			2			3			4			5			6			7			8			9			A			B			C			D			E			F			-		-.=>sortie  F.=>fin
+const unsigned int debugDisplayNbMap[19]={0b11111100, 0b01100000, 0b11011010, 0b11110010, 0b01100110, 0b10110110, 0b10111110, 0b11100000, 0b11111110, 0b11110110, 0b11101110, 0b00111110, 0b10011100, 0b01111010, 0b10011110, 0b10001110 ,0b00000010,0b00000011,0b10001111};
 
 int debug_init(){
 	
@@ -73,13 +73,7 @@ int debug_init(){
 	//########## Choix MODE ########
 	int MODE=(int)((GPIOE_PDIR & 0x003C)>>2);
 				
-	if (MODE>5) {
-		debug_displaySendNb(16);
-		//affichage de la barre du milieu
-		MODE=-1;
-	} else {
-		debug_displaySendNb(MODE);
-	}
+	debug_displaySendNb(MODE);
 	uart_write("MODE=",5);
 	uart_writeNb(MODE);
 	uart_write("\n\r",2);	

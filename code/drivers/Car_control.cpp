@@ -86,18 +86,29 @@ void Car::init(float Te,int MODE){
 	N_calc_speed=(int)(Te_calc_speed/Te)+1;
 	
 	//######## MODE #########
-	if (MODE==0){
+	if (MODE_car==0){
 		mode_speed=0;
 		Vset=1000;
 		enable_finish=false;
-	}else if (MODE==1){
+	}else if (MODE_car==1){
 		enable_finish=true;
 	}else if(MODE==2){
 		enable_finish=false;
-	}else if (MODE==3){
+	}else if (MODE_car==3){
 		Increment_speed-=5;
 		Vhigh-=200;
 		enable_finish=false;
+	}else if (MODE_car==14){
+		Increment_speed+=5;
+		Vhigh+=1000;
+		enable_finish=true;
+	}else{
+		MODE_car=-1;
+	}
+	if (MODE_car==-1){
+		debug_displaySendNb(16); //affichage de la barre du milieu
+	}else{
+		debug_displaySendNb(MODE_car);
 	}
 }
 
@@ -152,13 +163,17 @@ void Car::Set_diff_speed(void){
 	if (enable_brake && !(finish)){
 		float r=LENGHT_CAR/(abs(servo_angle_moy)*DEG_TO_RAD); //r=radius of the turn
 		delta_speed=(abs(Vset)*L_ENTRAXE)/(1.0*r+L_ENTRAXE);//On l'aide à tourner
-	}else if (state_turn_car==0){
+	}else if (state_turn_car==0 && state_turn_car==3){
 		//Strait line
 		delta_speed=0;
-	}else{
+	}else if(state_turn_car==1){
 		//Soft turn
 		float r=LENGHT_CAR/(abs(servo_angle_moy)*DEG_TO_RAD); //r=radius of the turn
 		delta_speed=(abs(Vset)*L_ENTRAXE)/(2.0*r+L_ENTRAXE);//théorique avec 2.0*r
+	}else{
+		//hard turn
+		float r=LENGHT_CAR/(abs(servo_angle_moy)*DEG_TO_RAD); //r=radius of the turn
+		delta_speed=(abs(Vset)*L_ENTRAXE)/(1.5*r+L_ENTRAXE);//théorique avec 2.0*r
 	}
 	
 	//Left turn servoangle<0
@@ -232,12 +247,12 @@ void Car::Detect_state(void){
 	}
 	
 	//######## Test finish ############
-	if (enable_finish && (!finish)){
-		if ((cam.number_edges)==NB_LIGNES_FIN && state_turn_car<2){//Nb de bandes noires (+1 pour chaque côté)
+	if (enable_finish && (!reset)){
+		if ((cam.number_edges)==NB_LIGNES_FIN && state_turn_car<3){//Nb de bandes noires (+1 pour chaque côté)
 			C_finish=0;
 			finish=true;
 			//On affiche F pour fin
-			debug_displaySendNb(15); //=> F
+			debug_displaySendNb(18); //=> F.
 			uart_write("Fin !",5);
 		}
 	}
@@ -247,6 +262,8 @@ void Car::Detect_state(void){
 			finish=false;
 			debug_displaySendNb(MODE_car);// => -
 			uart_write("Fausse fin !",12);
+			uart_writeNb(cam.number_edges_old);
+			uart_write("\n\r",2);
 		}
 	}
 	
@@ -278,7 +295,9 @@ void Car::Set_deplacement(void){
 			}
 		}
 	}else{
-		Reset();
+		if (stop){
+			Reset();
+		}
 	}
 	myMovement.set(V_apply,servo_angle);
 	myMovement.setDiff(V_apply,delta_speed);
@@ -293,22 +312,71 @@ void Car::Car_handler(void){
 	Process_data();//Acquisition des données
 	//On regarde si on est en ligne droite ou non
 	Detect_state();
-	//On met à jour les param de la voiture
-	Caculate_angle_wheel();
-	servo_angle_moy+=servo_angle;
-	if(c>N_calc_speed){
-		c=0;
-		servo_angle_moy=servo_angle_moy/N_calc_speed;
-		//We calculate the speed
-		Set_speed();
-		//Calcul du diff en fonction
-		Set_diff_speed();
-		servo_angle_moy=0;
+	if (!reset){
+		//On met à jour les param de la voiture
+		Caculate_angle_wheel();
+		servo_angle_moy+=servo_angle;
+		if(c>N_calc_speed){
+			c=0;
+			servo_angle_moy=servo_angle_moy/N_calc_speed;
+			//We calculate the speed
+			Set_speed();
+			//Calcul du diff en fonction
+			Set_diff_speed();
+			servo_angle_moy=0;
+		}
 	}
 	//Debug
 	Aff_debug();
 	//We refresh the deplacement's parameters. Speed +wheels Angle
 	Set_deplacement();
+}
+
+//################ IT ###################
+void Car::Demarre(void){
+	DEBUG_GREEN_OFF;
+	finish=false;
+	reset=false;
+	stop=false;
+}
+
+int c_stop=0;
+void Car::Stop(void){
+	C_finish=0;
+	finish=true;
+	if (V_mes>0){
+		V_apply=-(abs(V_mes)+SPEED_BRAKE_END);
+	}else{
+		V_apply=abs(V_mes)+SPEED_BRAKE_END;
+	}
+	if (abs(V_mes)<10){
+		c_stop++;
+		if (c_stop>5){
+			c_stop=0;
+			reset=true;
+		}
+	}else if(abs(V_mes)>100){
+		c_stop=0;
+	}
+	delta_speed=0;
+}
+
+void Car::Reset(void){
+	DEBUG_GREEN_OFF;
+	V_apply=0;
+	stop=true;
+	finish=true;
+	servo_angle=0;
+	servo_angle_moy=0.0;
+	V_old=0;
+	delta_speed=0;
+	state_turn_car=0;
+	enable_brake=false;
+	ypk=0.0;
+	yik=0.0;
+	yikold=0.0;
+	ydk=0.0;
+	ydkold=0.0;
 }
 
 //#################### Debug ###############################
@@ -442,7 +510,7 @@ void Car::Car_debug(void){
 					uart_write("\r\n",2);
 					break;
 				case ' ':	//emergency stop
-					reset=true;
+					stop=true;
 					uart_write("Arret!",6);
 					uart_write("\r\n",2);
 					n=0;
@@ -535,50 +603,6 @@ void Car::Aff_debug_init(void){
 	uart_write("EN_finish=",10);
 	uart_writeNb(enable_finish);
 	uart_write("\r\n",2);
-}
-
-//################ IT ###################
-void Car::Demarre(void){
-	finish=false;
-	reset=false;
-	stop=0;
-}
-
-int c_stop=0;
-void Car::Stop(void){
-	C_finish=0;
-	finish=true;
-	if (V_mes>100){
-		V_apply=-VBRAKE_min;
-		delta_speed=0;
-	}else{
-		V_apply=0;
-	}
-	if (abs(V_mes)<100){
-		c_stop++;
-		if (c_stop>5){
-			c_stop=0;
-			reset=true;
-		}
-	}
-	delta_speed=0;
-}
-
-void Car::Reset(void){
-	V_apply=0;
-	stop=true;
-	finish=true;
-	servo_angle=0;
-	servo_angle_moy=0.0;
-	V_old=0;
-	delta_speed=0;
-	state_turn_car=0;
-	enable_brake=false;
-	ypk=0.0;
-	yik=0.0;
-	yikold=0.0;
-	ydk=0.0;
-	ydkold=0.0;
 }
 
 //########### others ###############
