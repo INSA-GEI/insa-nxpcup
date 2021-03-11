@@ -58,6 +58,7 @@ Car::Car(){
 	Increment_speed=INCREMENT_SPEED;
 	MODE_car=0;
 	reset=true;
+	finish=true;
 }
 
 //################## Functions ####################
