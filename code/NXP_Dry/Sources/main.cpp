@@ -1,11 +1,13 @@
 #include "derivative.h" /* include peripheral declarations */
 #include "Debug.h"
 #include "Car_control.h"
+#include "Obstacle_detection.h"
 
 //#define SLOW_BLINK      (10000000)
 //#define FAST_BLINK      (1000000)
 int z=0;
 Car car;
+Obstacle obs;
 
 #define Te 0.01 //sample time 10ms Car_handler/!\ Te_s (sample time for rear motors is in Movement.h)
 
@@ -18,6 +20,16 @@ int main(){
 	DEBUG_CAM_LED_OFF;
 	Timer_init (Te);
 	car.init(Te);
+	//obs.init();
+	
+	obs.I2C_clock_init();;
+	/****** RIGHT SENSOR ******/
+	/* Port initialization */
+	obs.I2C_init_port_right();
+	/* Module initialization (as master) */
+	obs.I2C_init_master_right();
+	
+	uart_write("I2C init done.\n\r",16);
 	
 	for(;;) {
 		car.Car_debug();

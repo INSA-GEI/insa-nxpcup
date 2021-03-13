@@ -29,36 +29,25 @@
 * */
 #define INTER_MEASUREMENT_PERIOD_MS 55
 
-/*One sensor is defined as:
- *  typedef struct {
- *	VL53L1_DevData_t   	Data;
- *	uint8_t   			I2cDevAddr;
- *	uint8_t   			comms_type;
- *	uint16_t  			comms_speed_khz;
- *	uint32_t  			new_data_ready_poll_duration_ms;
- *	I2C_HandleTypeDef*	I2cHandle;
- *  } VL53L1_Dev_t;
- *	
- *	typedef struct {
- *	   uint32_t 		dummy;
- *	} I2C_HandleTypeDef;
+/* Predefined I2C address
  * */
-//Right sensor
-VL53L1_Dev_t	devR;
-VL53L1_DEV		DevR = &devR;
-//Left sensor
-VL53L1_Dev_t	devL;
-VL53L1_DEV		DevL = &devL;
-
 #define I2C_ADDR 0x52
 
 /*Variable declaration*/
 int status = 0;
 
-void Obstacle::setup(VL53L1_DEV Dev, uint8_t DeviceAddress){
+/*void Obstacle::Obstacle() {
+	devR.Data=;
+	devR.I2cDevAddr=0;
+	devR.comms_type=0;
+	devR.comms_speed_khz=0;
+	devR.new_data_ready_poll_duration_ms=0;
+	devR.I2cHandle=NULL;
+}*/
+
+void Obstacle::setup(VL53L1_DEV Dev){
 	
-	//I2C clock init
-	SIM_SCGC4 |= SIM_SCGC4_I2C0_MASK | SIM_SCGC4_I2C1_MASK;
+	I2C_clock_init();
 	
 	/****** RIGHT SENSOR ******/
 	/* Port initialization */
@@ -66,12 +55,13 @@ void Obstacle::setup(VL53L1_DEV Dev, uint8_t DeviceAddress){
 	/* Module initialization (as master) */
 	I2C_init_master_right();
 
+	uart_write("I2C init done.\n\r",16);
+	
 	/****** LEFT SENSOR ******/
 	/* Port initialization */
 	//I2C_init_port_left();
 	/* Module initialization (as master) */
 	//I2C_init_master_left();
-
 	
 	/*** Before initializing the sensor: Performs device software reset ***/
 	VL53L1_software_reset(Dev);
@@ -79,7 +69,7 @@ void Obstacle::setup(VL53L1_DEV Dev, uint8_t DeviceAddress){
 	/*** System initialization ***/
 	status = VL53L1_WaitDeviceBooted(Dev); 	//Wait for device booted
 	//As two devices are used: SetDeviceAddress must be called to differentiate them with device address
-	status = VL53L1_SetDeviceAddress(Dev, DeviceAddress);
+	status = VL53L1_SetDeviceAddress(Dev, I2C_ADDR);
 	status = VL53L1_DataInit(Dev);			//One time device initialization
 	status = VL53L1_StaticInit(Dev);		//Basic device init with default settings
 	
@@ -92,8 +82,29 @@ void Obstacle::setup(VL53L1_DEV Dev, uint8_t DeviceAddress){
 	//Interval between measurements
 	status = VL53L1_SetInterMeasurementPeriodMilliSeconds(Dev, INTER_MEASUREMENT_PERIOD_MS);
 	
-		/*** Start Measurement ***/
+	/*** Start Measurement ***/
 	status = VL53L1_StartMeasurement(Dev);
+	
+	if(status){
+		uart_write("VL53L1_StartMeasurement failed\n\r",32);
+	}
+}
+
+void Obstacle::init(void){
+	
+	uint8_t status = 0;
+	
+	I2C_clock_init();
+	
+	/****** RIGHT SENSOR ******/
+	/* Port initialization */
+	I2C_init_port_right();
+	/* Module initialization (as master) */
+	I2C_init_master_right();
+
+	uart_write("I2C init done.\n\r",16);
+	
+	//uart_writeNb((int) I2C1_byte_read(0xFFFFFFFF, &status));
 	
 	if(status){
 		uart_write("VL53L1_StartMeasurement failed\n\r",32);
@@ -131,42 +142,44 @@ void I2C_init_port_left(void){
 
 void I2C_init_master_right(void){
 	// Write: Frequency Divider register to set the I2C baud rate
-	I2C1_F |= (1<<5); //12MHz clk is divided by 160 : I2C clk is 75kHz (ICR=0x20)
-	// Write: Control Register 1 to enable the I2C module and interrupts
-	I2C1_C1 |= (1<<7); //Enable I2C module operation IICEN
-	I2C1_C1 |= (1<<6); //Enable I2C interrupt requests IICIE
-	I2C1_FLT |= (1<<5); //Enable the I2C Bus Stop Interrupt Enable STOPIE
-	I2C1_FLT |= (1<<6); //Clear the I2C bus stop detect flag STOPF
-	I2C1_S |= (1<<1); //Clear the interrupt flag IICIF
-	// Initialize RAM variables (IICEN = 1 and IICIE = 1) for transmit data
-	// Initialize RAM variables used to achieve the routine shown in the following figure
-	// Write: Control Register 1 to enable TX
-	I2C1_C1 |= (1<<4);
-	// Write: Control Register 1 to enable MST (master mode)
-	I2C1_C1 |= (1<<5);
+	I2C1_F &= ~I2C_F_MULT(1); //MULT bits (6-7) = 00 (multiplier factor=1)
+	I2C1_F |= I2C_F_ICR(0x20); //12MHz clk is divided by 160 : I2C clk is 75kHz (ICR=0x20)
 	// Write: Data register with the address of the target slave (the LSB of this byte
 	// determines whether the communication is master receive or transmit)
 	I2C1_D = I2C_ADDR;
+	// Write: Control Register 1 to enable the I2C module and interrupts
+	I2C1_C1 |= I2C_C1_IICEN_MASK; //Enable I2C module operation IICEN
+	I2C1_C1 |= I2C_C1_IICIE_MASK; //Enable I2C interrupt requests IICIE
+	I2C1_FLT |= I2C_FLT_STOPIE_MASK; //Enable the I2C Bus Stop Interrupt Enable STOPIE
+	I2C1_FLT |= I2C_FLT_STOPF_MASK; //Clear the I2C bus stop detect flag STOPF
+	I2C1_S |= I2C_S_IICIF_MASK; //Clear the interrupt flag IICIF
+	// Initialize RAM variables (IICEN = 1 and IICIE = 1) for transmit data
+	// Initialize RAM variables used to achieve the routine shown in the following figure
+	// Write: Control Register 1 to enable TX
+	I2C1_C1 |= I2C_C1_TX_MASK;
+	// Write: Control Register 1 to enable MST (master mode)
+	I2C1_C1 |= I2C_C1_MST_MASK;
 }
 
 void I2C_init_master_left(void){
 	// Write: Frequency Divider register to set the I2C baud rate
-	I2C0_F |= (1<<5); //12MHz clk is divided by 160 : I2C clk is 75kHz (ICR=0x20)
-	// Write: Control Register 1 to enable the I2C module and interrupts
-	I2C0_C1 |= (1<<7); //Enable I2C module operation IICEN
-	I2C0_C1 |= (1<<6); //Enable I2C interrupt requests IICIE
-	I2C0_FLT |= (1<<5); //Enable the I2C Bus Stop Interrupt Enable STOPIE
-	I2C0_FLT |= (1<<6); //Clear the I2C bus stop detect flag STOPF
-	I2C0_S |= (1<<1); //Clear the interrupt flag IICIF
-	// Initialize RAM variables (IICEN = 1 and IICIE = 1) for transmit data
-	// Initialize RAM variables used to achieve the routine shown in the following figure
-	// Write: Control Register 1 to enable TX
-	I2C0_C1 |= (1<<4);
-	// Write: Control Register 1 to enable MST (master mode)
-	I2C0_C1 |= (1<<5);
+	I2C0_F &= ~I2C_F_MULT(1); //MULT bits (6-7) = 00 (multiplier factor=1)
+	I2C0_F |= I2C_F_ICR(0x20); //12MHz clk is divided by 160 : I2C clk is 75kHz (ICR=0x20)
 	// Write: Data register with the address of the target slave (the LSB of this byte
 	// determines whether the communication is master receive or transmit)
 	I2C0_D = I2C_ADDR;
+	// Write: Control Register 1 to enable the I2C module and interrupts
+	I2C0_C1 |= I2C_C1_IICEN_MASK; //Enable I2C module operation IICEN
+	I2C0_C1 |= I2C_C1_IICIE_MASK; //Enable I2C interrupt requests IICIE
+	I2C0_FLT |= I2C_FLT_STOPIE_MASK; //Enable the I2C Bus Stop Interrupt Enable STOPIE
+	I2C0_FLT |= I2C_FLT_STOPF_MASK; //Clear the I2C bus stop detect flag STOPF
+	I2C0_S |= I2C_S_IICIF_MASK; //Clear the interrupt flag IICIF
+	// Initialize RAM variables (IICEN = 1 and IICIE = 1) for transmit data
+	// Initialize RAM variables used to achieve the routine shown in the following figure
+	// Write: Control Register 1 to enable TX
+	I2C0_C1 |= I2C_C1_TX_MASK;
+	// Write: Control Register 1 to enable MST (master mode)
+	I2C0_C1 |= I2C_C1_MST_MASK;
 }
 
 VL53L1_RangingMeasurementData_t printRangingData(VL53L1_DEV Dev){
@@ -197,4 +210,419 @@ VL53L1_RangingMeasurementData_t printRangingData(VL53L1_DEV Dev){
   return RangingData;
 }
 
+static void I2C_delay_us(uint16_t usec_time)
+{
+    uint16_t outer_loop;
+    uint16_t inner_loop;
+     
+    /* System clock is configured as 48Mhz in BSPInit.c module.
+         With 48Mhz clock, the time per instruction comes to be
+       1/48000000 = 0.02834usec.
+       The get 1usec time, number of instructions to be executed
+       becomes 1usec / 0.02834usec which comes out to be ~35.
+       The generate delay equal to 'cnt' usec, using this function, the 
+       input parameter 'cnt' must be multiplied with '35'.
+       As this function uses for loop to generate delay, additional
+       overhead comes into picture to execute this loop and the delay
+       generated will always be more than specified 'cnt' parameter.
+       However, this should be okay in this case, as delay does not
+       need to be very accurate.
+       The max possible delay is 32768usec with uint16_t type.
+    */
+     
+    for (outer_loop=0u; outer_loop < (uint16_t)35; outer_loop++)
+    {
+        for (inner_loop=0u; inner_loop < usec_time; inner_loop++)
+        {
+            // do nothing
+        }
+    }
+}
+
+void I2C1_start(void){
+	/* 	START condition on I2C for distance sensor:
+		SCL: HIGH
+		SDA: HIGH to LOW Transition
+	* */
+    I2C1_C1 |= I2C_C1_MST_MASK;  /* MST bit changed from 0 to 1 generates START condition */
+    I2C_delay_us(5);
+}
+
+void I2C1_repeat_start(void){
+    /* START condition on I2C EEPROM:
+         SCL: HIGH
+         SDA: HIGH to LOW Transition
+    */
+    I2C1_C1 |= I2C_C1_RSTA_MASK;  /* RSTA bit changed from 0 to 1 generates RESTART condition */
+    I2C_delay_us(5);
+}
+
+void I2C1_stop(void){
+    /* STOP condition on I2C for distance sensor:
+         SCL: HIGH
+         SDA: LOW to HIGH Transition
+    */
+    I2C1_C1 &= ~I2C_C1_MST_MASK;  /* MST bit changed from 1 to 0 generates STOP condition */
+    I2C_delay_us(5);
+}
+
+void I2C0_start(void){
+	/* 	START condition on I2C for distance sensor:
+		SCL: HIGH
+		SDA: HIGH to LOW Transition
+	* */
+    I2C0_C1 |= I2C_C1_MST_MASK;  /* MST bit changed from 0 to 1 generates START condition */
+    I2C_delay_us(5);
+}
+
+void I2C0_repeat_start(void){
+    /* START condition on I2C EEPROM:
+         SCL: HIGH
+         SDA: HIGH to LOW Transition
+    */
+    I2C0_C1 |= I2C_C1_RSTA_MASK;  /* RSTA bit changed from 0 to 1 generates RESTART condition */
+    I2C_delay_us(5);
+}
+
+void I2C0_stop(void){
+    /* STOP condition on I2C for distance sensor:
+         SCL: HIGH
+         SDA: LOW to HIGH Transition
+    */
+    I2C0_C1 &= ~I2C_C1_MST_MASK;  /* MST bit changed from 1 to 0 generates STOP condition */
+    I2C_delay_us(5);
+}
+
+void I2C_clock_init(void){
+	//I2C clock init
+	SIM_SCGC4 |= SIM_SCGC4_I2C0_MASK | SIM_SCGC4_I2C1_MASK;
+}
+
+static uint8_t I2C0_data_read(void){
+    uint8_t data = 0x0;
+     
+    /* Master reading from slave */
+    I2C0_S |= I2C_S_SRW_MASK;     
+     
+    /* Master Transmit mode disabled (to receive data) */
+    I2C0_C1 &= ~I2C_C1_TX_MASK;
+     
+    /* Initiate data read (As per MCU datasheet, reading the
+       I2C0_D register initiates the data transfer to next byte.
+    */
+    data = I2C0_D;
+     
+    /* Wait for data to read from EEPROM */
+    I2C_delay_us(100);
+     
+    /* Read data from I2C data register */
+    data = I2C0_D;
+     
+    /* Send NACK to slave */
+    I2C0_C1 |= I2C_C1_TXAK_MASK;
+     
+    /* This delay is must to complete sending NACK on slave */
+    I2C_delay_us(5);
+     
+    return data;
+}
+
+static uint8_t I2C1_data_read(void){
+    uint8_t data = 0x0;
+     
+    /* Master reading from slave */
+    I2C1_S |= I2C_S_SRW_MASK;     
+     
+    /* Master Transmit mode disabled (to receive data) */
+    I2C1_C1 &= ~I2C_C1_TX_MASK;
+     
+    /* Initiate data read (As per MCU datasheet, reading the
+       I2C0_D register initiates the data transfer to next byte.
+    */
+    data = I2C1_D;
+     
+    /* Wait for data to read from EEPROM */
+    I2C_delay_us(100);
+     
+    /* Read data from I2C data register */
+    data = I2C1_D;
+     
+    /* Send NACK to slave */
+    I2C1_C1 |= I2C_C1_TXAK_MASK;
+     
+    /* This delay is must to complete sending NACK on slave */
+    I2C_delay_us(5);
+     
+    return data;
+}
+
+static uint8_t I2C0_data_send(uint8_t data){
+    uint32_t timeout = 4000000UL;  /* ~100msec */
+    uint8_t ret_val = 0;
+     
+    /* Master writing to slave */
+    I2C0_S &= ~I2C_S_SRW_MASK;     
+     
+    /* Master Transmit mode enabled (to transmit data) */
+    I2C0_C1 |= I2C_C1_TX_MASK;   
+     
+    /* Write to I2C0 Data register */
+    I2C0_D = data;
+     
+    while (((I2C0_S & I2C_S_RXAK_MASK) == I2C_S_RXAK_MASK) & (timeout != 0))
+    {
+        /* wait until ACK is received from slave device or timeout occurs */
+        timeout--;
+    }
+     
+    if (timeout != 0){
+        timeout = 4000000UL;
+        while (((I2C0_S & I2C_S_TCF_MASK) == 0) & (timeout != 0)){
+            /* wait until transmit is in progress or timeout occurs */
+            timeout--;
+        }
+    }
+     
+    if (timeout != 0){
+        /* Return 1 when data transmit is successful without timeout */
+        ret_val = 1;
+    }
+     
+    /* Delay before sending next byte */
+    I2C_delay_us(100);
+     
+    return ret_val;
+}
+
+static uint8_t I2C1_data_send(uint8_t data){
+    uint32_t timeout = 4000000UL;  /* ~100msec */
+    uint8_t ret_val = 0;
+     
+    /* Master writing to slave */
+    I2C1_S &= ~I2C_S_SRW_MASK;     
+     
+    /* Master Transmit mode enabled (to transmit data) */
+    I2C1_C1 |= I2C_C1_TX_MASK;   
+     
+    /* Write to I2C0 Data register */
+    I2C1_D = data;
+     
+    while (((I2C1_S & I2C_S_RXAK_MASK) == I2C_S_RXAK_MASK) & (timeout != 0))
+    {
+        /* wait until ACK is received from slave device or timeout occurs */
+        timeout--;
+    }
+     
+    if (timeout != 0){
+        timeout = 4000000UL;
+        while (((I2C1_S & I2C_S_TCF_MASK) == 0) & (timeout != 0)){
+            /* wait until transmit is in progress or timeout occurs */
+            timeout--;
+        }
+    }
+     
+    if (timeout != 0){
+        /* Return 1 when data transmit is successful without timeout */
+        ret_val = 1;
+    }
+     
+    /* Delay before sending next byte */
+    I2C_delay_us(100);
+     
+    return ret_val;
+}
+
+uint8_t I2C0_byte_read(uint32_t mem_loc, uint8_t *read_status){
+    uint8_t data;
+     
+    *read_status = 1;
+     
+    /* Generate START condition */
+    I2C0_start();
+     
+    /* Send sensor device address for Write operation */
+    if (!I2C0_data_send(I2C_ADDR))
+    {
+        /* Return if transmission is not successful */
+        *read_status = 0;
+        return 0;
+    }
+     
+    /* Send Higher Word of memory location to Write */
+    if (!I2C0_data_send((uint16_t)((mem_loc & 0xFFFF0000) >> 16)))
+    {
+        /* Return if transmission is not successful */
+        *read_status = 0;
+        return 0;
+    }
+     
+    /* Send Lower Word of memory location to Write */
+    if (!I2C0_data_send((uint16_t)((mem_loc & 0x0000FFFF))))
+    {
+        /* Return if transmission is not successful */
+        *read_status = 0;
+        return 0;
+    }
+     
+    /* Generate Re-Start condition */
+    I2C0_repeat_start();
+     
+    /* Send sensor device address for Read operation */
+    if (!I2C0_data_send(I2C_ADDR))
+    {
+        /* Return if transmission is not successful */
+        *read_status = 0;
+        return 0;
+    }
+     
+    /* Read EEPROM to get data */
+    data = I2C0_data_read();
+     
+    /* Generate STOP condition */
+    I2C0_stop();
+     
+    return data;
+}
+
+uint8_t I2C1_byte_read(uint32_t mem_loc, uint8_t *read_status){
+    uint8_t data;
+     
+    *read_status = 1;
+     
+    /* Generate START condition */
+    I2C1_start();
+     
+    /* Send sensor device address for Write operation */
+    if (!I2C1_data_send(I2C_ADDR))
+    {
+        /* Return if transmission is not successful */
+        *read_status = 0;
+        return 0;
+    }
+     
+    /* Send Higher Word of memory location to Write */
+    if (!I2C1_data_send((uint16_t)((mem_loc & 0xFFFF0000) >> 16)))
+    {
+        /* Return if transmission is not successful */
+        *read_status = 0;
+        return 0;
+    }
+     
+    /* Send Lower Word of memory location to Write */
+    if (!I2C1_data_send((uint16_t)((mem_loc & 0x0000FFFF))))
+    {
+        /* Return if transmission is not successful */
+        *read_status = 0;
+        return 0;
+    }
+     
+    /* Generate Re-Start condition */
+    I2C1_repeat_start();
+     
+    /* Send sensor device address for Read operation */
+    if (!I2C1_data_send(I2C_ADDR))
+    {
+        /* Return if transmission is not successful */
+        *read_status = 0;
+        return 0;
+    }
+     
+    /* Read EEPROM to get data */
+    data = I2C1_data_read();
+     
+    /* Generate STOP condition */
+    I2C1_stop();
+     
+    return data;
+}
+
+void I2C0_byte_write(uint32_t mem_loc, uint8_t byte, uint8_t *write_status){
+    *write_status = 1;
+     
+    /* Generate START condition */
+    I2C0_start();
+     
+    /* Send sensor device address for Write operation */
+    if (!I2C0_data_send(I2C_ADDR))
+    {
+        /* Return if transmission is not successful */
+        *write_status = 0;
+        return;
+    }
+     
+    /* Send Higher Word of memory location to Write */
+    if (!I2C0_data_send((uint16_t)((mem_loc & 0xFFFF0000) >> 16)))
+    {
+        /* Return if transmission is not successful */
+        *write_status = 0;
+        return;
+    }
+     
+    /* Send Lower Word of memory location to Write */
+    if (!I2C0_data_send((uint16_t)((mem_loc & 0x0000FFFF))))
+    {
+        /* Return if transmission is not successful */
+        *write_status = 0;
+        return;
+    }
+     
+    /* Send data to be written to sensor */
+    if (!I2C0_data_send(byte))
+    {
+        /* Return if transmission is not successful */
+        *write_status = 0;
+        return;
+    }
+     
+    /* Generate STOP condition */
+    I2C0_stop();
+     
+    /* Wait to finish Write operation (~10msec) */
+    I2C_delay_us(10000);
+}
+
+void I2C1_byte_write(uint32_t mem_loc, uint8_t byte, uint8_t *write_status){
+    *write_status = 1;
+     
+    /* Generate START condition */
+    I2C1_start();
+     
+    /* Send sensor device address for Write operation */
+    if (!I2C1_data_send(I2C_ADDR))
+    {
+        /* Return if transmission is not successful */
+        *write_status = 0;
+        return;
+    }
+     
+    /* Send Higher Word of memory location to Write */
+    if (!I2C1_data_send((uint16_t)((mem_loc & 0xFFFF0000) >> 16)))
+    {
+        /* Return if transmission is not successful */
+        *write_status = 0;
+        return;
+    }
+     
+    /* Send Lower Word of memory location to Write */
+    if (!I2C1_data_send((uint16_t)((mem_loc & 0x0000FFFF))))
+    {
+        /* Return if transmission is not successful */
+        *write_status = 0;
+        return;
+    }
+     
+    /* Send data to be written to sensor */
+    if (!I2C1_data_send(byte))
+    {
+        /* Return if transmission is not successful */
+        *write_status = 0;
+        return;
+    }
+     
+    /* Generate STOP condition */
+    I2C1_stop();
+     
+    /* Wait to finish Write operation (~10msec) */
+    I2C_delay_us(10000);
+}
 
