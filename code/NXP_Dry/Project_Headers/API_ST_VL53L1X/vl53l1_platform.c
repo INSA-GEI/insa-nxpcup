@@ -72,6 +72,7 @@
 // #include <math.h>
 
 
+
 // #define I2C_TIME_OUT_BASE   10
 // #define I2C_TIME_OUT_BYTE   1
 
@@ -100,12 +101,21 @@
 // #   define VL53L1_PutI2cBus(...) (void)0
 // #endif
 
-// uint8_t _I2CBuffer[256];
+uint8_t _I2CBuffer[256];
 
-// int _I2CWrite(VL53L1_DEV Dev, uint8_t *pdata, uint32_t count) {
-//     int status = 0;
-//     return status;
-// }
+int _I2CWrite(VL53L1_DEV Dev, uint8_t *pdata, uint32_t count) {
+    int status;
+
+    Obstacle obst;
+
+	for (int i = 0; i < count; i++){
+    	status = obst.I2C1_data_send(pdata[i]);
+    	if (status==0){
+    		return VL53L1_ERROR_CALIBRATION_WARNING;
+    	}
+    }
+	return VL53L1_ERROR_NONE;
+}
 
 // int _I2CRead(VL53L1_DEV Dev, uint8_t *pdata, uint32_t count) {
 //    int status = 0;
@@ -125,6 +135,16 @@ VL53L1_Error VL53L1_ReadMulti(VL53L1_DEV Dev, uint16_t index, uint8_t *pdata, ui
 
 VL53L1_Error VL53L1_WrByte(VL53L1_DEV Dev, uint16_t index, uint8_t data) {
     VL53L1_Error Status = VL53L1_ERROR_NONE;
+    int32_t status_int;
+
+    _I2CBuffer[0] = index>>8;
+    _I2CBuffer[1] = index&0xFF;
+    _I2CBuffer[2] = data;
+
+    status_int = _I2CWrite(Dev, _I2CBuffer, 3);
+    if (status_int != 0) {
+        Status = VL53L1_ERROR_CONTROL_INTERFACE;
+    }
     return Status;
 }
 
