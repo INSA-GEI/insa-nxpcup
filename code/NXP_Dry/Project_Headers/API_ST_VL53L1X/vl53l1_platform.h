@@ -71,10 +71,10 @@
 #define VL53L1_IPP_API
 #include "vl53l1_platform_user_data.h"
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+//#ifdef __cplusplus
+//extern "C"
+//{
+//#endif
 
 VL53L1_Error VL53L1_CommsInitialise(
 	VL53L1_Dev_t *pdev,
@@ -165,8 +165,8 @@ VL53L1_Error VL53L1_WaitValueMaskEx(
 		uint8_t       mask,
 		uint32_t      poll_delay_ms);
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif
 
 #endif

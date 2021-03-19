@@ -66,6 +66,8 @@
 
 #include "vl53l1_api_strings.h"
 #include "vl53l1_api_core.h"
+#include "vl53l1_platform_user_data.h"
+
 
 #ifdef __cplusplus
 extern "C"

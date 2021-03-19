@@ -65,17 +65,12 @@
 #define _VL53L1_PLATFORM_USER_DATA_H_
 // #include "stm32xxx_hal.h"
 #include "vl53l1_def.h"
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 
 typedef struct {
     uint32_t dummy;
 } I2C_HandleTypeDef;
 
-typedef struct {
+typedef struct struct_Dev {
 
 	VL53L1_DevData_t   Data;
 
@@ -93,7 +88,6 @@ typedef VL53L1_Dev_t *VL53L1_DEV;
 #define VL53L1DevDataSet(Dev, field, VL53L1_PRM_00005) ((Dev->Data.field) = (VL53L1_PRM_00005))
 #define VL53L1DevStructGetLLDriverHandle(Dev) (&Dev->Data.LLData)
 #define VL53L1DevStructGetLLResultsHandle(Dev) (&Dev->Data.llresults)
-#ifdef __cplusplus
-}
-#endif
+
+
 #endif

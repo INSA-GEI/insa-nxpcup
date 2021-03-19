@@ -70,6 +70,7 @@
 #define _VL53L1_API_CALIBRATION_H_
 
 #include "vl53l1_platform.h"
+#include "vl53l1_platform_user_data.h"
 
 #ifdef __cplusplus
 extern "C" {

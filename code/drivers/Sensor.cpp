@@ -41,6 +41,67 @@ void Obstacle::init(void){
 	
 }
 
+void Obstacle::setup(VL53L1_DEV Dev){
+	
+	init();
+	
+	/****** LEFT SENSOR ******/
+	/* Port initialization */
+	//I2C_init_port_left();
+	/* Module initialization (as master) */
+	//I2C_init_master_left();
+	
+	/*** Before initializing the sensor: Performs device software reset ***/
+	VL53L1_software_reset(Dev);
+	
+	int status;
+	/*** System initialization ***/
+	status = VL53L1_WaitDeviceBooted(Dev); 	//Wait for device booted
+	//As two devices are used: SetDeviceAddress must be called to differentiate them with device address
+	status = VL53L1_SetDeviceAddress(Dev, I2C_ADDR);
+	status = VL53L1_DataInit(Dev);			//One time device initialization
+	status = VL53L1_StaticInit(Dev);		//Basic device init with default settings
+	
+	/*** Optional functions call ***/
+	/* If not working: try using VL53L1_SetPresetMode() and check API config */
+	//Distance mode short has max detection distance of 135cm (same in the dark or under ambient light)
+	status = VL53L1_SetDistanceMode(Dev, VL53L1_DISTANCEMODE_SHORT);
+	//Timing budget is the maximum time allowed to run a full ranging sequence
+	status = VL53L1_SetMeasurementTimingBudgetMicroSeconds(Dev, MEASUREMENT_BUDGET_MS * 1000);
+	//Interval between measurements
+	status = VL53L1_SetInterMeasurementPeriodMilliSeconds(Dev, INTER_MEASUREMENT_PERIOD_MS);
+	
+	/*** Start Measurement ***/
+	status = VL53L1_StartMeasurement(Dev);
+	
+	if(status){
+		uart_write("VL53L1_StartMeasurement failed\n\r",32);
+	}
+	else{
+		uart_write("VL53L1_StartMeasurement ok\n\r",28);
+	}
+}
+
+VL53L1_RangingMeasurementData_t & Obstacle::getRange(VL53L1_DEV Dev){
+	
+	VL53L1_RangingMeasurementData_t RangingData;
+	uint8_t isReady;
+	
+	int status;
+	status = VL53L1_GetMeasurementDataReady(Dev, &isReady);
+	if (!status){
+		if(isReady){
+			status = VL53L1_GetRangingMeasurementData(Dev, &RangingData);
+		}
+		VL53L1_ClearInterruptAndStartMeasurement(Dev);
+	}
+	else {
+		uart_write("Error with VL53L1_GetMeasurementDataReady(..)\n\r",47);
+	}
+	
+  return RangingData;
+}
+
 
 void Obstacle::I2C_init_port_right(void){
 	PORTE_PCR0 = PORT_PCR_MUX(6);

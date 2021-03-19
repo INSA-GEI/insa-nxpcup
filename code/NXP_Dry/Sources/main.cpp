@@ -12,6 +12,7 @@ Obstacle obs;
 
 VL53L1_Dev_t devR;
 VL53L1_DEV DevR = &devR;
+VL53L1_RangingMeasurementData_t Data;
 
 #define Te 0.01 //sample time 10ms Car_handler/!\ Te_s (sample time for rear motors is in Movement.h)
 
@@ -19,18 +20,18 @@ VL53L1_DEV DevR = &devR;
 
 int main(){
 	//int p=0; //???? pour l'affichage
-	debug_init();
-	debug_displaySendNb((GPIOE_PDIR & 0x003C)>>2);
-	DEBUG_CAM_LED_OFF;
-	Timer_init (Te);
-	car.init(Te);
-	obs.init();
 	devR.I2cDevAddr=I2C_ADDR;
 	devR.comms_type=0;
 	devR.comms_speed_khz=75;
 	devR.new_data_ready_poll_duration_ms=0;
 	devR.I2cHandle=NULL;
-	VL53L1_WrByte(DevR, VL53L1_I2C_SLAVE__DEVICE_ADDRESS, I2C_ADDR);
+	debug_init();
+	debug_displaySendNb((GPIOE_PDIR & 0x003C)>>2);
+	DEBUG_CAM_LED_OFF;
+	Timer_init (Te);
+	obs.setup(DevR);
+	car.init(Te);
+	
 	
 	for(;;) {
 		car.Car_debug();
@@ -41,8 +42,17 @@ int main(){
 
 //############# handlers ##############
 //100Hz
+int c_sensor=0;
 void FTM1_IRQHandler() {
 	//car.Car_handler(); //Define Vset and servo_angle.
+	c_sensor++;
+	if (c_sensor>50){
+		c_sensor=0;
+		Data = obs.getRange(DevR);
+		uart_write("range = ",8);
+		uart_writeNb(Data.RangeMilliMeter);
+		uart_write("\n\r",2);
+	}
 	TPM1_SC |= TPM_SC_TOF_MASK;//Clear IT
 }
 
