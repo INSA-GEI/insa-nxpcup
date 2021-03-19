@@ -8,21 +8,21 @@
 
 //####################### Wheels #################################
 #define K 								1.6	//P of the PI -> Vitesse vers le point d'équilibre - 1.6 Original
-#define Ki								1 	//I of the PI -> Vitesse à laquelle il va tourner  - 1 Original
+#define Ki								0.8 	//I of the PI -> Vitesse à laquelle il va tourner  - 1 Original
 
-#define AMPLIFIE_TURN_1 1	// Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
-#define AMPLIFIE_TURN_2 4	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
+#define AMPLIFIE_TURN_1 2	// Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
+#define AMPLIFIE_TURN_2 5	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
 #define MAX_CAM_DIFF 30		// 20 Original
 #define MAX_ANGLE 30.0		// 30 Original
 
 
 //#################### SPEED #############################
-#define VSLOW 1000	// 1000 Original
+#define VSLOW 1200	// 1000 Original
 #define VHIGH 2500	// 2500 Original
 #define T_BRAKE 200 //Threshold before braking - 200 Original
-#define INCREMENT_SPEED 40 //Constante d'augmentation de la vitesse (évite le patinage)
+#define INCREMENT_SPEED 40 //Constante d'augmentation de la vitesse (évite le patinage) - 40 Original
 #define DIV_1_SPEED 3 //Divise la consigne de vitesse pour éviter le patinage sur la premiere moitié Vmes=[Vslow,Vhigh/2]	- 3 Original
-#define TURN_SPEED 1300 //Vitesse seuil dans les virages - 1300 Original
+#define TURN_SPEED 1400 //Vitesse seuil dans les virages - 1300 Original
 
 
 
@@ -99,7 +99,6 @@ private:
 		
 		//Debug
 		int mode_debug;
-		void Set_debug_mode(int i); //i=>0 : Cam+ange_servo  //i=>1 : Cam[i] //i=>2 : 
 		void Aff_debug(void);
 		void Aff_debug_init(void);
 };

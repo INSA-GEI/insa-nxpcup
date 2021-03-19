@@ -6,9 +6,6 @@ int c_t=0;//counter for the threshold
 int CompareData_high=140;
 int CompareData_low=100;
 int dejafait = 1;
-// Valeurs de calibration
-int threshold = 50;
-bool intersection = false;
 
 void Img_Proc::init(){
 	
@@ -204,7 +201,7 @@ void Img_Proc::process (void){
 	   				}
 	   			}		/* END else if ... */
 	   		}	/* END for (i=64;i>=1;i--) */
-		}	/* END of "(IF mfunctioning_mod == 2 " */
+		}	/* END of "(IF functioning_mod == 2 " */
 		
 		
 		//################### mode A ##########################
@@ -214,70 +211,59 @@ void Img_Proc::process (void){
 			for(i=127; i>=0; i--) ImageData[i] = ImageDataBuff[127-i];
 			
 			// Calcul du threshold entre noir & blanc : moyennage
-			for(i=1;i<=127;i++) threshold += ImageData[i];
+			for(i=0;i<128;i++) threshold += ImageData[i];
 			threshold /= 128;
 			
-			// Si on detecte une intersection, que du blanc, moyenne en dessous de 35
-			/*intersection = false;
-			if (threshold < 35) {
-				intersection = true;
-				servo_angle=0;
-				delta_speed=0;
-				myMovement.set(Vset,servo_angle);
-				myMovement.setDiff(Vset,delta_speed);
+			// Détection du noir et du blanc
+			for(i=0;i<=127;i++){
+				if (ImageData[i]>threshold){
+					ImageDataDifference[i]=1; //white
+				}
+				else{
+					ImageDataDifference[i]=0;//black
+				}
 			}
-			else {*/
-				// Détection du noir et du blanc
-				for(i=0;i<=127;i++){
-					if (ImageData[i]>threshold){
-						ImageDataDifference[i]=1; //white
-					}
-					else{
-						ImageDataDifference[i]=0;//black
-					}
+			
+			BlackLineRight = 128;
+			BlackLineLeft = -1;
+			i=1;
+			while (BlackLineLeft==-1 && i<127){
+				if (ImageDataDifference[i]==1 && ImageDataDifference[i-1]==0){
+					BlackLineLeft=i;
+					number_edges++;
+				}else{
+					i++;
 				}
-				
-				BlackLineRight = 128;
-				BlackLineLeft = -1;
-				i=1;
-				while (BlackLineLeft==-1 && i<127){
-					if (ImageDataDifference[i]==1 && ImageDataDifference[i-1]==0){
-						BlackLineLeft=i;
-						number_edges++;
-					}else{
-						i++;
-					}
+			}
+			i=126;
+			while (BlackLineRight==128 && (i>0 && i>BlackLineLeft)){
+				if (ImageDataDifference[i]==1 && ImageDataDifference[i+1]==0){
+					BlackLineRight=i;
+					number_edges++;
+				}else{
+					i--;
 				}
-				i=126;
-				while (BlackLineRight==128 && (i>0 && i>BlackLineLeft)){
-					if (ImageDataDifference[i]==1 && ImageDataDifference[i+1]==0){
-						BlackLineRight=i;
-						number_edges++;
-					}else{
-						i--;
-					}
-				}
-				//Nb transistions
-				i=BlackLineLeft+1+TAILLE_BANDE;
-				bool ok=false;
-				while (i<BlackLineRight-1-TAILLE_BANDE){
-					if (ImageDataDifference[i-1]!=ImageDataDifference[i]){
-						ok=true;
-						//On regarde les TAILLE_BANDE prochains pixels 
-						for (int j=i;j<=(i+TAILLE_BANDE);j++){
-							if (ImageDataDifference[j]==1){
-								ok=false;
-							}
+			}
+			//Nb transistions
+			i=BlackLineLeft+1+TAILLE_BANDE;
+			bool ok=false;
+			while (i<BlackLineRight-1-TAILLE_BANDE){
+				if (ImageDataDifference[i-1]!=ImageDataDifference[i]){
+					ok=true;
+					//On regarde les TAILLE_BANDE prochains pixels 
+					for (int j=i;j<=(i+TAILLE_BANDE);j++){
+						if (ImageDataDifference[j]==1){
+							ok=false;
 						}
-						if (ok){
-							number_edges++;
-						}
-						i+=4;
-					}else{
-						i++;
 					}
+					if (ok){
+						number_edges++;
+					}
+					i+=4;
+				}else{
+					i++;
 				}
-			//}
+			}
 		}
 		
 		if (functioning_mode == 0xF) {
@@ -289,9 +275,11 @@ void Img_Proc::process (void){
 				
 				// On met des valeurs max et min pour être sûr qu'elles seront effacées
 				int maximum = 0;
-				int minimum = 100;
-				// Lancement de la capture caméra
-				capture();
+				int minimum = 1000;
+				
+				// Inversement de la camera
+				for(i=0; i<=127; i++) ImageDataBuff[i] = ImageData[i];
+				for(i=127; i>=0; i--) ImageData[i] = ImageDataBuff[127-i];
 				
 				// Affichage
 					// On est obligé de faire 1 pixel sur 2 car sinon on rentre dans un HardFault

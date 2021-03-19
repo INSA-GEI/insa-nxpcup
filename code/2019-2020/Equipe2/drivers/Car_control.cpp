@@ -14,11 +14,7 @@ int n=0;	//Allow us to use the debug with Putty/XCTU
 int C_finish=0;
 
 //Debug Flag
-bool FLAG_ENABLE_LOG_IMG=false;
-bool FLAG_ENABLE_LOG_SERVO=false;
-
-//############## Wheel var #################
-bool FLAG_SEND_IMG=false;
+bool FLAG_START_DEBUG = false;
 
 //################## Functions ####################
 
@@ -267,31 +263,12 @@ void Car::Car_handler(void){
 	Set_deplacement();
 }
 
-//#################### Debug ###############################
-//Permet de modifier le mode de débug et du coup l'affichage dans Putty
-void Car::Set_debug_mode(int i){
-	mode_debug=i;
-	if (mode_debug==0){
-		FLAG_ENABLE_LOG_IMG=0;
-		FLAG_ENABLE_LOG_SERVO=1;
-	}else if (mode_debug==1){
-		FLAG_ENABLE_LOG_IMG=1;
-		FLAG_ENABLE_LOG_SERVO=0;
-	}
-}
-
 //Affiche le débug
 void Car::Aff_debug(void){
-	if(FLAG_SEND_IMG && FLAG_ENABLE_LOG_IMG){
-		for(int i=0;i<128;i++){
-			// /!\ marche 1 fois sur 2 car on utilise en même temps les vecteurs pour stocker l'image si l'IT suivante est arrivée
-		}
-	}
-	else if(FLAG_SEND_IMG && FLAG_ENABLE_LOG_SERVO){
+	if(FLAG_START_DEBUG){
 		uart_write("#####car#####\n\r",15);
 		uart_write("Vset=",5);
 		uart_writeNb(Vset);
-		//uart_write(" ",1);
 		uart_write(" / ",3);
 		uart_write("V_mes=",6);
 		uart_writeNb(V_mes);
@@ -353,7 +330,7 @@ void Car::Aff_debug(void){
 		uart_writeNb(V_mes);
 		uart_write("\r\n",2);
 	}*/
-	FLAG_SEND_IMG=false;
+	FLAG_START_DEBUG = false;
 }
 
 //On choisit les param de débug (ex x:mode_speed +:plus vite etc....)
@@ -435,10 +412,14 @@ void Car::Car_debug(void){
 						uart_write("Speed manu\r\n",12);
 					}
 					break;
-				/*
-				case 'l':	//lights toggle
-					GPIOC_PTOR =DEBUG_CAM_LED_Pin;
+				case 'd':	// Debug
+					FLAG_START_DEBUG = true;
 					break;
+				case 'g':	// Lights toggle
+					uart_write("Lights ON\r\n",13);
+					DEBUG_CAM_LED_ON;
+					break;
+					/*
 				case 'i':
 					uart_write("debug_img\n\r",11);
 					FLAG_ENABLE_LOG_IMG=!FLAG_ENABLE_LOG_IMG;
@@ -448,9 +429,6 @@ void Car::Car_debug(void){
 					uart_write("debug_servo\n\r",13);
 					FLAG_ENABLE_LOG_SERVO=!FLAG_ENABLE_LOG_SERVO;
 					FLAG_ENABLE_LOG_IMG=false;
-					break;
-				case 'v':
-					FLAG_SEND_IMG=true;
 					break;
 				case 'f':
 					enable_finish=!(enable_finish);
