@@ -86,24 +86,31 @@ void Car::init(float Te,int MODE){
 	N_calc_speed=(int)(Te_calc_speed/Te)+1;
 	
 	//######## MODE #########
-	if (MODE_car==0){
-		mode_speed=0;
-		Vset=1000;
-		enable_finish=false;
-	}else if (MODE_car==1){
-		enable_finish=true;
-	}else if(MODE==2){
-		enable_finish=false;
-	}else if (MODE_car==3){
-		Increment_speed-=5;
-		Vhigh-=200;
-		enable_finish=false;
-	}else if (MODE_car==14){
-		Increment_speed+=5;
-		Vhigh+=1000;
-		enable_finish=true;
-	}else{
-		MODE_car=-1;
+	switch(MODE_car){
+		case 0 :
+			mode_speed=0;
+			Vset=1000;
+			enable_finish=false;
+			break;
+		case 1 :
+			enable_finish=true;
+			break;
+		case 2 :
+			enable_finish=false;
+			break;
+		case 3:
+			Increment_speed-=5;
+			Vhigh-=200;
+			enable_finish=false;
+			break;
+		case 14:
+			Increment_speed+=5;
+			Vhigh+=1000;
+			enable_finish=true;
+			break;
+		default:
+			MODE_car=-1;
+			break;
 	}
 	if (MODE_car==-1){
 		debug_displaySendNb(16); //affichage de la barre du milieu
@@ -177,6 +184,7 @@ void Car::Set_diff_speed(void){
 	}
 	
 	//Left turn servoangle<0
+	
 	if (servo_angle<0){
 		delta_speed=-delta_speed;
 	}
@@ -247,7 +255,7 @@ void Car::Detect_state(void){
 	}
 	
 	//######## Test finish ############
-	if (enable_finish && (!reset)){
+	if (enable_finish && (!reset) && !(finish)){
 		if ((cam.number_edges)==NB_LIGNES_FIN && state_turn_car<3){//Nb de bandes noires (+1 pour chaque côté)
 			C_finish=0;
 			finish=true;
@@ -289,7 +297,9 @@ void Car::Set_deplacement(void){
 			if (finish){
 				C_finish++;
 				delta_speed=0;
+				enable_brake=true;
 				if (C_finish>CST_FINISH_TIME){
+					C_finish=0;
 					stop=true;
 				}
 			}
@@ -349,13 +359,13 @@ void Car::Stop(void){
 	}else{
 		V_apply=abs(V_mes)+SPEED_BRAKE_END;
 	}
-	if (abs(V_mes)<10){
+	if (abs(V_mes)<5){
 		c_stop++;
 		if (c_stop>5){
 			c_stop=0;
 			reset=true;
 		}
-	}else if(abs(V_mes)>100){
+	}else if(abs(V_mes)>50){
 		c_stop=0;
 	}
 	delta_speed=0;

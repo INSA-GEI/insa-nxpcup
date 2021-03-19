@@ -6,7 +6,7 @@
 #include "ImageProcessing.h"
 #include "Interrupt.h"
 
-#define CST_FINISH_TIME 20 //X*10ms=>
+#define CST_FINISH_TIME 100 //X*10ms=>
 
 #define INCREASE_SPEED_MAX_MIN 		400	//Nb of time ok before we increase the speed handler every 10ms
 #define MAX_DIFF_BEFORE_SLOWDOWN 	10 
@@ -14,7 +14,7 @@
 #define MAX_CAM_DIFF 				20
 #define NB_LIGNES_FIN 				4
 #define NB_LIGNES_NORMAL			2
-#define NB_LIGNES_MAX_PB 			7
+#define NB_LIGNES_MAX_PB 			5
 #define NB_LIGNES_MIN_PB			1
 
 //####################### Wheels #################################
@@ -28,12 +28,12 @@
 
 #define VSLOW 900
 #define VHIGH 1800
-#define VBRAKE_min 1500
+#define VBRAKE_min VHIGH
 
-#define T_BRAKE 600 //Threshold before braking
+#define T_BRAKE 300 //Threshold before braking
 #define INCREMENT_SPEED 12 //Constante d'augmentation de la vitesse (évite le patinage)
-#define SPEED_BRAKE_BEG 1000 //Vitesse seuil dans les virages
-#define SPEED_BRAKE_END 500 //Vitesse seuil dans les virages
+#define SPEED_BRAKE_BEG VSLOW //Vitesse seuil dans les virages
+#define SPEED_BRAKE_END 300 //Vitesse seuil dans les virages
 
 
 #define DEG_TO_RAD 0.0175 //conversion Degré vers radian
