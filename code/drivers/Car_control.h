@@ -18,15 +18,15 @@
 #define NB_LIGNES_MIN_PB			1
 
 //####################### Wheels #################################
-#define Kp 								1.5 	//PI=1.8 //entre 1.3 et 2.0 //P of the PID
-#define Ki								0.05//0.05		//PI=0.9 // 1.5 max	 //I of the PID
-#define Kd								0.15//0.15		//Dérivée
+#define Kp 								1.0 	//P=1.5 		//P of the PID
+#define Ki								0.05	//I=0.05		//I of the PID
+#define Kd								0.15	//D=0.15		//Dérivée
 #define N								7.0 	//Filtre dérivée
 
 //#################### SPEED #############################
 #define Te_calc_speed 	0.01 //100Hz Consigne Vset //Frequence du calcul de vitesse
 
-#define VSLOW 900
+#define VSLOW 1000
 #define VHIGH 1800
 #define VBRAKE_min VHIGH
 
