@@ -48,10 +48,28 @@ void FTM1_IRQHandler() {
 	c_sensor++;
 	if (c_sensor>50){
 		c_sensor=0;
+		VL53L1_StartMeasurement(DevR);
 		Data = obs.getRange(DevR);
-		uart_write("range = ",8);
-		uart_writeNb(Data.RangeMilliMeter);
-		uart_write("\n\r",2);
+		  //printing StreamCount
+		  uart_write("Stream Count : ",15);
+		  uart_writeNb(Data.StreamCount);
+		  uart_write("\n\r",2);	
+		  //printing Range Status
+		  uart_write("RangeStatus (0=valid) : ",24);
+		  uart_writeNb(Data.RangeStatus);
+		  uart_write("\n\r",2);
+		  //printing Range Value
+		  uart_write("Ranging data (mm) : ",20);
+		  uart_writeNb(Data.RangeMilliMeter);
+		  uart_write("\n\r",2);
+		  //printing Signal Rate
+		  //uart_write("Signal rate : ",14);
+		  //uart_writeNb((int)(Data.SignalRateRtnMegaCps/65536.0));
+		  //uart_write("\n\r",2);	  
+		  //printing Ambient Rate
+		  //uart_write("Ambient rate : ",15);
+		  //uart_writeNb((int)(Data.AmbientRateRtnMegaCps/65536.0));
+		  //uart_write("\n\r",2);	
 	}
 	TPM1_SC |= TPM_SC_TOF_MASK;//Clear IT
 }

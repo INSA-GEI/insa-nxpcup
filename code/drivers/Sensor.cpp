@@ -17,13 +17,13 @@
 * 20 ms is the minimum timing budget and can be used only in Short distance mode.
 * 33 ms is the minimum timing budget which can work for all distance modes
 * */
-#define MEASUREMENT_BUDGET_MS 30
+#define MEASUREMENT_BUDGET_MS 20
 
 /* Interval between measurements, set through VL53L1_SetInterMeasurementPeriodMilliSeconds()
 * According to the API user manual "the minimum inter-measurement period must be longer than the
 * timing budget + 4 ms." 
 * */
-#define INTER_MEASUREMENT_PERIOD_MS 55
+#define INTER_MEASUREMENT_PERIOD_MS 25
 
 
 
@@ -54,13 +54,24 @@ void Obstacle::setup(VL53L1_DEV Dev){
 	/*** Before initializing the sensor: Performs device software reset ***/
 	VL53L1_software_reset(Dev);
 	
+	uart_write("SW reset ok\n\r",13);
+	
 	int status;
 	/*** System initialization ***/
 	status = VL53L1_WaitDeviceBooted(Dev); 	//Wait for device booted
+	
 	//As two devices are used: SetDeviceAddress must be called to differentiate them with device address
 	status = VL53L1_SetDeviceAddress(Dev, I2C_ADDR);
 	status = VL53L1_DataInit(Dev);			//One time device initialization
+	if(status==0){
+		uart_write("VL53L1_DataInit ok\n\r",20);
+	}
+	else{
+		uart_write("VL53L1_DataInit failed\n\r",24);
+	}
 	status = VL53L1_StaticInit(Dev);		//Basic device init with default settings
+	
+	uart_write("je suis ici\n\r",13);
 	
 	/*** Optional functions call ***/
 	/* If not working: try using VL53L1_SetPresetMode() and check API config */
@@ -232,3 +243,4 @@ uint8_t Obstacle::I2C1_data_read(void){
      
     return data;
 }
+

@@ -66,6 +66,7 @@
 // #include "vl53l1_platform_log.h"
 #include "vl53l1_api.h"
 
+
 // #include "stm32xxx_hal.h"
 #include <string.h>
 // #include <time.h>
@@ -103,35 +104,25 @@
 
 uint8_t _I2CBuffer[256];
 
-int _I2CWrite(VL53L1_DEV Dev, uint8_t *pdata, uint32_t count) {
-    int status;
+int _I2CWrite(VL53L1_DEV Dev, uint8_t* pdata, uint32_t count) {
+    int status = 0;
 
-    Obstacle obst;
+    i2c_WriteMultRegister(I2C1, I2C_ADDR, 0x01, (uint8_t) count, pdata);
 
-	for (int i = 0; i < (int)count; i++){
-    	status = obst.I2C1_data_send(pdata[i]);
-    	if (status==0){
-    		return VL53L1_ERROR_CALIBRATION_WARNING;
-    	}
-    }
-	return VL53L1_ERROR_NONE;
+	return status;
 }
 
-int _I2CRead(VL53L1_DEV Dev, uint8_t *buf, uint32_t len)
-{
+int _I2CRead(VL53L1_DEV Dev, uint8_t *buf, uint32_t len) {
     int status = 0;
-	Obstacle obst;
 	
-	for (int i=0; i < (int)len; i++){
-		buf[len-1-i] = obst.I2C1_data_read();
-	}
+    status = i2c_ReadMultRegister(I2C1, I2C_ADDR, 0x00, (uint8_t) len, buf);
 	
     return status;
 }
 
 VL53L1_Error VL53L1_WriteMulti(VL53L1_DEV Dev, uint16_t index, uint8_t *pdata, uint32_t count) {
     VL53L1_Error Status = VL53L1_ERROR_NONE;
-    int32_t status_int;
+    /*int32_t status_int;
     if (count > sizeof(_I2CBuffer) - 1) {
     	return VL53L1_ERROR_INVALID_PARAMS;
     }
@@ -141,69 +132,48 @@ VL53L1_Error VL53L1_WriteMulti(VL53L1_DEV Dev, uint16_t index, uint8_t *pdata, u
     status_int = _I2CWrite(Dev, _I2CBuffer, count+2);
     if (status_int != 0) {
         Status = VL53L1_ERROR_CONTROL_INTERFACE;
-    }
+    }*/
+    Status = _I2CWrite(Dev, pdata, count);
     return Status;
 }
 
 // the ranging_sensor_comms.dll will take care of the page selection
 VL53L1_Error VL53L1_ReadMulti(VL53L1_DEV Dev, uint16_t index, uint8_t *pdata, uint32_t count) {
     VL53L1_Error Status = VL53L1_ERROR_NONE;
-    if (count > sizeof(_I2CBuffer) - 3) {
+    /*if (count > sizeof(_I2CBuffer) - 3) {
         return VL53L1_ERROR_INVALID_PARAMS;
     }
     int status_int = _I2CRead(Dev, _I2CBuffer, count + 2);
     if (status_int != 0) {
         Status = VL53L1_ERROR_CONTROL_INTERFACE;
-    }
+    }*/
+    Status = _I2CRead(Dev, pdata, count);
     return Status;
 }
 
 VL53L1_Error VL53L1_WrByte(VL53L1_DEV Dev, uint16_t index, uint8_t data) {
     VL53L1_Error Status = VL53L1_ERROR_NONE;
-    int32_t status_int;
-
-    _I2CBuffer[0] = index>>8;
-    _I2CBuffer[1] = index&0xFF;
-    _I2CBuffer[2] = data;
-
-    status_int = _I2CWrite(Dev, _I2CBuffer, 3);
-    if (status_int != 0) {
-        Status = VL53L1_ERROR_CONTROL_INTERFACE;
-    }
+    Status = _I2CWrite(Dev, &data, 1);
     return Status;
 }
 
 VL53L1_Error VL53L1_WrWord(VL53L1_DEV Dev, uint16_t index, uint16_t data) {
     VL53L1_Error Status = VL53L1_ERROR_NONE;
-    int32_t status_int;
-
-    _I2CBuffer[0] = index>>8;
-    _I2CBuffer[1] = index&0xFF;
-    _I2CBuffer[2] = data >> 8;
-    _I2CBuffer[3] = data & 0x00FF;
-
-    status_int = _I2CWrite(Dev, _I2CBuffer, 4);
-    if (status_int != 0) {
-        Status = VL53L1_ERROR_CONTROL_INTERFACE;
-    }
+    uint8_t buffer [2];
+    buffer[0]= ((data&0xFF00)>>8);
+    buffer[1]= (data & 0xFF);
+    Status = _I2CWrite(Dev, buffer, 2);
     return Status;
 }
 
 VL53L1_Error VL53L1_WrDWord(VL53L1_DEV Dev, uint16_t index, uint32_t data) {
     VL53L1_Error Status = VL53L1_ERROR_NONE;
-    int32_t status_int;
-
-    _I2CBuffer[0] = index>>8;
-    _I2CBuffer[1] = index&0xFF;
-    _I2CBuffer[2] = (data >> 24) & 0xFF;
-    _I2CBuffer[3] = (data >> 16) & 0xFF;
-    _I2CBuffer[4] = (data >> 8)  & 0xFF;
-    _I2CBuffer[5] = (data >> 0 ) & 0xFF;
-
-    status_int = _I2CWrite(Dev, _I2CBuffer, 6);
-    if (status_int != 0) {
-        Status = VL53L1_ERROR_CONTROL_INTERFACE;
-    }
+    uint8_t buffer [4];
+    buffer[0]= ((data&0xFF000000)>>24);
+    buffer[1]= ((data&0xFF0000)>>16);
+    buffer[2]= ((data&0xFF00)>>8);
+    buffer[3]= (data&0xFF);
+    Status = _I2CWrite(Dev, buffer, 4);
     return Status;
 }
 
@@ -212,30 +182,36 @@ VL53L1_Error VL53L1_UpdateByte(VL53L1_DEV Dev, uint16_t index, uint8_t AndData, 
     return Status;
 }
 
-VL53L1_Error VL53L1_RdByte(VL53L1_DEV Dev, uint16_t index, uint8_t *data) {
+VL53L1_Error VL53L1_RdByte(VL53L1_DEV Dev, uint16_t index, uint8_t *pdata) {
     VL53L1_Error Status = VL53L1_ERROR_NONE;
-    int status_int = _I2CRead(Dev, _I2CBuffer, 3);
-    if (status_int != 0) {
-        Status = VL53L1_ERROR_CONTROL_INTERFACE;
-    }
+    Status = _I2CRead(Dev, pdata, 1);
     return Status;
 }
 
-VL53L1_Error VL53L1_RdWord(VL53L1_DEV Dev, uint16_t index, uint16_t *data) {
+VL53L1_Error VL53L1_RdWord(VL53L1_DEV Dev, uint16_t index, uint16_t *pdata) {
     VL53L1_Error Status = VL53L1_ERROR_NONE;
-    int status_int = _I2CRead(Dev, _I2CBuffer, 4);
-    if (status_int != 0) {
-        Status = VL53L1_ERROR_CONTROL_INTERFACE;
-    }
+    
+    uint8_t aux_data[2];
+    
+    Status = _I2CRead(Dev, aux_data, 2);
+    
+    *pdata|=aux_data[0]<<8;
+    *pdata|=aux_data[1];
     return Status;
 }
 
-VL53L1_Error VL53L1_RdDWord(VL53L1_DEV Dev, uint16_t index, uint32_t *data) {
+VL53L1_Error VL53L1_RdDWord(VL53L1_DEV Dev, uint16_t index, uint32_t *pdata) {
     VL53L1_Error Status = VL53L1_ERROR_NONE;
-    int status_int = _I2CRead(Dev, _I2CBuffer, 6);
-    if (status_int != 0) {
-        Status = VL53L1_ERROR_CONTROL_INTERFACE;
-    }
+    
+    uint8_t aux_data[4];
+    
+    Status = _I2CRead(Dev, aux_data, 4);
+    
+    *pdata|=aux_data[0]<<24;
+    *pdata|=aux_data[1]<<16;
+    *pdata|=aux_data[2]<<8;
+    *pdata|=aux_data[3];
+    
     return Status;
 }
 

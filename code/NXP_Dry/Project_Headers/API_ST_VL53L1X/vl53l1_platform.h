@@ -67,6 +67,7 @@
 #include "vl53l1_ll_def.h"
 #include "vl53l1_platform_log.h"
 #include "Sensor.h" //Perso
+#include "i2c.h"
 
 #define VL53L1_IPP_API
 #include "vl53l1_platform_user_data.h"
