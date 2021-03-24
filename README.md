@@ -51,11 +51,13 @@ Old branchs:
 	git checkout dev       : work in progress (Obsolete)
 	
 	
-#Amélioration possible
--Détection du soleil et traitement de l'image en fonction
--Détection des erreurs de détection de ligne de fin
--caméra inclinable pour anticiper les virages
--Paufinage possible du PID
+# Amélioration possible
+- Détection du soleil et traitement de l'image en fonction
+- Image en 2D
+- Détection des erreurs de détection de ligne de fin
+- caméra inclinable pour anticiper les virages
+
+# Ajout du servo_CAM sur le port PTD0 ou PTD5
 
 
 
