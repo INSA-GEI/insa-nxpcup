@@ -9,7 +9,7 @@ int main(){
 	debug_init();
 	debug_displaySendNb((GPIOE_PDIR & 0x003C)>>2);
 	DEBUG_CAM_LED_OFF;
-	Timer_init(0.01);
+	Timer_init(0.005);
 	car.init();
 	
 	for(;;) {
@@ -32,7 +32,7 @@ void FTM2_IRQHandler() {//encoder interrupt 6kHz
 	car.myMovement.regulate(); //Applique la PWM correspond à la vitesse aux moteurs
 }
 
-//500Hz
+//100Hz
 void SysTick_Handler() {
 	car.Car_handler();		//Define Vset and servo_angle.
 	SYST_CSR &= 0xFFFEFFFF;	// Clears IT

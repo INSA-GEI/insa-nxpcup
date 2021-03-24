@@ -306,6 +306,9 @@ void Car::Aff_debug(void){
 		uart_write(" / ",3);
 		uart_write("seuil=",6);
 		uart_writeNb(cam.threshold);
+		uart_write(" / ",3);
+		uart_write("ecart type=",11);
+		uart_writeNb(cam.ecart_type);
 		/*uart_write(" ",1);
 		uart_writeNb(cam.diff-cam.diff_old);
 		uart_write(" ",1);

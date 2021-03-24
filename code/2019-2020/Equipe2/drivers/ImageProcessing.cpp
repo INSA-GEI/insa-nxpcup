@@ -6,6 +6,8 @@ int c_t=0;//counter for the threshold
 int CompareData_high=140;
 int CompareData_low=100;
 int dejafait = 1;
+int tab_threshold[100];
+int tab_threshold_count = 0;
 
 void Img_Proc::init(){
 	
@@ -38,6 +40,8 @@ void Img_Proc::init(){
 	BlackLineRight=127;
 	BlackLineLeft=0;
 	number_edges=0;
+	ecart_type = 0;
+	for (i=0; i<100; i++) tab_threshold[i] = 200; 
 
 }
 
@@ -207,12 +211,25 @@ void Img_Proc::process (void){
 		//################### mode A ##########################
 		if (functioning_mode == 0xA){
 			// Inversement de la camera
-			for(i=0;i<=127;i++) ImageDataBuff[i] = ImageData[i];
+			for(i=0;i<128;i++) ImageDataBuff[i] = ImageData[i];
 			for(i=127; i>=0; i--) ImageData[i] = ImageDataBuff[127-i];
 			
 			// Calcul du threshold entre noir & blanc : moyennage
 			for(i=0;i<128;i++) threshold += ImageData[i];
 			threshold /= 128;
+			
+			// Calcul de l'écart type
+			for(i=0;i<128;i++) ecart_type += (ImageData[i]-threshold)*(ImageData[i]-threshold);
+			ecart_type /= 128;
+			ecart_type = sqrt(ecart_type);
+			
+			// Calcul moyenne threshold pour attenuer les gros changements
+			tab_threshold[tab_threshold_count] = threshold;
+			for(i=0; i<100; i++) threshold += tab_threshold[i];
+			threshold /= 100;
+			if (tab_threshold_count < 100) tab_threshold_count++;
+			else tab_threshold_count = 0;
+			
 			
 			// Détection du noir et du blanc
 			for(i=0;i<=127;i++){
@@ -330,9 +347,8 @@ void Img_Proc::calculateMiddle (void){
 	// Find middle of the road, 64 for strait road
 	RoadMiddle = (BlackLineLeft + BlackLineRight)/2;
 
-	
 	// if no line on left and right side
-	if (number_edges == 0){
+	if ((number_edges == 0) || (ecart_type < 17)){
 		RoadMiddle = RoadMiddle_old;
 	}
 	if ((BlackLineRight > 127) && (BlackLineLeft < 0)){

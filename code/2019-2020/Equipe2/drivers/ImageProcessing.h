@@ -31,6 +31,7 @@ public:
 	int diff;								// actual difference from line middle position
 	int diff_old;
 	int threshold;							// actual position of the servo relative to middle
+	int ecart_type;
 	
 	int RoadMiddle;						// calculated middle of the road
 	int RoadMiddle_old;					// save the last "Middle of the road" position
