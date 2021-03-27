@@ -247,7 +247,7 @@ uint8_t i2c_ReadRegister(I2C_MemMapPtr i2c,uint8_t SlaveAddress,uint8_t Register
 	i2c_Wait(i2c);
 	i2c_Stop(i2c);
 	res = i2c_ReadByte(i2c);
-	delay(10);//50);
+	delay(50);
 
 	return res;
 }
@@ -257,6 +257,10 @@ uint8_t i2c_ReadRegister(I2C_MemMapPtr i2c,uint8_t SlaveAddress,uint8_t Register
 uint8_t i2c_ReadMultRegister(I2C_MemMapPtr i2c,uint8_t SlaveAddress,uint8_t RegisterAddress,uint8_t n_data, uint8_t *res)
 {
 	uint8_t i = 0;
+	
+	//TEST
+	uint8_t* res_aux=res;
+	//
 
 	i2c_Start(i2c);
 	i2c_WriteByte(i2c, ((SlaveAddress << 1) | I2C_WRITE));
@@ -292,8 +296,12 @@ uint8_t i2c_ReadMultRegister(I2C_MemMapPtr i2c,uint8_t SlaveAddress,uint8_t Regi
 	i2c_Stop(i2c);
 
 	*res = i2c_ReadByte(i2c);
+	
+	//TEST
+	res=res_aux;
+	//
 
-	delay(10);//50);
+	delay(50);
 	
 	return 0;
 }
@@ -320,7 +328,7 @@ void i2c_WriteMultRegister(I2C_MemMapPtr i2c,uint8_t SlaveAddress,uint8_t Regist
 	}
 	i2c_Stop(i2c);
 
-	delay(10);//50);
+	delay(50);
 }
 /****************************************************************************************
 *
