@@ -2,6 +2,11 @@
 #define PID_H_
 
 #include "Car_control.h"
+#include "ImageProcessing.h"
+#include "math.h"
+#include "stdio.h"
+#include "stdlib.h"
+
 
 // Controller Gains
 #define Kp 1.6
