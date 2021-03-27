@@ -24,7 +24,7 @@ float PIDController_update(float setpoint, float measurement) {
 	float Proportional = Kp * error;
 	
 	// ########## Integral ########## //
-	Integrator = Integrator + 0.5f * Ki * Te * (error + old_error);
+	Integrator = Integrator + 0.5f * Ki * Te_PID * (error + old_error);
 	
 	// Anti wind-up via clamping
 		// Compute limits
@@ -42,8 +42,8 @@ float PIDController_update(float setpoint, float measurement) {
 	// ########## Derivative ########## //
 	// Note : on measurement !!
 	Differentiator = -(2.0f * Kd * (measurement - old_measurement)
-					 +(2.0f) * tau - Te) * Differentiator
-					 /(2.0f * tau + Te);
+					 +(2.0f) * tau - Te_PID) * Differentiator
+					 /(2.0f * tau + Te_PID);
 	
 	
 	

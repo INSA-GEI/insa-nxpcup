@@ -1,20 +1,19 @@
 #ifndef PID_H_
 #define PID_H_
 
-#include "Car_control.h"
-#include "ImageProcessing.h"
 #include "math.h"
 #include "stdio.h"
 #include "stdlib.h"
 
 
 // Controller Gains
-#define Kp 1.6
-#define Ki 0.8
-#define Kd 0.2
+#define Kp 1.6f
+#define Ki 0.8f
+#define Kd 0.2f
 	
 // Derivative low-pass filter time constant
-#define tau 2*Te
+#define Te_PID 0.01f
+#define tau 0.02f
 	
 // Limits
 float PID_min, PID_max;
