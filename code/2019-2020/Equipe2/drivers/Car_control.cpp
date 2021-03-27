@@ -35,8 +35,8 @@ void Car::init(void){
 	enable_brake=false;
 	
 	//Coeff PI servo_angle
-	K_camdiff=(float)((2*K+Te*Ki)/2);
-	K_camdiffold=(float)((Te*Ki-2*K)/2);
+	//K_camdiff=(float)((2*K+Te*Ki)/2);
+	//K_camdiffold=(float)((Te*Ki-2*K)/2);
 	
 	enable_finish=false;
 	stop=true;

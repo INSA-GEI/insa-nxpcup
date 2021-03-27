@@ -7,8 +7,8 @@
 #define CST_FINISH_TIME 100 //100*10ms=>1s
 
 //####################### Wheels #################################
-#define K 								1.6	//P of the PI -> Vitesse vers le point d'équilibre - 1.6 Original
-#define Ki								0.8 	//I of the PI -> Vitesse à laquelle il va tourner  - 1 Original
+//#define K 								1.6	//P of the PI -> Vitesse vers le point d'équilibre - 1.6 Original
+//#define Ki								0.8 	//I of the PI -> Vitesse à laquelle il va tourner  - 1 Original
 
 #define AMPLIFIE_TURN_1 2	// Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
 #define AMPLIFIE_TURN_2 5	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
