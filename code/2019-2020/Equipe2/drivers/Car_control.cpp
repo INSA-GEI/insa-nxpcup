@@ -4,12 +4,7 @@
 //#################################### Var ###################
 int c=0;
 float old_servo_angle=0.0;
-//Wheel PI
-float K_camdiff=0.0;
-float K_camdiffold=0.0;
-
 int n=0;	//Allow us to use the debug with Putty/XCTU
-
 int C_finish=0;
 
 //Debug Flag
@@ -33,18 +28,14 @@ void Car::init(void){
 	enable_ampli_turn=false;
 	enable_brake=false;
 
+	// PID
+	PID_max = MAX_ANGLE;
+	PID_min = -MAX_ANGLE;
 	Integrator = 0.0;
 	old_error = 0.0;
-	
 	Differentiator = 0.0;
 	old_measurement = 0.0;
-	
 	PID_output = 0.0;
-	
-	
-	//Coeff PI servo_angle
-	//K_camdiff=(float)((2*K+Te*Ki)/2);
-	//K_camdiffold=(float)((Te*Ki-2*K)/2);
 	
 	enable_finish=false;
 	stop=true;
@@ -145,9 +136,9 @@ void Car::Caculate_angle_wheel(void){
 			}
 		}
 		old_servo_angle=servo_angle;
-		//PI Approx bilinéaire
 
-		servo_angle=servo_angle+(float)aux_diff*K_camdiff+(float)cam.diff_old*K_camdiffold;
+		// PID -> Consigne de 0 (rester au milieu)
+		servo_angle = PIDController_update(0, cam.diff);
 
 //##################### Changement valeurs  ##########################
 		if(servo_angle<-MAX_ANGLE)servo_angle=(-MAX_ANGLE);
@@ -500,11 +491,11 @@ float Car::PIDController_update(float setpoint, float measurement) {
 	float Proportional = Kp * error;
 	
 	// ########## Integral ########## //
-	Integrator = Integrator + 0.5 * Ki * Te_PID * (error + old_error);
+	Integrator = Integrator + 0.5 * Ki * Te * (error + old_error);
 	
 	// Anti wind-up via clamping
 		// Compute limits
-	if (PID_min > Proportional) integrator_max = PID_max - Proportional;
+	/*if (PID_min > Proportional) integrator_max = PID_max - Proportional;
 	else integrator_max = 0.0;
 	
 	if (PID_min < Proportional) integrator_min = PID_min - Proportional;
@@ -512,14 +503,17 @@ float Car::PIDController_update(float setpoint, float measurement) {
 	
 		// Clamp Integrator
 	if (Integrator > integrator_max) Integrator = integrator_max;
-	else if (Integrator < integrator_min) Integrator = integrator_min;
+	else if (Integrator < integrator_min) Integrator = integrator_min;*/
 	
 	
 	// ########## Derivative ########## //
 	// Note : on measurement !!
-	Differentiator = -(2.0 * Kd * (measurement - old_measurement)
-					 +(2.0) * tau - Te_PID) * Differentiator
-					 /(2.0 * tau + Te_PID);
+//	Differentiator = -(2.0 * Kd * (measurement - old_measurement)
+//					 +(2.0 * tau - Te) * Differentiator)
+//					 /(2.0 * tau + Te);
+	Differentiator = (2.0 * Kd * (measurement - old_measurement)
+					 +(Te) * Differentiator)
+					 /(Te);
 	
 	
 	

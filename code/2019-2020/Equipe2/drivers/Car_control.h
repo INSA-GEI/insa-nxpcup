@@ -9,12 +9,11 @@
 
 //####################### PID ########################
 // Controller Gains
-#define Kp 1.6
-#define Ki 0.8
-#define Kd 0.2
+#define Kp 0.8
+#define Ki 0.007
+#define Kd 0.01
 	
 // Derivative low-pass filter time constant
-#define Te_PID 0.01
 #define tau 0.02
 	
 
@@ -71,6 +70,21 @@ public:
 		
 		int mode_speed;//Mode 0=>speed manual //1=> speed auto
 	
+	//######### PID ###########
+		// Limits
+		float PID_max, PID_min;
+		float integrator_max, integrator_min;
+					
+		// Controller 'memory'
+		float Integrator;
+		float old_error;
+		float Differentiator;
+		float old_measurement;
+			
+		// Controller output
+		float PID_output;
+
+		float PIDController_update(float setpoint, float measurement);
 	
 	//############# functions #########################
 		void init(void);
@@ -111,24 +125,6 @@ private:
 		void Aff_debug(void);
 		void Aff_debug_init(void);
 		
-		
-	//######### PID ###########
-		// Limits
-		float PID_min, PID_max;
-		float integrator_max, integrator_min;
-			
-		// Controller 'memory'
-		float Integrator;
-		float old_error;
-		float Differentiator;
-		float old_measurement;
-			
-		// Controller output
-		float PID_output;
-
-
-		void PIDController_init(void);
-		float PIDController_update(float setpoint, float measurement);
 
 
 
