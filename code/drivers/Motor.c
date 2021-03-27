@@ -21,7 +21,7 @@ void motor_init(void){
 	TPM0_MOD = 600; 				// frequency modulo
 	TPM0_SC |= TPM_SC_CMOD(1); 		// enable timer
 	TPM0_C1SC = 0x28;				// CH1 (right  motor)
-	TPM0_C5SC = 0x28;				// CH2 (left motor)
+	TPM0_C5SC = 0x28;				// CH5 (left motor)
 
 	PORTA_PCR4   = 0;				
 	PORTA_PCR4  |= PORT_PCR_MUX(3);	// PTA4 Motor Right In 1 (speed) PTA4 TPM0_CH1

@@ -27,5 +27,7 @@ void servo_init(void);
 
 void servo_setPos(int angle);
 
+void init_servo_cam();
+
 
 #endif /* SERVO_H_ */
