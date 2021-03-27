@@ -6,10 +6,19 @@
 
 #define CST_FINISH_TIME 100 //100*10ms=>1s
 
-//####################### Wheels #################################
-//#define K 								1.6	//P of the PI -> Vitesse vers le point d'équilibre - 1.6 Original
-//#define Ki								0.8 	//I of the PI -> Vitesse à laquelle il va tourner  - 1 Original
 
+//####################### PID ########################
+// Controller Gains
+#define Kp 1.6
+#define Ki 0.8
+#define Kd 0.2
+	
+// Derivative low-pass filter time constant
+#define Te_PID 0.01
+#define tau 0.02
+	
+
+//####################### Wheels #################################
 #define AMPLIFIE_TURN_1 2	// Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
 #define AMPLIFIE_TURN_2 5	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
 #define MAX_CAM_DIFF 30		// 20 Original
@@ -101,6 +110,28 @@ private:
 		int mode_debug;
 		void Aff_debug(void);
 		void Aff_debug_init(void);
+		
+		
+	//######### PID ###########
+		// Limits
+		float PID_min, PID_max;
+		float integrator_max, integrator_min;
+			
+		// Controller 'memory'
+		float Integrator;
+		float old_error;
+		float Differentiator;
+		float old_measurement;
+			
+		// Controller output
+		float PID_output;
+
+
+		void PIDController_init(void);
+		float PIDController_update(float setpoint, float measurement);
+
+
+
 };
 
 int sng(int a);

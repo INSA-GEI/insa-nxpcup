@@ -2,7 +2,6 @@
 #include "Debug.h"
 
 //#################################### Var ###################
-//################ var aux #############
 int c=0;
 float old_servo_angle=0.0;
 //Wheel PI
@@ -33,6 +32,15 @@ void Car::init(void){
 	state_turn_car=0;
 	enable_ampli_turn=false;
 	enable_brake=false;
+
+	Integrator = 0.0;
+	old_error = 0.0;
+	
+	Differentiator = 0.0;
+	old_measurement = 0.0;
+	
+	PID_output = 0.0;
+	
 	
 	//Coeff PI servo_angle
 	//K_camdiff=(float)((2*K+Te*Ki)/2);
@@ -480,3 +488,52 @@ int sng(int a){
 		return -1;
 	}
 }
+
+
+//########### PID ###############
+float Car::PIDController_update(float setpoint, float measurement) {
+	
+	// ########## Error signal ########## //
+	float error = setpoint - measurement;
+	
+	// ########## Proportional ########## //
+	float Proportional = Kp * error;
+	
+	// ########## Integral ########## //
+	Integrator = Integrator + 0.5 * Ki * Te_PID * (error + old_error);
+	
+	// Anti wind-up via clamping
+		// Compute limits
+	if (PID_min > Proportional) integrator_max = PID_max - Proportional;
+	else integrator_max = 0.0;
+	
+	if (PID_min < Proportional) integrator_min = PID_min - Proportional;
+	else integrator_min = 0.0;
+	
+		// Clamp Integrator
+	if (Integrator > integrator_max) Integrator = integrator_max;
+	else if (Integrator < integrator_min) Integrator = integrator_min;
+	
+	
+	// ########## Derivative ########## //
+	// Note : on measurement !!
+	Differentiator = -(2.0 * Kd * (measurement - old_measurement)
+					 +(2.0) * tau - Te_PID) * Differentiator
+					 /(2.0 * tau + Te_PID);
+	
+	
+	
+	// ########## Output ########## //
+	// Compute & apply limits
+	PID_output = Proportional + Integrator + Differentiator;
+	if (PID_output > PID_max) PID_output = PID_max;
+	if (PID_output < PID_min) PID_output = PID_min;
+	
+	// Store error and measurement
+	old_error = error;
+	old_measurement = measurement;
+	
+	return PID_output;	
+}
+
+
