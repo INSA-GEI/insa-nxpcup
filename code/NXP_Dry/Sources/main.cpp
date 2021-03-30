@@ -17,6 +17,8 @@ VL53L1_RangingMeasurementData_t Data;
 #define Te 0.01 //sample time 10ms Car_handler/!\ Te_s (sample time for rear motors is in Movement.h)
 
 //void delay_time(int number);
+uint32_t donnees = I2C_ADDR;
+
 
 int main(){
 	//int p=0; //???? pour l'affichage
@@ -32,7 +34,6 @@ int main(){
 	obs.setup(DevR);
 	car.init(Te);
 	
-	
 	for(;;) {
 		car.Car_debug();
 	}
@@ -43,13 +44,16 @@ int main(){
 //############# handlers ##############
 //100Hz
 int c_sensor=0;
+
+
 void FTM1_IRQHandler() {
 	//car.Car_handler(); //Define Vset and servo_angle.
 	c_sensor++;
 	if (c_sensor>50){
 		c_sensor=0;
-		VL53L1_StartMeasurement(DevR);
-		Data = obs.getRange(DevR);
+		VL53L1_WrDWord(DevR, 0x0, donnees);
+		//VL53L1_StartMeasurement(DevR);
+		/*Data = obs.getRange(DevR);
 		  //printing StreamCount
 		  uart_write("Stream Count : ",15);
 		  uart_writeNb(Data.StreamCount);
@@ -69,7 +73,7 @@ void FTM1_IRQHandler() {
 		  //printing Ambient Rate
 		  //uart_write("Ambient rate : ",15);
 		  //uart_writeNb((int)(Data.AmbientRateRtnMegaCps/65536.0));
-		  //uart_write("\n\r",2);	
+		  //uart_write("\n\r",2);	*/
 	}
 	TPM1_SC |= TPM_SC_TOF_MASK;//Clear IT
 }
