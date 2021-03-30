@@ -14,7 +14,7 @@ void Timer_init (float Te){
 	
 	float F_IT=F_CPU;
 
-	reload= ((int)(Te*F_IT)-1);
+	reload= ((int)(Te*F_IT))-1;
 	if (reload>max_reload){reload=max_reload;}
 	uart_write("reload=",7);
 	uart_writeNb(reload);

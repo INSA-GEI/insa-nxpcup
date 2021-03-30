@@ -6,12 +6,12 @@
 //#define FAST_BLINK      (1000000)
 Car car;
 #define Fe					500.0
-#define Fe_IT_PWM			50000.0
+#define Fe_IT_PWM			100000.0
 #define Fe_PWM_servo_cam	50.0
 
-#define Te 					1.0/Fe			//sample time 2ms Car_handler/!\ Te_s (sample time for rear motors is in Movement.h)
+#define Te 					1.0/Fe					//sample time 2ms Car_handler/!\ Te_s (sample time for rear motors is in Movement.h)
 #define Te_IT_PWM			1.0/Fe_IT_PWM			//100kHz 10µs
-#define Te_PWM_servo_cam	1.0/Fe_PWM_servo_cam		//20ms
+#define Te_PWM_servo_cam	1.0/Fe_PWM_servo_cam	//20ms
 
 int CST_TE; 								//cst Pour le car.handler() 
 int CST_TE_PWM;
@@ -49,8 +49,8 @@ int main(){
 	CST_TE_PWM=(int)(Fe_IT_PWM/Fe_PWM_servo_cam);
 	uart_write("CST_TE=",7);
 	uart_writeNb (CST_TE);
-	uart_write(" | CST_TE_PWM=",14);
-	uart_writeNb (CST_TE_PWM);
+	uart_write(" | Fe_PWM=",10);
+	uart_writeNb (Fe_IT_PWM/CST_TE_PWM);
 	uart_write("\n\r",2);
 	//######## While (1) pour débug #########
 	for(;;) {
