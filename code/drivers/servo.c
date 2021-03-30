@@ -37,16 +37,21 @@ void servo_setPos(int angle){
 }
 
 void init_servo_cam(){
-	SIM_SCGC5 |= SIM_SCGC5_PORTC_MASK;
-	SIM_SCGC6 |= SIM_SCGC6_TPM0_MASK;
-	//Carac PWM initialisées dans motor.c
+	SIM_SCGC5 |= SIM_SCGC5_PORTD_MASK;
 	
-	//PTD5 ALT4
-	PORTC_PCR5 |= PORT_PCR_MUX(4);	// Servo PTD5 TMP0_CH0
-	TPM0_C0SC = SERVO_SET_CHANNEL_0;
-	TPM0_C0V = 7000;
+	//PTD0 ALT1 => GPIO
+	PORTD_PCR0 = 0;
+	PORTD_PCR0 |= PORT_PCR_MUX(1);		// Servo PTD
+	GPIOD_PDDR |= DEBUG_PWM_SERVO_CAM; 				//Conf en ouput
 	
+	/*
 	uart_write("Servo_cam_ok\n\r",14);
+	uart_writeNb(GPIOD_PDOR);
+	uart_write("\n\r",2);
+	uart_write("portD0 :",8);
+	uart_writeNb(PORTD_PCR0);
+	uart_write("\n\r",2);
+	*/
 		
 }
 

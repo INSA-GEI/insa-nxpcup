@@ -10,6 +10,12 @@
 
 #include <MKL25Z4.h>
 
+//ServoCAM
+#define DEBUG_PWM_SERVO_CAM (1 << 0)
+#define SERVO_CAM_PWM_ON 	(GPIOD_PSOR = DEBUG_PWM_SERVO_CAM)
+#define SERVO_CAM_PWM_OFF	(GPIOD_PCOR = DEBUG_PWM_SERVO_CAM)
+
+//SERVO direction
 
 #define SERVO_MASK_TPM1_PRESCALER 3	//3=(11)2 => clock divided by 8 (see datasheet p553)
 #define SERVO_TPM1_ARR 60000 //60000			//Value of the auto-reload of the TIMER

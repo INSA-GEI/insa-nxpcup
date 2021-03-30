@@ -5,8 +5,17 @@
 //#define SLOW_BLINK      (10000000)
 //#define FAST_BLINK      (1000000)
 Car car;
+#define Fe					500.0
+#define Fe_IT_PWM			50000.0
+#define Fe_PWM_servo_cam	50.0
 
-#define Te 0.002//sample time 2ms Car_handler/!\ Te_s (sample time for rear motors is in Movement.h)
+#define Te 					1.0/Fe			//sample time 2ms Car_handler/!\ Te_s (sample time for rear motors is in Movement.h)
+#define Te_IT_PWM			1.0/Fe_IT_PWM			//100kHz 10µs
+#define Te_PWM_servo_cam	1.0/Fe_PWM_servo_cam		//20ms
+
+int CST_TE; 								//cst Pour le car.handler() 
+int CST_TE_PWM;
+int CST_PWM_HIGH=150;
 
 int MODE=-1;
 //void delay_time(int number);
@@ -14,6 +23,7 @@ int MODE=-1;
 //La led rouge indique qu'il faut changer la batterie, on affiche aussi B sur l'afficheur 7seg;
 int Init_tot(void){
 	//######## INIT ###########
+	//ATTENTION l'ordre est important!
 	MODE=debug_init(); 		//retourne le mode
 	car.myMovement.init(Te);
 	int f_mode=1;//MODE; 	//Définit le functionning mode
@@ -22,15 +32,26 @@ int Init_tot(void){
 	}
 	car.cam.init(f_mode);
 	car.init(Te,MODE);
-	Timer_init (Te);
-	car.myMovement.encoder.init_SENS(); //ATTENTION à laisser en dernier!!
+	car.myMovement.encoder.init_SENS(); 
+	//Init de GPIO
 	IT_PORTD_init();
+	init_servo_cam();
+	
+	//Init IT
+	Timer_init (Te_IT_PWM);
 	
 	return 0;
 }
 
 int main(){	
 	Init_tot();
+	CST_TE=(int)(Fe_IT_PWM/Fe);
+	CST_TE_PWM=(int)(Fe_IT_PWM/Fe_PWM_servo_cam);
+	uart_write("CST_TE=",7);
+	uart_writeNb (CST_TE);
+	uart_write(" | CST_TE_PWM=",14);
+	uart_writeNb (CST_TE_PWM);
+	uart_write("\n\r",2);
 	//######## While (1) pour débug #########
 	for(;;) {
 		car.Car_debug();
@@ -46,6 +67,12 @@ void PORTD_IRQHandler(void){
 	PORTD_PCR3 |= 1<<24;
 	count_dem++;
 	
+}
+
+//10kHz
+void FTM0_IRQHandler() {
+	
+	TPM0_SC |= TPM_SC_TOF_MASK;//Clear IT
 }
 
 //100Hz
@@ -65,16 +92,52 @@ void FTM1_IRQHandler() {
 }
 
 //speed handlers
-void FTM2_IRQHandler() {//encoder interrupt à max 6Hz
+void FTM2_IRQHandler() {//encoder interrupt à max 6Hz Te variable!!!
 	
 	car.myMovement.encoder.interruptHandler();
 	
 }
 
 //Calcul var de la voiture + MAJ
+int cpt_car_handler=0;
+//PWM servo
+int count_FTM0=0;
+bool etat=true;
 void SysTick_Handler(){
-	car.Car_handler(); //Define Vset and servo_angle.
+	//Incr cpt
+	cpt_car_handler++;
+	count_FTM0++;
 	
+	// car handler
+	if (cpt_car_handler>CST_TE){
+		//500Hz 
+		cpt_car_handler=0;
+		car.Car_handler(); //Define Vset and servo_angle.
+	}else{
+		
+	}
+	
+	//###### PWM ##############
+	
+	//pas de 0.1 ms
+	//1.5ms
+	if (count_FTM0>CST_TE_PWM){
+		//50Hz => 20ms //Une période de PWM
+		count_FTM0=0;
+		etat=false;
+	}else if (count_FTM0<=CST_PWM_HIGH){
+		etat=true;
+	}else{
+		etat=false;
+	}
+	
+	//Actualisation
+	if (etat){
+		SERVO_CAM_PWM_ON;
+	}else{
+		SERVO_CAM_PWM_OFF;
+	}
+		
 	SYST_CSR &=0xFFFEFFFF; //Clear IT
 }
 

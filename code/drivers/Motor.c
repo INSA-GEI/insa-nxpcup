@@ -17,8 +17,8 @@ void motor_init(void){
 	//SIM_SOPT2 &= ~SIM_SOPT2_TPMSRC_MASK;
 	//SIM_SOPT2 |= SIM_SOPT2_TPMSRC(1);
 
-	TPM0_SC |= 3; 					// prescaler
-	TPM0_MOD = 600; 				// frequency modulo
+	TPM0_SC |= 3; 					// prescaler (divise par 8)
+	TPM0_MOD = 599; 				// frequency modulo
 	TPM0_SC |= TPM_SC_CMOD(1); 		// enable timer
 	TPM0_C1SC = 0x28;				// CH1 (right  motor)
 	TPM0_C5SC = 0x28;				// CH5 (left motor)
@@ -48,5 +48,10 @@ void motor_init(void){
 
 	MOTOR_LEFT_FSPEED(0);
 	MOTOR_RIGHT_FSPEED(0);
+	
+	//IT 10 kHz
+	TPM0_SC |= TPM_SC_TOIE_MASK;			//enable IT
+	NVIC_ICPR |= (1 << 17);					// clear pending interrupt TPM0
+	NVIC_ISER |= (1 << 17);					// enable interrupt TPM0
 
 }

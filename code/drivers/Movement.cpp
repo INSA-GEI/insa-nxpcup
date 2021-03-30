@@ -29,7 +29,6 @@ Movement::Movement() {
 void Movement::init(float Te_s) {
 	motor_init();
 	servo_init();
-	init_servo_cam();
 	encoder.init();
 	MOTOR_LEFT_ENABLE;
 	MOTOR_RIGHT_ENABLE;
