@@ -1,6 +1,8 @@
-#include "derivative.h" /* include peripheral declarations */
-#include "Debug.h"
-#include "Car_control.h"
+//#include "derivative.h" /* include peripheral declarations */
+#include <MKL25Z4.h>
+#include "board.h"
+#include "../../drivers/Debug.h"
+#include "../../drivers/Car_control.h"
 
 //#define SLOW_BLINK      (10000000)
 //#define FAST_BLINK      (1000000)
@@ -64,7 +66,7 @@ int application(){
 int count_dem=0;
 void PORTD_IRQHandler(void){
 	DEBUG_GREEN_ON;
-	PORTD_PCR3 |= 1<<24;
+	PORTD->PCR[3] |= 1<<24;
 	count_dem++;
 	
 }
@@ -72,7 +74,7 @@ void PORTD_IRQHandler(void){
 //10kHz
 void FTM0_IRQHandler() {
 	
-	TPM0_SC |= TPM_SC_TOF_MASK;//Clear IT
+	TPM0->SC |= TPM_SC_TOF_MASK;//Clear IT
 }
 
 //100Hz
@@ -88,7 +90,7 @@ void FTM1_IRQHandler() {
 		}
 	}
 	
-	TPM1_SC |= TPM_SC_TOF_MASK;//Clear IT
+	TPM1->SC |= TPM_SC_TOF_MASK;//Clear IT
 }
 
 //speed handlers
@@ -138,7 +140,7 @@ void SysTick_Handler(){
 		SERVO_CAM_PWM_OFF;
 	}
 		
-	SYST_CSR &=0xFFFEFFFF; //Clear IT
+	//SYST_CSR &=0xFFFEFFFF; //Clear IT
 }
 
 

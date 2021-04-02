@@ -6,6 +6,7 @@
  */
 #include "Movement.h"
 #include "math.h"
+#include "Motor.h"
 
 int speed=0;
 float K_e_s=0.0;
