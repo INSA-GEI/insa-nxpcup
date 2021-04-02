@@ -21,8 +21,11 @@ void servo_init(void){
 	TPM1_C0V = SERVO_CENTER_POS;				// TPM1 channel_0 value matches to 1.5 ms (middle)
 	TPM1_SC |= TPM_SC_TOIE_MASK;				// enable overflow interrupt in TPM1 (10 ms rate)
 	// enable interrupts 18 (TPM = FTM1)  in NVIC, no interrupt levels
-	NVIC_ICPR |= (1 << 18);						// clear pending interrupt 18
-	NVIC_ISER |= (1 << 18);						// enable interrupt 18
+	// INFO: Basculement vers les fonctions CMSIS
+	NVIC_ClearPendingIRQ(TPM1_IRQn);
+	NVIC_EnableIRQ(TPM1_IRQn);
+	//NVIC_ICPR |= (1 << 18);						// clear pending interrupt 18
+	//NVIC_ISER |= (1 << 18);						// enable interrupt 18
 
 }
 

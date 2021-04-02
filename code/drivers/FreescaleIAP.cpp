@@ -2,7 +2,6 @@
 #include "Debug.h"
 #include <MKL25Z4.h>
 
-
 #ifdef TARGET_Freescale
 
 //#define IAPDEBUG
@@ -12,20 +11,20 @@
 #   include "MK64F12.h"
 #   define USE_ProgramPhrase 1
 #   define FTFA                        FTFE
-#   define FTFA_FSTAT_FPVIOL_MASK      FTFE_FSTAT_FPVIOL_MASK 
-#   define FTFA_FSTAT_ACCERR_MASK      FTFE_FSTAT_ACCERR_MASK
-#   define FTFA_FSTAT_RDCOLERR_MASK    FTFE_FSTAT_RDCOLERR_MASK
-#   define FTFA_FSTAT_CCIF_MASK        FTFE_FSTAT_CCIF_MASK
-#   define FTFA_FSTAT_MGSTAT0_MASK     FTFE_FSTAT_MGSTAT0_MASK
+#   define FTFA->FSTAT_FPVIOL_MASK      FTFE_FSTAT_FPVIOL_MASK
+#   define FTFA->FSTAT_ACCERR_MASK      FTFE_FSTAT_ACCERR_MASK
+#   define FTFA->FSTAT_RDCOLERR_MASK    FTFE_FSTAT_RDCOLERR_MASK
+#   define FTFA->FSTAT_CCIF_MASK        FTFE_FSTAT_CCIF_MASK
+#   define FTFA->FSTAT_MGSTAT0_MASK     FTFE_FSTAT_MGSTAT0_MASK
 #else
 //Different names used on at least the K20:
 # ifndef FTFA_FSTAT_FPVIOL_MASK
 #       define FTFA                        FTFL
-#       define FTFA_FSTAT_FPVIOL_MASK      FTFL_FSTAT_FPVIOL_MASK 
-#       define FTFA_FSTAT_ACCERR_MASK      FTFL_FSTAT_ACCERR_MASK
-#       define FTFA_FSTAT_RDCOLERR_MASK    FTFL_FSTAT_RDCOLERR_MASK
-#       define FTFA_FSTAT_CCIF_MASK        FTFL_FSTAT_CCIF_MASK
-#       define FTFA_FSTAT_MGSTAT0_MASK     FTFL_FSTAT_MGSTAT0_MASK
+#       define FTFA->FSTAT_FPVIOL_MASK      FTFL_FSTAT_FPVIOL_MASK
+#       define FTFA->FSTAT_ACCERR_MASK      FTFL_FSTAT_ACCERR_MASK
+#       define FTFA->FSTAT_RDCOLERR_MASK    FTFL_FSTAT_RDCOLERR_MASK
+#       define FTFA->FSTAT_CCIF_MASK        FTFL_FSTAT_CCIF_MASK
+#       define FTFA->FSTAT_MGSTAT0_MASK     FTFL_FSTAT_MGSTAT0_MASK
 #   endif
 #endif
 
@@ -59,10 +58,10 @@ IAPCode erase_sector(int address) {
         return AlignError;
     
     //Setup command
-    FTFA_FCCOB0 = EraseSector;
-    FTFA_FCCOB1 = (address >> 16) & 0xFF;
-    FTFA_FCCOB2 = (address >> 8) & 0xFF;
-    FTFA_FCCOB3 = address & 0xFF;
+    FTFA->FCCOB0 = EraseSector;
+    FTFA->FCCOB1 = (address >> 16) & 0xFF;
+    FTFA->FCCOB2 = (address >> 8) & 0xFF;
+    FTFA->FCCOB3 = address & 0xFF;
     
     run_command();
     
@@ -98,9 +97,9 @@ IAPCode program_flash(int address, char *data, /*unsigned*/ int length) {
 }
 
 uint32_t flash_size(void) {
-    uint32_t retval = (SIM_FCFG2 & 0x7F000000u) >> (24-13);
-    if (SIM_FCFG2 & (1<<23))           //Possible second flash bank
-        retval += (SIM_FCFG2 & 0x007F0000u) >> (16-13);
+    uint32_t retval = (SIM->FCFG2 & 0x7F000000u) >> (24-13);
+    if (SIM->FCFG2 & (1<<23))           //Possible second flash bank
+        retval += (SIM->FCFG2 & 0x007F0000u) >> (16-13);
     return retval;
 }
 
@@ -114,28 +113,28 @@ IAPCode program_word(int address, char *data) {
     if (check_align(address))
         return AlignError;
 #ifdef USE_ProgramPhrase
-    FTFA_FCCOB0 = ProgramPhrase;
-    FTFA_FCCOB1 = (address >> 16) & 0xFF;
-    FTFA_FCCOB2 = (address >> 8) & 0xFF;
-    FTFA_FCCOB3 = address & 0xFF;
-    FTFA_FCCOB4 = data[3];
-    FTFA_FCCOB5 = data[2];
-    FTFA_FCCOB6 = data[1];
-    FTFA_FCCOB7 = data[0];
-    FTFA_FCCOB8 = data[7];
-    FTFA_FCCOB9 = data[6];
-    FTFA_FCCOBA = data[5];
-    FTFA_FCCOBB = data[4];    
+    FTFA->FCCOB0 = ProgramPhrase;
+    FTFA->FCCOB1 = (address >> 16) & 0xFF;
+    FTFA->FCCOB2 = (address >> 8) & 0xFF;
+    FTFA->FCCOB3 = address & 0xFF;
+    FTFA->FCCOB4 = data[3];
+    FTFA->FCCOB5 = data[2];
+    FTFA->FCCOB6 = data[1];
+    FTFA->FCCOB7 = data[0];
+    FTFA->FCCOB8 = data[7];
+    FTFA->FCCOB9 = data[6];
+    FTFA->FCCOBA = data[5];
+    FTFA->FCCOBB = data[4];
 #else
     //Setup command
-    FTFA_FCCOB0 = ProgramLongword;
-    FTFA_FCCOB1 = (address >> 16) & 0xFF;
-    FTFA_FCCOB2 = (address >> 8) & 0xFF;
-    FTFA_FCCOB3 = address & 0xFF;
-    FTFA_FCCOB4 = data[3];
-    FTFA_FCCOB5 = data[2];
-    FTFA_FCCOB6 = data[1];
-    FTFA_FCCOB7 = data[0];
+    FTFA->FCCOB0 = ProgramLongword;
+    FTFA->FCCOB1 = (address >> 16) & 0xFF;
+    FTFA->FCCOB2 = (address >> 8) & 0xFF;
+    FTFA->FCCOB3 = address & 0xFF;
+    FTFA->FCCOB4 = data[3];
+    FTFA->FCCOB5 = data[2];
+    FTFA->FCCOB6 = data[1];
+    FTFA->FCCOB7 = data[0];
 #endif    
     run_command();
     
@@ -146,9 +145,9 @@ IAPCode program_word(int address, char *data) {
 inline void run_command(void) {
     //Clear possible old errors, start command, wait until done
     __disable_irq();            //Disable IRQs, preventing IRQ routines from trying to access flash (thanks to https://mbed.org/users/mjr/)
-    FTFA_FSTAT = FTFA_FSTAT_FPVIOL_MASK | FTFA_FSTAT_ACCERR_MASK | FTFA_FSTAT_RDCOLERR_MASK;
-    FTFA_FSTAT = FTFA_FSTAT_CCIF_MASK;
-    while (!(FTFA_FSTAT & FTFA_FSTAT_CCIF_MASK));
+    FTFA->FSTAT = FTFA_FSTAT_FPVIOL_MASK | FTFA_FSTAT_ACCERR_MASK | FTFA_FSTAT_RDCOLERR_MASK;
+    FTFA->FSTAT = FTFA_FSTAT_CCIF_MASK;
+    while (!(FTFA->FSTAT & FTFA_FSTAT_CCIF_MASK));
     __enable_irq();
 }    
     
@@ -197,13 +196,13 @@ IAPCode verify_erased(int address, unsigned int length) {
     #endif
     
     //Setup command
-    FTFA_FCCOB0 = Read1s;
-    FTFA_FCCOB1 = (address >> 16) & 0xFF;
-    FTFA_FCCOB2 = (address >> 8) & 0xFF;
-    FTFA_FCCOB3 = address & 0xFF;
-    FTFA_FCCOB4 = (length >> 8) & 0xFF;
-    FTFA_FCCOB5 = length & 0xFF;
-    FTFA_FCCOB6 = 0;
+    FTFA->FCCOB0 = Read1s;
+    FTFA->FCCOB1 = (address >> 16) & 0xFF;
+    FTFA->FCCOB2 = (address >> 8) & 0xFF;
+    FTFA->FCCOB3 = address & 0xFF;
+    FTFA->FCCOB4 = (length >> 8) & 0xFF;
+    FTFA->FCCOB5 = length & 0xFF;
+    FTFA->FCCOB6 = 0;
     
     run_command();
     
@@ -221,25 +220,25 @@ IAPCode verify_erased(int address, unsigned int length) {
 /* Check if an error occured 
    Returns error code or Success*/
 IAPCode check_error(void) {
-    if (FTFA_FSTAT & FTFA_FSTAT_FPVIOL_MASK) {
+    if (FTFA->FSTAT & FTFA_FSTAT_FPVIOL_MASK) {
         #ifdef IAPDEBUG
     	uart_write( "IAP: Protection violation", 25);
         #endif
         return ProtectionError;
     }
-    if (FTFA_FSTAT & FTFA_FSTAT_ACCERR_MASK) {
+    if (FTFA->FSTAT & FTFA_FSTAT_ACCERR_MASK) {
         #ifdef IAPDEBUG
     	uart_write( "IAP: Flash access error", 23);
         #endif
         return AccessError;
     }
-    if (FTFA_FSTAT & FTFA_FSTAT_RDCOLERR_MASK) {
+    if (FTFA->FSTAT & FTFA_FSTAT_RDCOLERR_MASK) {
         #ifdef IAPDEBUG
     	uart_write( "IAP: Collision error", 20);
         #endif
         return CollisionError;
     }
-    if (FTFA_FSTAT & FTFA_FSTAT_MGSTAT0_MASK) {
+    if (FTFA->FSTAT & FTFA_FSTAT_MGSTAT0_MASK) {
         #ifdef IAPDEBUG
     	uart_write( "IAP: Runtime error", 18);
         #endif

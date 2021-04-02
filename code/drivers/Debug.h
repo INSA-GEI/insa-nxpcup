@@ -8,6 +8,7 @@
 #ifndef DEBUG_H_
 #define DEBUG_H_
 
+#include "board.h"
 #include <MKL25Z4.h>
 
 #define CORE_CLOCK 48000000UL
@@ -24,25 +25,25 @@
 #define DEBUG_BLUE_Pin		(1 << 1)
 #define DEBUG_CAM_LED_Pin   (1 << 12)
 
-#define DEBUG_RED_OFF		(GPIOB_PSOR = DEBUG_RED_Pin)
-#define DEBUG_RED_ON		(GPIOB_PCOR = DEBUG_RED_Pin)
-#define DEBUG_GREEN_OFF		(GPIOB_PSOR = DEBUG_GREEN_Pin)
-#define DEBUG_GREEN_ON		(GPIOB_PCOR = DEBUG_GREEN_Pin)
-#define DEBUG_BLUE_OFF		(GPIOD_PSOR = DEBUG_BLUE_Pin)
-#define DEBUG_BLUE_ON		(GPIOD_PCOR = DEBUG_BLUE_Pin)
-#define DEBUG_CAM_LED_ON    (GPIOC_PSOR = DEBUG_CAM_LED_Pin)
-#define DEBUG_CAM_LED_OFF   (GPIOC_PCOR = DEBUG_CAM_LED_Pin)
+#define DEBUG_RED_OFF		(FGPIOB->PSOR = DEBUG_RED_Pin)
+#define DEBUG_RED_ON		(FGPIOB->PCOR = DEBUG_RED_Pin)
+#define DEBUG_GREEN_OFF		(FGPIOB->PSOR = DEBUG_GREEN_Pin)
+#define DEBUG_GREEN_ON		(FGPIOB->PCOR = DEBUG_GREEN_Pin)
+#define DEBUG_BLUE_OFF		(FGPIOD->PSOR = DEBUG_BLUE_Pin)
+#define DEBUG_BLUE_ON		(FGPIOD->PCOR = DEBUG_BLUE_Pin)
+#define DEBUG_CAM_LED_ON    (FGPIOC->PSOR = DEBUG_CAM_LED_Pin)
+#define DEBUG_CAM_LED_OFF   (FGPIOC->PCOR = DEBUG_CAM_LED_Pin)
 
 #define DISP_CLK_PIN		(1<<5)
 #define DISP_SIN_PIN 		(1<<6)
 #define DISP_LATCH_PIN 		(1<<10)
 
-#define DISP_CLK_OFF		(GPIOC_PCOR = DISP_CLK_PIN)
-#define DISP_CLK_ON			(GPIOC_PSOR = DISP_CLK_PIN)
-#define DISP_SIN_OFF		(GPIOC_PCOR = DISP_SIN_PIN)
-#define DISP_SIN_ON			(GPIOC_PSOR = DISP_SIN_PIN)
-#define DISP_LATCH_OFF		(GPIOC_PCOR = DISP_LATCH_PIN)
-#define DISP_LATCH_ON		(GPIOC_PSOR = DISP_LATCH_PIN)
+#define DISP_CLK_OFF		(FGPIOC->PCOR = DISP_CLK_PIN)
+#define DISP_CLK_ON			(FGPIOC->PSOR = DISP_CLK_PIN)
+#define DISP_SIN_OFF		(FGPIOC->PCOR = DISP_SIN_PIN)
+#define DISP_SIN_ON			(FGPIOC->PSOR = DISP_SIN_PIN)
+#define DISP_LATCH_OFF		(FGPIOC->PCOR = DISP_LATCH_PIN)
+#define DISP_LATCH_ON		(FGPIOC->PSOR = DISP_LATCH_PIN)
 
 #define LPTMR_ARR 65535
 
@@ -61,11 +62,12 @@ void debug_displaySendNb(int8_t nb);
 
 
 static inline void enable_irq(int n) {
-    NVIC_ICPR |= 1 << (n - 16);
-    NVIC_ISER |= 1 << (n - 16);			
+//TODO Reprendre la fonction
+	//NVIC->ICPR |= (uint32_t)(1 << (n - 16));
+    //NVIC->ISER |= (uint32_t)(1 << (n - 16));
 }
-static inline void __enable_irq(void)	{ asm volatile ("cpsie i"); }
-static inline void __disable_irq(void)  { asm volatile ("cpsid i"); }
+//static inline void __enable_irq(void)	{ asm volatile ("cpsie i"); }
+//static inline void __disable_irq(void)  { asm volatile ("cpsid i"); }
 
 //uart stuff
 typedef struct {

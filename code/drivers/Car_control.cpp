@@ -40,6 +40,7 @@ float Ked=0.0;
 float Kei=0.0;
 
 Car::Car(){
+
 	servo_angle=0;
 	servo_angle_moy=0.0;
 	Vset=0;
@@ -82,7 +83,7 @@ void Car::init(float Te,int MODE){
 	Ked=2.0*N*Kd;
 	Kei=(Te/2.0)*Ki;
 	
-	//Calcul nb itération avant le calcul de la vitesse
+	//Calcul nb itï¿½ration avant le calcul de la vitesse
 	N_calc_speed=(int)(Te_calc_speed/Te)+1;
 	
 	//######## MODE #########
@@ -122,7 +123,7 @@ void Car::init(float Te,int MODE){
 //############### SPEED ########################
 
 //Calcule la consigne de vitesse en fonction de l'angle des roues
-//Le correcteur est présent dans Movement.cpp =>regulate()
+//Le correcteur est prï¿½sent dans Movement.cpp =>regulate()
 void Car::Calculate_speed(void){
 	//Linear mode
 	V_old=abs(Vset);
@@ -140,7 +141,7 @@ void Car::Calculate_speed(void){
 	}
 }
 
-//Calcul Vslow et Vhigh et renvoie à Calculate_speed
+//Calcul Vslow et Vhigh et renvoie ï¿½ Calculate_speed
 void Car::Set_speed(void){
 	
 	//We notice if we have been near the black lines or not
@@ -162,25 +163,25 @@ void Car::Set_speed(void){
 	}
 }
 
-//Calcul et instancie la vitesse du différentiel
+//Calcul et instancie la vitesse du diffï¿½rentiel
 void Car::Set_diff_speed(void){
 	//Calcul du diff
 	//We calculate the delta_speed of the rear wheels
 	//##################### Changement ############
 	if (enable_brake && !(finish)){
 		float r=LENGHT_CAR/(abs(servo_angle_moy)*DEG_TO_RAD); //r=radius of the turn
-		delta_speed=(abs(Vset)*L_ENTRAXE)/(1.0*r+L_ENTRAXE);//On l'aide à tourner
+		delta_speed=(abs(Vset)*L_ENTRAXE)/(1.0*r+L_ENTRAXE);//On l'aide ï¿½ tourner
 	}else if (state_turn_car==0 && state_turn_car==3){
 		//Strait line
 		delta_speed=0;
 	}else if(state_turn_car==1){
 		//Soft turn
 		float r=LENGHT_CAR/(abs(servo_angle_moy)*DEG_TO_RAD); //r=radius of the turn
-		delta_speed=(abs(Vset)*L_ENTRAXE)/(2.0*r+L_ENTRAXE);//théorique avec 2.0*r
+		delta_speed=(abs(Vset)*L_ENTRAXE)/(2.0*r+L_ENTRAXE);//thï¿½orique avec 2.0*r
 	}else{
 		//hard turn
 		float r=LENGHT_CAR/(abs(servo_angle_moy)*DEG_TO_RAD); //r=radius of the turn
-		delta_speed=(abs(Vset)*L_ENTRAXE)/(1.5*r+L_ENTRAXE);//théorique avec 2.0*r
+		delta_speed=(abs(Vset)*L_ENTRAXE)/(1.5*r+L_ENTRAXE);//thï¿½orique avec 2.0*r
 	}
 	
 	//Left turn servoangle<0
@@ -191,7 +192,7 @@ void Car::Set_diff_speed(void){
 }
 
 //##################### Wheels ###############
-//Calcul la commande des roues et opère un PI avant de stocker la valeur dans servo_angle
+//Calcul la commande des roues et opï¿½re un PI avant de stocker la valeur dans servo_angle
 void Car::Caculate_angle_wheel(void){
 	//cam.diff=ek
 	yikold=yik;
@@ -204,7 +205,7 @@ void Car::Caculate_angle_wheel(void){
 		uart_write("\n\r",2);
 	}else{
 		old_servo_angle=servo_angle;
-		//PI Approx bilinéaire
+		//PI Approx bilinï¿½aire
 		//servo_angle=servo_angle+(float)aux_diff*K_camdiff+(float)cam.diff_old*K_camdiffold;
 		//PID
 		ypk=Kp*cam.diff;
@@ -219,9 +220,9 @@ void Car::Caculate_angle_wheel(void){
 }
 
 //############# Test Turn? strait line? Brake? ##################
-//Fait l'acquisition des données
+//Fait l'acquisition des donnï¿½es
 //return 	: 	V_mes
-//			:	cam (à jour)
+//			:	cam (ï¿½ jour)
 void Car::Process_data(void){
 	V_mes=(int)(myMovement.v_R+myMovement.v_L)/2;
 	cam.processAll();
@@ -232,7 +233,7 @@ void Car::Process_data(void){
 	}
 }
 
-//Permet la dectection de l'état et de où se trouve la voiture
+//Permet la dectection de l'ï¿½tat et de oï¿½ se trouve la voiture
 //return 	: state_car_turn : 0/1/2
 //			:enable_brake :true/false
 //			:enable_ampli_turn :true/false
@@ -256,7 +257,7 @@ void Car::Detect_state(void){
 	
 	//######## Test finish ############
 	if (enable_finish && (!reset) && !(finish)){
-		if ((cam.number_edges)==NB_LIGNES_FIN && state_turn_car<3){//Nb de bandes noires (+1 pour chaque côté)
+		if ((cam.number_edges)==NB_LIGNES_FIN && state_turn_car<3){//Nb de bandes noires (+1 pour chaque cï¿½tï¿½)
 			C_finish=0;
 			finish=true;
 			//On affiche F pour fin
@@ -283,12 +284,12 @@ void Car::Detect_state(void){
 	}
 }
 
-//Actualise le déplacement grâce à l'objet myMovement
-//La vitesse peut être négative (si freiange) ou positive, tout est paramétré dans Movement.cpp
-//Arg : finish :true/false <= màj dans Detect_state()
+//Actualise le dï¿½placement grï¿½ce ï¿½ l'objet myMovement
+//La vitesse peut ï¿½tre nï¿½gative (si freiange) ou positive, tout est paramï¿½trï¿½ dans Movement.cpp
+//Arg : finish :true/false <= mï¿½j dans Detect_state()
 
 void Car::Set_deplacement(void){
-	//########### On actualise le déplacement #################
+	//########### On actualise le dï¿½placement #################
 	if (!reset){
 		V_apply=Vset;
 		if (stop){
@@ -311,7 +312,7 @@ void Car::Set_deplacement(void){
 	}
 	myMovement.set(V_apply,servo_angle);
 	myMovement.setDiff(V_apply,delta_speed);
-	myMovement.regulate(); //Applique la PWM correspond à la vitesse aux moteurs
+	myMovement.regulate(); //Applique la PWM correspond ï¿½ la vitesse aux moteurs
 }
 
 //################ Handler ##########################
@@ -319,11 +320,11 @@ void Car::Set_deplacement(void){
 void Car::Car_handler(void){
 	c++;	
 	//
-	Process_data();//Acquisition des données
+	Process_data();//Acquisition des donnï¿½es
 	//On regarde si on est en ligne droite ou non
 	Detect_state();
 	if (!reset){
-		//On met à jour les param de la voiture
+		//On met ï¿½ jour les param de la voiture
 		Caculate_angle_wheel();
 		servo_angle_moy+=servo_angle;
 		if(c>N_calc_speed){
@@ -390,7 +391,7 @@ void Car::Reset(void){
 }
 
 //#################### Debug ###############################
-//Permet de modifier le mode de débug et du coup l'affichage dans Putty
+//Permet de modifier le mode de dï¿½bug et du coup l'affichage dans Putty
 void Car::Set_debug_mode(int i){
 	mode_debug=i;
 	if (mode_debug==0){
@@ -402,11 +403,11 @@ void Car::Set_debug_mode(int i){
 	}
 }
 
-//Affiche le débug
+//Affiche le dï¿½bug
 void Car::Aff_debug(void){
 	if(FLAG_SEND_IMG && FLAG_ENABLE_LOG_IMG){
 		for(int i=0;i<128;i++){
-			// /!\ marche 1 fois sur 2 car on utilise en même temps les vecteurs pour stocker l'image si l'IT suivante est arrivée
+			// /!\ marche 1 fois sur 2 car on utilise en mï¿½me temps les vecteurs pour stocker l'image si l'IT suivante est arrivï¿½e
 			cam.display_camera_data();
 		}
 	}else if(FLAG_SEND_IMG && FLAG_ENABLE_LOG_SERVO){
@@ -474,7 +475,7 @@ void Car::Aff_debug(void){
 	FLAG_SEND_IMG=false;
 }
 
-//On choisit les param de débug (ex x:mode_speed +:plus vite etc....)
+//On choisit les param de dï¿½bug (ex x:mode_speed +:plus vite etc....)
 void Car::Car_debug(void){
 	char str[10];
 	
@@ -525,7 +526,7 @@ void Car::Car_debug(void){
 					uart_write("\r\n",2);
 					n=0;
 					break;
-				case 13:	//GO! touche entrée
+				case 13:	//GO! touche entrï¿½e
 					Demarre();
 					uart_write("Demarre!  ",10);
 					Aff_debug_init();
@@ -557,7 +558,7 @@ void Car::Car_debug(void){
 					}
 					break;
 				case 'l':	//lights toggle
-					GPIOC_PTOR =DEBUG_CAM_LED_Pin;
+					FGPIOC->PTOR =DEBUG_CAM_LED_Pin;
 					break;
 				case 'i':
 					uart_write("debug_img\n\r",11);

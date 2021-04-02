@@ -11,10 +11,10 @@
 #define Plausibily_check 40 //For Roadmiddle
 
 #define CAM_DELAY				asm ("nop")				// minimal delay time
-#define	CAM_SI_HIGH				GPIOB_PDOR |= (1<<8)	// SI on PTB8
-#define	CAM_SI_LOW				GPIOB_PDOR &= ~(1<<8)	// SI on PTB8
-#define	CAM_CLK_HIGH			GPIOB_PDOR |= (1<<9)	// CLK on PTB9
-#define	CAM_CLK_LOW				GPIOB_PDOR &= ~(1<<9)	// CLK on PTB9
+#define	CAM_SI_HIGH				FGPIOB->PDOR |= (1<<8)	// SI on PTB8
+#define	CAM_SI_LOW				FGPIOB->PDOR &= ~(1<<8)	// SI on PTB8
+#define	CAM_CLK_HIGH			FGPIOB->PDOR |= (1<<9)	// CLK on PTB9
+#define	CAM_CLK_LOW				FGPIOB->PDOR &= ~(1<<9)	// CLK on PTB9
 #define CSV						false //display data
 
 // Define thresholds for Camera Black Line recognition
@@ -38,8 +38,8 @@ public:
 	
 	int diff;							// actual difference from line middle position
 	int diff_old;						//
-	int threshold;						//Moyenne des échantillons
-	int threshold_sun;						//Moyenne des échantillons soleil
+	int threshold;						//Moyenne des ï¿½chantillons
+	int threshold_sun;						//Moyenne des ï¿½chantillons soleil
 	float delta;						//Ecart-type peut servir pour savoir si on est en dehors de la route ou pas		
 	int threshold_old;
 	
@@ -55,7 +55,7 @@ public:
 	void differentiate(void);			//computes differential
 	void process(void);					//detects edges
 	void calculateMiddle(void);			//guesses the middle
-	void processAll(void);				//executes all camera related operations in order. Takes approx 940µs to complete
+	void processAll(void);				//executes all camera related operations in order. Takes approx 940ï¿½s to complete
 	
 	/*** 2020 - 2021 ***/
 	void display_camera_data(void);
@@ -63,11 +63,11 @@ public:
 	
 	
 private:
-	//Mode de détection des lignes
+	//Mode de dï¿½tection des lignes
 	int functionning_mode;
 	
 	int validate_gradient;				// used in image processing to validate some parameters
-	bool detect_sun;					//Un rayon de soleil est détecté
+	bool detect_sun;					//Un rayon de soleil est dï¿½tectï¿½
 };
 
 /* PROCESS

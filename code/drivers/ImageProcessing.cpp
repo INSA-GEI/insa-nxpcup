@@ -24,50 +24,50 @@ Img_Proc::Img_Proc(){
 void Img_Proc::init(int f_mode){
 	
 	// turn on ADC0 clock
-	SIM_SCGC6 |= SIM_SCGC6_ADC0_MASK;
-	SIM_SCGC5 = SIM_SCGC5_PORTC_MASK | SIM_SCGC5_PORTB_MASK;
+	SIM->SCGC6 |= SIM_SCGC6_ADC0_MASK;
+	SIM->SCGC5 = SIM_SCGC5_PORTC_MASK | SIM_SCGC5_PORTB_MASK;
 	
-	PORTC_PCR2  |= PORT_PCR_MUX(0);		// Camera 1 PTC2 ADC0_SE11
+	PORTC->PCR[2]  |= PORT_PCR_MUX(0);		// Camera 1 PTC2 ADC0->SE11
 	
-	PORTB_PCR8  |= PORT_PCR_MUX(1);	// PTB8 Camera SI
-	PORTB_PCR9  |= PORT_PCR_MUX(1);	// PTB9 Camera Clock
-	GPIOB_PDDR |= (1<<8);			// PTB8 Camera SI
-	GPIOB_PDDR |= (1<<9);			// PTB9 Camera Clock
+	PORTB->PCR[8]  |= PORT_PCR_MUX(1);	// PTB8 Camera SI
+	PORTB->PCR[9]  |= PORT_PCR_MUX(1);	// PTB9 Camera Clock
+	FGPIOB->PDDR |= (1<<8);			// PTB8 Camera SI
+	FGPIOB->PDDR |= (1<<9);			// PTB9 Camera Clock
 	
 	
 	// ADC0 clock configuration : 													WARNING : maybe not compatible with 48MHz system clock ! to check
-	ADC0_CFG1 |= 0x01;				// clock is bus clock divided by 2 = 24 MHz
+	ADC0->CFG1 |= 0x01;				// clock is bus clock divided by 2 = 24 MHz
 	
 	// ADC0 resolution    
-	ADC0_CFG1 |= 0x08;				// resolution 10 bit, max. value is 1023
+	ADC0->CFG1 |= 0x08;				// resolution 10 bit, max. value is 1023
 
 	// ADC0 conversion mode
-	ADC0_SC3 = 0x00;				// single conversion mode
+	ADC0->SC3 = 0x00;				// single conversion mode
 	
 	functionning_mode=f_mode;
 
 }
 
 void Img_Proc::capture(void){
-		ADC0_CFG2 |= 0x10;							// select B side of the MUX
+		ADC0->CFG2 |= 0x10;							// select B side of the MUX
 		CAM_SI_HIGH;
 		CAM_DELAY;
 		CAM_CLK_HIGH;
 		CAM_DELAY;
 		CAM_SI_LOW;
 		// inputs data from camera (first pixel)
-		ADC0_SC1A  =  11;							// set ADC0 channel 11
-		while((ADC0_SC1A & ADC_SC1_COCO_MASK) == 0);// wait until ADC is ready
-		ImageData[0] = ADC0_RA;						// return value
+		ADC0->SC1[0]  =  11;							// set ADC0 channel 11
+		while((ADC0->SC1[0] & ADC_SC1_COCO_MASK) == 0);// wait until ADC is ready
+		ImageData[0] = ADC0->R[0];						// return value
 		CAM_CLK_LOW;
 
 		for(i=1;i<128;i++){
 			CAM_CLK_HIGH;
 			 // inputs data from camera (one pixel each time through loop)
-			ADC0_SC1A  =  11;							// set ADC0 channel 11
-			while((ADC0_SC1A & ADC_SC1_COCO_MASK) == 0);// wait until ADC is ready
+			ADC0->SC1[0]  =  11;							// set ADC0 channel 11
+			while((ADC0->SC1[0] & ADC_SC1_COCO_MASK) == 0);// wait until ADC is ready
 			CAM_CLK_LOW;
-			ImageData[i] = ADC0_RA;						// return value 
+			ImageData[i] = ADC0->R[0];						// return value
 		}
 	
 }
@@ -89,7 +89,7 @@ void Img_Proc::differentiate(void){
 		threshold=moy;
 		if (delta<DELTA_OUT)threshold=-1;
 	}else if (functionning_mode == 2){
-		//Algo pour éviter le soleil
+		//Algo pour ï¿½viter le soleil
 		//Motif Binaire Local
 		int moy=0;
 		int count=0;
@@ -127,7 +127,7 @@ void Img_Proc::differentiate(void){
 	
 	if (c_t>CST_RECAL_T){
 		c_t=0;
-		//############### à enlever
+		//############### ï¿½ enlever
 		/*uart_write("IMG=",4);
 		for (int j=0; j<127;j++){
 			if (j%2==0){
@@ -178,7 +178,7 @@ void Img_Proc::process (void){
 						}
 					}
 					if (ok){
-						//Regarder s'il y a bien du blanc jusqu'à un max
+						//Regarder s'il y a bien du blanc jusqu'ï¿½ un max
 						number_edges++;
 					}
 					i+=4;

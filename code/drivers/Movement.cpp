@@ -83,7 +83,7 @@ void Movement::stop(void) {
 
 void Movement::regulate(void) {
 	if (speed!=0){
-		GPIOB_PTOR = DEBUG_RED_Pin;
+		FGPIOB->PTOR = DEBUG_RED_Pin;
 		//LEFT
 		err_old_L=err_L;
 		v_L=encoder.getLeftSpeed();		

@@ -10,7 +10,7 @@ Car car;
 #define Fe_PWM_servo_cam	50.0
 
 #define Te 					1.0/Fe					//sample time 2ms Car_handler/!\ Te_s (sample time for rear motors is in Movement.h)
-#define Te_IT_PWM			1.0/Fe_IT_PWM			//100kHz 10µs
+#define Te_IT_PWM			1.0/Fe_IT_PWM			//100kHz 10ï¿½s
 #define Te_PWM_servo_cam	1.0/Fe_PWM_servo_cam	//20ms
 
 int CST_TE; 								//cst Pour le car.handler() 
@@ -26,7 +26,7 @@ int Init_tot(void){
 	//ATTENTION l'ordre est important!
 	MODE=debug_init(); 		//retourne le mode
 	car.myMovement.init(Te);
-	int f_mode=1;//MODE; 	//Définit le functionning mode
+	int f_mode=1;//MODE; 	//Dï¿½finit le functionning mode
 	if (f_mode==-1){
 		f_mode=1;
 	}
@@ -43,7 +43,7 @@ int Init_tot(void){
 	return 0;
 }
 
-int main(){	
+int application(){
 	Init_tot();
 	CST_TE=(int)(Fe_IT_PWM/Fe);
 	CST_TE_PWM=(int)(Fe_IT_PWM/Fe_PWM_servo_cam);
@@ -52,7 +52,7 @@ int main(){
 	uart_write(" | Fe_PWM=",10);
 	uart_writeNb (Fe_IT_PWM/CST_TE_PWM);
 	uart_write("\n\r",2);
-	//######## While (1) pour débug #########
+	//######## While (1) pour dï¿½bug #########
 	for(;;) {
 		car.Car_debug();
 	}
@@ -92,7 +92,7 @@ void FTM1_IRQHandler() {
 }
 
 //speed handlers
-void FTM2_IRQHandler() {//encoder interrupt à max 6Hz Te variable!!!
+void FTM2_IRQHandler() {//encoder interrupt ï¿½ max 6Hz Te variable!!!
 	
 	car.myMovement.encoder.interruptHandler();
 	
@@ -122,7 +122,7 @@ void SysTick_Handler(){
 	//pas de 0.1 ms
 	//1.5ms
 	if (count_FTM0>CST_TE_PWM){
-		//50Hz => 20ms //Une période de PWM
+		//50Hz => 20ms //Une pï¿½riode de PWM
 		count_FTM0=0;
 		etat=false;
 	}else if (count_FTM0<=CST_PWM_HIGH){
