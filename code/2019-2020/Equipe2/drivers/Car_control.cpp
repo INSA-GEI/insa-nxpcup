@@ -1,7 +1,7 @@
 #include "Car_control.h"
 #include "Debug.h"
 
-//#################################### Var ###################
+//################### Var ###################//
 int c=0;
 float old_servo_angle=0.0;
 int n=0;	//Allow us to use the debug with Putty/XCTU
@@ -10,43 +10,113 @@ int C_finish=0;
 //Debug Flag
 bool FLAG_START_DEBUG = false;
 
-//################## Functions ####################
 
+
+
+
+
+//################ Functions ################//
+
+
+/**
+  * @brief  Initialisation
+  * @param  None
+  * @retval None
+  */
 void Car::init(void){
+	//########### Objects ###########//
 	myMovement.init();
-	cam.init();
 	myMovement.set(Vset,0.0);
-	servo_angle=0;
-	Vset=0;
-	V_old=0;
-	Vslow=VSLOW;
-	Vhigh=VHIGH;
-	mode_speed=1; //0 : manu, 1: auto, 2: auto incr
-	delta_speed=0;
-	mode_debug=0;
-	state_turn_car=0;
-	enable_ampli_turn=false;
-	enable_brake=false;
+	cam.init();
+	
+	//########### Variables ###########//
+	if ((functioning_mode == 0xA) || (functioning_mode == 0xB) || (functioning_mode == 0xC)) stop = false;
+	else stop = true;
+	enable_finish = false;
+	
 	DEBUG_CAM_LED_OFF;
 
-	// PID
-	PID_max = MAX_ANGLE;
-	PID_min = -MAX_ANGLE;
-	Integrator = 0.0;
-	old_error = 0.0;
-	Differentiator = 0.0;
-	old_measurement = 0.0;
-	PID_output = 0.0;
+	// Angle wheels
+	servo_angle=0;
+	enable_ampli_turn = false;
 	
-	enable_finish=false;
-	if (functioning_mode == 0xA) stop=false;
-	else stop = true;
-}
+	//######## NORMAL MODE ########//
+	if (functioning_mode == 0xB) {
+		// Speed
+			Vslow = 1000;	// 1000 Original
+			Vhigh = 2500;	// 2500 Original
+			T_BRAKE = 200; 			//Threshold before braking - 200 Original
+			INCREMENT_SPEED = 40; 	//Constante d'augmentation de la vitesse (évite le patinage) - 40 Original
+			DIV_1_SPEED = 3; 		//Divise la consigne de vitesse pour éviter le patinage sur la premiere moitié Vmes=[Vslow,Vhigh/2]	- 3 Original
+			TURN_SPEED = 1400; 		//Vitesse seuil dans les virages - 1300 Original
 
-//############### SPEED ########################
+		//  Wheels
+			AMPLIFIE_TURN_1 = 2.0;	// Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
+			AMPLIFIE_TURN_2 = 5.0;	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
+			MAX_ANGLE = 30.0;		// 30 Original
+			MAX_CAM_DIFF = 20;		// 20 Original
+		
+		// PID Gains
+			Kp = 1.2;
+			Ki = 0.007;
+			Kd = 0.013;
+	}
+	
+	//######## FAST MODE ########//
+	if (functioning_mode == 0xC) {
+		// Speed
+			Vslow = 1000;	// 1000 Original
+			Vhigh = 4000;	// 2500 Original
+			T_BRAKE = 200; 			//Threshold before braking - 200 Original
+			INCREMENT_SPEED = 55; 	//Constante d'augmentation de la vitesse (évite le patinage) - 40 Original
+			DIV_1_SPEED = 4; 		//Divise la consigne de vitesse pour éviter le patinage sur la premiere moitié Vmes=[Vslow,Vhigh/2]	- 3 Original
+			TURN_SPEED = 1400; 		//Vitesse seuil dans les virages - 1300 Original
 
-//Calcule la consigne de vitesse en fonction de l'angle des roues
-//Le correcteur est présent dans Movement.cpp =>regulate()
+		//  Wheels
+			AMPLIFIE_TURN_1 = 4.0;	// Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
+			AMPLIFIE_TURN_2 = 8.0;	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
+			MAX_ANGLE = 30.0;		// 30 Original
+			MAX_CAM_DIFF = 20;		// 20 Original
+		
+		// PID Gains
+			Kp = 1.5;
+			Ki = 0.009;
+			Kd = 0.017;
+	}
+	
+
+	// PID
+		// Saturation
+		PID_max = MAX_ANGLE;
+		PID_min = -MAX_ANGLE;
+		// Controller 'memory'
+		Integrator = 0.0;
+		old_error = 0.0;
+		Differentiator = 0.0;
+		old_measurement = 0.0;
+		// Controller output
+		PID_output = 0.0;
+
+	//Speed of the car
+	Vset = 0;
+	V_old = 0;
+	mode_speed = 1; //0 : manu, 1: auto, 2: auto incr
+	delta_speed = 0;
+	mode_debug = 0;
+	state_turn_car = 0;
+	enable_brake = false;
+		
+}	/*	END of the function "init"	*/
+
+
+
+
+/**
+  * @brief  Calcul consigne vitesse en fonction de l'angle des roues
+  * 		Correcteur présent dans Movement.cpp => regulate()
+  * @param  None
+  * @retval None
+  */
 void Car::Calculate_speed(void){
 	//Linear mode
 	V_old=abs(Vset);
@@ -64,9 +134,15 @@ void Car::Calculate_speed(void){
 	if (state_turn_car==3){
 		Vset=Vslow;
 	}
-}
+}	/*	END of the function "Calculate_speed"	*/
 
-//Calcul Vslow et Vhigh et renvoie à Calculate_speed
+
+
+/**
+  * @brief  Calcul Vslow et Vhigh et renvoie à Calculate_speed
+  * @param  None
+  * @retval None
+  */
 void Car::Set_speed(void){
 	
 	//We notice if we have been near the black lines or not
@@ -86,9 +162,15 @@ void Car::Set_speed(void){
 		}*/
 		Calculate_speed();
 	}
-}
+}	/*	END of the function "Set_speed"	*/
 
-//Calcul et instancie la vitesse du différentiel
+
+
+/**
+  * @brief  Calcul et instancie la vitesse du différentiel
+  * @param  None
+  * @retval None
+  */
 void Car::Set_diff_speed(void){
 	//Calcul du diff
 	//We calculate the delta_speed of the rear wheels
@@ -111,10 +193,16 @@ void Car::Set_diff_speed(void){
 	if (servo_angle<0){
 		delta_speed=-delta_speed;
 	}
-}
+}	/*	END of the function "Set_diff_speed"	*/
 
-//##################### Wheels ###############
-//Calcul la commande des roues et opère un PI avant de stocker la valeur dans servo_angle
+
+
+
+/**
+  * @brief  Calcul la commande des roues et opère un PI avant de stocker la valeur dans servo_angle
+  * @param  None
+  * @retval None
+  */
 void Car::Caculate_angle_wheel(void){
 	
 	int aux_diff=cam.diff;
@@ -142,25 +230,35 @@ void Car::Caculate_angle_wheel(void){
 		// PID -> Consigne de 0 (rester au milieu)
 		servo_angle = PIDController_update(0, cam.diff);
 
-//##################### Changement valeurs  ##########################
+		// Saturation
 		if(servo_angle<-MAX_ANGLE)servo_angle=(-MAX_ANGLE);
 		if(servo_angle>MAX_ANGLE)servo_angle=MAX_ANGLE;
 	}
-}
+}	/*	END of the function "Caculate_angle_wheel"	*/
 
-//############# Test Turn? strait line? Brake? ##################
-//Fait l'acquisition des données
-//return 	: 	V_mes
-//			:	cam (à jour)
+
+
+
+
+/**
+  * @brief  Fait l'acquisition des données
+  * @param  None
+  * @retval V_mes
+  * 	    cam (à jour)
+  */
 void Car::Process_data(void){
 	V_mes=(int)(myMovement.encoder.getLeftSpeed()+myMovement.encoder.getRightSpeed())/2;
 	cam.processAll();
-}
+}	/*	END of the function "Process_data"	*/
 
-//Permet la dectection de l'état et de où se trouve la voiture
-//return 	: state_car_turn : 0/1/2
-//			:enable_brake :true/false
-//			:enable_ampli_turn :true/false
+
+/**
+  * @brief  Permet la detection de l'état et de où se trouve la voiture
+  * @param  None
+  * @retval state_car_turn : 0/1/2
+  * 		enable_brake : true/false
+  * 		enable_ampli_turn : true/false
+  */
 void Car::Detect_state(void){
 	
 	//Test braking #####################################
@@ -207,12 +305,20 @@ void Car::Detect_state(void){
 			uart_write("Fin !",5);
 		}
 	}
-}
+}	/*	END of the function "Detect_state"	*/
 
-//Actualise le déplacement grâce à l'objet myMovement
-//La vitesse peut être négative (si freinage) ou positive, tout est paramétré dans Movement.cpp
-//Arg : finish :true/false <= màj dans Detect_state()
 
+
+
+
+/**
+  * @brief  Actualise le déplacement grâce à l'objet myMovement
+  * 		La vitesse peut être négative (si freinage) ou positive, tout est paramétré dans Movement.cpp
+  * @param  finish :true/false <= màj dans Detect_state()
+  * @retval state_car_turn : 0/1/2
+  * 		enable_brake : true/false
+  * 		enable_ampli_turn : true/false
+  */
 void Car::Set_deplacement(void){
 	//########### On actualise le déplacement #################
 	if (stop){
@@ -234,10 +340,16 @@ void Car::Set_deplacement(void){
 			myMovement.setDiff(Vset,delta_speed);
 		}
 	}
-}
+}	/*	END of the function "Set_deplacement"	*/
 
-//################ Handler ##########################
-//servo//rear motors interrupt, 100Hz => Te=10ms
+
+
+
+/**
+  * @brief  servo//rear motors interrupt, 100Hz => Te=10ms
+  * @param  none
+  * @retval none
+  */
 void Car::Car_handler(void){
 	//Debug
 	c++;
@@ -262,9 +374,15 @@ void Car::Car_handler(void){
 	Aff_debug();
 	//We refresh the deplacement's parameters. Speed +wheels Angle
 	Set_deplacement();
-}
+}	/*	END of the function "Car_handler"	*/
 
-//Affiche le débug
+
+
+/**
+  * @brief  Show debug
+  * @param  none
+  * @retval none
+  */
 void Car::Aff_debug(void){
 	if(FLAG_START_DEBUG){
 		uart_write("#####car#####\n\r",15);
@@ -335,115 +453,128 @@ void Car::Aff_debug(void){
 		uart_write("\r\n",2);
 	}*/
 	FLAG_START_DEBUG = false;
-}
+}	/*	END of the function "Aff_debug"	*/
 
-//On choisit les param de débug (ex x:mode_speed +:plus vite etc....)
+
+
+/**
+  * @brief  Select debug param with keyboard
+  * @param  none
+  * @retval none
+  */
 void Car::Car_debug(void){
 	char str[10];
 	
-			if(uart_read(str,1)>0){
-				switch(str[0]){
-				case 'p':	//Vset +
-					Vset += 250;
-					uart_write("Vset : ",7);
-					uart_writeNb(Vset);
-					uart_write("\r\n",2);
-					n++;
-					break;
-				case 'm':	//Vset -
-					Vset -= 250;
-					uart_write("Vset : ",7);
-					uart_writeNb(Vset);
-					uart_write("\r\n",2);
-					n--;
-					break;
-				case 'o':	//Vhigh +
-					Vhigh+=100;
-					uart_write("Vhigh : ",7);
-					uart_writeNb(Vhigh);
-					uart_write("\r\n",2);
-					break;
-				case 'l':	//Vhigh -
-					if (Vhigh>Vslow){
-						Vhigh-=100;
-					}
-					uart_write("Vhigh : ",7);
-					uart_writeNb(Vhigh);
-					uart_write("\r\n",2);
-					break;
-				case 'i':	//Vslow +
-					if (Vslow<Vhigh){
-						Vslow+=100;
-					}
-					uart_write("Vslow : ",7);
-					uart_writeNb(Vslow);
-					uart_write("\r\n",2);
-					break;
-				case 'k':	//Vslow -
-					if (Vslow>200){
-						Vslow-=100;
-					}else{
-						Vslow=0;
-					}
-					uart_write("Vslow : ",7);
-					uart_writeNb(Vslow);
-					uart_write("\r\n",2);
-					break;
-				case ' ':	//Start & Stop
-					if (stop == 0) {
-						stop=1;
-						uart_write("Arret!\r\n",10);
-						n=0;
-					}
-					else {
-						stop=0;
-						uart_write("Demarre!\r\n",12);
-						Vset = 1000;
-						Aff_debug_init();
-						n=0;
-					}
-					break;
-				case 'x':	//Change speed mode
-					if(mode_speed==0){
-						mode_speed=1;
-						uart_write("Speed auto\r\n",12);
-					}else if(mode_speed==1){
-						mode_speed=2;
-						uart_write("Speed auto incr\r\n",17);
-					}else{
-						mode_speed=0;
-						Vset=Vslow;
-						uart_write("Speed manu\r\n",12);
-					}
-					break;
-				case 'b':	// Debug
-					FLAG_START_DEBUG = true;
-					break;
-				case 'g':	// Lights toggle
-					DEBUG_CAM_LED_ON;					
-					break;
-				/*case 'i':
-					uart_write("debug_img\n\r",11);
-					FLAG_ENABLE_LOG_IMG=!FLAG_ENABLE_LOG_IMG;
-					FLAG_ENABLE_LOG_SERVO=false;
-					break;
-				case 's':
-					uart_write("debug_servo\n\r",13);
-					FLAG_ENABLE_LOG_SERVO=!FLAG_ENABLE_LOG_SERVO;
-					FLAG_ENABLE_LOG_IMG=false;
-					break;
-				case 'f':
-					enable_finish=!(enable_finish);
-					uart_write("EN_finish=",10);
-					uart_writeNb(enable_finish);
-					uart_write("\r\n",2);
-					break;*/
-				default:
-					break;
+		if(uart_read(str,1)>0){
+			switch(str[0]){
+			case 'p':	//Vset +
+				Vset += 250;
+				uart_write("Vset : ",7);
+				uart_writeNb(Vset);
+				uart_write("\r\n",2);
+				n++;
+				break;
+			case 'm':	//Vset -
+				Vset -= 250;
+				uart_write("Vset : ",7);
+				uart_writeNb(Vset);
+				uart_write("\r\n",2);
+				n--;
+				break;
+			case 'o':	//Vhigh +
+				Vhigh+=100;
+				uart_write("Vhigh : ",7);
+				uart_writeNb(Vhigh);
+				uart_write("\r\n",2);
+				break;
+			case 'l':	//Vhigh -
+				if (Vhigh>Vslow){
+					Vhigh-=100;
 				}
+				uart_write("Vhigh : ",7);
+				uart_writeNb(Vhigh);
+				uart_write("\r\n",2);
+				break;
+			case 'i':	//Vslow +
+				if (Vslow<Vhigh){
+					Vslow+=100;
+				}
+				uart_write("Vslow : ",7);
+				uart_writeNb(Vslow);
+				uart_write("\r\n",2);
+				break;
+			case 'k':	//Vslow -
+				if (Vslow>200){
+					Vslow-=100;
+				}else{
+					Vslow=0;
+				}
+				uart_write("Vslow : ",7);
+				uart_writeNb(Vslow);
+				uart_write("\r\n",2);
+				break;
+			case ' ':	//Start & Stop
+				if (stop == 0) {
+					stop=1;
+					uart_write("Arret!\r\n",10);
+					n=0;
+				}
+				else {
+					stop=0;
+					uart_write("Demarre!\r\n",12);
+					Vset = 1000;
+					Aff_debug_init();
+					n=0;
+				}
+				break;
+			case 'x':	//Change speed mode
+				if(mode_speed==0){
+					mode_speed=1;
+					uart_write("Speed auto\r\n",12);
+				}else if(mode_speed==1){
+					mode_speed=2;
+					uart_write("Speed auto incr\r\n",17);
+				}else{
+					mode_speed=0;
+					Vset=Vslow;
+					uart_write("Speed manu\r\n",12);
+				}
+				break;
+			case 'b':	// Debug
+				FLAG_START_DEBUG = true;
+				break;
+			case 'g':	// Lights toggle
+				DEBUG_CAM_LED_ON;					
+				break;
+			/*case 'i':
+				uart_write("debug_img\n\r",11);
+				FLAG_ENABLE_LOG_IMG=!FLAG_ENABLE_LOG_IMG;
+				FLAG_ENABLE_LOG_SERVO=false;
+				break;
+			case 's':
+				uart_write("debug_servo\n\r",13);
+				FLAG_ENABLE_LOG_SERVO=!FLAG_ENABLE_LOG_SERVO;
+				FLAG_ENABLE_LOG_IMG=false;
+				break;
+			case 'f':
+				enable_finish=!(enable_finish);
+				uart_write("EN_finish=",10);
+				uart_writeNb(enable_finish);
+				uart_write("\r\n",2);
+				break;*/
+			default:
+				break;
 			}
-}
+		}
+}	/*	END of the function "Car_debug"	*/
 
+
+
+/**
+  * @brief  Initialisation
+  * @param  none
+  * @retval none
+  */
 void Car::Aff_debug_init(void){
 	uart_write("Vset : ",7);
 	uart_writeNb(Vset);
@@ -468,10 +599,13 @@ void Car::Aff_debug_init(void){
 	//uart_write("EN_finish=",10);
 	//uart_writeNb(enable_finish);
 	//uart_write("\r\n",2);
-}
+}	/*	END of the function "Aff_debug_init"	*/
 
-//########### others ###############
-
+/**
+  * @brief  idk what this is
+  * @param  none
+  * @retval none
+  */
 int sng(int a){
 	if (a<=0){
 		return 1;
@@ -481,7 +615,11 @@ int sng(int a){
 }
 
 
-//########### PID ###############
+/**
+  * @brief  PID baby !
+  * @param  none
+  * @retval PID output, aka servo_angle
+  */
 float Car::PIDController_update(float setpoint, float measurement) {
 	
 	// ########## Error signal ########## //

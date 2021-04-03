@@ -42,7 +42,6 @@ public:
 
 	void init(void);					//initializes the camera
 	void capture(void);					//retrieves data from the camera
-	void differentiate(void);			//computes differential
 	void process(void);					//detects edges
 	void calculateMiddle(void);			//guesses the middle
 	void sendDataExcel(void);			// Sends the camera data in different formats
