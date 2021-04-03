@@ -17,6 +17,7 @@
 
 //Mode de détection des lignes
 #define functioning_mode			(GPIOE_PDIR & 0x003C)>>2			// operating mode: from 1 to 2
+#define nb_echantillons_threshold 5
 
 
 #define CST_RECAL_T 200

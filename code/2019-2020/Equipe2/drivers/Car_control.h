@@ -9,23 +9,20 @@
 
 //####################### PID ########################
 // Controller Gains
-#define Kp 0.8
+#define Kp 1.2
 #define Ki 0.007
-#define Kd 0.01
-	
-// Derivative low-pass filter time constant
-#define tau 0.02
+#define Kd 0.013
 	
 
 //####################### Wheels #################################
 #define AMPLIFIE_TURN_1 2	// Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
 #define AMPLIFIE_TURN_2 5	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
-#define MAX_CAM_DIFF 30		// 20 Original
+#define MAX_CAM_DIFF 20		// 20 Original
 #define MAX_ANGLE 30.0		// 30 Original
 
 
 //#################### SPEED #############################
-#define VSLOW 1200	// 1000 Original
+#define VSLOW 1000	// 1000 Original
 #define VHIGH 2500	// 2500 Original
 #define T_BRAKE 200 //Threshold before braking - 200 Original
 #define INCREMENT_SPEED 40 //Constante d'augmentation de la vitesse (évite le patinage) - 40 Original

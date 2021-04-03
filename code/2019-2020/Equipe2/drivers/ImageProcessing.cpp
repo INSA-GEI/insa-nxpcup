@@ -6,7 +6,7 @@ int c_t=0;//counter for the threshold
 int CompareData_high=140;
 int CompareData_low=100;
 int dejafait = 1;
-int tab_threshold[100];
+int tab_threshold[nb_echantillons_threshold];
 int tab_threshold_count = 0;
 
 void Img_Proc::init(){
@@ -41,7 +41,7 @@ void Img_Proc::init(){
 	BlackLineLeft=0;
 	number_edges=0;
 	ecart_type = 0;
-	for (i=0; i<100; i++) tab_threshold[i] = 200; 
+	for (i=0; i<nb_echantillons_threshold; i++) tab_threshold[i] = 200; 
 
 }
 
@@ -209,7 +209,7 @@ void Img_Proc::process (void){
 		
 		
 		//################### mode A ##########################
-		if (functioning_mode == 0xA){
+		if ((functioning_mode == 0xA) || (functioning_mode == 0xB)){
 			// Inversement de la camera
 			for(i=0;i<128;i++) ImageDataBuff[i] = ImageData[i];
 			for(i=127; i>=0; i--) ImageData[i] = ImageDataBuff[127-i];
@@ -225,9 +225,9 @@ void Img_Proc::process (void){
 			
 			// Calcul moyenne threshold pour attenuer les gros changements
 			tab_threshold[tab_threshold_count] = threshold;
-			for(i=0; i<100; i++) threshold += tab_threshold[i];
-			threshold /= 100;
-			if (tab_threshold_count < 100) tab_threshold_count++;
+			for(i=0; i<nb_echantillons_threshold; i++) threshold += tab_threshold[i];
+			threshold /= nb_echantillons_threshold;
+			if (tab_threshold_count < nb_echantillons_threshold) tab_threshold_count++;
 			else tab_threshold_count = 0;
 			
 			
@@ -283,8 +283,7 @@ void Img_Proc::process (void){
 			}
 		}
 		
-		if (functioning_mode == 0xF) {
-			
+		if (functioning_mode == 0xE) {
 			// On veut pouvoir régler la fréquence à laquelle la fonction est appelée
 			// De base, c'est l'IT FTM1 qui est à 100Hz, mais avec if (dejafait < x) on peut diviser x fois la frequence
 			if (dejafait == 0) {
@@ -295,34 +294,37 @@ void Img_Proc::process (void){
 				int minimum = 1000;
 				
 				// Inversement de la camera
-				for(i=0; i<=127; i++) ImageDataBuff[i] = ImageData[i];
+				for(i=0;i<128;i++) ImageDataBuff[i] = ImageData[i];
 				for(i=127; i>=0; i--) ImageData[i] = ImageDataBuff[127-i];
 				
-				// Affichage
-					// On est obligé de faire 1 pixel sur 2 car sinon on rentre dans un HardFault
-				for (i=0;i<128;i+=2) {
-					uart_writeNb(ImageData[i]);
-					uart_write(";",1);
+				// Calcul du threshold entre noir & blanc : moyennage
+				for(i=0;i<128;i++) threshold += ImageData[i];
+				threshold /= 128;
+				
+				// Calcul de l'écart type
+				for(i=0;i<128;i++) ecart_type += (ImageData[i]-threshold)*(ImageData[i]-threshold);
+				ecart_type /= 128;
+				ecart_type = sqrt(ecart_type);
+				
+				// Calcul moyenne threshold pour attenuer les gros changements
+				tab_threshold[tab_threshold_count] = threshold;
+				for(i=0; i<nb_echantillons_threshold; i++) threshold += tab_threshold[i];
+				threshold /= nb_echantillons_threshold;
+				if (tab_threshold_count < nb_echantillons_threshold) tab_threshold_count++;
+				else tab_threshold_count = 0;
+				
+				
+				// Détection du noir et du blanc
+				for(i=0; i<128; i+=2){
 					if (maximum < ImageData[i]) maximum = ImageData[i];
 					if (minimum > ImageData[i]) minimum = ImageData[i];
+					if ( ((ImageData[i-1]+ImageData[i]+ImageData[i+1])/3) > threshold) uart_write("*",1);
+					else  uart_write("_",1);
 				}
-				uart_write("\r\n",2);
-				
-				// Affichage grâce au treshold calculé : si la voiture est au milieu, on devrait avoir quelque chose comme :
-				// **__*********__**
-				/*for (i = 0;i<128;i+=2) {
-					if ((ImageData[i] < threshold_noir_droit) || (ImageData[i] < threshold_noir_gauche)) uart_write("_",1);	// Noir
-					else {
-						uart_write("*",1);	// Blanc
-						bande_blanche_totale++;
-					}
-				}
-				if (bande_blanche_totale < 10) calibree = 0;
-				bande_blanche_totale = 0;
-				uart_write("\r\n",2);*/
-				
+				uart_write("\n",2);
+
 				// Affichage des différentes valeurs calculées pour pouvoir comparer
-				/*uart_write("\r\n",2);
+				uart_write("\r\n",2);
 				uart_write("Threshold : ", 12);
 				uart_writeNb(threshold);
 				uart_write(" // ",4);
@@ -331,7 +333,30 @@ void Img_Proc::process (void){
 				uart_write(" // ",4);
 				uart_write("MIN : ",6);
 				uart_writeNb(minimum);
-				uart_write("\r\n",2);*/
+				uart_write("\r\n",2);
+			}
+			else if (dejafait < 100) dejafait++;
+			else dejafait = 0;
+		}
+		
+		
+		
+		if (functioning_mode == 0xF) {
+			// On veut pouvoir régler la fréquence à laquelle la fonction est appelée
+			// De base, c'est l'IT FTM1 qui est à 100Hz, mais avec if (dejafait < x) on peut diviser x fois la frequence
+			if (dejafait == 0) {
+				dejafait = 1;
+				
+				// Inversement de la camera
+				for(i=0; i<=127; i++) ImageDataBuff[i] = ImageData[i];
+				for(i=127; i>=0; i--) ImageData[i] = ImageDataBuff[127-i];
+				
+				// Affichage des valeurs et calcul des min/max
+				for (i=0;i<128;i+=2) {
+					uart_writeNb(ImageData[i]);
+					uart_write(";",1);
+				}
+				uart_write("\r\n",2);
 			}
 			else if (dejafait < 25) dejafait++;
 			else dejafait = 0;
@@ -348,7 +373,7 @@ void Img_Proc::calculateMiddle (void){
 	RoadMiddle = (BlackLineLeft + BlackLineRight)/2;
 
 	// if no line on left and right side
-	if ((number_edges == 0) || (ecart_type < 17)){
+	if ((number_edges == 0) || (ecart_type < 20)){
 		RoadMiddle = RoadMiddle_old;
 	}
 	if ((BlackLineRight > 127) && (BlackLineLeft < 0)){

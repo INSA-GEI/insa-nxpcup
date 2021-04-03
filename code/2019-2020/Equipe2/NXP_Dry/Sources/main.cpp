@@ -8,7 +8,6 @@ Car car;
 int main(){
 	debug_init();
 	debug_displaySendNb((GPIOE_PDIR & 0x003C)>>2);
-	DEBUG_CAM_LED_OFF;
 	Timer_init(0.005);
 	car.init();
 	

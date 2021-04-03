@@ -27,6 +27,7 @@ void Car::init(void){
 	state_turn_car=0;
 	enable_ampli_turn=false;
 	enable_brake=false;
+	DEBUG_CAM_LED_OFF;
 
 	// PID
 	PID_max = MAX_ANGLE;
@@ -38,7 +39,8 @@ void Car::init(void){
 	PID_output = 0.0;
 	
 	enable_finish=false;
-	stop=true;
+	if (functioning_mode == 0xA) stop=false;
+	else stop = true;
 }
 
 //############### SPEED ########################
@@ -414,15 +416,13 @@ void Car::Car_debug(void){
 						uart_write("Speed manu\r\n",12);
 					}
 					break;
-				case 'd':	// Debug
+				case 'b':	// Debug
 					FLAG_START_DEBUG = true;
 					break;
 				case 'g':	// Lights toggle
-					uart_write("Lights ON\r\n",13);
-					DEBUG_CAM_LED_ON;
+					DEBUG_CAM_LED_ON;					
 					break;
-					/*
-				case 'i':
+				/*case 'i':
 					uart_write("debug_img\n\r",11);
 					FLAG_ENABLE_LOG_IMG=!FLAG_ENABLE_LOG_IMG;
 					FLAG_ENABLE_LOG_SERVO=false;
@@ -492,25 +492,8 @@ float Car::PIDController_update(float setpoint, float measurement) {
 	
 	// ########## Integral ########## //
 	Integrator = Integrator + 0.5 * Ki * Te * (error + old_error);
-	
-	// Anti wind-up via clamping
-		// Compute limits
-	/*if (PID_min > Proportional) integrator_max = PID_max - Proportional;
-	else integrator_max = 0.0;
-	
-	if (PID_min < Proportional) integrator_min = PID_min - Proportional;
-	else integrator_min = 0.0;
-	
-		// Clamp Integrator
-	if (Integrator > integrator_max) Integrator = integrator_max;
-	else if (Integrator < integrator_min) Integrator = integrator_min;*/
-	
-	
+
 	// ########## Derivative ########## //
-	// Note : on measurement !!
-//	Differentiator = -(2.0 * Kd * (measurement - old_measurement)
-//					 +(2.0 * tau - Te) * Differentiator)
-//					 /(2.0 * tau + Te);
 	Differentiator = (2.0 * Kd * (measurement - old_measurement)
 					 +(Te) * Differentiator)
 					 /(Te);
