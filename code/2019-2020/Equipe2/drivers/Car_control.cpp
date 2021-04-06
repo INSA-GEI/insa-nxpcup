@@ -39,7 +39,29 @@ void Car::init(void){
 	// Angle wheels
 	servo_angle=0;
 	enable_ampli_turn = false;
-	
+	//######## SLOW MODE ########//
+	if (functioning_mode == 0xA) {
+		// Speed
+			Vslow = 500;	// 1000 Original
+			Vhigh = 2000;	// 2500 Original
+			T_BRAKE = 200; 			//Threshold before braking - 200 Original
+			INCREMENT_SPEED = 40; 	//Constante d'augmentation de la vitesse (évite le patinage) - 40 Original
+			DIV_1_SPEED = 3; 		//Divise la consigne de vitesse pour éviter le patinage sur la premiere moitié Vmes=[Vslow,Vhigh/2]	- 3 Original
+			TURN_SPEED = 1000; 		//Vitesse seuil dans les virages - 1300 Original
+
+		//  Wheels
+			AMPLIFIE_TURN_1 = 1.0;	// Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
+			AMPLIFIE_TURN_2 = 4.0;	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
+			MAX_ANGLE = 30.0;		// 30 Original
+			MAX_CAM_DIFF = 20;		// 20 Original
+		
+
+		// PID Gains
+			Kp = 1.1;
+			Ki = 0.005;
+			Kd = 0.011;
+	}
+		
 	//######## NORMAL MODE ########//
 	if (functioning_mode == 0xB) {
 		// Speed
@@ -68,19 +90,19 @@ void Car::init(void){
 			Vslow = 1000;	// 1000 Original
 			Vhigh = 4000;	// 2500 Original
 			T_BRAKE = 200; 			//Threshold before braking - 200 Original
-			INCREMENT_SPEED = 55; 	//Constante d'augmentation de la vitesse (évite le patinage) - 40 Original
+			INCREMENT_SPEED = 80; 	//Constante d'augmentation de la vitesse (évite le patinage) - 40 Original
 			DIV_1_SPEED = 4; 		//Divise la consigne de vitesse pour éviter le patinage sur la premiere moitié Vmes=[Vslow,Vhigh/2]	- 3 Original
 			TURN_SPEED = 1400; 		//Vitesse seuil dans les virages - 1300 Original
 
 		//  Wheels
-			AMPLIFIE_TURN_1 = 4.0;	// Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
-			AMPLIFIE_TURN_2 = 8.0;	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
-			MAX_ANGLE = 30.0;		// 30 Original
+			AMPLIFIE_TURN_1 = 5.0;	// Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
+			AMPLIFIE_TURN_2 = 10.0;	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
+			MAX_ANGLE = 35.0;		// 30 Original
 			MAX_CAM_DIFF = 20;		// 20 Original
 		
 		// PID Gains
 			Kp = 1.5;
-			Ki = 0.009;
+			Ki = 0.008;
 			Kd = 0.017;
 	}
 	
