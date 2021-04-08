@@ -1,5 +1,6 @@
 #include "Car_control.h"
 #include "Debug.h"
+#include "ToF_sensor.h"
 
 //################### Var ###################//
 int c=0;
@@ -10,7 +11,11 @@ int C_finish=0;
 //Debug Flag
 bool FLAG_START_DEBUG = false;
 
-
+VL53L1_DEV Dev;
+VL53L1_DEV *pDev = &Dev;
+uint16_t byte = 0x3264;
+uint32_t tick_count;
+uint32_t *ptick_count = &tick_count;
 
 
 
@@ -568,6 +573,13 @@ void Car::Car_debug(void){
 			case 'g':	// Lights toggle
 				DEBUG_CAM_LED_ON;					
 				break;
+			case 'w' :
+				uart_write("current_tick =", 14);
+				VL53L1_GetTickCount(ptick_count);
+				uart_write("\r\n", 2);
+				break;
+				
+				
 			/*case 'i':
 				uart_write("debug_img\n\r",11);
 				FLAG_ENABLE_LOG_IMG=!FLAG_ENABLE_LOG_IMG;
