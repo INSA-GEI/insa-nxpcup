@@ -64,6 +64,7 @@
 
 #include "vl53l1_platform.h"
 #include "vl53l1_platform_log.h"
+#include "Tof_sensor.h"
 
 #include "vl53l1_api.h"
 #include "C:\Users\maier\OneDrive\Documents\INSA\4A\PIR NXP CUP\Projet\insa-nxpcup\code\2019-2020\Equipe2\drivers\Debug.h"
@@ -73,38 +74,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-
-// #define I2C_TIME_OUT_BASE   10
-// #define I2C_TIME_OUT_BYTE   1
-
-#define SLAVE_ADDRESS 0x52
-
-// #ifdef VL53L1_LOG_ENABLE
-// #define trace_print(level, ...) VL53L1_trace_print_module_function(VL53L1_TRACE_MODULE_PLATFORM, level, VL53L1_TRACE_FUNCTION_NONE, ##__VA_ARGS__)
-// #define trace_i2c(...) VL53L1_trace_print_module_function(VL53L1_TRACE_MODULE_NONE, VL53L1_TRACE_LEVEL_NONE, VL53L1_TRACE_FUNCTION_I2C, ##__VA_ARGS__)
-// #endif
-
-// #ifndef HAL_I2C_MODULE_ENABLED
-// #warning "HAL I2C module must be enable "
-// #endif
-
-//extern I2C_HandleTypeDef hi2c1;
-//#define VL53L0X_pI2cHandle    (&hi2c1)
-
-/* when not customized by application define dummy one */
-// #ifndef VL53L1_GetI2cBus
-/** This macro can be overloaded by user to enforce i2c sharing in RTOS context
- */
-// #   define VL53L1_GetI2cBus(...) (void)0
-// #endif
-
-// #ifndef VL53L1_PutI2cBus
-/** This macro can be overloaded by user to enforce i2c sharing in RTOS context
- */
-// #   define VL53L1_PutI2cBus(...) (void)0
-// #endif
-
-// uint8_t _I2CBuffer[256];
+TOF *ptof; // pointer on TOF object to retrieve the tick_count value
 
 
 /* 	VL53L1_DEV = structure explanations
@@ -118,31 +88,8 @@
 	I2C_HandleTypeDef *I2cHandle;	
 */
 
-uint32_t current_tick = 0;
 
-/*!
- * Tick Count interrupt initialisation
- * Initialisation on rising edge detection interrupt on SCL
- */
-void Tick_Interrupt_Init(void){
-	PORTB_PCR0 |= PORT_PCR_ISF_MASK; 	//detect interrupt active
-	PORTB_PCR0 |= PORT_PCR_IRQC(0x9); 	//activate in rising edge detection
-	
-	NVIC_ICPR |= 1 << PORTB_PCR0;		//clear pending register
-	NVIC_ISER |= 1 << PORTB_PCR0;		//enable interrupt register
-	
-}
 
-/*!
- * Tick Count interrupt handler
- * 
- */
-
-void Tick_Interrupt_Handler(void) {
-	PORTB_PCR0 |= PORT_PCR_ISF_MASK; //Clear the bit flag of interrupt
-	current_tick++;
-	uart_writeNb(current_tick);
-}
 
 /*!
  * I2C Wait
@@ -151,7 +98,7 @@ void Tick_Interrupt_Handler(void) {
 
 void _I2CWait(void) {
 	while ( (I2C0_S & I2C_S_IICIF_MASK) ==1){
-		//I2C0_S |= I2C_S_IICIF_MASK;
+		// do nothing = just wait
 	}
 }
 /*!
@@ -173,9 +120,6 @@ void _I2CInit(VL53L1_DEV * Dev){
 	I2C0_F |= I2C_F_MULT(2);
 	I2C0_F |= I2C_F_ICR(5);
 	
-
-	Tick_Interrupt_Init(); // initialisation of tick count interrupt
-	
 }
 
 /*!
@@ -195,8 +139,8 @@ void  _I2CStartTransmission(VL53L1_DEV Dev, unsigned char Mode) {
 		I2C0_C1 = I2C_C1_TX_MASK; 		// start master transmission
 	}
 	
-	if (Mode == MRSW) { // mode Master Read Slave Write
-		I2C0_C1 &= (~I2C_C1_TX_MASK); // start master reading
+	if (Mode == MRSW) {		// mode Master Read Slave Write
+		I2C0_C1 &= (~I2C_C1_TX_MASK); 	// start master reading
 	}
 }
 
@@ -211,10 +155,6 @@ int _I2CWrite(VL53L1_DEV Dev, uint8_t *pdata, uint32_t count) {
      
     _I2CStartTransmission(Dev, MWSR); //start transmission in write mode
     _I2CWait(); //wait until I2C interrupt pending = task finished 
-    
-     //I2C0_D = Dev->I2cDevAddr; //specifies address where write the data 
-     //_I2CWait(); //wait until task is finished
-     
      I2C0_D = *pdata; // send data
      _I2CWait(); 
      
@@ -271,7 +211,6 @@ int _I2CRead(VL53L1_DEV Dev, uint8_t *pdata, uint32_t count) {
 VL53L1_Error VL53L1_WriteMulti(VL53L1_DEV Dev, uint16_t index, uint8_t *pdata, uint32_t count) {
     VL53L1_Error Status = VL53L1_ERROR_NONE;
     
-    
     _I2CStartTransmission(Dev, MWSR);  	//master mode + Tx mode + send address 
     _I2CWait(); 						//wait until interrupt is pending = task finish
         
@@ -311,7 +250,7 @@ VL53L1_Error VL53L1_ReadMulti(VL53L1_DEV Dev, uint16_t index, uint8_t *pdata, ui
     VL53L1_Error Status = VL53L1_ERROR_NONE;
     
     _I2CStartTransmission(Dev, MWSR);	//master mode + Tx mode + send write address
-    _I2CWait(); 					//wait until interrupt is pending = task finish
+    _I2CWait(); 						//wait until interrupt is pending = task finish
             
 	I2C0_D = index >> 8; 	// send 8 index MSB 
 	_I2CWait();
@@ -378,15 +317,6 @@ VL53L1_Error VL53L1_WrWord(VL53L1_DEV Dev, uint16_t index, uint16_t data) {
     return Status;
 }
 
-/*VL53L1_Error VL53L1_WrDWord(VL53L1_DEV Dev, uint16_t index, uint32_t data) {
-    VL53L1_Error Status = VL53L1_ERROR_NONE;
-    return Status;
-}*/
-
-/*VL53L1_Error VL53L1_UpdateByte(VL53L1_DEV Dev, uint16_t index, uint8_t AndData, uint8_t OrData) {
-    VL53L1_Error Status = VL53L1_ERROR_NONE;
-    return Status;
-}*/
 
 /*!
  * Master Read Byte
@@ -420,11 +350,6 @@ VL53L1_Error VL53L1_RdWord(VL53L1_DEV Dev, uint16_t index, uint16_t *data) {
     return Status;
 }
 
-/*VL53L1_Error VL53L1_RdDWord(VL53L1_DEV Dev, uint16_t index, uint32_t *data) {
-    VL53L1_Error Status = VL53L1_ERROR_NONE;
-    return Status;
-}*/
-
 /*!
  * Get Tick Count
  * value of the absolute time --> t=0 is the initialisation of I2C
@@ -432,24 +357,13 @@ VL53L1_Error VL53L1_RdWord(VL53L1_DEV Dev, uint16_t index, uint16_t *data) {
  */
 VL53L1_Error VL53L1_GetTickCount(uint32_t *ptick_count_ms){
 	VL53L1_Error status  = VL53L1_ERROR_NONE;
-	uint32_t period = 1/400; 				// I2C frequency = 400kHz
-	*ptick_count_ms = period*current_tick;	// current_tick update each rising edge of SCL
+	
+	float tick_count_float = (float)call_C_getTickCount(ptof)/6;	// divided the number of tick by the clock frequency to obtain the time
+																	// Interrupt frequency = 6kHz
+	*ptick_count_ms = (uint32_t)tick_count_float;	
 	
 	return status;
 }
-
-//#define trace_print(level, ...) 
-//	_LOG_TRACE_PRINT(VL53L1_TRACE_MODULE_PLATFORM, 
-//	level, VL53L1_TRACE_FUNCTION_NONE, ##__VA_ARGS__)
-
-//#define trace_i2c(...) 
-//	_LOG_TRACE_PRINT(VL53L1_TRACE_MODULE_NONE, 
-//	VL53L1_TRACE_LEVEL_NONE, VL53L1_TRACE_FUNCTION_I2C, ##__VA_ARGS__)
-
-/*VL53L1_Error VL53L1_GetTimerFrequency(int32_t *ptimer_freq_hz){
-	VL53L1_Error status  = VL53L1_ERROR_NONE;
-	return status;
-}*/
 
 
 /*!
@@ -460,13 +374,18 @@ VL53L1_Error VL53L1_GetTickCount(uint32_t *ptick_count_ms){
 VL53L1_Error VL53L1_WaitMs(VL53L1_Dev_t *pdev, int32_t wait_ms){
 	VL53L1_Error status  = VL53L1_ERROR_NONE;
 	
-	uint32_t start_time, current_time; 
+	uint32_t start_time;
+	uint32_t *pstart_time = &start_time;
+	uint32_t current_time; 
+	uint32_t *pcurrent_time = &current_time;
 	
-	VL53L1_GetTickCount(&start_time); 				// take the current absolute time as a start time
+	VL53L1_GetTickCount(pstart_time); 				// take the current time as a start time
+	VL53L1_GetTickCount(pcurrent_time);
 	
-	while (current_time < (start_time + wait_ms)) { // we wait until the current time equals to the start time + the wait time
-		VL53L1_GetTickCount(&current_time);
-	}	
+	while (*pcurrent_time < (*pstart_time + wait_ms)) { // we wait until the current time equals to the start time + the wait time
+		VL53L1_GetTickCount(pcurrent_time);
+	}
+	
 	return status;
 }
 
@@ -477,12 +396,16 @@ VL53L1_Error VL53L1_WaitMs(VL53L1_Dev_t *pdev, int32_t wait_ms){
  */
 VL53L1_Error VL53L1_WaitUs(VL53L1_Dev_t *pdev, int32_t wait_us){
 	VL53L1_Error status  = VL53L1_ERROR_NONE;
+	uint32_t start_time;
+	uint32_t *pstart_time = &start_time;
+	uint32_t current_time; 
+	uint32_t *pcurrent_time = &current_time;
 	
-	uint32_t start_time, current_time;
-	VL53L1_GetTickCount(&start_time);
+	VL53L1_GetTickCount(pstart_time);
+	VL53L1_GetTickCount(pcurrent_time);
 		
-	while (current_time*1000 < (start_time*1000 + wait_us)) {
-		VL53L1_GetTickCount(&current_time);
+	while (*pcurrent_time*1000 < (*pstart_time*1000 + wait_us)) {
+		VL53L1_GetTickCount(pcurrent_time);
 	}	
 	return status;
 }
@@ -496,6 +419,7 @@ VL53L1_Error VL53L1_WaitValueMaskEx(
 	uint32_t      poll_delay_ms)
 {
 	VL53L1_Error status  = VL53L1_ERROR_NONE;
+	VL53L1_WaitMs(pdev, timeout_ms);
 	return status;
 }
 

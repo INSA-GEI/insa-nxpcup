@@ -3,6 +3,8 @@
 
 #include "Movement.h"
 #include "ImageProcessing.h"
+#include "ToF_sensor.h"
+
 
 #define CST_FINISH_TIME 100 //100*10ms=>1s
 
@@ -20,6 +22,7 @@ public:
 	//########### Objects ###########//
 	Movement myMovement;
 	Img_Proc cam;
+	TOF tof;
 	
 	//########### Variables ###########//
 	bool enable_finish;

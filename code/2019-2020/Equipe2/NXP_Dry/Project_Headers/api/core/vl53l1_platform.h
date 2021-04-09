@@ -68,31 +68,20 @@
 #include "vl53l1_ll_def.h"
 #include "vl53l1_platform_log.h"
 
+
 #define VL53L1_IPP_API
 #include "vl53l1_platform_user_data.h"
 
 #ifdef __cplusplus
+
 extern "C" {
+
 
 #endif
 
 // to define the mode of transmission
 #define MWSR 0x00 // Master Write Slave Read
 #define MRSW 0x01 // Master Read Slave Write 
-
-//uint32_t current_time = 0;
-
-/*!
- * Tick Count interrupt initialisation
- * Initialisation on rising edge detection interrupt on SCL
- */
-void Tick_Interrupt_Init(void);
-
-/*!
- * Tick Count interrupt handler
- * 
- */
-void Tick_Interrupt_Handler(void);
 
 /*!
  * I2C Wait
@@ -176,13 +165,6 @@ VL53L1_Error VL53L1_WrWord(
 		VL53L1_Dev_t *pdev,
 		uint16_t      index,
 		uint16_t      data);
-/*
-VL53L1_Error VL53L1_WrDWord(
-		VL53L1_Dev_t *pdev,
-		uint16_t      index,
-		uint32_t      VL53L1_PRM_00005);
-*/
-
 
 /*!
  * Master Read Byte
@@ -205,11 +187,6 @@ VL53L1_Error VL53L1_RdWord(
 		VL53L1_Dev_t *pdev,
 		uint16_t      index,
 		uint16_t     *pdata);
-/*
-VL53L1_Error VL53L1_RdDWord(
-		VL53L1_Dev_t *pdev,
-		uint16_t      index,
-		uint32_t     *pdata);*/
 
 VL53L1_Error VL53L1_WaitUs(
 		VL53L1_Dev_t *pdev,
@@ -218,26 +195,6 @@ VL53L1_Error VL53L1_WaitUs(
 VL53L1_Error VL53L1_WaitMs(
 		VL53L1_Dev_t *pdev,
 		int32_t       wait_ms);
-
-//VL53L1_Error VL53L1_GetTimerFrequency(int32_t *ptimer_freq_hz);
-
-//VL53L1_Error VL53L1_GetTimerValue(int32_t *ptimer_count);
-
-//VL53L1_Error VL53L1_GpioSetMode(uint8_t pin, uint8_t mode);
-
-//VL53L1_Error VL53L1_GpioSetValue(uint8_t pin, uint8_t value);
-
-//VL53L1_Error VL53L1_GpioGetValue(uint8_t pin, uint8_t *pvalue);
-
-//VL53L1_Error VL53L1_GpioXshutdown(uint8_t value);
-
-//VL53L1_Error VL53L1_GpioCommsSelect(uint8_t value);
-
-//VL53L1_Error VL53L1_GpioPowerEnable(uint8_t value);
-
-//VL53L1_Error  VL53L1_GpioInterruptEnable(void (*function)(void), uint8_t edge_type);
-
-//VL53L1_Error  VL53L1_GpioInterruptDisable(void);
 
 VL53L1_Error VL53L1_GetTickCount(
 	uint32_t *ptime_ms);

@@ -2,18 +2,24 @@
 #include "Debug.h"
 #include "Car_control.h"
 #include "interrupt.h"
-#include "ToF_sensor.h"
+
+
+
+int dejafe = 0;
 
 Car car;
 VL53L1_DEV Device;
 VL53L1_DEV *pDevice = &Device;
 
+
+
 int main(){
-	_I2CInit(pDevice);
+	//_I2CInit(pDevice);
 	debug_init();
 	debug_displaySendNb((GPIOE_PDIR & 0x003C)>>2);
 	Timer_init(0.005);
 	car.init();
+	
 	
 	for(;;) {
 		car.Car_debug();
@@ -33,10 +39,7 @@ void FTM1_IRQHandler() {
 void FTM2_IRQHandler() {	//encoder interrupt 6kHz
 	car.myMovement.encoder.interruptHandler();
 	car.myMovement.regulate(); //Applique la PWM correspond à la vitesse aux moteurs
-}
-
-void FTM3_IRQHandler() {	//tick count interrupt 400kHz
-	Tick_Interrupt_Handler();
+	car.tof.tick_count++;
 }
 
 //100Hz

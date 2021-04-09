@@ -8,3 +8,13 @@
 
 #include "Tof_sensor.h"
 
+uint32_t TOF::tick_count = 0;
+
+uint32_t TOF::getTickCount(void) {
+	return (this->tick_count);
+}
+
+extern "C" uint32_t call_C_getTickCount(TOF *p) {// wrapper function
+		return p->getTickCount();
+}
+
