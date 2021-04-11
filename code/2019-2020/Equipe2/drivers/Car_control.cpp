@@ -30,17 +30,17 @@ void Car::init(void){
 	cam.init();
 	
 	//########### Variables ###########//
-	if ((functioning_mode == 0xA) || (functioning_mode == 0xB) || (functioning_mode == 0xC)) stop = false;
+	if ((functioning_mode == 0xA) || (functioning_mode == 0xB) || (functioning_mode == 0xC) || (functioning_mode == 0xD)) stop = false;
 	else stop = true;
 	enable_finish = false;
 	
-	DEBUG_CAM_LED_OFF;
+	DEBUG_CAM_LED_ON;
 
 	// Angle wheels
 	servo_angle=0;
 	enable_ampli_turn = false;
-	//######## SLOW MODE ########//
-	if (functioning_mode == 0xA) {
+	//######## SLOW MODE + Obstacle avoidance mode ########//
+	if ((functioning_mode == 0xA) || (functioning_mode == 0xD)) {
 		// Speed
 			Vslow = 500;	// 1000 Original
 			Vhigh = 2000;	// 2500 Original
@@ -104,6 +104,28 @@ void Car::init(void){
 			Kp = 1.5;
 			Ki = 0.008;
 			Kd = 0.017;
+	}
+	
+	//######## OBSTACLE AVOIDANCE MODE ########//
+	if (functioning_mode == 0xD) {
+		// Speed
+			Vslow = 500;	// 1000 Original
+			Vhigh = 1000;	// 2500 Original
+			T_BRAKE = 200; 			//Threshold before braking - 200 Original
+			INCREMENT_SPEED = 20; 	//Constante d'augmentation de la vitesse (évite le patinage) - 40 Original
+			DIV_1_SPEED = 3; 		//Divise la consigne de vitesse pour éviter le patinage sur la premiere moitié Vmes=[Vslow,Vhigh/2]	- 3 Original
+			TURN_SPEED = 700; 		//Vitesse seuil dans les virages - 1300 Original
+
+		//  Wheels
+			AMPLIFIE_TURN_1 = 1.0;	// Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
+			AMPLIFIE_TURN_2 = 2.0;	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
+			MAX_ANGLE = 20.0;		// 30 Original
+			MAX_CAM_DIFF = 20;		// 20 Original
+		
+		// PID Gains
+			Kp = 1.2;
+			Ki = 0.007;
+			Kd = 0.013;
 	}
 	
 
@@ -450,6 +472,13 @@ void Car::Aff_debug(void){
 		uart_write(" / ",3);
 		uart_write("ecart type=",11);
 		uart_writeNb(cam.ecart_type);
+		uart_write(" / ",3);
+		uart_write("RoadMiddle=",11);
+		uart_writeNb(cam.RoadMiddle);
+		uart_write(" / ",3);
+		uart_write("CUBE=",11);
+		uart_writeNb(cam.CUBE);
+		
 		/*uart_write(" ",1);
 		uart_writeNb(cam.diff-cam.diff_old);
 		uart_write(" ",1);

@@ -39,7 +39,8 @@ public:
 	int BlackLineRight;					// position of the black line on the right side (127)
 	int BlackLineLeft;					// position of the black line on the left side
 	int number_edges;
-
+	int CUBE;
+	
 	void init(void);					//initializes the camera
 	void capture(void);					//retrieves data from the camera
 	void process(void);					//detects edges

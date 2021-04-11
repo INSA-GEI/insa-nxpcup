@@ -4,10 +4,15 @@
 #include "interrupt.h"
 
 Car car;
+int tempo_main = 0;
 
 int main(){
 	debug_init();
 	debug_displaySendNb((GPIOE_PDIR & 0x003C)>>2);
+	
+	// Petite attente d'environ 5s avant de démarrer le code
+	while (tempo_main < 5*1800000) tempo_main++;
+
 	Timer_init(0.005);
 	car.init();
 	

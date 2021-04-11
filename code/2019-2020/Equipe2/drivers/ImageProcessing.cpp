@@ -5,11 +5,18 @@ int i,j;
 int c_t=0;//counter for the threshold
 int CompareData_high=140;
 int CompareData_low=100;
-int dejafait = 1;
+int dejafait = 0;
+int calibration = 0;
 int tab_threshold[nb_echantillons_threshold];
 int tab_threshold_count = 0;
-
-
+int data_max[100];
+int total_data_max = 0;
+int car_middle = 64;
+int car_left = 80;
+int car_right = 52;
+int cubeagauche = 0;
+int cubeadroite = 0;
+int coupdefesse = 0;
 
 
 /**
@@ -49,7 +56,7 @@ void Img_Proc::init(){
 	BlackLineLeft=0;
 	number_edges=0;
 	ecart_type = 0;
-	for (i=0; i<nb_echantillons_threshold; i++) tab_threshold[i] = 200; 
+	for (i=0; i<nb_echantillons_threshold; i++) tab_threshold[i] = 150; 
 
 }	/*	END of the function "init"	*/
 
@@ -100,7 +107,7 @@ void Img_Proc::capture(void){
   * 		Mode A - Slow Mode
   * 		Mode B - Regular Mode
   * 		Mode C - Fast Mode
-  * 		Mode D - /
+  * 		Mode D - Obstacle Avoidance
   * 		Mode E - Affichage de la route style _____***********_____
   * 		Mode F - Affichage des valeurs de la camera pour excel
   * 					Aide : nouveau fichier -> selection colonne A -> Donnees -> Convertir -> Suivant -> cocher seulement 'point virgule' -> Suivant -> Terminer
@@ -111,7 +118,7 @@ void Img_Proc::capture(void){
 void Img_Proc::process (void){
 	number_edges = 0;	// Reset the number of peaks to 0
 	
-	//################### Mode A ###################//
+	//################### Modes A B C ###################//
 	if ((functioning_mode == 0xA) || (functioning_mode == 0xB) || (functioning_mode == 0xC)){
 		// Inversement de la camera
 		for(i=0;i<128;i++) ImageDataBuff[i] = ImageData[i];
@@ -185,6 +192,181 @@ void Img_Proc::process (void){
 			}
 		}
 	}
+	
+	//################### Mode D ###################//
+	if (functioning_mode == 0xD){
+
+		// Première étape : détecter quand y'a le cube
+		// Deuxième étape : On teste d'abord avec le cube à droite UNIQUEMENT
+		//	On peut laisser le calcul du threshold normal (en prenant quand
+		// 	même les 100 premiers points) et dès que le cube est
+		//	détecté on stop le calcul du threshold, et on overwrite RoadMiddle
+		// 	pour faire en sorte que la voiture aille à gauche (RoadMiddle = 40)
+		//	On fait une variable booléenne cubeadroite qui sera à 1 si on détecte
+		//	le cube, et dans la fonction calculatemiddle si cubeadroite est à 1
+		//	on overwrite roadmiddle à 40 et basta, peu importe où le cube est,
+		//	on se met au bord de la ligne gauche pour éviter le cube même si il
+		
+		// Inversement de la camera
+		for(i=0;i<128;i++) ImageDataBuff[i] = ImageData[i];
+		for(i=127; i>=0; i--) ImageData[i] = ImageDataBuff[127-i];
+		
+		//-----Algo normal + calibration sur 100 points-----//
+		if (calibration < 100) {
+			// Mise a 0 de la data_max n° calibration pour avoir le max de ce run
+			data_max[calibration] = 0;
+			
+			// Calcul du threshold entre noir & blanc : moyennage + max de toutes les data de cette run
+			for(i=0;i<128;i++) {
+				if (data_max[calibration] < ImageData[i]) data_max[calibration] = ImageData[i];
+				threshold += ImageData[i];
+			}
+			threshold /= 128;
+			
+			// Calcul moyenne threshold pour attenuer les gros changements
+			tab_threshold[tab_threshold_count] = threshold;
+			for(i=0; i<nb_echantillons_threshold; i++) threshold += tab_threshold[i];
+			threshold /= nb_echantillons_threshold;
+			if (tab_threshold_count < nb_echantillons_threshold) tab_threshold_count++;
+			else tab_threshold_count = 0;
+			
+			calibration++;
+		}
+		//-----Une fois que calibration faite, on fait la moyenne des valeurs max-----//
+		else if (calibration == 100) { // Si on a calibré 100 fois, on fait la moyenne des data max
+			for (i=0; i<100; i++) total_data_max += data_max[i];
+			total_data_max /= 100;
+			uart_write("CALIBRATION OK : ", 17);
+			uart_writeNb(total_data_max);
+			uart_write("\n", 2);
+			calibration++;
+		}
+		//-----Une fois la moyenne des valeurs max faite, on reprend l'algo normal-----//
+		else {
+			// Reset valeur cubeadroite
+			cubeadroite = 0;
+			cubeagauche = 0;
+			// Calcul valeur cubeadroite
+			for(i=0;i<64;i++) if (ImageData[i] > total_data_max+25) cubeagauche++;
+			for(i=64;i<128;i++) if (ImageData[i] > total_data_max+25) cubeadroite++;
+			
+			// Calcul du threshold entre noir & blanc : moyennage SEULEMENT SI PAS DE CUBEADROITE
+			if ((cubeagauche == 0) && (cubeadroite == 0)) {
+				for(i=0;i<128;i++) threshold += ImageData[i];
+				threshold /= 128;
+
+				// Calcul de l'écart type
+				for(i=0;i<128;i++) ecart_type += (ImageData[i]-threshold)*(ImageData[i]-threshold);
+				ecart_type /= 128;
+				ecart_type = sqrt(ecart_type);
+				
+				// Calcul moyenne threshold pour attenuer les gros changements
+				tab_threshold[tab_threshold_count] = threshold;
+				for(i=0; i<nb_echantillons_threshold; i++) threshold += tab_threshold[i];
+				threshold /= nb_echantillons_threshold;
+				if (tab_threshold_count < nb_echantillons_threshold) tab_threshold_count++;
+				else tab_threshold_count = 0;
+			}
+		}
+		
+		
+
+		//-----On continue l'algo classique-----//
+		
+		// Détection du noir et du blanc
+		for(i=0;i<=127;i++){
+			if (ImageData[i]>threshold){
+				ImageDataDifference[i]=1; //white
+			}
+			else{
+				ImageDataDifference[i]=0;//black
+			}
+		}
+		
+		BlackLineRight = 128;
+		BlackLineLeft = -1;
+		i=1;
+		while (BlackLineLeft==-1 && i<127){
+			if (ImageDataDifference[i]==1 && ImageDataDifference[i-1]==0){
+				BlackLineLeft=i;
+				number_edges++;
+			}else{
+				i++;
+			}
+		}
+		i=126;
+		while (BlackLineRight==128 && (i>0 && i>BlackLineLeft)){
+			if (ImageDataDifference[i]==1 && ImageDataDifference[i+1]==0){
+				BlackLineRight=i;
+				number_edges++;
+			}else{
+				i--;
+			}
+		}
+	}
+		
+	
+		
+//		
+//		
+//		int pos_cube_left = 0;
+//		int pos_cube_right = 127;
+//		
+//		int CUBE = 0;+
+//				
+//		
+//		// Algo de Raph'
+//		// Détection du noir et du blanc
+//		for(i=0;i<128;i++){
+//			if (  (ImageData[i]<threshold)){
+//				ImageDataDifference[i]=0; //Black
+//			}
+//			else{
+//				ImageDataDifference[i]=1;// White
+//			}
+//			// Cote gauche du cube detecté
+//			if ((calibration > 100) && (ImageData[i] > total_data_max)) {
+//				pos_cube_left = i;
+//				while ((ImageData[i] > total_data_max+20) && (i<128)) i++;
+//				pos_cube_right = i;
+//			}
+//		}
+//		
+//		
+//		BlackLineRight = 128;
+//		BlackLineLeft = -1;
+//		i=1;
+//		while (BlackLineLeft==-1 && i<127){
+//			if (ImageDataDifference[i]==1 && ImageDataDifference[i-1]==0){
+//				BlackLineLeft=i;
+//				number_edges++;
+//			}else{
+//				i++;
+//			}
+//		}
+//		i=126;
+//		while (BlackLineRight==128 && (i>0 && i>BlackLineLeft)){
+//			if (ImageDataDifference[i]==1 && ImageDataDifference[i+1]==0){
+//				BlackLineRight=i;
+//				number_edges++;
+//			}else{
+//				i--;
+//			}
+//		}
+//		
+//		if ( (pos_cube_left > 0) && ((BlackLineLeft-pos_cube_left) < 0) && ((BlackLineRight-pos_cube_right) > 0)) {
+//			CUBE = 1;
+//			// Cube a droite
+//			if ( abs(BlackLineLeft-pos_cube_left) > abs(BlackLineRight-pos_cube_right) ) {
+//				BlackLineRight = pos_cube_left - 20;
+//			}
+//			// Cube a gauche
+//			else {
+//				BlackLineLeft = pos_cube_right + 20;
+//			}
+//			dejafait++;
+//		}
+//		else CUBE = 0;
 	
 
 	//################### Mode E ###################//
@@ -281,27 +463,49 @@ void Img_Proc::calculateMiddle (void){
 
 	// Store old RoadMiddle value
 	RoadMiddle_old = RoadMiddle;
+	
+	if (cubeagauche != 0) {
+		BlackLineLeft = 55;
+		BlackLineRight = 115;
+		coupdefesse++;
+	}
+//	else if ((BlackLineLeft > 40) && (BlackLineRight < 85) && (coupdefesse/10 > 0)) {
+//		BlackLineLeft = 55;
+//		BlackLineRight = 115;
+//		coupdefesse--;
+//	}
+	if (cubeadroite != 0) {
+		BlackLineLeft = 20;
+		BlackLineRight = 70;
+	}
+	
 
 	// Find middle of the road, 64 for strait road
 	RoadMiddle = (BlackLineLeft + BlackLineRight)/2;
-
-	// if no line on left and right side
-	if ((number_edges == 0) || (ecart_type < 20)){
-		RoadMiddle = RoadMiddle_old;
-	}
-	if ((BlackLineRight > 127) && (BlackLineLeft < 0)){
-		RoadMiddle = RoadMiddle_old;		// we continue on the same trajectory as before 
+	
+	// Si detection d'osbtacle, pas besoin d'aller tout droit
+	if (functioning_mode != 0xD) {
+		// No line on left and right side
+		if ((number_edges == 0) || (ecart_type < 20)){
+			RoadMiddle = RoadMiddle_old;
+		}
+		if ((BlackLineRight > 127) && (BlackLineLeft < 0)){
+			RoadMiddle = RoadMiddle_old;		// we continue on the same trajectory as before 
+		}
 	}
 
 	// Store old value
 	diff_old = diff;							// store old difference
 	
 	// Find difference from real middle
-	diff = RoadMiddle - 64;						// calculate actual difference
-	
+	diff = RoadMiddle - car_middle;			// calculate actual difference
 	if (abs(diff-diff_old)>Plausibily_check){
 		diff=diff_old;
 	}
+	
+	
+	
+
 }	/*	END of the function "calculateMiddle"	*/
 
 
