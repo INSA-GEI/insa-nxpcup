@@ -11,12 +11,9 @@ int tab_threshold[nb_echantillons_threshold];
 int tab_threshold_count = 0;
 int data_max[100];
 int total_data_max = 0;
-int car_middle = 64;
-int car_left = 80;
-int car_right = 52;
 int cubeagauche = 0;
 int cubeadroite = 0;
-int coupdefesse = 0;
+int timer_cube_straight = 0;
 
 
 /**
@@ -243,14 +240,14 @@ void Img_Proc::process (void){
 		}
 		//-----Une fois la moyenne des valeurs max faite, on reprend l'algo normal-----//
 		else {
-			// Reset valeur cubeadroite
+			// Reset valeurs cubeadroite et cubeagauche
 			cubeadroite = 0;
 			cubeagauche = 0;
 			// Calcul valeur cubeadroite
 			for(i=0;i<64;i++) if (ImageData[i] > total_data_max+25) cubeagauche++;
 			for(i=64;i<128;i++) if (ImageData[i] > total_data_max+25) cubeadroite++;
 			
-			// Calcul du threshold entre noir & blanc : moyennage SEULEMENT SI PAS DE CUBEADROITE
+			// Calcul du threshold entre noir & blanc : moyennage SEULEMENT SI PAS de CUBEADROITE ou de CUBEAGAUCHE
 			if ((cubeagauche == 0) && (cubeadroite == 0)) {
 				for(i=0;i<128;i++) threshold += ImageData[i];
 				threshold /= 128;
@@ -465,9 +462,9 @@ void Img_Proc::calculateMiddle (void){
 	RoadMiddle_old = RoadMiddle;
 	
 	if (cubeagauche != 0) {
+		timer_cube_straight = 200;
 		BlackLineLeft = 55;
 		BlackLineRight = 115;
-		coupdefesse++;
 	}
 //	else if ((BlackLineLeft > 40) && (BlackLineRight < 85) && (coupdefesse/10 > 0)) {
 //		BlackLineLeft = 55;
@@ -475,6 +472,7 @@ void Img_Proc::calculateMiddle (void){
 //		coupdefesse--;
 //	}
 	if (cubeadroite != 0) {
+		timer_cube_straight = 200;
 		BlackLineLeft = 20;
 		BlackLineRight = 70;
 	}
@@ -498,14 +496,14 @@ void Img_Proc::calculateMiddle (void){
 	diff_old = diff;							// store old difference
 	
 	// Find difference from real middle
-	diff = RoadMiddle - car_middle;			// calculate actual difference
+	diff = RoadMiddle - 64;			// calculate actual difference
 	if (abs(diff-diff_old)>Plausibily_check){
 		diff=diff_old;
 	}
+	if ( (timer_cube_straight > 0) && (BlackLineRight < 85)){
+		if (timer_cube_straight-- < 75) diff = 0;
+	}
 	
-	
-	
-
 }	/*	END of the function "calculateMiddle"	*/
 
 
