@@ -11,6 +11,11 @@ int speed=0;
 float K_e_s=0.0;
 float K_e_s_old=0.0;
 
+/**
+  * @brief  constructor Movement object
+  * @param  none
+  * @retval none
+  */
 Movement::Movement() {
 	targetSpeedL=0;
 	targetSpeedR=0;
@@ -18,6 +23,11 @@ Movement::Movement() {
 	actualSpeedR=targetSpeedR;
 }
 
+/**
+  * @brief  Initialisation 
+  * @param  none
+  * @retval none
+  */
 void Movement::init(void) {
 	motor_init();
 	servo_init();
@@ -36,11 +46,22 @@ void Movement::init(void) {
 	K_e_s_old=((Te_s*MOVEMENT_CORR_KI-2.0*MOVEMENT_CORR_KP)/2.0);
 }
 
+/**
+  * @brief  Set car speed and wheels angle
+  * @param  int speed = car speed to set
+  * 		float angle = wheels angle to set
+  * @retval none
+  */
 void Movement::set(int speed, float angle) {
 	if(speed!=0)setAngle(angle);
-	setSpeed(speed);//important : set angle before speed, as differential speed is based on angle
+	setSpeed(speed); //warning : set angle before speed, as differential speed is based on angle
 }
 
+/**
+  * @brief  Set car speed 
+  * @param  int speed = car speed to set
+  * @retval none
+  */
 void Movement::setSpeed(int speed) {
 	if(speed<0){
 		MOTOR_RIGHT_BACKWARD;
@@ -52,6 +73,12 @@ void Movement::setSpeed(int speed) {
 	
 }
 
+/**
+  * @brief  Set each wheel speed 
+  * @param  int v = car speed
+  * 		float delta = speed delta between right and left wheel
+  * @retval none
+  */
 void Movement::setDiff(int v,float delta) {
 	speed=(int) v;
 	if (speed<0){
@@ -63,12 +90,22 @@ void Movement::setDiff(int v,float delta) {
 	}
 }
 
+/**
+  * @brief  Set wheels angle
+  * @param  float angle
+  * @retval none
+  */
 void Movement::setAngle(float angle) {
 	if(angle>SERVO_MAX_RIGHT_ANGLE)angle=SERVO_MAX_RIGHT_ANGLE;
 	if(angle<SERVO_MAX_LEFT_ANGLE)angle=SERVO_MAX_LEFT_ANGLE;
 	servo_setPos(angle);
 }
 
+/**
+  * @brief  Stop the car
+  * @param  none
+  * @retval none
+  */
 void Movement::stop(void) {
 	targetSpeedL=0;
 	targetSpeedR=0;
@@ -80,7 +117,11 @@ void Movement::stop(void) {
 	MOTOR_RIGHT_DISABLE;
 }
 
-
+/**
+  * @brief  motor PI controller 
+  * @param 	none
+  * @retval none
+  */
 void Movement::regulate(void) {
 	if (speed!=0){
 		GPIOB_PTOR = DEBUG_RED_Pin;
@@ -116,6 +157,11 @@ void Movement::regulate(void) {
 	applySpeeds();
 }
 
+/**
+  * @brief 	Apply speed calculated in previous functions to motors
+  * @param 	none
+  * @retval none
+  */
 void Movement::applySpeeds(void) {
 	if(actualSpeedL>SPEED_LIMIT)actualSpeedL=SPEED_LIMIT;
 	if(actualSpeedR>SPEED_LIMIT)actualSpeedR=SPEED_LIMIT;
