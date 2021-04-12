@@ -3,23 +3,18 @@
 #include "Car_control.h"
 #include "interrupt.h"
 
-
-
-int dejafe = 0;
-
 Car car;
-VL53L1_DEV Device;
-VL53L1_DEV *pDevice = &Device;
-
-
+int tempo_main = 0;
 
 int main(){
-	//_I2CInit(pDevice);
 	debug_init();
 	debug_displaySendNb((GPIOE_PDIR & 0x003C)>>2);
+	
+	// Petite attente d'environ 5s avant de démarrer le code
+	while (tempo_main < 5*1800000) tempo_main++;
+
 	Timer_init(0.005);
 	car.init();
-	
 	
 	for(;;) {
 		car.Car_debug();
@@ -36,15 +31,13 @@ void FTM1_IRQHandler() {
 
 //Differential speed handlers
 //6Hz
-void FTM2_IRQHandler() {	//encoder interrupt 6kHz
+void FTM2_IRQHandler() {//encoder interrupt 6kHz
 	car.myMovement.encoder.interruptHandler();
 	car.myMovement.regulate(); //Applique la PWM correspond à la vitesse aux moteurs
-	car.tof.tick_count++;
 }
 
 //100Hz
 void SysTick_Handler() {
 	car.Car_handler();		//Define Vset and servo_angle.
 	SYST_CSR &= 0xFFFEFFFF;	// Clears IT
-	
 }

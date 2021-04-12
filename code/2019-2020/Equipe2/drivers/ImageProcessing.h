@@ -15,13 +15,13 @@
 #define	CAM_CLK_HIGH			GPIOB_PDOR |= (1<<9)	// CLK on PTB9
 #define	CAM_CLK_LOW				GPIOB_PDOR &= ~(1<<9)	// CLK on PTB9
 
-//Mode de détection des lignes
+//Mode lines detection
 #define functioning_mode			(GPIOE_PDIR & 0x003C)>>2			// operating mode: from 1 to 2
 #define nb_echantillons_threshold 5
 
 
 #define CST_RECAL_T 200
-#define TAILLE_BANDE 3 //taille bande noir en pixel
+#define TAILLE_BANDE 3 //black lines size in pixel
 
 class Img_Proc{
 public:
@@ -39,7 +39,8 @@ public:
 	int BlackLineRight;					// position of the black line on the right side (127)
 	int BlackLineLeft;					// position of the black line on the left side
 	int number_edges;
-
+	int CUBE;
+	
 	void init(void);					//initializes the camera
 	void capture(void);					//retrieves data from the camera
 	void process(void);					//detects edges

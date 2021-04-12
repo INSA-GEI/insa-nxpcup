@@ -20,18 +20,66 @@
 #define MOVEMENT_CORR_THRESHOLD 6 		// correct the speed only when we are more than 1 cm/s off target speed
 #define MOVEMENT_CORR_KP 7.0			//1.0 P
 #define MOVEMENT_CORR_KI 10000.0		// I
-#define SPEED_LIMIT 6000 //9000				//	mm/s
-#define Te_s (float)1/6000 //sample time 6Khz handler rear motors 0.2ms
+#define SPEED_LIMIT 6000 				//max = 9000 in mm/s
+#define Te_s (float)1/6000 				//sample time 6Khz handler rear motors 0.2ms
 
 class Movement{
 public:
+	
+	/**
+	  * @brief  constructor Movement object
+	  * @param  none
+	  * @retval none
+	  */
 	Movement();
+	
+	
+	/**
+	  * @brief  Initialisation 
+	  * @param  none
+	  * @retval none
+	  */
 	void init(void);
+	
+	
+	/**
+	  * @brief  Set car speed and wheels angle
+	  * @param  int speed = car speed to set
+	  * 		float angle = wheels angle to set
+	  * @retval none
+	  */
 	void set(int speed, float angle);
+	
+	/**
+	  * @brief  Set car speed 
+	  * @param  int speed = car speed to set
+	  * @retval none
+	  */
 	void setSpeed(int speed);
+	
+	/**
+	  * @brief  Set each wheel speed 
+	  * @param  int v = car speed
+	  * 		float delta = speed delta between right and left wheel
+	  * @retval none
+	  */
 	void setDiff(int speed,float delta);
+	
+	/**
+	  * @brief  Stop the car
+	  * @param  none
+	  * @retval none
+	  */
 	void stop(void);
+	
+	/**
+	  * @brief  motor PI controller 
+	  * @param 	none
+	  * @retval none
+	  */
 	void regulate(void);
+	
+	
 	Encoder encoder; // needed in public for interrupt access
 	
 	//in public for testing purposes only
@@ -49,7 +97,19 @@ public:
 	int v_R;
 	
 private:
+	
+	/**
+	  * @brief 	Apply speed calculated in previous functions to motors
+	  * @param 	none
+	  * @retval none
+	  */
 	void applySpeeds(void);
+	
+	/**
+	  * @brief  Set wheels angle
+	  * @param  float angle
+	  * @retval none
+	  */
 	void setAngle(float angle);
 	
 };
