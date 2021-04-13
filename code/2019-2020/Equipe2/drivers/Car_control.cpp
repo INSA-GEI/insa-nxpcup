@@ -40,7 +40,7 @@ void Car::init(void){
 	servo_angle=0;
 	enable_ampli_turn = false;
 	//######## SLOW MODE + Obstacle avoidance mode ########//
-	if ((functioning_mode == 0xA) || (functioning_mode == 0xD)) {
+	if (functioning_mode == 0xA) {
 		// Speed
 			Vslow = 500;	// 1000 Original
 			Vhigh = 2000;	// 2500 Original
@@ -109,18 +109,18 @@ void Car::init(void){
 	//######## OBSTACLE AVOIDANCE MODE ########//
 	if (functioning_mode == 0xD) {
 		// Speed
-			Vslow = 500;	// 1000 Original
-			Vhigh = 1000;	// 2500 Original
+			Vslow = 300;	// 1000 Original
+			Vhigh = 500;	// 2500 Original
 			T_BRAKE = 200; 			//Threshold before braking - 200 Original
 			INCREMENT_SPEED = 20; 	//Constante d'augmentation de la vitesse (évite le patinage) - 40 Original
 			DIV_1_SPEED = 3; 		//Divise la consigne de vitesse pour éviter le patinage sur la premiere moitié Vmes=[Vslow,Vhigh/2]	- 3 Original
-			TURN_SPEED = 700; 		//Vitesse seuil dans les virages - 1300 Original
+			TURN_SPEED = 400; 		//Vitesse seuil dans les virages - 1300 Original
 
 		//  Wheels
-			AMPLIFIE_TURN_1 = 1.0;	// Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
-			AMPLIFIE_TURN_2 = 2.0;	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
+			AMPLIFIE_TURN_1 = 0.05;	// Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
+			AMPLIFIE_TURN_2 = 3.0;	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
 			MAX_ANGLE = 20.0;		// 30 Original
-			MAX_CAM_DIFF = 20;		// 20 Original
+			MAX_CAM_DIFF = 40;		// 20 Original
 		
 		// PID Gains
 			Kp = 1.2;
