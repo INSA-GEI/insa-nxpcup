@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name Carte_MCU)(type Legacy)(uri ${KIPRJMOD}/Carte_MCU.lib)(options "")(descr ""))
+)
