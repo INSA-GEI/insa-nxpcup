@@ -45,17 +45,56 @@
 
 #define LPTMR_ARR 65535
 
-
+/**
+  * @brief  Initialisation of all pins related to debug (LEDs, Cam, rotary switch, display, UART)
+  * @param  None
+  * @retval None
+  */
 void debug_init();
+
+/**
+  * @brief  Initialisation of all clocks related to debug (LEDs, Cam, rotary switch, display, UART)
+  * @param  None
+  * @retval None
+  */
 void clock_init();
 
 //input stuff
-unsigned char debug_getRotarySW();
+
+/**
+  * @brief  Get rotary switch value
+  * @param  None
+  * @retval unsigned char = rotary switch value
+  */
+unsigned char debug_getRotarySW(void);
+
+/**
+  * @brief  Get switch 1 value
+  * @param  None
+  * @retval unsigned char = switch 1 value
+  */
 unsigned char debug_getUserSW1(void);
+
+/**
+  * @brief  Get switch 2 value
+  * @param  None
+  * @retval unsigned char = switch 2 value
+  */
 unsigned char debug_getUserSW2(void);
 
 //7segment dsplay stuff
+/**
+  * @brief  Send raw data to display
+  * @param  uint8_t data = raw data to send
+  * @retval none
+  */
 void debug_displaySendRaw(uint8_t data);
+
+/**
+  * @brief  Send number data to display
+  * @param  int8_t nb = number data to send
+  * @retval none
+  */
 void debug_displaySendNb(int8_t nb);
 
 
@@ -75,19 +114,84 @@ typedef struct {
 } RingBuffer;
 
 
+
+/**
+  * @brief  Interrupt handler of UART0
+  * @param  none
+  * @retval none
+  */
+void UART0_IRQHandler() __attribute__((interrupt("IRQ")));
+
+/**
+  * @brief  Send string using UART 
+  * @param  const char *p = string to write 
+  * 		int len = string's length 
+  * @retval none
+  */
+int uart_write(const char *p, int len);
+
+/**
+  * @brief  Send int using UART 
+  * @param  int n = int to send 
+  * @retval none
+  */
+void uart_writeNb(int n);
+
+/**
+  * @brief  Send string error using UART disabling interrupt
+  * @param  const char *p = string to write 
+  * 		int len = string's length 
+  * @retval none
+  */
+int uart_write_err(const char *p, int len);
+
+/**
+  * @brief Receive string using UART
+  * @param  const char *p = string received
+  * 		int len = string's length 
+  * @retval int = lenght of string received
+  */
+int uart_read(char *p, int len);
+
+/**
+  * @brief UART initialisation
+  * @param  int baudrate = baudrate of UART 
+  * @retval none
+  */
+void uart_init(int baudrate);
+
+/**
+  * @brief 	Reset buffers
+  * @param  RingBuffer *buf = buffer's pointer to reset 
+  * 		int size = size of the buffer 
+  * @retval none
+  */
 void buf_reset(RingBuffer *buf, int size);
+
+/**
+  * @brief 	Get buffer's lenght
+  * @param  const RingBuffer *buf = buffer's pointer 
+  * @retval int = lenght of the buffer  
+  */
 int buf_len(const RingBuffer *buf);
+
+
+/**
+  * @brief 	Check if the buffer is full
+  * @param  const RingBuffer *buf = buffer's pointer 
+  * @retval int = buffer full -> 1 / buffer not full -> 0
+  */
 int buf_isfull(const RingBuffer *buf);
+
+/**
+  * @brief 	Check if the buffer is empty 
+  * @param  const RingBuffer *buf = buffer's pointer 
+  * @retval int = buffer empty -> 1 / buffer not empty -> 0
+  */
+
 int buf_isempty(const RingBuffer *buf);
 uint8_t buf_get_byte(RingBuffer *buf);
 void buf_put_byte(RingBuffer *buf, uint8_t val);
-
-void UART0_IRQHandler() __attribute__((interrupt("IRQ")));
-int uart_write(const char *p, int len);
-void uart_writeNb(int n);
-int uart_write_err(const char *p, int len);
-int uart_read(char *p, int len);
-void uart_init(int baudrate);
 
 
 /************* Low Power Timer (LPTMR) **************/

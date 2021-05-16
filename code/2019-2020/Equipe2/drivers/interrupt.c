@@ -3,6 +3,11 @@
 int reload = 0;
 const int max_reload = 0xFFFFFA;
 
+/**
+  * @brief 	Configure systick interrupt with a chosen frequency
+  * @param 	float Te = period of the interruption 
+  * @retval none
+  */
 void Timer_init(float Te) {
 	reload = ((int) (Te*F_CPU))-1;
 	if (reload > max_reload) reload = max_reload;

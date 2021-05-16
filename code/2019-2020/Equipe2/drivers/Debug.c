@@ -12,6 +12,11 @@
 //											0			1			2			3			4			5			6			7			8			9			A			B			C			D			E			F			-
 const unsigned int debugDisplayNbMap[17]={0b11111100, 0b01100000, 0b11011010, 0b11110010, 0b01100110, 0b10110110, 0b10111110, 0b11100000, 0b11111110, 0b11110110, 0b11101110, 0b00111110, 0b10011100, 0b01111010, 0b10011110, 0b10001110 ,0b00000010};
 
+/**
+  * @brief  Initialisation of all pins related to debug (LEDs, Cam, rotary switch, display, UART)
+  * @param  None
+  * @retval None
+  */
 void debug_init(){
 	
 	clock_init();
@@ -22,15 +27,16 @@ void debug_init(){
 	PORTB_PCR18 = PORT_PCR_MUX(1);
 	GPIOB_PSOR = DEBUG_RED_Pin;
 	GPIOB_PDDR |= DEBUG_RED_Pin;
+	
 	//Initialize the Green LED (PTB19)
 	PORTB_PCR19 = PORT_PCR_MUX(1);
 	GPIOB_PSOR = DEBUG_GREEN_Pin;
 	GPIOB_PDDR |= DEBUG_GREEN_Pin;
+	
 	//Initialize the Blue LED (PTD1) //WARNING : BLUE LED attached to same pin as SW_USER2
 	PORTD_PCR1 = PORT_PCR_MUX(1);
 	GPIOD_PSOR = DEBUG_BLUE_Pin;
 	GPIOD_PDDR |= DEBUG_BLUE_Pin;
-
 
 	//PTD1 (SW_USER_2) & PTD3 (SW_USER_1)//WARNING : BLUE LED attached to same pin as SW_USER2
 	PORTD_PCR1 = PORT_PCR_MUX(1);
@@ -70,17 +76,102 @@ void debug_init(){
 	ADC_init();
 	BatteryVoltage();
 }
+
+/**
+  * @brief  Initialisation of all clocks related to debug (LEDs, Cam, rotary switch, display, UART)
+  * @param  None
+  * @retval None
+  */
+void clock_init(){
+	// Enable clock gate to Port A module to enable pin routing (PORTA=1)
+	SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK;
+
+	// Divide-by-2 for clock 1 and clock 4 (OUTDIV1=1, OUTDIV4=1)   
+	SIM_CLKDIV1 = SIM_CLKDIV1_OUTDIV1(0x01) | SIM_CLKDIV1_OUTDIV4(0x01);
+
+	// System oscillator drives 32 kHz clock for various peripherals (OSC32KSEL=0)
+	SIM_SOPT1 &= ~SIM_SOPT1_OSC32KSEL(0x03);
+
+	// Select PLL as a clock source for various peripherals (PLLFLLSEL=1)
+	// Clock source for TPM counter clock is MCGFLLCLK or MCGPLLCLK/2
+	SIM_SOPT2 |= SIM_SOPT2_PLLFLLSEL_MASK;
+	SIM_SOPT2 = (SIM_SOPT2 & ~(SIM_SOPT2_TPMSRC(0x02))) | SIM_SOPT2_TPMSRC(0x01);
+
+	// PORTA_PCR18: ISF=0,MUX=0 
+	// PORTA_PCR19: ISF=0,MUX=0 *           
+	PORTA_PCR18 &= ~((PORT_PCR_ISF_MASK | PORT_PCR_MUX(0x07)));
+	PORTA_PCR19 &= ~((PORT_PCR_ISF_MASK | PORT_PCR_MUX(0x07)));                                                   
+	// Switch to FBE Mode 
+
+	// OSC0_CR: ERCLKEN=0,??=0,EREFSTEN=0,??=0,SC2P=0,SC4P=0,SC8P=0,SC16P=0 
+	OSC0_CR = 0;                                                   
+	// MCG_C2: LOCRE0=0,??=0,RANGE0=2,HGO0=0,EREFS0=1,LP=0,IRCS=0 
+	MCG_C2 = (MCG_C2_RANGE0(0x02) | MCG_C2_EREFS0_MASK);
+	// MCG_C1: CLKS=2,FRDIV=3,IREFS=0,IRCLKEN=0,IREFSTEN=0 
+	MCG_C1 = (MCG_C1_CLKS(0x02) | MCG_C1_FRDIV(0x03));
+	// MCG_C4: DMX32=0,DRST_DRS=0 
+	MCG_C4 &= ~((MCG_C4_DMX32_MASK | MCG_C4_DRST_DRS(0x03)));
+	// MCG_C5: ??=0,PLLCLKEN0=0,PLLSTEN0=0,PRDIV0=1 
+	MCG_C5 = MCG_C5_PRDIV0(0x01);                                                   
+	// MCG_C6: LOLIE0=0,PLLS=0,CME0=0,VDIV0=0 
+	MCG_C6 = 0;
+
+	// Check that the source of the FLL reference clock is 
+	// the external reference clock.
+	while((MCG_S & MCG_S_IREFST_MASK) != 0)
+		;
+
+	while((MCG_S & MCG_S_CLKST_MASK) != 8)      // Wait until external reference
+		;
+
+	// Switch to PBE mode
+	//   Select PLL as MCG source (PLLS=1)
+	MCG_C6 = MCG_C6_PLLS_MASK;
+	while((MCG_S & MCG_S_LOCK0_MASK) == 0)      // Wait until PLL locked
+		;
+
+	// Switch to PEE mode
+	//    Select PLL output (CLKS=0)
+	//    FLL external reference divider (FRDIV=3)
+	//    External reference clock for FLL (IREFS=0)
+	MCG_C1 = MCG_C1_FRDIV(0x03);
+	while((MCG_S & MCG_S_CLKST_MASK) != 0x0CU);  // Wait until PLL output
+}
+
+
+/**
+  * @brief  Get rotary switch value
+  * @param  None
+  * @retval unsigned char = rotary switch value
+  */
 unsigned char debug_getRotarySW(){
 	//return (GPIOE_PDIR & 0x003C)>>2;
 	return GPIOE_PDIR;
 }
+
+/**
+  * @brief  Get switch 1 value
+  * @param  None
+  * @retval unsigned char = switch 1 value
+  */
 unsigned char debug_getUserSW1(void){
 	return (GPIOD_PDIR & (1<<3))? 0 : 1;
 }
+
+/**
+  * @brief  Get switch 2 value
+  * @param  None
+  * @retval unsigned char = switch 2 value
+  */
 unsigned char debug_getUserSW2(void){
 	return (GPIOD_PDIR & (1<<1))? 0 : 1;
 }
 
+/**
+  * @brief  Send raw data to display
+  * @param  uint8_t data = raw data to send
+  * @retval none
+  */
 void debug_displaySendRaw(uint8_t data){
 	DISP_LATCH_OFF;
 	for (int i=0; i<8;i++){
@@ -94,6 +185,12 @@ void debug_displaySendRaw(uint8_t data){
 	}
 	DISP_LATCH_ON;
 }
+
+/**
+  * @brief  Send number data to display
+  * @param  int8_t nb = number data to send
+  * @retval none
+  */
 void debug_displaySendNb(int8_t nb){
 	if(nb<0){
 		nb=-nb;
@@ -111,6 +208,12 @@ static uint8_t _rx_buffer[sizeof(RingBuffer) + BUFLEN] __attribute__ ((aligned(4
 static RingBuffer *const tx_buffer = (RingBuffer *) &_tx_buffer;
 static RingBuffer *const rx_buffer = (RingBuffer *) &_rx_buffer;
 
+
+/**
+  * @brief  Interrupt handler of UART0
+  * @param  none
+  * @retval none
+  */
 void UART0_IRQHandler(){
 	int status = UART0_S1;
 
@@ -127,6 +230,12 @@ void UART0_IRQHandler(){
 	}
 }
 
+/**
+  * @brief  Send string using UART 
+  * @param  const char *p = string to write 
+  * 		int len = string's length 
+  * @retval none
+  */
 int uart_write(const char *p, int len){
 	for(int i=0; i<len; i++) {
 		while(buf_isfull(tx_buffer));
@@ -135,6 +244,12 @@ int uart_write(const char *p, int len){
 	}
 	return len;
 }
+
+/**
+  * @brief  Send int using UART 
+  * @param  int n = int to send 
+  * @retval none
+  */
 void uart_writeNb(int n){
 	int d=1;
 	if(n<0){
@@ -149,6 +264,13 @@ void uart_writeNb(int n){
 		d/=10;
 	}
 }
+
+/**
+  * @brief  Send string error using UART disabling interrupt
+  * @param  const char *p = string to write 
+  * 		int len = string's length 
+  * @retval none
+  */
 int uart_write_err(const char *p, int len){
 	int i;
 	__disable_irq();
@@ -160,6 +282,12 @@ int uart_write_err(const char *p, int len){
 	return len;
 }
 
+/**
+  * @brief Receive string using UART
+  * @param  const char *p = string received
+  * 		int len = string's length 
+  * @retval int = lenght of string received
+  */
 int uart_read(char *p, int len){
 	int i = 0;
 	while((i<len) && !buf_isempty(rx_buffer)){
@@ -170,6 +298,11 @@ int uart_read(char *p, int len){
 	return i;
 }
 
+/**
+  * @brief UART initialisation
+  * @param  int baudrate = baudrate of UART 
+  * @retval none
+  */
 void uart_init(int baudrate){
 
 #ifdef UARTXBEE
@@ -206,30 +339,64 @@ void uart_init(int baudrate){
 	enable_irq(INT_UART0);
 }
 
+/**
+  * @brief 	Reset buffers
+  * @param  RingBuffer *buf = buffer's pointer to reset 
+  * 		int size = size of the buffer 
+  * @retval none
+  */
 void buf_reset(RingBuffer *buf, int size){
 	buf->head = buf->tail = 0;
 	buf->size = size;
 }
 
+/**
+  * @brief 	Get buffer's lenght
+  * @param  const RingBuffer *buf = buffer's pointer 
+  * @retval int = lenght of the buffer  
+  */
 int buf_len(const RingBuffer *buf){
 	int len = buf->tail - buf->head;
 	if (len < 0)len += buf->size;
 	return len;
 }
 
+/**
+  * @brief 	Check if the buffer is full
+  * @param  const RingBuffer *buf = buffer's pointer 
+  * @retval int = buffer full -> 1 / buffer not full -> 0
+  */
 int buf_isfull(const RingBuffer *buf){
 	return buf_len(buf) == (buf->size-1);
 }
 
+/**
+  * @brief 	Check if the buffer is empty 
+  * @param  const RingBuffer *buf = buffer's pointer 
+  * @retval int = buffer empty -> 1 / buffer not empty -> 0
+  */
 int buf_isempty(const RingBuffer *buf){
 	return buf->head == buf->tail;
 }
 
+/**
+  * @brief 	Go forward in the buffer
+  * @param 	uint16_t i = number of iterations we want to go forward
+  * 		uint16_t size = size of the buffer 
+  * @retval int = number of iterations
+  */
 int advance(uint16_t i, uint16_t size){
 	if (++i >= size)i=0;
 	return i;
 }
 
+
+/**
+  * @brief 	Get head byte 
+  * @param 	uint16_t i = number of iterations we want to go forward
+  * 		uint16_t size = size of the buffer 
+  * @retval int = number of iterations
+//  */
 uint8_t buf_get_byte(RingBuffer *buf){
 	const uint8_t item = buf->data[buf->head];
 	buf->head = advance(buf->head, buf->size);
@@ -311,59 +478,3 @@ void BatteryVoltage(void) {
 
 
 
-
-void clock_init(){
-	// Enable clock gate to Port A module to enable pin routing (PORTA=1)
-	SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK;
-
-	// Divide-by-2 for clock 1 and clock 4 (OUTDIV1=1, OUTDIV4=1)   
-	SIM_CLKDIV1 = SIM_CLKDIV1_OUTDIV1(0x01) | SIM_CLKDIV1_OUTDIV4(0x01);
-
-	// System oscillator drives 32 kHz clock for various peripherals (OSC32KSEL=0)
-	SIM_SOPT1 &= ~SIM_SOPT1_OSC32KSEL(0x03);
-
-	// Select PLL as a clock source for various peripherals (PLLFLLSEL=1)
-	// Clock source for TPM counter clock is MCGFLLCLK or MCGPLLCLK/2
-	SIM_SOPT2 |= SIM_SOPT2_PLLFLLSEL_MASK;
-	SIM_SOPT2 = (SIM_SOPT2 & ~(SIM_SOPT2_TPMSRC(0x02))) | SIM_SOPT2_TPMSRC(0x01);
-
-	// PORTA_PCR18: ISF=0,MUX=0 
-	// PORTA_PCR19: ISF=0,MUX=0 *           
-	PORTA_PCR18 &= ~((PORT_PCR_ISF_MASK | PORT_PCR_MUX(0x07)));
-	PORTA_PCR19 &= ~((PORT_PCR_ISF_MASK | PORT_PCR_MUX(0x07)));                                                   
-	// Switch to FBE Mode 
-
-	// OSC0_CR: ERCLKEN=0,??=0,EREFSTEN=0,??=0,SC2P=0,SC4P=0,SC8P=0,SC16P=0 
-	OSC0_CR = 0;                                                   
-	// MCG_C2: LOCRE0=0,??=0,RANGE0=2,HGO0=0,EREFS0=1,LP=0,IRCS=0 
-	MCG_C2 = (MCG_C2_RANGE0(0x02) | MCG_C2_EREFS0_MASK);
-	// MCG_C1: CLKS=2,FRDIV=3,IREFS=0,IRCLKEN=0,IREFSTEN=0 
-	MCG_C1 = (MCG_C1_CLKS(0x02) | MCG_C1_FRDIV(0x03));
-	// MCG_C4: DMX32=0,DRST_DRS=0 
-	MCG_C4 &= ~((MCG_C4_DMX32_MASK | MCG_C4_DRST_DRS(0x03)));
-	// MCG_C5: ??=0,PLLCLKEN0=0,PLLSTEN0=0,PRDIV0=1 
-	MCG_C5 = MCG_C5_PRDIV0(0x01);                                                   
-	// MCG_C6: LOLIE0=0,PLLS=0,CME0=0,VDIV0=0 
-	MCG_C6 = 0;
-
-	// Check that the source of the FLL reference clock is 
-	// the external reference clock.
-	while((MCG_S & MCG_S_IREFST_MASK) != 0)
-		;
-
-	while((MCG_S & MCG_S_CLKST_MASK) != 8)      // Wait until external reference
-		;
-
-	// Switch to PBE mode
-	//   Select PLL as MCG source (PLLS=1)
-	MCG_C6 = MCG_C6_PLLS_MASK;
-	while((MCG_S & MCG_S_LOCK0_MASK) == 0)      // Wait until PLL locked
-		;
-
-	// Switch to PEE mode
-	//    Select PLL output (CLKS=0)
-	//    FLL external reference divider (FRDIV=3)
-	//    External reference clock for FLL (IREFS=0)
-	MCG_C1 = MCG_C1_FRDIV(0x03);
-	while((MCG_S & MCG_S_CLKST_MASK) != 0x0CU);  // Wait until PLL output
-}

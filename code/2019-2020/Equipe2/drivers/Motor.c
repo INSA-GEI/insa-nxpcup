@@ -7,7 +7,11 @@
 
 #include "Motor.h"
 
-
+/**
+  * @brief 	Motor initialisation  
+  * @param 	none
+  * @retval none
+  */
 void motor_init(void){
 
 	SIM_SCGC6 |= SIM_SCGC6_TPM0_MASK | SIM_SCGC6_TPM1_MASK | SIM_SCGC6_TPM2_MASK;

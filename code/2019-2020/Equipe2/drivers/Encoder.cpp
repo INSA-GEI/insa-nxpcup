@@ -9,7 +9,11 @@
 #include "Encoder.h"
 
 int state=0;
-
+/**
+  * @brief 	Encoder object constructor
+  * @param 	none
+  * @retval none
+  */
 Encoder::Encoder(void){
     prev_ccr1=0;
     prev_ccr2=0;
@@ -18,6 +22,12 @@ Encoder::Encoder(void){
     OVF_cnt1=0;
     OVF_cnt2=0;
 }
+
+/**
+  * @brief 	Initialisation of both encoder and interruptions 
+  * @param 	none
+  * @retval none
+  */
 void Encoder::init(void){
 	SIM_SCGC5 = SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK | SIM_SCGC5_PORTD_MASK; //Enable the clock of PORTA, PORTB, PORTD
 	SIM_SCGC6 |= SIM_SCGC6_TPM2_MASK; //Enable the clock of TPM2 
@@ -47,17 +57,31 @@ void Encoder::init(void){
 	
 }
 
+/**
+  * @brief 	Get left wheel speed 
+  * @param 	none
+  * @retval int : Left wheel speed
+  */
 int Encoder::getLeftSpeed(void){
 	if(delta1>0)return ENCODER_CAL_SPEED/delta1;
 	return -1;
 }
 
+/**
+  * @brief 	Get right wheel speed 
+  * @param 	none
+  * @retval int : right wheel speed
+  */
 int Encoder::getRightSpeed(void){
 	if(delta2>0)return ENCODER_CAL_SPEED/delta2;
 	return -1;
 }
 
-
+/**
+  * @brief 	Encoder interrupt handler 
+  * @param 	none
+  * @retval none
+  */
 void Encoder::interruptHandler(void){
 	
 	if ((TPM2_SC & TPM_SC_TOF_MASK)) {//Clear the bit flag of the overflow interrupt FTM2

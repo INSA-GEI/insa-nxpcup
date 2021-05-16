@@ -45,13 +45,13 @@ void Car::init(void){
 			Vslow = 500;	// 1000 Original
 			Vhigh = 2000;	// 2500 Original
 			T_BRAKE = 200; 			//Threshold before braking - 200 Original
-			INCREMENT_SPEED = 40; 	//Constante d'augmentation de la vitesse (évite le patinage) - 40 Original
-			DIV_1_SPEED = 3; 		//Divise la consigne de vitesse pour éviter le patinage sur la premiere moitié Vmes=[Vslow,Vhigh/2]	- 3 Original
-			TURN_SPEED = 1000; 		//Vitesse seuil dans les virages - 1300 Original
+			INCREMENT_SPEED = 40; 	//Speed increase constant (avoid car sinning) - 40 Original
+			DIV_1_SPEED = 3; 		//Divided speed control to avoid car spinning on first half of Vmes=[Vslow,Vhigh/2]	- 3 Original
+			TURN_SPEED = 1000; 		//Speed threshold in turns - 1300 Original
 
 		//  Wheels
-			AMPLIFIE_TURN_1 = 1.0;	// Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
-			AMPLIFIE_TURN_2 = 4.0;	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
+			AMPLIFIE_TURN_1 = 1.0;	// Constant to increase wheels angles in wide turns (+ or - cam.diff)
+			AMPLIFIE_TURN_2 = 4.0;	// Constant to increase wheels angles in tight turns (+ or - cam.diff) - 5 Original
 			MAX_ANGLE = 30.0;		// 30 Original
 			MAX_CAM_DIFF = 20;		// 20 Original
 		
@@ -68,13 +68,13 @@ void Car::init(void){
 			Vslow = 1000;	// 1000 Original
 			Vhigh = 2500;	// 2500 Original
 			T_BRAKE = 200; 			//Threshold before braking - 200 Original
-			INCREMENT_SPEED = 40; 	//Constante d'augmentation de la vitesse (évite le patinage) - 40 Original
-			DIV_1_SPEED = 3; 		//Divise la consigne de vitesse pour éviter le patinage sur la premiere moitié Vmes=[Vslow,Vhigh/2]	- 3 Original
-			TURN_SPEED = 1400; 		//Vitesse seuil dans les virages - 1300 Original
+			INCREMENT_SPEED = 40; 	//Speed increase constant (avoid car sinning) - 40 Original - 40 Original
+			DIV_1_SPEED = 3; 		//Divided speed control to avoid car spinning on first half of Vmes = [Vslow,Vhigh/2]- 3 Original
+			TURN_SPEED = 1400; 		//Speed threshold in turns - 1300 Original
 
 		//  Wheels
-			AMPLIFIE_TURN_1 = 2.0;	// Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
-			AMPLIFIE_TURN_2 = 5.0;	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
+			AMPLIFIE_TURN_1 = 2.0;	// Constant to increase wheels angles in wide turns (+ or - cam.diff)
+			AMPLIFIE_TURN_2 = 5.0;	// Constant to increase wheels angles in tight turns (+ or - cam.diff) - 5 Original
 			MAX_ANGLE = 30.0;		// 30 Original
 			MAX_CAM_DIFF = 20;		// 20 Original
 		
@@ -90,13 +90,13 @@ void Car::init(void){
 			Vslow = 1000;	// 1000 Original
 			Vhigh = 4000;	// 2500 Original
 			T_BRAKE = 200; 			//Threshold before braking - 200 Original
-			INCREMENT_SPEED = 80; 	//Constante d'augmentation de la vitesse (évite le patinage) - 40 Original
-			DIV_1_SPEED = 4; 		//Divise la consigne de vitesse pour éviter le patinage sur la premiere moitié Vmes=[Vslow,Vhigh/2]	- 3 Original
-			TURN_SPEED = 1400; 		//Vitesse seuil dans les virages - 1300 Original
+			INCREMENT_SPEED = 80; 	//Speed increase constant (avoid car sinning) - 40 Original
+			DIV_1_SPEED = 4; 		//Divided speed control to avoid car spinning on first half of Vmes=[Vslow,Vhigh/2]- 3 Original
+			TURN_SPEED = 1400; 		//Speed threshold in turns - 1300 Original
 
 		//  Wheels
-			AMPLIFIE_TURN_1 = 5.0;	// Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
-			AMPLIFIE_TURN_2 = 10.0;	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
+			AMPLIFIE_TURN_1 = 5.0;	// Constant to increase wheels angles in wide turns (+ or - cam.diff)
+			AMPLIFIE_TURN_2 = 10.0;	// Constant to increase wheels angles in tight turns (+ or - cam.diff) - 5 Original
 			MAX_ANGLE = 35.0;		// 30 Original
 			MAX_CAM_DIFF = 20;		// 20 Original
 		
@@ -112,13 +112,14 @@ void Car::init(void){
 			Vslow = 500;	// 1000 Original
 			Vhigh = 1000;	// 2500 Original
 			T_BRAKE = 200; 			//Threshold before braking - 200 Original
-			INCREMENT_SPEED = 20; 	//Constante d'augmentation de la vitesse (évite le patinage) - 40 Original
-			DIV_1_SPEED = 3; 		//Divise la consigne de vitesse pour éviter le patinage sur la premiere moitié Vmes=[Vslow,Vhigh/2]	- 3 Original
-			TURN_SPEED = 700; 		//Vitesse seuil dans les virages - 1300 Original
+			INCREMENT_SPEED = 20; 	//Speed increase constant (avoid car sinning) - 40 Original
+			DIV_1_SPEED = 3; 		//Divided speed control to avoid car spinning on first half of Vmes=[Vslow,Vhigh/2]- 3 Original
+			TURN_SPEED = 700; 		//Speed threshold in turns - 1300 Original
+
 
 		//  Wheels
-			AMPLIFIE_TURN_1 = 1.0;	// Constante pour amplifier les virages tranquilles (s'ajout ou se soustrait à cam.diff)
-			AMPLIFIE_TURN_2 = 2.0;	// Constante pour amplifier les virages serrés (s'ajout ou se soustrait à cam.diff) - 5 Original
+			AMPLIFIE_TURN_1 = 1.0;	// Constant to increase wheels angles in wide turns (+ or - cam.diff)
+			AMPLIFIE_TURN_2 = 2.0;	// Constant to increase wheels angles in tight turns (+ or - cam.diff) - 5 Original
 			MAX_ANGLE = 20.0;		// 30 Original
 			MAX_CAM_DIFF = 20;		// 20 Original
 		
@@ -197,15 +198,15 @@ void Car::Car_handler(void){
 		c=0;		
 	}
 	//
-	Process_data();//Acquisition des données
-	//On regarde si on est en ligne droite ou non
+	Process_data(); //data acquisition 
+	// detect if we are in strait line or in turn 
 	Detect_state();
 	if (!(stop)){
-		//On met à jour les param de la voiture
+		//set car param
 		Caculate_angle_wheel();	
-		//We calculate the speed
+		//calculate the speed
 		Set_speed();
-		//Calcul du diff en fonction
+		//calculate the differential between two wheels
 		Set_diff_speed();
 	}else{
 		//FLAG_SEND_IMG=true;
@@ -362,7 +363,7 @@ void Car::Caculate_angle_wheel(void){
 		}
 		old_servo_angle=servo_angle;
 
-		// PID -> Consigne de 0 (rester au milieu)
+		// PID -> Control = 0 (stay in the middle)
 		servo_angle = PIDController_update(0, cam.diff);
 
 		// Saturation
@@ -395,7 +396,7 @@ void Car::Calculate_speed(void){
 		Vset=-(abs(Vset-V_old))-Vslow;
 	}else if (Vset>V_old+INCREMENT_SPEED){
 		if ((V_old<(Vhigh+Vset)/2)){
-			Vset=V_old+(int)(INCREMENT_SPEED/DIV_1_SPEED); //Temps de montée max 100ms//évite de glisser
+			Vset=V_old+(int)(INCREMENT_SPEED/DIV_1_SPEED); // Max rise time = 100ms --> avoid car spinning
 		}else{
 			Vset=V_old+INCREMENT_SPEED;
 		}
@@ -443,7 +444,6 @@ void Car::Set_diff_speed(void){
 	//Calcul du diff
 	//We calculate the delta_speed of the rear wheels
 	//delta_speed=servo_angle*MOVEMENT_ENTRAXE_COEFF*Vset;
-	//##################### Changement ############
 	if (state_turn_car==0){
 		//Strait line
 		delta_speed=0;

@@ -20,11 +20,21 @@
 #define SERVO_HARD_LEFT 8310		// Original 8310
 #define SERVO_HARD_RIGHT 6310		// Original 6310
 
-#define SERVO_MAX_LEFT_ANGLE -22.0 //Avant -22
-#define SERVO_MAX_RIGHT_ANGLE 29.0 //Avant 29
-//Configuration of the pins/clock
+#define SERVO_MAX_LEFT_ANGLE -22.0 //default -22
+#define SERVO_MAX_RIGHT_ANGLE 29.0 //default 29
+
+/**
+  * @brief 	Servo-motor initialisation (configuration of the pins/clock)
+  * @param 	none
+  * @retval none
+  */
 void servo_init(void);
 
+/**
+  * @brief 	Set servo-motor position
+  * @param 	none
+  * @retval none
+  */
 void servo_setPos(int angle);
 
 

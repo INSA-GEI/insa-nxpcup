@@ -32,15 +32,43 @@
 
 class Encoder{
 public:
+	/**
+	  * @brief 	Encoder object constructor
+	  * @param 	none
+	  * @retval none
+	  */
 	Encoder(void);
-	/* This function initialises both encoders*/
+	/**
+	  * @brief 	Initialisation of both encoder and interruptions 
+	  * @param 	none
+	  * @retval none
+	  */
 	void init(void);
+	
+	/**
+	  * @brief 	Get left wheel speed 
+	  * @param 	none
+	  * @retval int : Left wheel speed
+	  */
 	int getLeftSpeed(void);//in cm/s
+	
+	/**
+	  * @brief 	Get right wheel speed 
+	  * @param 	none
+	  * @retval int : right wheel speed
+	  */
 	int getRightSpeed(void);//in cm/s
+	
+	/**
+	  * @brief 	Encoder interrupt handler 
+	  * @param 	none
+	  * @retval none
+	  */
 	void interruptHandler(void);
+	
 private :
-	int prev_ccr1;//Left ?
-	int prev_ccr2;//Right ?
+	int prev_ccr1;
+	int prev_ccr2;
 	int delta1;
 	int delta2;
 	int OVF_cnt1;

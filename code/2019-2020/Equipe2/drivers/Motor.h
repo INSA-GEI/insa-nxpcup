@@ -33,5 +33,11 @@
 #define MOTOR_LEFT_BSPEED(s) (TPM0_C5V=(s))
 #define MOTOR_RIGHT_BSPEED(s) (TPM0_C1V=(s))
 
+/**
+  * @brief 	Motor initialisation  
+  * @param 	none
+  * @retval none
+  */
 void motor_init(void);
+
 #endif /* MOTOR_H_ */

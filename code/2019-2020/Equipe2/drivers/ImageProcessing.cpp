@@ -1,6 +1,14 @@
 #include "ImageProcessing.h"
 #include "Debug.h"
 
+#define TIM_CaG_D 2*80
+#define TIM_CaG_G 100
+#define TIM_CaG_TD 40
+
+#define TIM_CaD_G 2*80
+#define TIM_CaD_D 100
+#define TIM_CaD_TD 40
+
 int i,j;
 int c_t=0;//counter for the threshold
 int CompareData_high=140;
@@ -11,9 +19,25 @@ int tab_threshold[nb_echantillons_threshold];
 int tab_threshold_count = 0;
 int data_max[100];
 int total_data_max = 0;
-int cubeagauche = 0;
-int cubeadroite = 0;
-int timer_cube_straight = 0;
+
+int cube_on_left = 0;
+int cube_on_right = 0;
+
+
+// detect cube position
+bool is_cube_on_right = false;
+bool is_cube_on_left = false;
+
+// Cube on the left -> routine to stay on the right
+int timer_cubeonleft_goright = TIM_CaG_D;
+int timer_cubeonleft_goleft = TIM_CaG_G;
+int timer_cubeonleft_gostraight = TIM_CaG_TD;
+
+// Cube on the right -> routine to stay on the left
+int timer_cubeonright_goleft = TIM_CaD_G;
+int timer_cubeonright_goright = TIM_CaD_D;
+int timer_cubeonright_gostraight = TIM_CaD_TD;
+
 
 
 /**
@@ -95,6 +119,30 @@ void Img_Proc::capture(void){
 		CAM_CLK_LOW;
 }
 
+/**
+  * @brief  CalculateBlackWhiteThreshold
+  * @param  None
+  * @retval None
+  */
+void Img_Proc::BlackWhiteThreshold(void) {
+	
+	// Calculate threshold between black and right : average
+	for(i=0;i<128;i++) threshold += ImageData[i];
+	threshold /= 128;
+	
+	// Calculate standard deviation
+	for(i=0;i<128;i++) ecart_type += (ImageData[i]-threshold)*(ImageData[i]-threshold);
+	ecart_type /= 128;
+	ecart_type = sqrt(ecart_type);
+	
+	// Calculate average of the threshold to attenuate big changes
+	tab_threshold[tab_threshold_count] = threshold;
+	for(i=0; i<nb_echantillons_threshold; i++) threshold += tab_threshold[i];
+	threshold /= nb_echantillons_threshold;
+	if (tab_threshold_count < nb_echantillons_threshold) tab_threshold_count++;
+	else tab_threshold_count = 0;
+}
+
 
 /**
   * @brief  Processes differents modes
@@ -117,28 +165,13 @@ void Img_Proc::process (void){
 	
 	//################### Modes A B C ###################//
 	if ((functioning_mode == 0xA) || (functioning_mode == 0xB) || (functioning_mode == 0xC)){
-		// Inversement de la camera
+		// reverse camera
 		for(i=0;i<128;i++) ImageDataBuff[i] = ImageData[i];
 		for(i=127; i>=0; i--) ImageData[i] = ImageDataBuff[127-i];
 		
-		// Calcul du threshold entre noir & blanc : moyennage
-		for(i=0;i<128;i++) threshold += ImageData[i];
-		threshold /= 128;
+		BlackWhiteThreshold();
 		
-		// Calcul de l'écart type
-		for(i=0;i<128;i++) ecart_type += (ImageData[i]-threshold)*(ImageData[i]-threshold);
-		ecart_type /= 128;
-		ecart_type = sqrt(ecart_type);
-		
-		// Calcul moyenne threshold pour attenuer les gros changements
-		tab_threshold[tab_threshold_count] = threshold;
-		for(i=0; i<nb_echantillons_threshold; i++) threshold += tab_threshold[i];
-		threshold /= nb_echantillons_threshold;
-		if (tab_threshold_count < nb_echantillons_threshold) tab_threshold_count++;
-		else tab_threshold_count = 0;
-		
-		
-		// Détection du noir et du blanc
+		// Black and White detection
 		for(i=0;i<=127;i++){
 			if (ImageData[i]>threshold){
 				ImageDataDifference[i]=1; //white
@@ -168,13 +201,13 @@ void Img_Proc::process (void){
 				i--;
 			}
 		}
-		//Nb transistions
+		//calculate number of edges
 		i=BlackLineLeft+1+TAILLE_BANDE;
 		bool ok=false;
 		while (i<BlackLineRight-1-TAILLE_BANDE){
 			if (ImageDataDifference[i-1]!=ImageDataDifference[i]){
 				ok=true;
-				//On regarde les TAILLE_BANDE prochains pixels 
+				//Look at TAILLE_BANDE of the next pixels 
 				for (int j=i;j<=(i+TAILLE_BANDE);j++){
 					if (ImageDataDifference[j]==1){
 						ok=false;
@@ -192,18 +225,6 @@ void Img_Proc::process (void){
 	
 	//################### Mode D ###################//
 	if (functioning_mode == 0xD){
-
-		// Première étape : détecter quand y'a le cube
-		// Deuxième étape : On teste d'abord avec le cube à droite UNIQUEMENT
-		//	On peut laisser le calcul du threshold normal (en prenant quand
-		// 	même les 100 premiers points) et dès que le cube est
-		//	détecté on stop le calcul du threshold, et on overwrite RoadMiddle
-		// 	pour faire en sorte que la voiture aille à gauche (RoadMiddle = 40)
-		//	On fait une variable booléenne cubeadroite qui sera à 1 si on détecte
-		//	le cube, et dans la fonction calculatemiddle si cubeadroite est à 1
-		//	on overwrite roadmiddle à 40 et basta, peu importe où le cube est,
-		//	on se met au bord de la ligne gauche pour éviter le cube même si il
-		
 		// Inversement de la camera
 		for(i=0;i<128;i++) ImageDataBuff[i] = ImageData[i];
 		for(i=127; i>=0; i--) ImageData[i] = ImageDataBuff[127-i];
@@ -241,14 +262,14 @@ void Img_Proc::process (void){
 		//-----Une fois la moyenne des valeurs max faite, on reprend l'algo normal-----//
 		else {
 			// Reset valeurs cubeadroite et cubeagauche
-			cubeadroite = 0;
-			cubeagauche = 0;
-			// Calcul valeur cubeadroite
-			for(i=0;i<64;i++) if (ImageData[i] > total_data_max+25) cubeagauche++;
-			for(i=64;i<128;i++) if (ImageData[i] > total_data_max+25) cubeadroite++;
+			cube_on_right = 0;
+			cube_on_left = 0;
+			// Calcul valeur cubeadroite et cubeagauche
+			for(i=0;i<64;i++) if (ImageData[i] > total_data_max+45) cube_on_left++;
+			for(i=64;i<128;i++) if (ImageData[i] > total_data_max+45) cube_on_right++;
 			
 			// Calcul du threshold entre noir & blanc : moyennage SEULEMENT SI PAS de CUBEADROITE ou de CUBEAGAUCHE
-			if ((cubeagauche == 0) && (cubeadroite == 0)) {
+			if ((cube_on_left == 0) && (cube_on_right == 0)) {
 				for(i=0;i<128;i++) threshold += ImageData[i];
 				threshold /= 128;
 
@@ -301,69 +322,6 @@ void Img_Proc::process (void){
 			}
 		}
 	}
-		
-	
-		
-//		
-//		
-//		int pos_cube_left = 0;
-//		int pos_cube_right = 127;
-//		
-//		int CUBE = 0;+
-//				
-//		
-//		// Algo de Raph'
-//		// Détection du noir et du blanc
-//		for(i=0;i<128;i++){
-//			if (  (ImageData[i]<threshold)){
-//				ImageDataDifference[i]=0; //Black
-//			}
-//			else{
-//				ImageDataDifference[i]=1;// White
-//			}
-//			// Cote gauche du cube detecté
-//			if ((calibration > 100) && (ImageData[i] > total_data_max)) {
-//				pos_cube_left = i;
-//				while ((ImageData[i] > total_data_max+20) && (i<128)) i++;
-//				pos_cube_right = i;
-//			}
-//		}
-//		
-//		
-//		BlackLineRight = 128;
-//		BlackLineLeft = -1;
-//		i=1;
-//		while (BlackLineLeft==-1 && i<127){
-//			if (ImageDataDifference[i]==1 && ImageDataDifference[i-1]==0){
-//				BlackLineLeft=i;
-//				number_edges++;
-//			}else{
-//				i++;
-//			}
-//		}
-//		i=126;
-//		while (BlackLineRight==128 && (i>0 && i>BlackLineLeft)){
-//			if (ImageDataDifference[i]==1 && ImageDataDifference[i+1]==0){
-//				BlackLineRight=i;
-//				number_edges++;
-//			}else{
-//				i--;
-//			}
-//		}
-//		
-//		if ( (pos_cube_left > 0) && ((BlackLineLeft-pos_cube_left) < 0) && ((BlackLineRight-pos_cube_right) > 0)) {
-//			CUBE = 1;
-//			// Cube a droite
-//			if ( abs(BlackLineLeft-pos_cube_left) > abs(BlackLineRight-pos_cube_right) ) {
-//				BlackLineRight = pos_cube_left - 20;
-//			}
-//			// Cube a gauche
-//			else {
-//				BlackLineLeft = pos_cube_right + 20;
-//			}
-//			dejafait++;
-//		}
-//		else CUBE = 0;
 	
 
 	//################### Mode E ###################//
@@ -459,24 +417,7 @@ void Img_Proc::process (void){
 void Img_Proc::calculateMiddle (void){
 
 	// Store old RoadMiddle value
-	RoadMiddle_old = RoadMiddle;
-	
-	if (cubeagauche != 0) {
-		timer_cube_straight = 200;
-		BlackLineLeft = 55;
-		BlackLineRight = 115;
-	}
-//	else if ((BlackLineLeft > 40) && (BlackLineRight < 85) && (coupdefesse/10 > 0)) {
-//		BlackLineLeft = 55;
-//		BlackLineRight = 115;
-//		coupdefesse--;
-//	}
-	if (cubeadroite != 0) {
-		timer_cube_straight = 200;
-		BlackLineLeft = 20;
-		BlackLineRight = 70;
-	}
-	
+	RoadMiddle_old = RoadMiddle;	
 
 	// Find middle of the road, 64 for strait road
 	RoadMiddle = (BlackLineLeft + BlackLineRight)/2;
@@ -500,8 +441,39 @@ void Img_Proc::calculateMiddle (void){
 	if (abs(diff-diff_old)>Plausibily_check){
 		diff=diff_old;
 	}
-	if ( (timer_cube_straight > 0) && (BlackLineRight < 85)){
-		if (timer_cube_straight-- < 75) diff = 0;
+	
+	if (functioning_mode == 0xD) {
+		// Cube a gauche
+			// On detecte le cube a gauche 1 fois
+		if ((cube_on_right == 0) && (cube_on_left != 0) && (!is_cube_on_left)) is_cube_on_left = true;
+			// Si le cube est a gauche
+		if (is_cube_on_left) {
+			if ((timer_cubeonleft_goright-- > 0)) diff = 20;		// A droite toute !
+			else if (timer_cubeonleft_goleft-- > 0) diff = -20;	// On se remet droit
+			else if (timer_cubeonleft_gostraight-- > 0) diff = 0;	// Tout droit Moussaillon :o
+			else { 														// On reset toutes les variables
+				is_cube_on_left = false;
+				timer_cubeonleft_goright = TIM_CaG_D;
+				timer_cubeonleft_goleft = TIM_CaG_G;
+				timer_cubeonleft_gostraight = TIM_CaG_TD;
+			}
+		}
+	
+		// Cube a droite
+			// On detecte le cube a droite 1 fois
+		if ((cube_on_left == 0) && (cube_on_right != 0) && (!is_cube_on_right)) is_cube_on_right = true;
+			// Si le cube est a droite
+		if (is_cube_on_right) {
+			if (timer_cubeonright_goleft-- > 0) diff = -20;		// A gauche toute !
+			else if (timer_cubeonright_goright-- > 0) diff = 20;	// On se remet droit
+			else if (timer_cubeonright_gostraight-- > 0) diff = 0;	// Tout droit Moussaillon :o
+			else { 														// On reset toutes les variables
+				is_cube_on_right = false;
+				timer_cubeonright_goleft = TIM_CaD_G;
+				timer_cubeonright_goright = TIM_CaD_D;
+				timer_cubeonright_gostraight = TIM_CaD_TD;
+			}
+		}
 	}
 	
 }	/*	END of the function "calculateMiddle"	*/

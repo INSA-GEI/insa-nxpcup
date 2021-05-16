@@ -43,9 +43,10 @@ public:
 	
 	void init(void);					//initializes the camera
 	void capture(void);					//retrieves data from the camera
+	//void BlackWhiteThreshold(void);
 	void process(void);					//detects edges
 	void calculateMiddle(void);			//guesses the middle
-	void sendDataExcel(void);			// Sends the camera data in different formats
+	void sendDataExcel(void);			//Sends the camera data in different formats
 	void processAll(void);				//executes all camera related operations in order. Takes approx 940µs to complete
 	
 	
