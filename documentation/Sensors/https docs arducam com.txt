@@ -1,0 +1,1 @@
+https://docs.arducam.com/Arduino-SPI-camera/Legacy-SPI-camera/Pico/Camera-Module/Arducam-HM01B0-QVGA-Camera-Module/
