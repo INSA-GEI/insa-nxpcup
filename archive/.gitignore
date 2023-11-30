@@ -1,0 +1,107 @@
+# DS_Store osx files
+*.DS_Store
+
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+*.bin
+*.binary
+*.s19
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# CodeWarrior (eclipse) specific
+*.metadata/
+*RemoteLaunch/
+*RemoteSystemsTempFiles/
+*.ttf
+*.settings
+*FLASH/
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+
+# ADA
+*.ali
+
+# Altium
+__Previews/
+History/
+Project Logs for*/
+
+# Miscelaneous
+*.zip
+*.tgz
+*.msi
+*.cab
+*.tar.*
+*.7z
+
+# documentations
+*.pdf
+*.chm
+
+# kicad
+*.bak
+*.kicad_pcb-bak
+*.sch-bak
+
+# images
+*.png
+*.jpg
+*.jpeg
+*.bmp
+*.ico
+*.tiff
+*.svg
+_autosave-*
+
+# Inventor
+OldVersions/
+*.lck
+
+
