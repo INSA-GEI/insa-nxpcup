@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chips chipVendor="NXP"
+       family="KL2x"
+       vendorURL="http://www.nxp.com"
+       chipURL="http://www.nxp.com/kinetis">
+   <chip name="MKL25Z128xxx4"
+         displayName="MKL25Z128xxx4"
+         xml_file="MKL25Z4_internal.xml"
+         chipURL="http://www.nxp.com/kinetis"/>
+</chips>
