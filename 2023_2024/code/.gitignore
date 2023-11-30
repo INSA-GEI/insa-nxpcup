@@ -1,0 +1,11 @@
+#Project files
+.mcuxpressoide_packages_support/
+.metadata/
+/frdmkl25z_nxp_cup/.cproject
+/frdmkl25z_nxp_cup/.project
+
+#Debug files
+/frdmkl25z_nxp_cup/Debug/
+/frdmkl25z_nxp_cup/.settings
+
+
