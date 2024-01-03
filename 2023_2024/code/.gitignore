@@ -1,15 +1,10 @@
-#Project files
-.mcuxpressoide_packages_support/*
-.metadata/*
-*/.mcuxpressoide_packages_support/*
-*/.metadata/*
-*/.cproject
-*/.project
-*/.settings
-
-#Debug files
-*/Debug/
-
+# All repos
+*/
+# Except the buggy's source code repo
+!buggy/*
+# And these archives
+!example_config.zip
+!frdmkl25z_nxp_cup.zip
 
 
 
