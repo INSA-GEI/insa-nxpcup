@@ -18,14 +18,25 @@
  * Board's configurations for DC motor used in this drivers
  * 	- PTA4 : Motor Right In 1 (PWM for speed)
  * 	- PTA5 : Motor Right In 2 (GPIO for direction)
+ * 	- PTC7 : Motor Right Enable
  * 	- PTA9 : Motor Left In 2 (PWM for speed)
  * 	- PTA8 : Motor Left In 1 (GPIO for direction)
+ * 	- PTC0 : Motor Right Enable
  * 	- TPM0 : PWM for both motors
  * 		+ Channel 1 : PWM for motor Right
  * 		+ Channel 5 : PWM for motor Left
+ *
+ *
+ *  Attention :
+ *  The buggy uses 2 Half-Bridge to control each motor because the H-Bridge doesn't have a Direction pin.
+ *  Therefore, the Direction Pin in this code is actually a second PWM signal for the motor.
+ *  The logic works like this:
+ *  	- When Direction = Forward (i.e second PWM has 100% duty cycle), the speed of the motor is (100% - duty cycle of PWM pin)
+ *  	- When Direction = Backward (i.e second PWM has 0% duty cycle), the speed of the motor is (duty cycle of PWM pin)
+ *  This explains why we need 2 different functions for changing the speed of a motor (1 for Forward and 1 for Backward)
  */
 
-/*Motors' Constants*/
+/*Motors's Constants*/
 #define PIN_ENABLE_MOTOR_RIGHT		7
 #define PIN_ENABLE_MOTOR_LEFT 		0
 #define PIN_DIRECTION_MOTOR_RIGHT 	5
@@ -50,36 +61,42 @@
 /**
  * @brief Enable DC motor
  */
-#define __MOTOR_LEFT_ENABLE		(GPIO_SetPinsOutput(GPIO_MOTOR_ENABLE,GPIO_PSOR_PTSO(PIN_ENABLE_MOTOR_LEFT)))
-#define __MOTOR_RIGHT_ENABLE	(GPIO_SetPinsOutput(GPIO_MOTOR_ENABLE,GPIO_PSOR_PTSO(PIN_ENABLE_MOTOR_RIGHT)))
+#define __MOTOR_LEFT_ENABLE		(GPIO_SetPinsOutput(GPIO_MOTOR_ENABLE, 1<<PIN_ENABLE_MOTOR_LEFT))
+#define __MOTOR_RIGHT_ENABLE	(GPIO_SetPinsOutput(GPIO_MOTOR_ENABLE, 1<<PIN_ENABLE_MOTOR_RIGHT))
 
 
 /**
  * @brief Disable DC motor
  */
-#define __MOTOR_LEFT_DISABLE	(GPIO_ClearPinsOutput(GPIO_MOTOR_ENABLE,GPIO_PCOR_PTCO(PIN_ENABLE_MOTOR_LEFT)))
-#define __MOTOR_RIGHT_DISABLE	(GPIO_ClearPinsOutput(GPIO_MOTOR_ENABLE,GPIO_PCOR_PTCO(PIN_ENABLE_MOTOR_RIGHT)))
+#define __MOTOR_LEFT_DISABLE	(GPIO_ClearPinsOutput(GPIO_MOTOR_ENABLE, 1<<PIN_ENABLE_MOTOR_LEFT))
+#define __MOTOR_RIGHT_DISABLE	(GPIO_ClearPinsOutput(GPIO_MOTOR_ENABLE, 1<<PIN_ENABLE_MOTOR_RIGHT))
 
 /**
  * @brief Set direction for DC motor to FORWARD
  */
-#define __MOTOR_LEFT_DIRECTION_FORWARD		(GPIO_SetPinsOutput(GPIO_MOTOR_LEFT,GPIO_PSOR_PTSO(PIN_DIRECTION_MOTOR_LEFT)))
-#define __MOTOR_RIGHT_DIRECTION_FORWARD 	(GPIO_SetPinsOutput(GPIO_MOTOR_RIGHT,GPIO_PSOR_PTSO(PIN_DIRECTION_MOTOR_RIGHT)))
+#define __MOTOR_LEFT_DIRECTION_FORWARD		(GPIO_SetPinsOutput(GPIO_MOTOR_LEFT, 1<<PIN_DIRECTION_MOTOR_LEFT))
+#define __MOTOR_RIGHT_DIRECTION_FORWARD 	(GPIO_SetPinsOutput(GPIO_MOTOR_RIGHT, 1<<PIN_DIRECTION_MOTOR_RIGHT))
 
 
 /**
  * @brief Set direction for DC motor to BACKWARD
  */
-#define __MOTOR_LEFT_DIRECTION_BACKWARD		(GPIO_ClearPinsOutput(GPIO_MOTOR_LEFT,GPIO_PCOR_PTCO(PIN_DIRECTION_MOTOR_LEFT)))
-#define __MOTOR_RIGHT_DIRECTION_BACKWARD 	(GPIO_ClearPinsOutput(GPIO_MOTOR_RIGHT,GPIO_PCOR_PTCO(PIN_DIRECTION_MOTOR_RIGHT)))
+#define __MOTOR_LEFT_DIRECTION_BACKWARD		(GPIO_ClearPinsOutput(GPIO_MOTOR_LEFT, 1<<PIN_DIRECTION_MOTOR_LEFT))
+#define __MOTOR_RIGHT_DIRECTION_BACKWARD 	(GPIO_ClearPinsOutput(GPIO_MOTOR_RIGHT, 1<<PIN_DIRECTION_MOTOR_RIGHT))
 
 /**
- * @brief Set the speed for DC motor
+ * @brief Set the speed for DC motor for FORWARD rotation
  * @param speed Speed to set, must be from 0 to 100
  */
-#define __MOTOR_LEFT_SPEED(speed)  (TPM_UpdatePwmDutycycle(TPM_PWM_MOTOR, CHANNEL_PWM_MOTOR_LEFT, kTPM_EdgeAlignedPwm,s))
-#define __MOTOR_RIGHT_SPEED(speed) (TPM_UpdatePwmDutycycle(TPM_PWM_MOTOR, CHANNEL_PWM_MOTOR_RIGHT, kTPM_EdgeAlignedPwm,s))
+#define __MOTOR_LEFT_SPEED_FORWARD(speed)  (TPM_UpdatePwmDutycycle(TPM_PWM_MOTOR, CHANNEL_PWM_MOTOR_LEFT, kTPM_EdgeAlignedPwm, 100 - speed))
+#define __MOTOR_RIGHT_SPEED_FORWARD(speed) (TPM_UpdatePwmDutycycle(TPM_PWM_MOTOR, CHANNEL_PWM_MOTOR_RIGHT, kTPM_EdgeAlignedPwm, 100 - speed))
 
+/**
+ * @brief Set the speed for DC motor for BACKWARD rotation
+ * @param speed Speed to set, must be from 0 to 100
+ */
+#define __MOTOR_LEFT_SPEED_BACKWARD(speed)  (TPM_UpdatePwmDutycycle(TPM_PWM_MOTOR, CHANNEL_PWM_MOTOR_LEFT, kTPM_EdgeAlignedPwm, speed))
+#define __MOTOR_RIGHT_SPEED_BACKWARD(speed) (TPM_UpdatePwmDutycycle(TPM_PWM_MOTOR, CHANNEL_PWM_MOTOR_RIGHT, kTPM_EdgeAlignedPwm, speed))
 
 /**
  * @fn void dc_motors_init(void)
