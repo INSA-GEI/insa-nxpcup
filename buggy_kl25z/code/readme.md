@@ -7,9 +7,9 @@ This folder stores the code for Buggy 1 & 2, which uses the FRDM-KL25Z board.
 #### Authors: Triet NGUYEN (Github: trietngh)
 Feel free to contribute to this document and other guides included in this repo.
 
-> Please refer to this guide for more detail on MCUXpresso : [Guide for MCUXpresso](guide_mcuxpresso.md)
+> Please refer to this guide for more detail on MCUXpresso : [Guide for MCUXpresso](/guides/guide_mcuxpresso.md)
 
-> It is highly recommended to using Git when you work. Check out this guide for all the useful Git commands : [Guide for Git](guide_git.md)
+> It is highly recommended to using Git when you work. Check out this guide for all the useful Git commands : [Guide for Git](/guides/guide_git.md)
 
 ## Important notes
 1. **Please read the [WORKFLOW](#workflow) below before starting.**
@@ -38,9 +38,9 @@ First, **pull from git** to update the project:
 Then, you need an MCUXpresso project.
 1. Extract the project template zip file named `frdmkl25z_nxp_cup.zip` included in this repo.
 
-2. Make sure you already installed the SDK for the FRDM-KL25Z. If not, check [here](guide_mcuxpresso.md/#install-sdk-for-a-board) for how to do it
+2. Make sure you already installed the SDK for the FRDM-KL25Z. If not, check [here](/guides/guide_mcuxpresso.md/#install-sdk-for-a-board) for how to do it
 
-3. Follow these [steps](guide_mcuxpresso.md/#reopen-an-existing-project-in-your-workspace) to open the project in MCUXpresso.
+3. Follow these [steps](/guides/guide_mcuxpresso.md/#reopen-an-existing-project-in-your-workspace) to open the project in MCUXpresso.
 
 4. If you have done it correctly, the project is ready to build. In the top bar, click on the `Build` icon (a hammer icon) and make sure it doesn't have any errors.
 
@@ -72,7 +72,7 @@ When you want to work with a peripheral of the FRDM board (ex. TPM - Timer / PWM
 
 Often, these source codes can be found in the `Drivers` directory.
 
-If that's not the case, you can add it to your project by following this [guide](guide_mcuxpresso.md/#add-other-sdk-components-to-project).
+If that's not the case, you can add it to your project by following this [guide](/guides/guide_mcuxpresso.md/#add-other-sdk-components-to-project).
 
 ## Create source code for a new component
 1. In Project Explorer (on the left side), right-click and choose `New` and `Folder`
@@ -85,7 +85,7 @@ If that's not the case, you can add it to your project by following this [guide]
 
 5. Also, remember to write a test `.h` and `.c` for your component.
 
-6. Make sure the FSL driver needed for your component is presented in the project (for ex. dc_motor needs the `fsl_tpm.h` driver to use the PWM timer). If that is not the case, please refer to this [guide](guide_mcuxpresso.md/#add-other-sdk-components-to-your-project).
+6. Make sure the FSL driver needed for your component is presented in the project (for ex. dc_motor needs the `fsl_tpm.h` driver to use the PWM timer). If that is not the case, please refer to this [guide](/guides/guide_mcuxpresso.md/#add-other-sdk-components-to-your-project).
 
 7. You should configure all the peripherals needed for your component in your component's code. When someone uses your driver, it should take care of all the board configuration necessary. See this [part](#configure-pins-clock-and-peripheral) on how to do it.
 
@@ -117,7 +117,7 @@ The trick is to use the tool to configure the K32L3A6 board, then copy it to you
 
 > **Important note**: the configuration isn't 100% identical. It give you an example on how to configure the perpheral. Refer to the KL25Z manual reference to make sure that you done the configuration correctly.
 
-1. First, you need to extract the `example_config.zip` and open it in your workspace. [Here is the guide](guide_mcuxpresso.md/#reopen-an-existing-project-in-your-workspace) for that.
+1. First, you need to extract the `example_config.zip` and open it in your workspace. [Here is the guide](/guides/guide_mcuxpresso.md/#reopen-an-existing-project-in-your-workspace) for that.
 
 Now let's see how to configure a peripheral using the Peripheral auto-config tool.
 
