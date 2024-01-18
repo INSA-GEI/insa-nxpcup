@@ -1,7 +1,7 @@
 # All repos
-*/
+/*
 # Except the buggy's source code repo
-!buggy/*
+!/buggy/
 # And these archives
 !example_config.zip
 !frdmkl25z_nxp_cup.zip

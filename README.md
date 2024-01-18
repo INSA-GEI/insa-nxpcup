@@ -3,8 +3,9 @@
 Repository for INSA NXP cup 
 
 # File organization
-- 2023-2024: contain code, documentation, and hardware design of the Buggy 1 & 2 
-- archive: all the work before 2023
+- **buggy_kl25z**: contain code, documentation, and hardware design of the Buggy with FRMD_KL25Z board (2 oldest buggies) 
+- **guides**: useful guides for everyone 
+- **archive**: all the work before 2023
 
 # How can I navigate this project?
 Each buggy has a dedicated directory with all the code and hardware files.
