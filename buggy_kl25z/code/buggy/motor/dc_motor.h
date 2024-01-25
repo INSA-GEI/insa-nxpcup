@@ -2,7 +2,7 @@
  * dc_motor.h
  *
  *  Created on: 3 janv. 2024
- *      Author: TANG Huong Cam (tanghuongcam)
+ *      Author: TANG Huong Cam (hctang@insa-toulouse.fr)
  */
 
 #ifndef DC_MOTOR_H_
@@ -130,14 +130,14 @@ void MOTOR_Right_Speed_Forward(uint8_t speed);
 /**
  * @fn void MOTOR_Left_Speed_Backward(speed)
  * @brief Set the speed for left motor for Backward rotation
- * @param speed Speed to set, must be from 0 to 100
+ * @param speed Speed to set, must be from 0 to 100 (% for PWM)
  */
 void MOTOR_Left_Speed_Backward(uint8_t speed);
 
 /**
  * @fn void MOTOR_Right_Speed_Backward(speed)
  * @brief Set the speed for right motor for Backward rotation
- * @param speed Speed to set, must be from 0 to 100
+ * @param speed Speed to set, must be from 0 to 100 (% for PWM)
  */
 void MOTOR_Right_Speed_Backward(uint8_t speed);
 
