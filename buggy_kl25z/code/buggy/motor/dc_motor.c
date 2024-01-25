@@ -67,14 +67,68 @@ void dc_motors_init(void){
 	GPIO_PinInit(GPIO_MOTOR_ENABLE,PIN_ENABLE_MOTOR_RIGHT,&config_ouput_gpio);
 
 	//set forward direction for motors
-	__MOTOR_LEFT_DIRECTION_FORWARD;
-	__MOTOR_RIGHT_DIRECTION_FORWARD;
+	MOTOR_LEFT_DIRECTION_FORWARD();
+	MOTOR_RIGHT_DIRECTION_FORWARD();
 
 	//set initial speed's motors as 0
-	__MOTOR_LEFT_SPEED_FORWARD(0);
-	__MOTOR_RIGHT_SPEED_FORWARD(0);
+	MOTOR_LEFT_SPEED_FORWARD(0);
+	MOTOR_RIGHT_SPEED_FORWARD(0);
 
 	//enable the motors
-	__MOTOR_LEFT_ENABLE;
-	__MOTOR_RIGHT_ENABLE;
+	MOTOR_LEFT_ENABLE();
+	MOTOR_RIGHT_ENABLE();
 }
+/*
+static inline void MOTOR_LEFT_ENABLE(void)
+{
+	GPIO_SetPinsOutput(GPIO_MOTOR_ENABLE, 1<<PIN_ENABLE_MOTOR_LEFT);
+}
+
+static inline void MOTOR_RIGHT_ENABLE(void){
+	GPIO_SetPinsOutput(GPIO_MOTOR_ENABLE, 1<<PIN_ENABLE_MOTOR_RIGHT);
+}
+
+static inline void MOTOR_LEFT_DISABLE(void){
+	GPIO_ClearPinsOutput(GPIO_MOTOR_ENABLE, 1<<PIN_ENABLE_MOTOR_LEFT);
+}
+
+static inline void MOTOR_RIGHT_DISABLE(void){
+	GPIO_ClearPinsOutput(GPIO_MOTOR_ENABLE, 1<<PIN_ENABLE_MOTOR_RIGHT);
+}
+
+
+static inline void MOTOR_LEFT_DIRECTION_FORWARD(void){
+	GPIO_SetPinsOutput(GPIO_MOTOR_LEFT, 1<<PIN_DIRECTION_MOTOR_LEFT);
+}
+
+
+static inline void MOTOR_RIGHT_DIRECTION_FORWARD(void){
+	GPIO_SetPinsOutput(GPIO_MOTOR_RIGHT, 1<<PIN_DIRECTION_MOTOR_RIGHT);
+}
+
+
+static inline void MOTOR_LEFT_DIRECTION_BACKWARD(void){
+	GPIO_ClearPinsOutput(GPIO_MOTOR_LEFT, 1<<PIN_DIRECTION_MOTOR_LEFT);
+}
+
+
+static inline void MOTOR_RIGHT_DIRECTION_BACKWARD(void){
+	GPIO_ClearPinsOutput(GPIO_MOTOR_RIGHT, 1<<PIN_DIRECTION_MOTOR_RIGHT);
+}
+
+static inline void MOTOR_LEFT_SPEED_FORWARD(speed){
+	TPM_UpdatePwmDutycycle(TPM_PWM_MOTOR, CHANNEL_PWM_MOTOR_LEFT, kTPM_EdgeAlignedPwm, 100 - speed);
+}
+
+static inline void MOTOR_RIGHT_SPEED_FORWARD(speed){
+	TPM_UpdatePwmDutycycle(TPM_PWM_MOTOR, CHANNEL_PWM_MOTOR_RIGHT, kTPM_EdgeAlignedPwm, 100 - speed);
+}
+
+static inline void MOTOR_LEFT_SPEED_BACKWARD(speed){
+	TPM_UpdatePwmDutycycle(TPM_PWM_MOTOR, CHANNEL_PWM_MOTOR_LEFT, kTPM_EdgeAlignedPwm, speed);
+}
+
+static inline void MOTOR_RIGHT_SPEED_BACKWARD(speed){
+	TPM_UpdatePwmDutycycle(TPM_PWM_MOTOR, CHANNEL_PWM_MOTOR_RIGHT, kTPM_EdgeAlignedPwm, speed);
+}
+*/
