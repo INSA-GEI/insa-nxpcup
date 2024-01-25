@@ -35,7 +35,7 @@ const tpm_chnl_pwm_signal_param_t TPM_PWM_MOTOR_pwmSignalParams[] = {
 };
 
 
-void dc_motors_init(void){
+void MOTOR_init(void){
 
 	CLOCK_EnableClock(kCLOCK_Tpm0);  // enable clock for tpm0 PWM signal
 	CLOCK_EnableClock(kCLOCK_PortA); // enable clock for PORTA (Motor right : speed and direction)
@@ -67,68 +67,68 @@ void dc_motors_init(void){
 	GPIO_PinInit(GPIO_MOTOR_ENABLE,PIN_ENABLE_MOTOR_RIGHT,&config_ouput_gpio);
 
 	//set forward direction for motors
-	MOTOR_LEFT_DIRECTION_FORWARD();
-	MOTOR_RIGHT_DIRECTION_FORWARD();
+	MOTOR_Left_Direction_Forward();
+	MOTOR_Right_Direction_Forward();
 
 	//set initial speed's motors as 0
-	MOTOR_LEFT_SPEED_FORWARD(0);
-	MOTOR_RIGHT_SPEED_FORWARD(0);
+	MOTOR_Left_Speed_Forward(0);
+	MOTOR_Right_Speed_Forward(0);
 
 	//enable the motors
-	MOTOR_LEFT_ENABLE();
-	MOTOR_RIGHT_ENABLE();
+	MOTOR_Left_Enable();
+	MOTOR_Right_Enable();
 }
-/*
-static inline void MOTOR_LEFT_ENABLE(void)
+
+void MOTOR_Left_Enable(void)
 {
 	GPIO_SetPinsOutput(GPIO_MOTOR_ENABLE, 1<<PIN_ENABLE_MOTOR_LEFT);
 }
 
-static inline void MOTOR_RIGHT_ENABLE(void){
+void MOTOR_Right_Enable(void){
 	GPIO_SetPinsOutput(GPIO_MOTOR_ENABLE, 1<<PIN_ENABLE_MOTOR_RIGHT);
 }
 
-static inline void MOTOR_LEFT_DISABLE(void){
+void MOTOR_Left_Disable(void){
 	GPIO_ClearPinsOutput(GPIO_MOTOR_ENABLE, 1<<PIN_ENABLE_MOTOR_LEFT);
 }
 
-static inline void MOTOR_RIGHT_DISABLE(void){
+void MOTOR_Right_Disable(void){
 	GPIO_ClearPinsOutput(GPIO_MOTOR_ENABLE, 1<<PIN_ENABLE_MOTOR_RIGHT);
 }
 
 
-static inline void MOTOR_LEFT_DIRECTION_FORWARD(void){
+void MOTOR_Left_Direction_Forward(void){
 	GPIO_SetPinsOutput(GPIO_MOTOR_LEFT, 1<<PIN_DIRECTION_MOTOR_LEFT);
 }
 
 
-static inline void MOTOR_RIGHT_DIRECTION_FORWARD(void){
+void MOTOR_Right_Direction_Forward(void){
 	GPIO_SetPinsOutput(GPIO_MOTOR_RIGHT, 1<<PIN_DIRECTION_MOTOR_RIGHT);
 }
 
 
-static inline void MOTOR_LEFT_DIRECTION_BACKWARD(void){
+void MOTOR_Left_Direction_Backward(void){
 	GPIO_ClearPinsOutput(GPIO_MOTOR_LEFT, 1<<PIN_DIRECTION_MOTOR_LEFT);
 }
 
 
-static inline void MOTOR_RIGHT_DIRECTION_BACKWARD(void){
+void MOTOR_Right_Direction_Backward(void){
 	GPIO_ClearPinsOutput(GPIO_MOTOR_RIGHT, 1<<PIN_DIRECTION_MOTOR_RIGHT);
 }
 
-static inline void MOTOR_LEFT_SPEED_FORWARD(speed){
+void MOTOR_Left_Speed_Forward(uint8_t speed){
 	TPM_UpdatePwmDutycycle(TPM_PWM_MOTOR, CHANNEL_PWM_MOTOR_LEFT, kTPM_EdgeAlignedPwm, 100 - speed);
 }
 
-static inline void MOTOR_RIGHT_SPEED_FORWARD(speed){
+void MOTOR_Right_Speed_Forward(uint8_t speed){
 	TPM_UpdatePwmDutycycle(TPM_PWM_MOTOR, CHANNEL_PWM_MOTOR_RIGHT, kTPM_EdgeAlignedPwm, 100 - speed);
 }
 
-static inline void MOTOR_LEFT_SPEED_BACKWARD(speed){
+void MOTOR_Left_Speed_Backward(uint8_t speed){
 	TPM_UpdatePwmDutycycle(TPM_PWM_MOTOR, CHANNEL_PWM_MOTOR_LEFT, kTPM_EdgeAlignedPwm, speed);
 }
 
-static inline void MOTOR_RIGHT_SPEED_BACKWARD(speed){
+void MOTOR_Right_Speed_Backward(uint8_t speed){
 	TPM_UpdatePwmDutycycle(TPM_PWM_MOTOR, CHANNEL_PWM_MOTOR_RIGHT, kTPM_EdgeAlignedPwm, speed);
 }
-*/
+

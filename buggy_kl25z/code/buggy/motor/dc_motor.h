@@ -63,108 +63,83 @@
  * @brief initialize motors in mode forward direction, set null the speed's motors
  *
  */
-void dc_motors_init(void);
+void MOTOR_init(void);
 
 /**
- * @fn void MOTOR_LEFT_ENABLE(void)
+ * @fn void MOTOR_Left_Enable(void)
  * @brief Enable left motor
  */
-static inline void MOTOR_LEFT_ENABLE(void)
-{
-	GPIO_SetPinsOutput(GPIO_MOTOR_ENABLE, 1<<PIN_ENABLE_MOTOR_LEFT);
-}
-
+void MOTOR_Left_Enable(void);
 /**
- * @fn void MOTOR_RIGHT_ENABLE(void)
+ * @fn void MOTOR_Right_Enable(void)
  * @brief Enable right motor
  */
-static inline void MOTOR_RIGHT_ENABLE(void){
-	GPIO_SetPinsOutput(GPIO_MOTOR_ENABLE, 1<<PIN_ENABLE_MOTOR_RIGHT);
-}
+void MOTOR_Right_Enable(void);
 
 /**
- * @fn void MOTOR_LEFT_DISABLE(void)
+ * @fn void MOTOR_Left_Disable(void)
  * @brief Disable left motor
  */
-static inline void MOTOR_LEFT_DISABLE(void){
-	GPIO_ClearPinsOutput(GPIO_MOTOR_ENABLE, 1<<PIN_ENABLE_MOTOR_LEFT);
-}
+void MOTOR_Left_Disable(void);
 
 /**
- * @fn void MOTOR_RIGHT_DISABLE(void)
+ * @fn void MOTOR_Right_Disable(void)
  * @brief Disable right motor
  */
-static inline void MOTOR_RIGHT_DISABLE(void){
-	GPIO_ClearPinsOutput(GPIO_MOTOR_ENABLE, 1<<PIN_ENABLE_MOTOR_RIGHT);
-}
+void MOTOR_Right_Disable(void);
+
 
 /**
- * @fn void MOTOR_LEFT_DIRECTION_FORWARD (void)
- * @brief Set direction for left motor to FORWARD
+ * @fn void MOTOR_Left_Direction_Forward (void)
+ * @brief Set direction for left motor to Forward
  */
-static inline void MOTOR_LEFT_DIRECTION_FORWARD(void){
-	GPIO_SetPinsOutput(GPIO_MOTOR_LEFT, 1<<PIN_DIRECTION_MOTOR_LEFT);
-}
+void MOTOR_Left_Direction_Forward(void);
 
 /**
- * @fn void MOTOR_RIGHT_DIRECTION_FORWARD (void)
- * @brief Set direction for right motor to FORWARD
+ * @fn void MOTOR_Right_Direction_Forward (void)
+ * @brief Set direction for right motor to Forward
  */
-static inline void MOTOR_RIGHT_DIRECTION_FORWARD(void){
-	GPIO_SetPinsOutput(GPIO_MOTOR_RIGHT, 1<<PIN_DIRECTION_MOTOR_RIGHT);
-}
+void MOTOR_Right_Direction_Forward(void);
 
 /**
- * @fn void MOTOR_LEFT_DIRECTION_BACKWARD(void)
- * @brief Set direction for left motor to BACKWARD
+ * @fn void MOTOR_Left_Direction_Backward(void)
+ * @brief Set direction for left motor to Backward
  */
-static inline void MOTOR_LEFT_DIRECTION_BACKWARD(void){
-	GPIO_ClearPinsOutput(GPIO_MOTOR_LEFT, 1<<PIN_DIRECTION_MOTOR_LEFT);
-}
+void MOTOR_Left_Direction_Backward(void);
 
 /**
- * @fn void MOTOR_RIGHT_DIRECTION_BACKWARD(void)
- * @brief Set direction for right motor to BACKWARD
+ * @fn void MOTOR_Right_Direction_Backward(void)
+ * @brief Set direction for right motor to Backward
  */
-static inline void MOTOR_RIGHT_DIRECTION_BACKWARD(void){
-	GPIO_ClearPinsOutput(GPIO_MOTOR_RIGHT, 1<<PIN_DIRECTION_MOTOR_RIGHT);
-}
+void MOTOR_Right_Direction_Backward(void);
 
 /**
- * @fn void MOTOR_LEFT_SPEED_FORWARD(speed)
- * @brief Set the speed for left motor for FORWARD rotation
+ * @fn void MOTOR_Left_Speed_Forward(speed)
+ * @brief Set the speed for left motor for Forward rotation
  * @param speed Speed to set, must be from 0 to 100
  */
-static inline void MOTOR_LEFT_SPEED_FORWARD(uint8_t speed){
-	TPM_UpdatePwmDutycycle(TPM_PWM_MOTOR, CHANNEL_PWM_MOTOR_LEFT, kTPM_EdgeAlignedPwm, 100 - speed);
-}
+void MOTOR_Left_Speed_Forward(uint8_t speed);
 
 /**
- * @fn void MOTOR_RIGHT_SPEED_FORWARD(speed)
- * @brief Set the speed for right motor for FORWARD rotation
+ * @fn void MOTOR_Right_Speed_Forward(speed)
+ * @brief Set the speed for right motor for Forward rotation
  * @param speed Speed to set, must be from 0 to 100
  */
-static inline void MOTOR_RIGHT_SPEED_FORWARD(uint8_t speed){
-	TPM_UpdatePwmDutycycle(TPM_PWM_MOTOR, CHANNEL_PWM_MOTOR_RIGHT, kTPM_EdgeAlignedPwm, 100 - speed);
-}
+void MOTOR_Right_Speed_Forward(uint8_t speed);
 
 /**
- * @fn void MOTOR_LEFT_SPEED_BACKWARD(speed)
- * @brief Set the speed for left motor for BACKWARD rotation
+ * @fn void MOTOR_Left_Speed_Backward(speed)
+ * @brief Set the speed for left motor for Backward rotation
  * @param speed Speed to set, must be from 0 to 100
  */
-static inline void MOTOR_LEFT_SPEED_BACKWARD(uint8_t speed){
-	TPM_UpdatePwmDutycycle(TPM_PWM_MOTOR, CHANNEL_PWM_MOTOR_LEFT, kTPM_EdgeAlignedPwm, speed);
-}
+void MOTOR_Left_Speed_Backward(uint8_t speed);
 
 /**
- * @fn void MOTOR_RIGHT_SPEED_BACKWARD(speed)
- * @brief Set the speed for right motor for BACKWARD rotation
+ * @fn void MOTOR_Right_Speed_Backward(speed)
+ * @brief Set the speed for right motor for Backward rotation
  * @param speed Speed to set, must be from 0 to 100
  */
-static inline void MOTOR_RIGHT_SPEED_BACKWARD(uint8_t speed){
-	TPM_UpdatePwmDutycycle(TPM_PWM_MOTOR, CHANNEL_PWM_MOTOR_RIGHT, kTPM_EdgeAlignedPwm, speed);
-}
+void MOTOR_Right_Speed_Backward(uint8_t speed);
 
 
 #endif /* DC_MOTOR_H_ */
