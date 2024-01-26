@@ -15,17 +15,57 @@
 #include "pin_mux.h"
 #include "fsl_debug_console.h"
 
+#include <MKL25Z4.h>
+#include "math.h"
+#include <cmath>
+#include "stdio.h"
+#include "stdlib.h"
+
+
+
+
 #define CAM_DELAY				asm ("nop")				// minimal delay time
 #define	CAM_SI_HIGH 			GPIO_SetPinsOutput(GPIOB,(1<<8)) // SI on PTB8
 #define	CAM_SI_LOW				GPIO_ClearPinsOutput(GPIOB,(1<<8)) // SI on PTB8*
 #define	CAM_CLK_HIGH			GPIO_SetPinsOutput(GPIOB,(1<<9))	// CLK on PTB9
 #define	CAM_CLK_LOW				GPIO_ClearPinsOutput(GPIOB,(1<<9))	// CLK on PTB9
+
 #define ADC0_Channel_Group 0u // Utilisé pour le receuil de donnée de l'ADC0. Seul channel group avec software trigger
+
+#define SERVO_MAX_LEFT_ANGLE -22.0
+#define SERVO_MAX_RIGHT_ANGLE 29.0
+
+//#define KP_STRAIGHT						50			// Proportional coefficient in straight line
+//#define KDP_STRAIGHT					15			// Differential coefficient in straight line
+
+#define KP_TURN 						.7			// Proportional coefficient in turn
+#define KDP_TURN 						.6			// Differential coefficient in turn
+
+
+
+// Define thresholds for Camera Black Line recognition
+#define THRESHOLD_high				140			// Higher threshold : does not capture noise but may not capture all maximums.
+#define THRESHOLD_low				50			// Lower threshold : May capture more maximums than High threshold but can capture noise too.
+
+#define THRESHOLD_classic			120			// standard threshold : used in the basic image processing function
+
+#define functionning_mode			2			// operating mode: from 1 to 3: algorithm more and more precise but heavy
+
+#define SIGMA_1	 					2			// square root of the variance for the first gaussian filter
+#define SIGMA_2 					2.5			// square root of the variance for the second gaussian filter.
+
+#define PI							3.14159265358979323846	// value of PI
+
+#define THRESHOLD_FINISH_MIN 5				//Minimal threshold of edges for the finish
+#define THRESHOLD_FINISH_MAX 9				//Maximal threshold of edges for the finish
+#define COUNTER_THRESHOLD_FINISH 10
+#define BLACK_RECTANGLE_MIDDLE_1 40		//(124+94/2)mm*128/550mm=171*128/550=40
+#define BLACK_RECTANGLE_MIDDLE_2 88		//(550-(124+94/2))mm*128/550mm=379*128/550=88
+#define RECT_WIDTH 22				//(94*128)/550=22
 
 class ImageProcessing {
 public:
-	ImageProcessing();
-	~ImageProcessing();
+
 	uint16_t ImageData [128];				// array to store the LineScan image
 	uint16_t ImageDataDifference [128];		// array to store the PineScan pixel difference
 
