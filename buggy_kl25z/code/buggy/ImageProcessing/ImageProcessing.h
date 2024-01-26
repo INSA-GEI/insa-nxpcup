@@ -8,25 +8,24 @@
 #ifndef IMAGEPROCESSING_H_
 #define IMAGEPROCESSING_H_
 
+#include "fsl_gpio.h"
+#include "fsl_port.h"
+#include "fsl_adc16.h"
+#include "clock_config.h"
+#include "pin_mux.h"
+#include "fsl_debug_console.h"
 
 #define CAM_DELAY				asm ("nop")				// minimal delay time
 #define	CAM_SI_HIGH 			GPIO_SetPinsOutput(GPIOB,(1<<8)) // SI on PTB8
 #define	CAM_SI_LOW				GPIO_ClearPinsOutput(GPIOB,(1<<8)) // SI on PTB8*
 #define	CAM_CLK_HIGH			GPIO_SetPinsOutput(GPIOB,(1<<9))	// CLK on PTB9
 #define	CAM_CLK_LOW				GPIO_ClearPinsOutput(GPIOB,(1<<9))	// CLK on PTB9
-
-
-const adc16_config_t adc0_config = {
-	.clockDivider = kADC16_ClockDivider2,
-	.resolution = kADC16_ResolutionSE10Bit,
-	.enableContinuousConversion = false,
-
-};
+#define ADC0_Channel_Group 0u // Utilisé pour le receuil de donnée de l'ADC0. Seul channel group avec software trigger
 
 class ImageProcessing {
 public:
-	ImagProc();
-	virtual ~ImagProc();
+	ImageProcessing();
+	~ImageProcessing();
 	uint16_t ImageData [128];				// array to store the LineScan image
 	uint16_t ImageDataDifference [128];		// array to store the PineScan pixel difference
 
@@ -52,6 +51,7 @@ public:
 	void processAll(void);				//executes all camera related operations in order. Takes approx 940�s to complete
 	bool test_FinishLine_Detection(void);
 	void compute_data_threshold(void);
+	void affiche_image(void);           // Affiche image en mode débug sur serial terminal
 
 private:
 	int CompareData_classic;			// set data for comparison to find max IN BASE ALGORITHM
