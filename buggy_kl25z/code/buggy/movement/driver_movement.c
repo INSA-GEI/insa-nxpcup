@@ -5,76 +5,92 @@
  *      Author: TANG Huong Cam
  */
 
+#include "driver_movement.h"
 
-//in public for testing purposes only
+const float SPEED_TO_PWM = MOVEMENT_SPEED_LIMIT_PWM/MOVEMENT_SPEED_LIMIT_MM_S;
 
-float targetAngle;//	degrees
-int targetSpeedL; //	mm/s
-int targetSpeedR; //	mm/s
-int actualSpeedL; //	mm/s
-int actualSpeedR; //	mm/s
 
+float targetAngle;	//	degrees
+float targetSpeedL; //	mm/s
+float targetSpeedR; //	mm/s
+float actualSpeedL; //	mm/s
+float actualSpeedR; //	mm/s
+
+
+void applySpeeds(void)
+{
+	if(actualSpeedL<0.0)actualSpeedL=0.0;
+	if(actualSpeedR<0.0)actualSpeedR=0.0;
+	if(actualSpeedL>MOVEMENT_SPEED_LIMIT_MM_S)actualSpeedL=MOVEMENT_SPEED_LIMIT_MM_S;
+	if(actualSpeedR>MOVEMENT_SPEED_LIMIT_MM_S)actualSpeedR=MOVEMENT_SPEED_LIMIT_MM_S;
+
+	MOTOR_Left_Speed_Forward((int)(actualSpeedL*SPEED_TO_PWM));
+	MOTOR_Right_Speed_Forward((int)(actualSpeedR*SPEED_TO_PWM));
+
+}
 
 void movement_init(void)
 {
 	targetAngle=0.0;
-	targetSpeedL=0;
-	targetSpeedR=0;
+	targetSpeedL=0.0;
+	targetSpeedR=0.0;
 	actualSpeedL=targetSpeedL;
 	actualSpeedR=targetSpeedR;
 
-	dc_motors_init();
+	MOTOR_init();
 	//servo_init();
-	//encoder_init();
+	encoders_init();
 
 }
 
-void movement_set(int speed, float angle) {
-	if(speed!=0)
+void movement_set(float speed, float angle) {
+	if(speed!=0.0)
 	{
-		setAngle(angle);
+		//setAngle(angle);
 	}
 	//important : set angle before speed, as differential speed is based on angle
 	movement_setSpeed(speed);
 }
 
 
-void movement_setSpeed(int speed) {
-	if(speed<0)
+void movement_setSpeed(float speed) {
+	if(speed<0.0)
 	{
-		stop();
+		movement_stop();
 		return;
 	}
 
-	if(speed>SPEED_LIMIT)
+	if(speed>MOVEMENT_SPEED_LIMIT_MM_S)
 	{
-		speed=SPEED_LIMIT;
+		speed=MOVEMENT_SPEED_LIMIT_MM_S;
 	}
 
-	MOTOR_RIGHT_DIRECTION_FORWARD;
-	MOTOR_LEFT_DIRECTION_BACKWARD;
+	MOTOR_Right_Direction_Forward();
+	MOTOR_Left_Direction_Forward();
 
-	int deltaSpeed=targetAngle*MOVEMENT_ENTRAXE_COEFF*speed;
+	float deltaSpeed=targetAngle*MOVEMENT_ENTRAXE_COEFF*speed;
 	targetSpeedL=speed+deltaSpeed;
 	targetSpeedR=speed-deltaSpeed;
 }
 
 
 void movement_stop(void) {
-	targetSpeedL=0;
-	targetSpeedR=0;
-	actualSpeedL=0;
-	actualSpeedR=0;
-	MOTOR_LEFT_SPEED_FORWARD(0);
-	MOTOR_RIGHT_SPEED_FORWARD(0);
+	targetSpeedL=0.0;
+	targetSpeedR=0.0;
+	actualSpeedL=0.0;
+	actualSpeedR=0.0;
+	MOTOR_Left_Speed_Forward(0);
+	MOTOR_Right_Speed_Forward(0);
+	MOTOR_Left_Disable();
+	MOTOR_Right_Disable();
 }
 
 
 void movement_regulate(void) {
 	//GPIOB_PTOR = DEBUG_RED_Pin;
-	int err=getLeftSpeed();
-	if(err<0){	//detect invalid speed readings
-		err=0;
+	float err=encoder_getLeftSpeed();
+	if(err<0.0){	//detect invalid speed readings
+		err=0.0;
 	}
 
 	err=targetSpeedL-err;//calculate error
@@ -84,10 +100,10 @@ void movement_regulate(void) {
 		actualSpeedL=actualSpeedL+err*MOVEMENT_CORR_KP;//compensate real speed command
 	}
 
-	err=getRightSpeed();
-	if(err<0)
+	err=encoder_getRightSpeed();
+	if(err<0.0)
 	{	//detect invalid speed readings
-		err=0;
+		err=0.0;
 	}
 	err=targetSpeedR-err;
 	if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD){
@@ -97,17 +113,8 @@ void movement_regulate(void) {
 	applySpeeds();
 }
 
-void applySpeeds(void)
-{
-	if(actualSpeedL<0)actualSpeedL=0;
-	if(actualSpeedR<0)actualSpeedR=0;
-	if(actualSpeedL>SPEED_LIMIT)actualSpeedL=SPEED_LIMIT;
-	if(actualSpeedR>SPEED_LIMIT)actualSpeedR=SPEED_LIMIT;
 
-	MOTOR_LEFT_SPEED_FORWARD(actualSpeedL*MOTOR_CAL_SPEED);
-	MOTOR_RIGHT_SPEED_FORWARD(actualSpeedR*MOTOR_CAL_SPEED);
-
-}
+/*
 void setAngle(float angle)
 {
 	if(angle>SERVO_MAX_RIGHT_ANGLE)
@@ -123,3 +130,4 @@ void setAngle(float angle)
 	//servo_setPos(angle);
 
 }
+*/
