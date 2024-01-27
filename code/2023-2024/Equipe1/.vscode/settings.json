@@ -1,0 +1,7 @@
+{
+    "cmake.allowCommentsInPresetsFile": true,
+    "cmake.additionalKits": [
+        "C:/Users/antoi/NXP_CUP/MCUXpresso/**"
+    ],
+    "cmake.allowUnsupportedPresetsVersions": true
+}
