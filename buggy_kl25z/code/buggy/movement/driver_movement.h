@@ -8,15 +8,28 @@
 #ifndef MOVEMENT_DRIVER_MOVEMENT_H_
 #define MOVEMENT_DRIVER_MOVEMENT_H_
 
+/***********************************************************************************************************************
+ * Included files
+ **********************************************************************************************************************/
 #include "motor/dc_motor.h"
 #include "encoder/driver_encoder.h"
+#include "servo/driver_servo.h"
 
-#define MOVEMENT_ENTRAXE_COEFF 		0.0056		// 0.0056 	// Distance between 2 wheels E=15cm
+
+/***********************************************************************************************************************
+ * Definitions
+ **********************************************************************************************************************/
+
+#define MOVEMENT_ENTRAXE_COEFF 		0.005		// 0.0056 	// Distance between 2 wheels E=15cm
 #define MOVEMENT_CORR_THRESHOLD 	6.0 		// correct the speed only when we are more than 60 mm/s off target speed
 #define MOVEMENT_CORR_KP 			1			// amount of error to correct each iteration
 #define MOVEMENT_SPEED_LIMIT_MM_S 	9000.0		// mm/s ~ 50% PWM
 #define MOVEMENT_SPEED_LIMIT_PWM	50.0		// 50% ~ 9000 mm/s
 
+
+/***********************************************************************************************************************
+ * Exported functions
+ **********************************************************************************************************************/
 
 /**
  * @fn void movement_init(void)

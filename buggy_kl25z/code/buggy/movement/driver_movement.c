@@ -2,7 +2,7 @@
  * driver_mouvement.c
  *
  *  Created on: 25 janv. 2024
- *      Author: TANG Huong Cam
+ *      Author: TANG Huong Cam (hctang@insa-toulouse.fr)
  */
 
 #include "driver_movement.h"
@@ -16,6 +16,21 @@ float targetSpeedR; //	mm/s
 float actualSpeedL; //	mm/s
 float actualSpeedR; //	mm/s
 
+void setAngle(float angle)
+{
+	if(angle>SERVO_MAX_RIGHT_ANGLE)
+	{
+		angle=SERVO_MAX_RIGHT_ANGLE;
+	}
+	if(angle<SERVO_MAX_LEFT_ANGLE)
+	{
+		angle=SERVO_MAX_LEFT_ANGLE;
+	}
+
+	targetAngle=angle;
+	servo_setPos(angle);
+
+}
 
 void applySpeeds(void)
 {
@@ -38,7 +53,7 @@ void movement_init(void)
 	actualSpeedR=targetSpeedR;
 
 	MOTOR_init();
-	//servo_init();
+	servo_init();
 	encoders_init();
 
 }
@@ -46,7 +61,7 @@ void movement_init(void)
 void movement_set(float speed, float angle) {
 	if(speed!=0.0)
 	{
-		//setAngle(angle);
+		setAngle(angle);
 	}
 	//important : set angle before speed, as differential speed is based on angle
 	movement_setSpeed(speed);
@@ -114,20 +129,6 @@ void movement_regulate(void) {
 }
 
 
-/*
-void setAngle(float angle)
-{
-	if(angle>SERVO_MAX_RIGHT_ANGLE)
-	{
-		angle=SERVO_MAX_RIGHT_ANGLE;
-	}
-	if(angle<SERVO_MAX_LEFT_ANGLE)
-	{
-		angle=SERVO_MAX_LEFT_ANGLE;
-	}
 
-	targetAngle=angle;
-	//servo_setPos(angle);
 
-}
-*/
+
