@@ -43,7 +43,6 @@ void VL53L4CD::Measure(void)
   } while (!NewDataReady);
 
   if ((!status) && (NewDataReady != 0)) {
-    this->ClearInterrupt();
     this->GetResult(&(this->results));
   }
 }
@@ -165,7 +164,7 @@ VL53L4CD_Error VL53L4CD::SensorInit()
     WaitMs(1);
   } while (continue_loop == (uint8_t)1);
 
-  status |= this->ClearInterrupt();
+
   status |= this->StopRanging();
   status |= this->WrByte(
                             VL53L4CD_VHV_CONFIG_TIMEOUT_MACROP_LOOP_BOUND,
@@ -178,13 +177,7 @@ VL53L4CD_Error VL53L4CD::SensorInit()
   return status;
 }
 
-VL53L4CD_Error VL53L4CD::ClearInterrupt()
-{
-  VL53L4CD_Error status = VL53L4CD_ERROR_NONE;
 
-  status |= this->WrByte( VL53L4CD_SYSTEM_INTERRUPT_CLEAR, 0x01);
-  return status;
-}
 
 VL53L4CD_Error VL53L4CD::StartRanging()
 {
@@ -499,33 +492,6 @@ VL53L4CD_Error VL53L4CD::GetXtalk(
   return status;
 }
 
-VL53L4CD_Error VL53L4CD::SetDetectionThresholds(
-  uint16_t distance_low_mm,
-  uint16_t distance_high_mm,
-  uint8_t window)
-{
-  VL53L4CD_Error status = VL53L4CD_ERROR_NONE;
-
-  status |= this->WrByte( VL53L4CD_SYSTEM_INTERRUPT, window);
-  status |= this->WrWord( VL53L4CD_THRESH_HIGH, distance_high_mm);
-  status |= this->WrWord( VL53L4CD_THRESH_LOW, distance_low_mm);
-  return status;
-}
-
-VL53L4CD_Error VL53L4CD::GetDetectionThresholds(
-  uint16_t *p_distance_low_mm,
-  uint16_t *p_distance_high_mm,
-  uint8_t *p_window)
-{
-  VL53L4CD_Error status = VL53L4CD_ERROR_NONE;
-
-  status |= this->RdWord( VL53L4CD_THRESH_HIGH, p_distance_high_mm);
-  status |= this->RdWord( VL53L4CD_THRESH_LOW, p_distance_low_mm);
-  status |= this->RdByte( VL53L4CD_SYSTEM_INTERRUPT, p_window);
-  *p_window = (*p_window & (uint8_t)0x7);
-
-  return status;
-}
 
 VL53L4CD_Error VL53L4CD::SetSignalThreshold(
   uint16_t signal_kcps)

@@ -72,12 +72,12 @@ typedef uint8_t VL53L4CD_Error;
 #define VL53L4CD_RESULT_SIGNAL_RATE   ((uint16_t)0x008E)
 #define VL53L4CD_RESULT_AMBIENT_RATE   ((uint16_t)0x0090)
 #define VL53L4CD_RESULT_SIGMA   ((uint16_t)0x0092)
-#define VL53L4CD_RESULT_DISTANCE   ((uint16_t)0x0096)
+#define VL53L4CD_RESULT_DISTANCE   ((uint16_t)0x0097)
 
 
 #define VL53L4CD_RESULT_OSC_CALIBRATE_VAL      ((uint16_t)0x00DE)
 #define VL53L4CD_FIRMWARE_SYSTEM_STATUS        ((uint16_t)0x00E5)
-#define VL53L4CD_IDENTIFICATION_MODEL_ID       ((uint16_t)0x010F)
+#define VL53L4CD_IDENTIFICATION_MODEL_ID       ((uint16_t)0x010E)
 
 /**
  *  @brief defines Software Version
@@ -331,13 +331,7 @@ class VL53L4CD {
 
     VL53L4CD_Error SensorInit();
 
-    /**
-     * @brief This function clears the interrupt. It needs to be called after a
-     * ranging data reading to arm the interrupt for the next data ready event.
-     * @return (VL53L4CD_Error) status : 0 if OK.
-     */
-
-    VL53L4CD_Error ClearInterrupt();
+   
 
     /**
      * @brief This function starts a ranging session. The ranging operation is
@@ -455,44 +449,8 @@ class VL53L4CD {
 
     VL53L4CD_Error GetXtalk(uint16_t *p_xtalk_kcps);
 
-    /**
-     * @brief This function sets new detection thresholds. The detection
-     * thresholds can be programmed to generate an interrupt on pin 7 (GPIO1), only
-     * when a condition on distance is reach. Example:
-     * VL53L4CD_SetDistanceThreshold(dev,100,300,0): Below 100 mm
-     * VL53L4CD_SetDistanceThreshold(dev,100,300,1): Above 300 mm
-     * VL53L4CD_SetDistanceThreshold(dev,100,300,2): Below 100mm or above 300mm
-     * VL53L4CD_SetDistanceThreshold(dev,100,300,3): Above 100mm or below 300mm
-     * @param (uint16_t) distance_low_mm : Low distance threshold in millimeters.
-     * @param (uint16_t) distance_high_mm : High distance threshold in millimeters.
-     * @param (uint8_t) window : Interrupt windows (0=below low threshold;
-     * 1=above high threshold; 2=out of low/high windows; 3=in low/high windows)
-     * @return (VL53L4CD_Error) status : 0 if OK.
-     */
+    
 
-    VL53L4CD_Error SetDetectionThresholds(
-      uint16_t distance_low_mm,
-      uint16_t distance_high_mm,
-      uint8_t window);
-
-
-    /**
-     * @brief This function gets the current detection thresholds. The detection
-     * thresholds can be programmed to generate an interrupt on pin 7 (GPIO1), only
-     * when a condition on distance is reach.
-     * @param (uint16_t) *p_distance_low_mm : Pointer of low distance threshold in
-     * millimeters.
-     * @param (uint16_t) *p_distance_high_mm : Pointer of high distance threshold in
-     * millimeters.
-     * @param (uint8_t) *p_window : Interrupt windows (0=below low threshold;
-     * 1=above high threshold; 2=out of low/high windows; 3=in low/high windows)
-     * @return (VL53L4CD_Error) status : 0 if OK.
-     */
-
-    VL53L4CD_Error GetDetectionThresholds(
-      uint16_t *p_distance_low_mm,
-      uint16_t *p_distance_high_mm,
-      uint8_t *p_window);
 
     /**
      * @brief This function sets a new signal threshold in kcps. If a
