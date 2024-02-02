@@ -16,10 +16,29 @@ It contains the source code for each component and also the main source code of 
 
 **There is a README.md in the `code` folder that describes how to work with the code. Please refer to that document.**
 
+# Prerequisite
+### *MCU Xpresso*
+
+IDE to work with NXP board, not intuitive to use but has auto-configuration tool.
+
+- **Install [link](https://nxp.flexnetoperations.com/control/frse/product?entitlementId=107109928&lineNum=1&authContactId=81844998&authPartyId=54297698)**
+- A guide is available [here](./guides/guide_mcuxpresso.md)
+
+
+**`WARNING for Windows users!!!`** When installing and using MCU Xpresso, a **firewall window** will pop up that asks you to permit the app to access public and private networks. The same will happen the first time you flash/ debug the code.
+
+**Make sure to permit `both` private and public networks**.
+
+Failed to do so then good luck getting the Redlink server working without reinstalling Windows.
+
+### *Git and GitHub*
+- Check [here](./guides/guide_git.md) for a quick guide on how to install and use Git.
+
+
 # Quick HowTo
 Small survival kit for everyone : 
 ## Installing git (the clean way)
-[Get here](https://git-scm.com/downloads) and follow the installer's instructions. One should avoid using the GitHub desktop client
+[Get here](https://git-scm.com/downloads) and follow the installer's instructions. One should avoid using the GitHub desktop client.
 
 ## Downloading the code
 ```bash

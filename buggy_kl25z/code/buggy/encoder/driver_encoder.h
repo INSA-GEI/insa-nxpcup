@@ -7,6 +7,10 @@
 #ifndef ENCODER_DRIVER_ENCODER_H_
 #define ENCODER_DRIVER_ENCODER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "pin_mux.h"
 #include "clock_config.h"
 #include "MKL25Z4.h"
@@ -67,5 +71,9 @@ float encoder_getLeftSpeed(void);
  * @return Right Motor's Speed in mm/s :float
  */
 float encoder_getRightSpeed(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ENCODER_DRIVER_ENCODER_H_ */

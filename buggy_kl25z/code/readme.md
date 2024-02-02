@@ -167,7 +167,7 @@ These 2 elements will show you which structure and function you need to use to c
 **Use them wisely!** 
 
 
-## Build and Flash code
+## Build, Flash and Debug
 ### Build
 It's easy. Find the `hammer` icon in the top bar and click on it.
 
@@ -178,9 +178,9 @@ Normally, you can flash by clicking on the `GUI Flash Tool` (micro-processor ico
 
 If the `GUI Flash Tool` doesn't illuminate, you can try :
 
-- Clean the project (broom icon in QuickStart Panel)
-- Rebuild it
-- Click on Run (green arrow), an error should appear, close it
-- Check if you can click on the `GUI Flash Tool` 
-- If not, repeat these steps. LOL (I will find another method later)
+- Go to another file
+- Go back to your main => The button should reappear
+
+### Debug
+**Use the blue debug button!!!**
 

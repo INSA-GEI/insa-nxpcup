@@ -8,6 +8,11 @@
 #ifndef DC_MOTOR_H_
 #define DC_MOTOR_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 
 #include "MKL25Z4.h"
 #include "fsl_port.h"
@@ -21,7 +26,7 @@
  * 	- PTC7 : Motor Right Enable
  * 	- PTA9 : Motor Left In 2 (PWM for speed)
  * 	- PTA8 : Motor Left In 1 (GPIO for direction)
- * 	- PTC0 : Motor Right Enable
+ * 	- PTC0 : Motor Left Enable
  * 	- TPM0 : PWM for both motors
  * 		+ Channel 1 : PWM for motor Right
  * 		+ Channel 5 : PWM for motor Left
@@ -141,5 +146,8 @@ void MOTOR_Left_Speed_Backward(uint8_t speed);
  */
 void MOTOR_Right_Speed_Backward(uint8_t speed);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* DC_MOTOR_H_ */
