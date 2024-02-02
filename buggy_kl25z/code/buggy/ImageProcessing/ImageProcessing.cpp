@@ -51,6 +51,7 @@ void ImageProcessing::capture(void) {
     // Boucle pour entrer les données de la caméra (un pixel à la fois)
     for (int i = 1; i < 128; i++) {
         CAM_DELAY; // Attente pour le délai CAM
+
         CAM_CLK_HIGH; // Activer l'horloge de la caméra
 
         // Entrée des données de la caméra (un pixel à chaque itération de la boucle)
@@ -69,7 +70,7 @@ void ImageProcessing::affiche_image(void){
 		PRINTF("| %d |",ImageData[i]);
 
 	}
-	PRINTF("/n");
+	PRINTF("\n");
 }
 
 void ImageProcessing::init(){
@@ -542,6 +543,29 @@ void ImageProcessing::processAll(void) {
 	calculateMiddle();
 	compute_data_threshold();
 	//test_FinishLine_Detection();
+}
+
+void ImageProcessing::affiche_edge(void){
+	/*int Tableau_edge[128];
+	for (int i=0;i<=BlackLineLeft;i++){
+		Tableau_edge[i]= 1;
+	}
+	for (int i=BlackLineLeft;i<=BlackLineRight;i++){
+		Tableau_edge[i]= 0;
+	}
+	for (int i=BlackLineRight;i<=127;i++){
+			Tableau_edge[i]= 1;
+		}
+	for (int i = 0 ; i<128;i++){
+			PRINTF("| %d |",Tableau_edge[i]);
+
+		}
+		PRINTF("\n");*/
+	PRINTF(" || Right : %d ",BlackLineLeft);
+	PRINTF(" Left : %d ||",BlackLineRight);
+	PRINTF(" Middle : %d",RoadMiddle);
+
+
 }
 
 

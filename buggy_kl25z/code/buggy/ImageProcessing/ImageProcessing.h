@@ -49,7 +49,7 @@
 
 #define THRESHOLD_classic			120			// standard threshold : used in the basic image processing function
 
-#define functionning_mode			2			// operating mode: from 1 to 3: algorithm more and more precise but heavy
+#define functionning_mode			1			// operating mode: from 1 to 4: algorithm more and more precise but heavy
 
 #define SIGMA_1	 					2			// square root of the variance for the first gaussian filter
 #define SIGMA_2 					2.5			// square root of the variance for the second gaussian filter.
@@ -83,6 +83,7 @@ public:
 	uint16_t BlackLineLeft;					// position of the black line on the left side
 	uint16_t number_edges;
 
+
 	void init(void);					//initializes the camera
 	void capture(void);					//retrieves data from the camera
 	void differentiate(void);			//computes differential
@@ -91,7 +92,8 @@ public:
 	void processAll(void);				//executes all camera related operations in order. Takes approx 940�s to complete
 	bool test_FinishLine_Detection(void);
 	void compute_data_threshold(void);
-	void affiche_image(void);           // Affiche image en mode débug sur serial terminal
+	void affiche_image(void); // Affiche image en mode débug sur serial terminal
+	void affiche_edge(void);
 
 private:
 	int CompareData_classic;			// set data for comparison to find max IN BASE ALGORITHM
