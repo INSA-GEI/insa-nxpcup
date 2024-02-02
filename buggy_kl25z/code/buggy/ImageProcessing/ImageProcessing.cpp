@@ -66,7 +66,7 @@ void ImageProcessing::capture(void) {
 
 void ImageProcessing::affiche_image(void){
 	for (int i = 0 ; i<128;i++){
-		PRINTF("%d",ImageData[i]);
+		PRINTF("| %d |",ImageData[i]);
 
 	}
 	PRINTF("/n");
@@ -103,14 +103,14 @@ void ImageProcessing::init(){
 	    // Désactivation du mode d'échantillonnage long
 	    .longSampleMode = kADC16_LongSampleDisabled,
 
-	    // Désactivation du mode de conversion continue, effectue une seule conversion
-	    .enableContinuousConversion = false,
-
-	    // Désactivation du mode haute vitesse
+		// Désactivation du mode haute vitesse
 	    .enableHighSpeed = false,
 
 	    // Désactivation du mode basse puissance
 	    .enableLowPower = false,
+
+	    // Désactivation du mode de conversion continue, effectue une seule conversion
+	    .enableContinuousConversion = false,
 	};
 
 	// Configurations GPIO pour les broches d'entrée et de sortie

@@ -17,7 +17,7 @@
 
 #include <MKL25Z4.h>
 #include "math.h"
-#include <cmath>
+//#include <cmath>
 #include "stdio.h"
 #include "stdlib.h"
 

@@ -30,7 +30,7 @@ void Img_Proc::init(){
 
 	// ADC0 conversion mode
 	ADC0_SC3 = 0x00;				// single conversion mode
-	
+	// Selectionner le channel B bit 5 ADC0_CFG2 
 	
 	diff=0;
 	diff_old=0;
