@@ -2,7 +2,7 @@
  * dc_motor.h
  *
  *  Created on: 3 janv. 2024
- *      Author: TANG Huong Cam (tanghuongcam)
+ *      Author: TANG Huong Cam (hctang@insa-toulouse.fr)
  */
 
 #ifndef DC_MOTOR_H_
