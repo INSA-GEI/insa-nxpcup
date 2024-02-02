@@ -45,7 +45,7 @@ extern "C" {
 #define SERVO_PWN_PIN			12
 
 
-#define SERVO_CENTER_POS 		3250		// initial servo position (center)
+#define SERVO_CENTER_POS 		3300		// initial servo position (center)
 #define SERVO_HARD_LEFT 		2950
 #define SERVO_HARD_RIGHT 		3580
 #define SERVO_FREQUENCY 		100U
