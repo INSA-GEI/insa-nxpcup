@@ -41,7 +41,7 @@ int OVF_cnt_left;
 int OVF_cnt_right;
 
 
-void TPM2_IRQHandler(void){
+void encoders_IRQHandler(void){
 
 	if (TPM_GetStatusFlags(ENCODERS_TPM) & kTPM_TimeOverflowFlag) {
 		TPM_ClearStatusFlags(ENCODERS_TPM,kTPM_TimeOverflowFlag); //Clear the bit flag of the overflow interrupt FTM2

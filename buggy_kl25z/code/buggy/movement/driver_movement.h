@@ -8,6 +8,10 @@
 #ifndef MOVEMENT_DRIVER_MOVEMENT_H_
 #define MOVEMENT_DRIVER_MOVEMENT_H_
 
+#if defined(__cplusplus)
+extern "C" {
+#endif /* __cplusplus */
+
 /***********************************************************************************************************************
  * Included files
  **********************************************************************************************************************/
@@ -35,7 +39,7 @@
  * @fn void movement_init(void)
  * @brief initialize the necessary peripherals for the movement
  */
-void movement_init(void);
+void movement_init(void (*ptrIRQ_Servo)(void));
 
 /**
  * @fn void movement_set(float speed, float angle)
@@ -64,7 +68,8 @@ void movement_stop(void);
  */
 void movement_regulate(void);
 
-
-
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* MOVEMENT_DRIVER_MOVEMENT_H_ */
