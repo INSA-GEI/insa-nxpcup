@@ -156,5 +156,5 @@ void FTM1_IRQHandler() {//servo interrupt, 100Hz
 void FTM2_IRQHandler() {//encoder interrupt 6kHz
 	myMovement.encoder.interruptHandler();
 	myMovement.regulate();
-
+	
 }

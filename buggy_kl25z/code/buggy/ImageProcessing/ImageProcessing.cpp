@@ -5,7 +5,7 @@
  *      Author: Ordi Axel
  */
 
-#include "image.hpp"
+#include <ImageProcessing/ImageProcessing.hpp>
 
 #define SERVO_MAX_LEFT_ANGLE 	-22.0
 #define SERVO_MAX_RIGHT_ANGLE 	28.0

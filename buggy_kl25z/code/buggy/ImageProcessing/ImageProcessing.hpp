@@ -1,12 +1,12 @@
 /*
- * ImageProcessing.h
+ * ImageProcessing.hpp
  *
  *  Created on: 22 janv. 2024
  *      Author: Ordi Axel
  */
 
-#ifndef IMAGE_H_
-#define IMAGE_H_
+#ifndef IMAGEPROCESSING_H_
+#define IMAGEPROCESSING_H_
 
 #include "fsl_gpio.h"
 #include "fsl_port.h"
@@ -104,5 +104,5 @@ private:
 
 };
 
-#endif /* IMAGE_H_ */
+#endif /* IMAGEPROCESSING_H_ */
 

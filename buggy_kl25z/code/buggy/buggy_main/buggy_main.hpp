@@ -9,7 +9,7 @@
 #define BUGGY_MAIN_H_
 
 
-
+void buggy_run(void);
 
 
 #endif /* BUGGY_MAIN_H_ */
