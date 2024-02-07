@@ -53,7 +53,7 @@ void servo_init(void) {
 	TPM_EnableInterrupts(SERVO_TPM_PWM,kTPM_TimeOverflowInterruptEnable);
 
 	//Clear pending interrupts 18 (TPM = FTM1) in NVIC
-	//DisableIRQ(TPM1_IRQn);
+	DisableIRQ(TPM1_IRQn);
 	//Enable interrupts 18 (TPM = FTM1) in NVIC
 	EnableIRQ(TPM1_IRQn);
 

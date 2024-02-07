@@ -542,11 +542,11 @@ void ImageProcessing::compute_data_threshold(void){
 
 void ImageProcessing::processAll(void) {
 	capture();
-	// Problem with differentiate function, it mqkes motor turn 100%
 	differentiate();
 	process();
 	calculateMiddle();
 	compute_data_threshold();
+	affiche_image();
 	//test_FinishLine_Detection();
 }
 

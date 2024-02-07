@@ -34,12 +34,14 @@ extern "C" {
 /***********************************************************************************************************************
  * Exported functions
  **********************************************************************************************************************/
-
+extern void TPM1_IRQHandler();
+extern void TPM2_IRQHandler();
 /**
  * @fn void movement_init(void)
  * @brief initialize the necessary peripherals for the movement
  */
-void movement_init(void (*ptrIRQ_Servo)(void));
+void movement_init();
+
 
 /**
  * @fn void movement_set(float speed, float angle)

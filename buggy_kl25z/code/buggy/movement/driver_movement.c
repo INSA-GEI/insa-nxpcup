@@ -16,8 +16,7 @@ float targetSpeedR; //	mm/s
 float actualSpeedL; //	mm/s
 float actualSpeedR; //	mm/s
 
-void (*ptrServoIRQ_Handler)(void);
-
+//void (*ptrServoIRQ_Handler)(void);
 
 void setAngle(float angle)
 {
@@ -47,7 +46,7 @@ void applySpeeds(void)
 
 }
 
-void movement_init(void (*ptrIRQ_Servo)(void))
+void movement_init()
 {
 	targetAngle=0.0;
 	targetSpeedL=0.0;
@@ -58,8 +57,7 @@ void movement_init(void (*ptrIRQ_Servo)(void))
 	MOTOR_init();
 	servo_init();
 	encoders_init();
-
-	ptrServoIRQ_Handler = ptrIRQ_Servo;
+	//ptrServoIRQ_Handler = ptrIRQ_Servo;
 }
 
 void movement_set(float speed, float angle) {
@@ -133,13 +131,13 @@ void movement_regulate(void) {
 }
 
 
-void TPM1_IRQHandler(){
-	(*ptrServoIRQ_Handler)();
-}
+//void TPM1_IRQHandler(){
+	//(*ptrServoIRQ_Handler)();
+//}
 
-void TPM2_IRQHandler(){
-	encoders_IRQHandler();
-	movement_regulate();
-}
+//void TPM2_IRQHandler(){
+	//encoders_IRQHandler();
+	//movement_regulate();
+//}
 
 
