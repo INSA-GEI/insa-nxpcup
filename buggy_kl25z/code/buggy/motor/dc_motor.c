@@ -66,9 +66,6 @@ void MOTOR_init(void){
 	GPIO_PinInit(GPIO_MOTOR_ENABLE,PIN_ENABLE_MOTOR_LEFT,&config_ouput_gpio);
 	GPIO_PinInit(GPIO_MOTOR_ENABLE,PIN_ENABLE_MOTOR_RIGHT,&config_ouput_gpio);
 
-	//enable the motors
-	MOTOR_Left_Enable();
-	MOTOR_Right_Enable();
 
 	//set initial speed's motors as 0
 	MOTOR_Left_Speed_Forward(0);
@@ -77,6 +74,9 @@ void MOTOR_init(void){
 	//set forward direction for motors
 	MOTOR_Left_Direction_Forward();
 	MOTOR_Right_Direction_Forward();
+	//enable the motors
+	MOTOR_Left_Enable();
+	MOTOR_Right_Enable();
 
 
 

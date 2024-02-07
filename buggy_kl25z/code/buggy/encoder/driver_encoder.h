@@ -80,3 +80,5 @@ float encoder_getRightSpeed(void);
 #endif
 
 #endif /* ENCODER_DRIVER_ENCODER_H_ */
+
+

@@ -43,7 +43,8 @@ void applySpeeds(void)
 
 	MOTOR_Left_Speed_Forward((int)(actualSpeedL*SPEED_TO_PWM));
 	MOTOR_Right_Speed_Forward((int)(actualSpeedR*SPEED_TO_PWM));
-
+	//MOTOR_Left_Speed_Forward(20);
+	//MOTOR_Right_Speed_Forward(20);
 }
 
 void movement_init()
@@ -67,6 +68,8 @@ void movement_set(float speed, float angle) {
 	}
 	//important : set angle before speed, as differential speed is based on angle
 	movement_setSpeed(speed);
+	MOTOR_Left_Speed_Forward((int)(targetSpeedL*SPEED_TO_PWM));
+	MOTOR_Right_Speed_Forward((int)(targetSpeedL*SPEED_TO_PWM));
 }
 
 

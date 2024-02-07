@@ -5,8 +5,13 @@
  *      Author: TANG Huong Cam (hctang@insa-toulouse.fr)
  */
 
+
 #ifndef SERVO_DRIVER_SERVO_H_
 #define SERVO_DRIVER_SERVO_H_
+
+#if defined(__cplusplus)
+extern "C" {
+#endif /* __cplusplus */
 
 /***********************************************************************************************************************
  * Included files
@@ -18,10 +23,6 @@
 #include "pin_mux.h"
 #include "fsl_port.h"
 #include "fsl_gpio.h"
-
-#if defined(__cplusplus)
-extern "C" {
-#endif /* __cplusplus */
 
 /***********************************************************************************************************************
  * Definitions
@@ -75,9 +76,10 @@ piloter la voiture de manière symétrique à gauche et à droite */
 void servo_init(void);
 void servo_setPos(int angle);
 
-
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* SERVO_DRIVER_SERVO_H_ */
+
+

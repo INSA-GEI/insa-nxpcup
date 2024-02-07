@@ -14,8 +14,8 @@
 ImageProcessing camera;
 unsigned int V=1500;
 unsigned int Vset=1500;
-unsigned int Vslow=1000;
-unsigned int VslowTH=1000;
+unsigned int Vslow=500;
+unsigned int VslowTH=500;
 const float ADAPTIVE_SPEED_ANGLE = 10.0;
 const float ADAPTIVE_SPEED_HYST = 2.0;
 
@@ -32,15 +32,16 @@ void buggy_run(void){
 	// BASE
 	movement_init();
 	camera.init();
-	movement_set(V, 20);
-
+	movement_set(V, 0);
+	movement_regulate();
 
 
 	//-----TEST---- Pas necessaire--------
 	//servo_init();
+	//servo_setPos(22);
 	//MOTOR_Left_Speed_Forward(20);
 	//MOTOR_Right_Speed_Forward(20);
-	movement_regulate();
+
 }
 
 void TPM1_IRQHandler(){
