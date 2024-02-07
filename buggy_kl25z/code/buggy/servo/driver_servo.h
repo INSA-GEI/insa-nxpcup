@@ -44,11 +44,19 @@ extern "C" {
 #define SERVO_PWM_GPIO 			GPIOA
 #define SERVO_PWN_PIN			12
 
+//premier servo LED casse
+#define SERVO_CENTER_POS 		1250		// initial servo position (center)
+#define SERVO_HARD_LEFT 		2250
+#define SERVO_HARD_RIGHT 		900
 
-#define SERVO_CENTER_POS 		3300		// initial servo position (center)
+/*
+#define SERVO_CENTER_POS 		3500		// initial servo position (center)
 #define SERVO_HARD_LEFT 		2950
-#define SERVO_HARD_RIGHT 		3580
-#define SERVO_FREQUENCY 		100U
+#define SERVO_HARD_RIGHT 		3800
+*/
+
+#define SERVO_FREQUENCY 		100
+
 
 /*Les angles de braquage max sont à remesurer en fonction des voitures, les deux côtés
 ne sont pas symétriques en général, on prend donc ici le plus petit angle des deux côtés pour
@@ -58,9 +66,12 @@ piloter la voiture de manière symétrique à gauche et à droite */
  * L'angle max à droite .
  */
 #define SERVO_MAX_LEFT_ANGLE -22
-#define SERVO_MAX_RIGHT_ANGLE 28
+#define SERVO_MAX_RIGHT_ANGLE 29
 
-
+/*
+#define SERVO_MAX_LEFT_ANGLE 28
+#define SERVO_MAX_RIGHT_ANGLE -22
+*/
 /***********************************************************************************************************************
  * Exported functions
  **********************************************************************************************************************/
