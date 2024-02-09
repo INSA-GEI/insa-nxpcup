@@ -8,7 +8,7 @@
 #include <ImageProcessing/ImageProcessing.hpp>
 
 #define SERVO_MAX_LEFT_ANGLE 	-22.0
-#define SERVO_MAX_RIGHT_ANGLE 	29.0
+#define SERVO_MAX_RIGHT_ANGLE 	22.0
 
 #define PI 						3.14159265358979323846	// value of PI
 
@@ -422,13 +422,13 @@ void ImageProcessing::calculateMiddle (void){
 	diff_old = diff;							// store old difference
 
 	// Find difference from real middle
-	diff =  RoadMiddle - 64;						// calculate actual difference
+	diff =  64 - RoadMiddle ;						// calculate actual difference
 
 	// plausibility check
 	if (abs (diff - diff_old) > 50){
 		diff = diff_old;
 	}else{
-		servo_angle=-(KP_TURN*(float)diff + KDP_TURN*(float)(diff-diff_old));
+		servo_angle=(KP_TURN*(float)diff + KDP_TURN*(float)(diff-diff_old));
 		if(servo_angle<SERVO_MAX_LEFT_ANGLE)servo_angle=SERVO_MAX_LEFT_ANGLE;
 		if(servo_angle>SERVO_MAX_RIGHT_ANGLE)servo_angle=SERVO_MAX_RIGHT_ANGLE;
 	}

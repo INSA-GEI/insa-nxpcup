@@ -31,14 +31,19 @@
 #define	CAM_CLK_LOW				GPIO_ClearPinsOutput(GPIOB,(1<<9))	// CLK on PTB9
 
 #define ADC0_Channel_Group 0u // Utilisé pour le receuil de donnée de l'ADC0. Seul channel group avec software trigger
-
+#define PORT_ADC PORTC
+#define PORT_GPIO PORTB
+#define PIN_CLOCK 9u
+#define PIN_SI 8u
 
 
 //#define KP_STRAIGHT						50			// Proportional coefficient in straight line
 //#define KDP_STRAIGHT					15			// Differential coefficient in straight line
 
-#define KP_TURN 						.7			// Proportional coefficient in turn
-#define KDP_TURN 						.6			// Differential coefficient in turn
+
+// Loi de control derivee proportionnel
+#define KP_TURN 						0.7 	// Proportional coefficient in turn
+#define KDP_TURN 						0.5		// Differential coefficient in turn
 
 
 
@@ -48,7 +53,9 @@
 
 #define THRESHOLD_classic			120			// standard threshold : used in the basic image processing function
 
-#define functionning_mode			1			// operating mode: from 1 to 4: algorithm more and more precise but heavy
+#define functionning_mode			2			// operating mode: from 1 to 4: algorithm more and more precise but heavy
+// Functionning mode 1: Problème de virage à droite
+// Functionning mode 2: Tour à gauche et droite effectuée
 
 #define SIGMA_1	 					2			// square root of the variance for the first gaussian filter
 #define SIGMA_2 					2.5			// square root of the variance for the second gaussian filter.

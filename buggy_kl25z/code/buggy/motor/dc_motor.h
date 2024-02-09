@@ -22,8 +22,8 @@ extern "C" {
  * 	- PTA4 : Motor Right In 1 (PWM for speed)
  * 	- PTA5 : Motor Right In 2 (GPIO for direction)
  * 	- PTC7 : Motor Right Enable
- * 	- PTA9 : Motor Left In 2 (PWM for speed)
- * 	- PTA8 : Motor Left In 1 (GPIO for direction)
+ * 	- PTC9 : Motor Left In 2 (PWM for speed)
+ * 	- PTC8 : Motor Left In 1 (GPIO for direction)
  * 	- PTC0 : Motor Right Enable
  * 	- TPM0 : PWM for both motors
  * 		+ Channel 1 : PWM for motor Right

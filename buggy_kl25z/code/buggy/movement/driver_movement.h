@@ -25,8 +25,12 @@ extern "C" {
  **********************************************************************************************************************/
 
 #define MOVEMENT_ENTRAXE_COEFF 		0.005		// 0.0056 	// Distance between 2 wheels E=15cm
+
+// Correcteur 
 #define MOVEMENT_CORR_THRESHOLD 	6.0 		// correct the speed only when we are more than 60 mm/s off target speed
 #define MOVEMENT_CORR_KP 			1			// amount of error to correct each iteration
+
+
 #define MOVEMENT_SPEED_LIMIT_MM_S 	9000.0		// mm/s ~ 70% PWM
 #define MOVEMENT_SPEED_LIMIT_PWM	70.0		// 1000% ~ 9000 mm/s
 

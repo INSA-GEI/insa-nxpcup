@@ -12,12 +12,12 @@
 //#include "movement/driver_movement.h"
 
 ImageProcessing camera;
-unsigned int V=1500;
-unsigned int Vset=1500;
-unsigned int Vslow=500;
-unsigned int VslowTH=500;
-const float ADAPTIVE_SPEED_ANGLE = 10.0;
-const float ADAPTIVE_SPEED_HYST = 2.0;
+unsigned int V=1800; // Entre 1000 et 9000 // Vitese initiale
+unsigned int Vset=2600; // Vitesse target
+// unsigned int Vslow=500;
+// unsigned int VslowTH=500;
+// const float ADAPTIVE_SPEED_ANGLE = 10.0;
+// const float ADAPTIVE_SPEED_HYST = 2.0;
 
 int n=0;
 int c=0;
@@ -35,6 +35,12 @@ void buggy_run(void){
 	movement_set(V, 0);
 	movement_regulate();
 
+
+	/*// Pour régler focale de la caméra. mettre en commentaire BASE
+	camera.init();
+	while (1){
+		camera.processAll();
+	}*/
 
 	//-----TEST---- Pas necessaire--------
 	//servo_init();

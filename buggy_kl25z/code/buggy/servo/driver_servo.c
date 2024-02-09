@@ -10,7 +10,7 @@
 //premier servo LED casse
 #define SERVO_CENTER_POS 		3000		// initial servo position (center)
 #define SERVO_HARD_LEFT 		4200
-#define SERVO_HARD_RIGHT 		1800
+#define SERVO_HARD_RIGHT 		1600        // initial 1800
 
 
 const tpm_config_t TPM_config = {
