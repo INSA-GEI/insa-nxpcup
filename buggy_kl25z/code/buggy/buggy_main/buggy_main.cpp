@@ -8,12 +8,13 @@
 
 //#include <ImageProcessing/ImageProcessing.hpp>
 #include "buggy_main.hpp"
+#include "camera_led/cam_led.h"
 #include "MKL25Z4.h"
 //#include "movement/driver_movement.h"
 
 ImageProcessing camera;
-unsigned int V=1800; // Entre 1000 et 9000 // Vitese initiale
-unsigned int Vset=2600; // Vitesse target
+unsigned int V=1500;	// Entre 1000 et 9000 // Vitese initiale
+unsigned int Vset=2100; // Vitesse target
 // unsigned int Vslow=500;
 // unsigned int VslowTH=500;
 // const float ADAPTIVE_SPEED_ANGLE = 10.0;
@@ -30,6 +31,7 @@ bool FLAG_ENABLE_LOG_SERVO=false;
 
 void buggy_run(void){
 	// BASE
+	cam_led_init();
 	movement_init();
 	camera.init();
 	movement_set(V, 0);

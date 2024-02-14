@@ -42,8 +42,8 @@
 
 
 // Loi de control derivee proportionnel
-#define KP_TURN 						0.7 	// Proportional coefficient in turn
-#define KDP_TURN 						0.5		// Differential coefficient in turn
+#define KP_TURN 						.7 	// Proportional coefficient in turn
+#define KDP_TURN 						.6		// Differential coefficient in turn
 
 
 

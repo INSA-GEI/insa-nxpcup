@@ -6,11 +6,14 @@
  */
 
 #include <ImageProcessing/ImageProcessing.hpp>
+#include <servo/driver_servo.h>
 
-#define SERVO_MAX_LEFT_ANGLE 	-22.0
-#define SERVO_MAX_RIGHT_ANGLE 	22.0
 
 #define PI 						3.14159265358979323846	// value of PI
+
+//Camera 1 : Proche ADC0
+#define CAMERA_1_ADC ADC0
+#define CAMERA_1_PIN
 
 int i,j;
 
