@@ -9,12 +9,12 @@
 //#include <ImageProcessing/ImageProcessing.hpp>
 #include "buggy_main.hpp"
 #include "camera_led/cam_led.h"
+#include "ImageProcessing/ImageProcessing_Commande.hpp"
 #include "MKL25Z4.h"
 //#include "movement/driver_movement.h"
 
-ImageProcessing camera;
-unsigned int V=1500;	// Entre 1000 et 9000 // Vitese initiale
-unsigned int Vset=2100; // Vitesse target
+unsigned int V=1800;	// Entre 1000 et 9000 // Vitese initiale
+unsigned int Vset=1800; // Vitesse target
 // unsigned int Vslow=500;
 // unsigned int VslowTH=500;
 // const float ADAPTIVE_SPEED_ANGLE = 10.0;
@@ -32,29 +32,24 @@ bool FLAG_ENABLE_LOG_SERVO=false;
 void buggy_run(void){
 	// BASE
 	cam_led_init();
+	Camera_Initiate();
 	movement_init();
-	camera.init();
 	movement_set(V, 0);
 	movement_regulate();
-
-
-	/*// Pour régler focale de la caméra. mettre en commentaire BASE
-	camera.init();
-	while (1){
-		camera.processAll();
-	}*/
 
 	//-----TEST---- Pas necessaire--------
 	//servo_init();
 	//servo_setPos(22);
 	//MOTOR_Left_Speed_Forward(20);
 	//MOTOR_Right_Speed_Forward(20);
+	//while(1){
+	//Camera_Calculate_Servo_Angle();
+	//}
 
 }
 
 void TPM1_IRQHandler(){
-	camera.processAll();
-	movement_set(Vset, camera.servo_angle);
+	movement_set(Vset,Camera_Calculate_Servo_Angle());
 	TPM_ClearStatusFlags(TPM1, kTPM_Chnl0Flag);
 }
 void TPM2_IRQHandler(){

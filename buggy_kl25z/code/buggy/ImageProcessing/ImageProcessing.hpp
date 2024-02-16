@@ -25,16 +25,15 @@
 
 
 #define CAM_DELAY				asm ("nop")				// minimal delay time
-#define	CAM_SI_HIGH 			GPIO_SetPinsOutput(GPIOB,(1<<8)) // SI on PTB8
-#define	CAM_SI_LOW				GPIO_ClearPinsOutput(GPIOB,(1<<8)) // SI on PTB8*
-#define	CAM_CLK_HIGH			GPIO_SetPinsOutput(GPIOB,(1<<9))	// CLK on PTB9
-#define	CAM_CLK_LOW				GPIO_ClearPinsOutput(GPIOB,(1<<9))	// CLK on PTB9
+#define	CAM_SI_HIGH_CAM_1 			GPIO_SetPinsOutput(GPIOB,(1<<8)) // SI on PTB8
+#define	CAM_SI_LOW_CAM_1				GPIO_ClearPinsOutput(GPIOB,(1<<8)) // SI on PTB8*
+#define	CAM_CLK_HIGH_CAM_1			GPIO_SetPinsOutput(GPIOB,(1<<9))	// CLK on PTB9
+#define	CAM_CLK_LOW_CAM_1				GPIO_ClearPinsOutput(GPIOB,(1<<9))	// CLK on PTB9
+#define	CAM_SI_HIGH_CAM_2 			GPIO_SetPinsOutput(GPIOB,(1<<10)) // SI on PTB8
+#define	CAM_SI_LOW_CAM_2				GPIO_ClearPinsOutput(GPIOB,(1<<10)) // SI on PTB8*
+#define	CAM_CLK_HIGH_CAM_2			GPIO_SetPinsOutput(GPIOB,(1<<11))	// CLK on PTB9
+#define	CAM_CLK_LOW_CAM_2				GPIO_ClearPinsOutput(GPIOB,(1<<11))	// CLK on PTB9
 
-#define ADC0_Channel_Group 0u // Utilisé pour le receuil de donnée de l'ADC0. Seul channel group avec software trigger
-#define PORT_ADC PORTC
-#define PORT_GPIO PORTB
-#define PIN_CLOCK 9u
-#define PIN_SI 8u
 
 
 //#define KP_STRAIGHT						50			// Proportional coefficient in straight line
@@ -44,6 +43,10 @@
 // Loi de control derivee proportionnel
 #define KP_TURN 						.7 	// Proportional coefficient in turn
 #define KDP_TURN 						.6		// Differential coefficient in turn
+
+//Gain correctif pour 2 camera somme = 1
+#define K_CAM_1 						.3
+#define K_CAM_2							.7
 
 
 
@@ -81,6 +84,8 @@ public:
 	int threshold;				// actual position of the servo relative to middle
 	int black_middle_pos_rect1;
 	int black_middle_pos_rect2;
+	int Numero_Camera; // Numéro déterminant si initialise et capture sur caméra 1 ou 2 .
+	//int initial_middle =50;
 	float servo_angle;
 	uint16_t RoadMiddle;						// calculated middle of the road
 	uint16_t RoadMiddle_old;					// save the last "Middle of the road" position
@@ -88,13 +93,23 @@ public:
 	uint16_t BlackLineLeft;					// position of the black line on the left side
 	uint16_t number_edges;
 
+	//Constructeurs
+	ImageProcessing();
+	ImageProcessing(int i);
 
-	void init(void);					//initializes the camera
-	void capture(void);					//retrieves data from the camera
+
+	//Méthodes
+	void CAMERA_1_init(void);					//initializes the camera
+	void CAMERA_1_capture(void);					//retrieves data from the camera
+	void CAMERA_2_init(void);					//initializes the camera
+	void CAMERA_2_capture(void);					//retrieves data from the camera
+	void capture(void);
+	void init(void);
 	void differentiate(void);			//computes differential
 	void process(void);					//detects edges
 	void calculateMiddle(void);			//guesses the middle
-	void processAll(void);				//executes all camera related operations in order. Takes approx 940�s to complete
+	void Actualise_Servo_1_Camera (void);
+	//void processAll(void);				//executes all camera related operations in order. Takes approx 940�s to complete
 	bool test_FinishLine_Detection(void);
 	void compute_data_threshold(void);
 	void affiche_image(void); // Affiche image en mode débug sur serial terminal

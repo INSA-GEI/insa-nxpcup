@@ -11,14 +11,59 @@
 
 #define PI 						3.14159265358979323846	// value of PI
 
-//Camera 1 : Proche ADC0
+//Camera 1 : Proche/ en haut
+
 #define CAMERA_1_ADC ADC0
-#define CAMERA_1_PIN
+#define CAMERA_1_Channel_Group 0u // Utilisé pour le receuil de donnée de l'ADC0. Seul channel group avec software trigger
+#define CAMERA_1_PIN_ADC 2u
+#define CAMERA_1_PIN_SI 8u
+#define CAMERA_1_PIN_CLK 9u
+#define CAMERA_1_PORT_SI PORTB
+#define CAMERA_1_PORT_CLK PORTB
+#define CAMERA_1_PORT_ADC PORTC
+#define CAMERA_1_ADC_CHANNEL_NUMBER 11
+
+//Camera 2 : loin/ en bas
+
+#define CAMERA_2_ADC ADC0
+#define CAMERA_2_Channel_Group 0u // Utilisé pour le receuil de donnée de l'ADC0. Seul channel group avec software trigger
+#define CAMERA_2_PIN_ADC 1u
+#define CAMERA_2_PIN_SI 10u
+#define CAMERA_2_PIN_CLK 11u
+#define CAMERA_2_PORT_SI PORTB
+#define CAMERA_2_PORT_CLK PORTB
+#define CAMERA_2_PORT_ADC PORTC
+#define CAMERA_2_ADC_CHANNEL_NUMBER 15
+
 
 int i,j;
+ImageProcessing::ImageProcessing():Numero_Camera(1){};
+ImageProcessing::ImageProcessing(int i):Numero_Camera(i){
+	// Permet d'initialiser la caméra sur ADC0 SE11 ou ADC0 SE15
+	// ADC0 SE11 --> Numero_Camera = 1
+	// ADC0 SE15 --> Numero_Camera = 2
+}
+
+void ImageProcessing::init(){
+	if (this->Numero_Camera == 1){
+		CAMERA_1_init();
+	}
+	else if (this->Numero_Camera == 2){
+		CAMERA_2_init();
+	}
+}
+
+void ImageProcessing::capture(){
+	if (this->Numero_Camera == 1){
+		CAMERA_1_capture();
+	}
+	else if (this->Numero_Camera == 2){
+		CAMERA_2_capture();
+	}
+}
 
 
-void ImageProcessing::capture(void) {
+void ImageProcessing::CAMERA_1_capture(void) {
 	/* capture des données provenant d'une caméra en utilisant l'ADC.
 	 * Il configure le canal 11 de l'ADC pour la capture des pixels de la caméra,
 	 * et stocke les valeurs des pixels dans le tableau ImageData.
@@ -27,52 +72,101 @@ void ImageProcessing::capture(void) {
 
     // Configuration spécifique pour le canal 11 de l'ADC
     const adc16_channel_config_t adc0_config_ch_11 = {
-        .channelNumber = 11,
+        .channelNumber = CAMERA_1_ADC_CHANNEL_NUMBER,
         .enableInterruptOnConversionCompleted = false,
         .enableDifferentialConversion = false,
     };
 
     // Sélectionner le côté B du MUX pour le canal 11
-    ADC16_SetChannelMuxMode(ADC0, kADC16_ChannelMuxB);
+    ADC16_SetChannelMuxMode(CAMERA_1_ADC, kADC16_ChannelMuxB);
 
     // Activer la ligne SI (Shift In) de la caméra
-    CAM_SI_HIGH;
+    CAM_SI_HIGH_CAM_1;
     CAM_DELAY; // Attente pour le délai CAM
 
     // Activer l'horloge de la caméra
-    CAM_CLK_HIGH;
+    CAM_CLK_HIGH_CAM_1;
     CAM_DELAY; // Attente pour le délai CAM
 
     // Désactiver la ligne SI de la caméra
-    CAM_SI_LOW;
+    CAM_SI_LOW_CAM_1;
     CAM_DELAY; // Attente pour le délai CAM
 
     // Entrée des données de la caméra pour le premier pixel
-    ADC16_SetChannelConfig(ADC0, ADC0_Channel_Group, &adc0_config_ch_11);
+    ADC16_SetChannelConfig(CAMERA_1_ADC, CAMERA_1_Channel_Group, &adc0_config_ch_11);
     while (0U == (kADC16_ChannelConversionDoneFlag &
-                  ADC16_GetChannelStatusFlags(ADC0, ADC0_Channel_Group))) {
+                  ADC16_GetChannelStatusFlags(CAMERA_1_ADC, CAMERA_1_Channel_Group))) {
         // Attente de la fin de la conversion pour prendre la valeur
     }
-    ImageData[0] = ADC16_GetChannelConversionValue(ADC0, ADC0_Channel_Group);
-    CAM_CLK_LOW;
+    ImageData[0] = ADC16_GetChannelConversionValue(CAMERA_1_ADC, CAMERA_1_Channel_Group);
+    CAM_CLK_LOW_CAM_1;
 
     // Boucle pour entrer les données de la caméra (un pixel à la fois)
     for (int i = 1; i < 128; i++) {
         CAM_DELAY; // Attente pour le délai CAM
 
-        CAM_CLK_HIGH; // Activer l'horloge de la caméra
+        CAM_CLK_HIGH_CAM_1; // Activer l'horloge de la caméra
 
         // Entrée des données de la caméra (un pixel à chaque itération de la boucle)
-        ADC16_SetChannelConfig(ADC0, ADC0_Channel_Group, &adc0_config_ch_11);
+        ADC16_SetChannelConfig(CAMERA_1_ADC, CAMERA_1_Channel_Group, &adc0_config_ch_11);
         while (0U == (kADC16_ChannelConversionDoneFlag &
-                      ADC16_GetChannelStatusFlags(ADC0, ADC0_Channel_Group))) {
+                      ADC16_GetChannelStatusFlags(CAMERA_1_ADC, CAMERA_1_Channel_Group))) {
             // Attente de la fin de la conversion pour prendre la valeur
         }
-        ImageData[i] = ADC16_GetChannelConversionValue(ADC0, ADC0_Channel_Group);
-        CAM_CLK_LOW; // Désactiver l'horloge de la caméra
+        ImageData[i] = ADC16_GetChannelConversionValue(CAMERA_1_ADC, CAMERA_1_Channel_Group);
+        CAM_CLK_LOW_CAM_1; // Désactiver l'horloge de la caméra
     }
 }
+void ImageProcessing::CAMERA_2_capture(void) {
 
+
+    // Configuration spécifique pour le canal 11 de l'ADC
+    const adc16_channel_config_t adc0_config_ch = {
+        .channelNumber = CAMERA_2_ADC_CHANNEL_NUMBER,
+        .enableInterruptOnConversionCompleted = false,
+        .enableDifferentialConversion = false,
+    };
+
+    // Sélectionner le côté B du MUX pour le canal 11
+    ADC16_SetChannelMuxMode(CAMERA_2_ADC, kADC16_ChannelMuxB);
+
+    // Activer la ligne SI (Shift In) de la caméra
+    CAM_SI_HIGH_CAM_2;
+    CAM_DELAY; // Attente pour le délai CAM
+
+    // Activer l'horloge de la caméra
+    CAM_CLK_HIGH_CAM_2;
+    CAM_DELAY; // Attente pour le délai CAM
+
+    // Désactiver la ligne SI de la caméra
+    CAM_SI_LOW_CAM_2;
+    CAM_DELAY; // Attente pour le délai CAM
+
+    // Entrée des données de la caméra pour le premier pixel
+    ADC16_SetChannelConfig(CAMERA_2_ADC, CAMERA_2_Channel_Group, &adc0_config_ch);
+    while (0U == (kADC16_ChannelConversionDoneFlag &
+                  ADC16_GetChannelStatusFlags(CAMERA_2_ADC, CAMERA_2_Channel_Group))) {
+        // Attente de la fin de la conversion pour prendre la valeur
+    }
+    ImageData[0] = ADC16_GetChannelConversionValue(CAMERA_2_ADC, CAMERA_2_Channel_Group);
+    CAM_CLK_LOW_CAM_2;
+
+    // Boucle pour entrer les données de la caméra (un pixel à la fois)
+    for (int i = 1; i < 128; i++) {
+        CAM_DELAY; // Attente pour le délai CAM
+
+        CAM_CLK_HIGH_CAM_2; // Activer l'horloge de la caméra
+
+        // Entrée des données de la caméra (un pixel à chaque itération de la boucle)
+        ADC16_SetChannelConfig(CAMERA_2_ADC, CAMERA_2_Channel_Group, &adc0_config_ch);
+        while (0U == (kADC16_ChannelConversionDoneFlag &
+                      ADC16_GetChannelStatusFlags(CAMERA_2_ADC, CAMERA_2_Channel_Group))) {
+            // Attente de la fin de la conversion pour prendre la valeur
+        }
+        ImageData[i] = ADC16_GetChannelConversionValue(CAMERA_2_ADC, CAMERA_2_Channel_Group);
+        CAM_CLK_LOW_CAM_2; // Désactiver l'horloge de la caméra
+    }
+}
 void ImageProcessing::affiche_image(void){
 	for (int i = 0 ; i<128;i++){
 		PRINTF("| %d |",ImageData[i]);
@@ -81,7 +175,7 @@ void ImageProcessing::affiche_image(void){
 	PRINTF("\n");
 }
 
-void ImageProcessing::init(){
+void ImageProcessing::CAMERA_1_init(){
 
 	/* Initialisation pour ImageProcessing
 	 *  - ADC0 channel 11 en mode single conversion. Entrée de l'ADC sur PORTC 2
@@ -139,24 +233,102 @@ void ImageProcessing::init(){
 	// ---------------------------------------------------------------------------
 
 	// Initialisation et Configuration de l'ADC
-	ADC16_Init(ADC0, &adc0_config);
-	ADC16_SetChannelMuxMode(ADC0, kADC16_ChannelMuxB); // Sélectionne le Mux B bit 5 ADC0_CFG2
+	ADC16_Init(CAMERA_1_ADC, &adc0_config);
+	ADC16_SetChannelMuxMode(CAMERA_1_ADC, kADC16_ChannelMuxB); // Sélectionne le Mux B bit 5 ADC0_CFG2
 
 	// Configuration de l'horloge et des ports
 	CLOCK_EnableClock(kCLOCK_PortC);
 	CLOCK_EnableClock(kCLOCK_PortB);
 
 	// Muxage des ports pour les broches ADC et GPIO
-	PORT_SetPinMux(PORTC, 2u, kPORT_PinDisabledOrAnalog); // Broche 2 de PORTC comme broche ADC
-	PORT_SetPinMux(PORTB, 8u, kPORT_MuxAsGpio);          // Broche 8 de PORTB comme broche GPIO
-	PORT_SetPinMux(PORTB, 9u, kPORT_MuxAsGpio);          // Broche 9 de PORTB comme broche GPIO
+	PORT_SetPinMux(PORTC, CAMERA_1_PIN_ADC, kPORT_PinDisabledOrAnalog); // Broche 2 de PORTC comme broche ADC
+	PORT_SetPinMux(PORTB, CAMERA_1_PIN_SI, kPORT_MuxAsGpio);          // Broche 8 de PORTB comme broche GPIO
+	PORT_SetPinMux(PORTB, CAMERA_1_PIN_CLK, kPORT_MuxAsGpio);          // Broche 9 de PORTB comme broche GPIO
 
 	// Initialisation GPIO
-	GPIO_PinInit(GPIOC, 2u, &gpio_pin_input);
-	GPIO_PinInit(GPIOB, 8u, &gpio_pin_output);
-	GPIO_PinInit(GPIOB, 9u, &gpio_pin_output);
+	GPIO_PinInit(GPIOC, CAMERA_1_PIN_ADC, &gpio_pin_input);
+	GPIO_PinInit(GPIOB, CAMERA_1_PIN_SI, &gpio_pin_output);
+	GPIO_PinInit(GPIOB, CAMERA_1_PIN_CLK, &gpio_pin_output);
 
 }
+
+void ImageProcessing::CAMERA_2_init(){
+
+	/* Initialisation pour ImageProcessing
+	 *  - ADC1 channel 11 en mode single conversion. Entrée de l'ADC sur PORTC 1
+	 *  - PORTB 10 en sortie GPIO digitale. Controle le SI( Shift - In) de la caméra.
+	 *  - PORTB 11 en sortie GPIO digitale. Controle le clock de la caméra.
+	 */
+
+	// ------------------- VARIABLES LOCALES ----------------------------------
+
+	// Configuration pour ADC0
+	const adc16_config_t adc0_config =
+	{
+	    // Utilisation des broches Vref externes (VrefH et VrefL) comme source de tension de référence
+	    .referenceVoltageSource = kADC16_ReferenceVoltageSourceVref,
+
+	    // Utilisation de ALT1 clk bus/2 comme source d'horloge d'entrée
+	    .clockSource = kADC16_ClockSourceAlt1,
+
+	    // Activation de la sortie d'horloge asynchrone
+	    .enableAsynchronousClock = false,
+
+	    // Configuration du diviseur d'horloge à 2, divisant la source d'horloge d'entrée
+	    .clockDivider = kADC16_ClockDivider1,
+
+	    // Utilisation du mode de résolution 10 bits en mode simple-ended
+	    .resolution = kADC16_ResolutionSE10Bit,
+
+	    // Désactivation du mode d'échantillonnage long
+	    .longSampleMode = kADC16_LongSampleDisabled,
+
+		// Désactivation du mode haute vitesse
+	    .enableHighSpeed = false,
+
+	    // Désactivation du mode basse puissance
+	    .enableLowPower = false,
+
+	    // Désactivation du mode de conversion continue, effectue une seule conversion
+	    .enableContinuousConversion = false,
+	};
+
+	// Configurations GPIO pour les broches d'entrée et de sortie
+	const gpio_pin_config_t gpio_pin_input =
+	{
+	    // Configuration de la broche en entrée numérique
+	    .pinDirection = kGPIO_DigitalInput,
+	};
+
+	const gpio_pin_config_t gpio_pin_output =
+	{
+	    // Configuration de la broche en sortie numérique avec logique à 0
+	    .pinDirection = kGPIO_DigitalOutput,
+	    .outputLogic = 0,
+	};
+
+	// --------------------------------------------------------------------------------------------
+
+	// Initialisation et Configuration de l'ADC
+	ADC16_Init(CAMERA_2_ADC, &adc0_config);
+	ADC16_SetChannelMuxMode(CAMERA_2_ADC, kADC16_ChannelMuxB); // Sélectionne le Mux B bit 5 ADC0_CFG2
+
+	// Configuration de l'horloge et des ports
+	CLOCK_EnableClock(kCLOCK_PortC);
+	CLOCK_EnableClock(kCLOCK_PortB);
+
+	// Muxage des ports pour les broches ADC et GPIO
+	PORT_SetPinMux(PORTC, CAMERA_2_PIN_ADC, kPORT_PinDisabledOrAnalog); // Broche 1 de PORTC comme broche ADC
+	PORT_SetPinMux(PORTB, CAMERA_2_PIN_SI, kPORT_MuxAsGpio);          // Broche 10 de PORTB comme broche GPIO
+	PORT_SetPinMux(PORTB, CAMERA_2_PIN_CLK, kPORT_MuxAsGpio);          // Broche 11 de PORTB comme broche GPIO
+
+	// Initialisation GPIO
+	GPIO_PinInit(GPIOC, CAMERA_2_PIN_ADC, &gpio_pin_input);
+	GPIO_PinInit(GPIOB, CAMERA_2_PIN_SI, &gpio_pin_output);
+	GPIO_PinInit(GPIOB, CAMERA_2_PIN_CLK, &gpio_pin_output);
+
+}
+
 
 void ImageProcessing::differentiate(void){
 
@@ -421,6 +593,11 @@ void ImageProcessing::calculateMiddle (void){
 		RoadMiddle = RoadMiddle_old;		// we continue on the same trajectory as before
 	}
 
+}
+void ImageProcessing:: Actualise_Servo_1_Camera (void){
+	// Option apres calcumateMiddle pour une camera
+	// Permet de changer l'angle du servo a
+
 	// Store old value
 	diff_old = diff;							// store old difference
 
@@ -436,6 +613,7 @@ void ImageProcessing::calculateMiddle (void){
 		if(servo_angle>SERVO_MAX_RIGHT_ANGLE)servo_angle=SERVO_MAX_RIGHT_ANGLE;
 	}
 }
+
 //You may need to adjust the values of "CompareData_high" by modifying the macro "THRESHOLD_high".
 bool ImageProcessing::test_FinishLine_Detection (void){
 
@@ -544,15 +722,6 @@ void ImageProcessing::compute_data_threshold(void){
 }
 
 
-void ImageProcessing::processAll(void) {
-	capture();
-	differentiate();
-	process();
-	calculateMiddle();
-	compute_data_threshold();
-	affiche_image();
-	//test_FinishLine_Detection();
-}
 
 void ImageProcessing::affiche_edge(void){
 	/*int Tableau_edge[128];
