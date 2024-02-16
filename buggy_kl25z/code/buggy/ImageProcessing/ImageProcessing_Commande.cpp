@@ -106,9 +106,21 @@ void  Camera_Actualise_Servo_2_Camera_Moyenne_Ponderee_1 (void){
 	}
 }
 
-//void Camera_Initialise_Middle (void){
+void Camera_Initialise_Middle (void){
+	for (int i =0;i<10;i++){
+		//Captuire dans le vide pour initialiser threshold
+		Camera_Calculate_Servo_Angle();
+	}
+	Camera_Calculate_Servo_Angle();
+	if (Nombre_de_Camera == 1){
+			Camera_1.initial_middle=(Camera_1.BlackLineLeft + Camera_1.BlackLineRight) / 2;
+		}
+		else if (Nombre_de_Camera == 2){
+			Camera_1.initial_middle=Camera_1.initial_middle=(Camera_1.BlackLineLeft + Camera_1.BlackLineRight) / 2;
+			Camera_2.initial_middle=Camera_2.initial_middle=(Camera_2.BlackLineLeft + Camera_2.BlackLineRight) / 2;
+		}
 
-//}
+}
 
 
 

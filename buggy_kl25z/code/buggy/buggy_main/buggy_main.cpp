@@ -14,7 +14,7 @@
 //#include "movement/driver_movement.h"
 
 unsigned int V=1800;	// Entre 1000 et 9000 // Vitese initiale
-unsigned int Vset=1800; // Vitesse target
+unsigned int Vset=2800; // Vitesse target
 // unsigned int Vslow=500;
 // unsigned int VslowTH=500;
 // const float ADAPTIVE_SPEED_ANGLE = 10.0;
@@ -33,6 +33,7 @@ void buggy_run(void){
 	// BASE
 	cam_led_init();
 	Camera_Initiate();
+	//Camera_Initialise_Middle();
 	movement_init();
 	movement_set(V, 0);
 	movement_regulate();

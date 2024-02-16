@@ -63,7 +63,7 @@ piloter la voiture de manière symétrique à gauche et à droite */
  * L'angle max à droite .
  */
 #define SERVO_MAX_LEFT_ANGLE -22
-#define SERVO_MAX_RIGHT_ANGLE 29
+#define SERVO_MAX_RIGHT_ANGLE 22
 
 /*
 #define SERVO_MAX_LEFT_ANGLE 28

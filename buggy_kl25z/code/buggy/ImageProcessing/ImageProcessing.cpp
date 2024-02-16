@@ -578,11 +578,11 @@ void ImageProcessing::calculateMiddle (void){
 
 	// if a line is only on the the right side
 	if (BlackLineLeft < 3){
-		RoadMiddle = BlackLineRight - 50;
+		RoadMiddle = BlackLineRight - initial_middle;
 	}
 	// if a line is only on the the left side
 	if (BlackLineRight > 124){
-		RoadMiddle = BlackLineLeft + 50;
+		RoadMiddle = BlackLineLeft + initial_middle;
 	}
 	// if no line on left and right side
 	if (number_edges == 0){
