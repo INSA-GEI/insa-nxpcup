@@ -9,14 +9,12 @@
 
 const float SPEED_TO_PWM = MOVEMENT_SPEED_LIMIT_PWM/MOVEMENT_SPEED_LIMIT_MM_S;
 
-
 float targetAngle;	//	degrees
 float targetSpeedL; //	mm/s
 float targetSpeedR; //	mm/s
 float actualSpeedL; //	mm/s
 float actualSpeedR; //	mm/s
 
-//void (*ptrServoIRQ_Handler)(void);
 
 void setAngle(float angle)
 {
@@ -43,8 +41,7 @@ void applySpeeds(void)
 
 	MOTOR_Left_Speed_Forward((int)(actualSpeedL*SPEED_TO_PWM));
 	MOTOR_Right_Speed_Forward((int)(actualSpeedR*SPEED_TO_PWM));
-	//MOTOR_Left_Speed_Forward(20);
-	//MOTOR_Right_Speed_Forward(20);
+
 }
 
 void movement_init()
@@ -85,9 +82,6 @@ void movement_setSpeed(float speed) {
 		speed=MOVEMENT_SPEED_LIMIT_MM_S;
 	}
 
-	//MOTOR_Right_Direction_Forward();
-	//MOTOR_Left_Direction_Forward();
-
 	float deltaSpeed=targetAngle*MOVEMENT_ENTRAXE_COEFF*speed;
 	targetSpeedL=speed+deltaSpeed;
 	targetSpeedR=speed-deltaSpeed;
@@ -107,7 +101,7 @@ void movement_stop(void) {
 
 
 void movement_regulate(void) {
-	//GPIOB_PTOR = DEBUG_RED_Pin;
+
 	float err=encoder_getLeftSpeed();
 	if(err<0.0){	//detect invalid speed readings
 		err=0.0;
@@ -133,14 +127,5 @@ void movement_regulate(void) {
 	applySpeeds();
 }
 
-
-//void TPM1_IRQHandler(){
-	//(*ptrServoIRQ_Handler)();
-//}
-
-//void TPM2_IRQHandler(){
-	//encoders_IRQHandler();
-	//movement_regulate();
-//}
 
 

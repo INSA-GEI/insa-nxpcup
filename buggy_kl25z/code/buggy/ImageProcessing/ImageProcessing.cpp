@@ -6,11 +6,13 @@
  */
 
 #include <ImageProcessing/ImageProcessing.hpp>
+#include <servo/driver_servo.h>
 
-#define SERVO_MAX_LEFT_ANGLE 	-22.0
-#define SERVO_MAX_RIGHT_ANGLE 	29.0
 
 #define PI 						3.14159265358979323846	// value of PI
+
+//Camera 1 : Proche ADC0
+#define CAMERA_1_ADC ADC0
 
 int i,j;
 
@@ -395,6 +397,7 @@ void ImageProcessing::process (void){
 
 void ImageProcessing::calculateMiddle (void){
 
+	int pixel_piste = 50;
 	// Store old RoadMiddle value
 	RoadMiddle_old = RoadMiddle;
 
@@ -403,16 +406,15 @@ void ImageProcessing::calculateMiddle (void){
 
 	// if a line is only on the the right side
 	if (BlackLineLeft < 3){
-		RoadMiddle = BlackLineRight - 50;
+		RoadMiddle = BlackLineRight - pixel_piste;
 	}
 	// if a line is only on the the left side
 	if (BlackLineRight > 124){
-		RoadMiddle = BlackLineLeft + 50;
+		RoadMiddle = BlackLineLeft + pixel_piste;
 	}
 	// if no line on left and right side
 	if (number_edges == 0){
 		RoadMiddle = RoadMiddle_old;
-		//for (i = 0 ; i < 1000000 ; i++);
 	}
 	if ((BlackLineRight > 124) && (BlackLineLeft < 3)){
 		RoadMiddle = RoadMiddle_old;		// we continue on the same trajectory as before
@@ -422,13 +424,13 @@ void ImageProcessing::calculateMiddle (void){
 	diff_old = diff;							// store old difference
 
 	// Find difference from real middle
-	diff =  RoadMiddle - 64;						// calculate actual difference
+	diff =  64 - RoadMiddle ;						// calculate actual difference
 
 	// plausibility check
-	if (abs (diff - diff_old) > 50){
+	if (abs (diff - diff_old) > pixel_piste){
 		diff = diff_old;
 	}else{
-		servo_angle=-(KP_TURN*(float)diff + KDP_TURN*(float)(diff-diff_old));
+		servo_angle=(KP_TURN*(float)diff + KDP_TURN*(float)(diff-diff_old));
 		if(servo_angle<SERVO_MAX_LEFT_ANGLE)servo_angle=SERVO_MAX_LEFT_ANGLE;
 		if(servo_angle>SERVO_MAX_RIGHT_ANGLE)servo_angle=SERVO_MAX_RIGHT_ANGLE;
 	}
