@@ -10,8 +10,7 @@
 #include "movement/driver_movement.h"
 #include <ImageProcessing/ImageProcessing.hpp>
 
-void Camera_IRQHandler();
 void buggy_run(void);
-
+void buggy_affiche_cam(void);
 
 #endif /* BUGGY_MAIN_H_ */

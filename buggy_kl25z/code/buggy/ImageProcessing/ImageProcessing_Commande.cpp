@@ -22,6 +22,15 @@ void Camera_Initiate(void){
 	}
 }
 
+void Camera_Affiche(int ID_Camera){
+	if (ID_Camera == 1){
+		Camera_1.affiche_image();
+	}
+	else if (ID_Camera == 2){
+		Camera_2.affiche_image();
+	}
+}
+
 float Camera_Calculate_Servo_Angle(void){
 	if (Nombre_de_Camera == 1){
 		Camera_1.capture();

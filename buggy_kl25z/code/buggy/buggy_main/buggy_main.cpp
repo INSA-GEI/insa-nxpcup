@@ -10,11 +10,11 @@
 #include "buggy_main.hpp"
 #include "camera_led/cam_led.h"
 #include "ImageProcessing/ImageProcessing_Commande.hpp"
+#include "debug/bluetooth_bee.h"
 #include "MKL25Z4.h"
-//#include "movement/driver_movement.h"
 
-unsigned int V=1800;	// Entre 1000 et 9000 // Vitese initiale
-unsigned int Vset=2800; // Vitesse target
+unsigned int V=0;	// Entre 1000 et 9000 // Vitese initiale
+unsigned int Vset=0; // Vitesse target
 // unsigned int Vslow=500;
 // unsigned int VslowTH=500;
 // const float ADAPTIVE_SPEED_ANGLE = 10.0;
@@ -27,16 +27,16 @@ bool FLAG_SEND_IMG=false;
 bool FLAG_ENABLE_LOG_IMG=false;
 bool FLAG_ENABLE_LOG_SERVO=false;
 
-
-
 void buggy_run(void){
 	// BASE
 	cam_led_init();
+	bee_init();
 	Camera_Initiate();
 	//Camera_Initialise_Middle();
 	movement_init();
 	movement_set(V, 0);
 	movement_regulate();
+
 
 	//-----TEST---- Pas necessaire--------
 	//servo_init();
@@ -46,7 +46,10 @@ void buggy_run(void){
 	//while(1){
 	//Camera_Calculate_Servo_Angle();
 	//}
+}
 
+void buggy_affiche_cam(void){
+	Camera_Affiche(1);
 }
 
 void TPM1_IRQHandler(){
