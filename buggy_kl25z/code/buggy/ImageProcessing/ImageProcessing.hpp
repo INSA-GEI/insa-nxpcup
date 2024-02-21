@@ -114,7 +114,6 @@ public:
 	//void processAll(void);				//executes all camera related operations in order. Takes approx 940�s to complete
 	bool test_FinishLine_Detection(void);
 	void compute_data_threshold(void);
-	void affiche_image(void); // Affiche image en mode débug sur serial terminal
 	void affiche_edge(void);
 
 private:

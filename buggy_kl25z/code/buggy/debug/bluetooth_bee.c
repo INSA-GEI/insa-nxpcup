@@ -24,6 +24,10 @@
 #define BEE_LPSCI_BAUD_RATE 115200
 #define BEE_LPSCI_SRC_CLS	1								/* Choose IRC48M (48Mhz) as source clock*/
 
+#define BEE_FRAME_HEADER		0xFF
+#define BEE_LENGTH_DATA_INFO	4
+
+
 void bee_init(void){
 	gpio_pin_config_t bee_gpio_config_output = {kGPIO_DigitalOutput,0};
 	lpsci_config_t bee_lpsci_config;
@@ -48,6 +52,13 @@ void bee_init(void){
 	LPSCI_EnableRx(BEE_LPSCI, true);
 }
 
-void bee_sendData(uint8_t * data, uint8_t data_length){
-	LPSCI_WriteBlocking(BEE_LPSCI, data, data_length);
+void bee_sendData(uint8_t * data, uint16_t lengthInByte){
+	uint8_t dataInfo[BEE_LENGTH_DATA_INFO];
+	dataInfo[0] = BEE_FRAME_HEADER;		/* Frame Header = 0xFF*/
+	dataInfo[1] = BEE_FRAME_HEADER;		/* Frame Header = 0xFF*/
+	dataInfo[2]	= lengthInByte & 0xFF;	/* Data Length LSB*/
+	dataInfo[3]	= lengthInByte >> 8;	/* Data Length MSB*/
+
+	LPSCI_WriteBlocking(BEE_LPSCI, dataInfo, BEE_LENGTH_DATA_INFO);
+	LPSCI_WriteBlocking(BEE_LPSCI, data, lengthInByte);
 }

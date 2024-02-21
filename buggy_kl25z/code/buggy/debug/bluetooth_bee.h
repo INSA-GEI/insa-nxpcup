@@ -24,7 +24,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 void bee_init(void);
-void bee_sendData(uint8_t * data, uint8_t data_length);
+void bee_sendData(uint8_t * data, uint16_t lengthInByte);
 
 #ifdef __cplusplus
 }

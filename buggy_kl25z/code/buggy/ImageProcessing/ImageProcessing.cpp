@@ -7,7 +7,6 @@
 
 #include <ImageProcessing/ImageProcessing.hpp>
 #include <servo/driver_servo.h>
-#include "debug/bluetooth_bee.h"
 
 #define PI 						3.14159265358979323846	// value of PI
 
@@ -166,16 +165,6 @@ void ImageProcessing::CAMERA_2_capture(void) {
         ImageData[i] = ADC16_GetChannelConversionValue(CAMERA_2_ADC, CAMERA_2_Channel_Group);
         CAM_CLK_LOW_CAM_2; // Désactiver l'horloge de la caméra
     }
-}
-void ImageProcessing::affiche_image(void){
-	for (int i = 0 ; i<128;i++){
-		PRINTF("| %d |",ImageData[i]);
-		//dataToSend = ImageData[i] & 0xFF;
-		//bee_sendData(ImageData[i], 1);
-	}
-	PRINTF("\n");
-
-	//bee_sendData(ImageData[i], 1);
 }
 
 void ImageProcessing::CAMERA_1_init(){
