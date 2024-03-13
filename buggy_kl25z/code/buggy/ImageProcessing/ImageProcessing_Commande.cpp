@@ -7,6 +7,10 @@
 
 #include <ImageProcessing/ImageProcessing_Commande.hpp>
 #include <movement/driver_movement.h>
+#include "math.h"
+//#include <cmath>
+#include "stdio.h"
+#include "stdlib.h"
 
 // Crée 2 objets caméra
 ImageProcessing Camera_1(1);
@@ -136,6 +140,55 @@ void Camera_Initialise_Middle (void){
 
 }
 
+uint16_t * Camera_Get_ImageData(int i){
+	//Retourne le pointeur vers le tableau contenant les valeurs des pixels de la camera 1 ou 2
+	if (i == 1){
+		return Camera_1.ImageData;
+	}
+	else if (i == 2){
+		return Camera_2.ImageData;
+	}
+	else{
+		return (uint16_t *)0;
+	}
+}
 
+uint16_t Camera_Get_BlackLineLeft(int i){
+	// Retourne la valeur de BlackLineLeft de Camera 1 ou 2
+	if (i == 1){
+		return Camera_1.BlackLineLeft;
+	}
+	else if (i == 2){
+		return Camera_2.BlackLineLeft;
+	}
+	else{
+		return -1;
+	}
+}
 
+uint16_t Camera_Get_BlackLineRight(int i){
+	// Retourne la valeur de BlackLineRight de Camera 1 ou 2
+	if (i == 1){
+		return Camera_1.BlackLineRight;
+	}
+	else if (i == 2){
+		return Camera_2.BlackLineRight;
+	}
+	else{
+		return -1;
+	}
+}
+
+uint16_t Camera_Get_RoadMiddle(int i){
+	// Retourne la valeur de RoadMiddle de Camera 1 ou 2
+	if (i == 1){
+		return Camera_1.RoadMiddle;
+	}
+	else if (i == 2){
+		return Camera_2.RoadMiddle;
+	}
+	else{
+		return -1;
+	}
+}
 

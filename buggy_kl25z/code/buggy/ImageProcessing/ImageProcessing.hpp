@@ -82,7 +82,7 @@ public:
 	int black_middle_pos_rect1;
 	int black_middle_pos_rect2;
 	int Numero_Camera; // Numéro déterminant si initialise et capture sur caméra 1 ou 2 .
-	int initial_middle =50;
+	int initial_middle = 50;
 	float servo_angle;
 	uint16_t RoadMiddle;						// calculated middle of the road
 	uint16_t RoadMiddle_old;					// save the last "Middle of the road" position

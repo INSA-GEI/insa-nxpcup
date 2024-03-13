@@ -25,7 +25,10 @@ void Camera_Initialise_Middle (void);
 float Camera_Calculate_Servo_Angle(void);
 void Camera_Actualise_Servo_2_Camera_Moyenne_Simple (void);
 void  Camera_Actualise_Servo_2_Camera_Moyenne_Ponderee_1 (void);
-
+uint16_t * Camera_Get_ImageData(int i);
+uint16_t Camera_Get_BlackLineLeft(int i);
+uint16_t Camera_Get_BlackLineRight(int i);
+uint16_t Camera_Get_RoadMiddle(int i);
 
 
 #endif /* IMAGEPROCESSING_IMAGEPROCESSING_COMMANDE_HPP_ */
