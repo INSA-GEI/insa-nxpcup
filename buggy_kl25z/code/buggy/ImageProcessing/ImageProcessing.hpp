@@ -35,14 +35,9 @@
 #define	CAM_CLK_LOW_CAM_2				GPIO_ClearPinsOutput(GPIOB,(1<<11))	// CLK on PTB9
 
 
-
-//#define KP_STRAIGHT						50			// Proportional coefficient in straight line
-//#define KDP_STRAIGHT					15			// Differential coefficient in straight line
-
-
 // Loi de control derivee proportionnel
-#define KP_TURN 						.7 	// Proportional coefficient in turn
-#define KDP_TURN 						.17
+#define KP_TURN 						1.5	// Proportional coefficient in turn
+#define KDP_TURN 						.6
 
 // Differential coefficient in turn
 
@@ -94,6 +89,7 @@ public:
 	uint16_t BlackLineRight;					// position of the black line on the right side (127)
 	uint16_t BlackLineLeft;					// position of the black line on the left side
 	uint16_t number_edges;
+	bool Lost_Control;
 
 	//Constructeurs
 	ImageProcessing();

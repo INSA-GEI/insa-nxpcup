@@ -133,14 +133,3 @@ void movement_regulate(void) {
 	applySpeeds();
 }
 
-
-//void TPM1_IRQHandler(){
-	//(*ptrServoIRQ_Handler)();
-//}
-
-//void TPM2_IRQHandler(){
-	//encoders_IRQHandler();
-	//movement_regulate();
-//}
-
-

@@ -6,11 +6,12 @@
  */
 
 #include <ImageProcessing/ImageProcessing_Commande.hpp>
-
+#include <movement/driver_movement.h>
 
 // Crée 2 objets caméra
 ImageProcessing Camera_1(1);
 ImageProcessing Camera_2(2);
+
 
 void Camera_Initiate(void){
 	if (Nombre_de_Camera == 1){
@@ -44,12 +45,14 @@ float Camera_Calculate_Servo_Angle(void){
 		Camera_1.process();
 		Camera_1.calculateMiddle();
 		//Camera_1.affiche_image();
+		//Camera_1.affiche_edge();
 
 		//Traitement de la caméra 2
 		Camera_2.differentiate();
 		Camera_2.process();
 		Camera_2.calculateMiddle();
 		//Camera_2.affiche_image();
+		//Camera_2.affiche_edge();
 
 		//Option 1 du calcul servo_angle
 		//Prend la moyenne des deux milieux de route obtenue sans se soucier du FOV(field of view) des caméras.
@@ -94,7 +97,18 @@ void  Camera_Actualise_Servo_2_Camera_Moyenne_Ponderee_1 (void){
 	Camera_1.diff_old = Camera_1.diff;
 	//Calcul de la différence de la voiture au centre de la route
 	// Ici centre de la route estimé par moyenne des roadmiddle des deux cameras
-	Camera_1.diff =  64 - (K_CAM_1 *Camera_1.RoadMiddle + K_CAM_2*Camera_2.RoadMiddle) ;
+
+	/*if(Camera_2.Lost_Control && !Camera_1.Lost_Control){
+		Camera_1.diff = 64 - Camera_1.RoadMiddle;
+	}
+	else if(Camera_1.Lost_Control && !Camera_2.Lost_Control)
+	{
+		Camera_1.diff = 64 - Camera_2.RoadMiddle;
+	}
+	else
+	{*/
+		Camera_1.diff =  64 - (K_CAM_1 *Camera_1.RoadMiddle + K_CAM_2*Camera_2.RoadMiddle) ;
+	//}
 
 	// plausibility check
 	if (abs (Camera_1.diff - Camera_1.diff_old) > 50){

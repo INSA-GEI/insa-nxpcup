@@ -20,7 +20,6 @@
 
 
 
-
 void Camera_Initiate(void);
 void Camera_Initialise_Middle (void);
 float Camera_Calculate_Servo_Angle(void);

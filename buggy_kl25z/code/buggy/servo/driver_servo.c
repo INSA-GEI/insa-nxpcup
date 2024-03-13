@@ -9,8 +9,8 @@
 
 //premier servo LED casse
 #define SERVO_CENTER_POS 		3000		// initial servo position (center)
-#define SERVO_HARD_LEFT 		4200
-#define SERVO_HARD_RIGHT 		1600        // initial 1800
+#define SERVO_HARD_LEFT 		4000
+#define SERVO_HARD_RIGHT 		2000        // initial 1800
 
 
 const tpm_config_t TPM_config = {
@@ -71,5 +71,4 @@ void servo_setPos(int angle)
 		pos+=angle*(SERVO_HARD_LEFT-SERVO_CENTER_POS)/SERVO_MAX_LEFT_ANGLE;
 	}
   	SERVO_TPM_PWM->CONTROLS[SERVO_CHANNEL_PWM].CnV = pos;
-	//TPM_UpdatePwmDutycycle(SERVO_TPM_PWM, SERVO_CHANNEL_PWM, kTPM_EdgeAlignedPwm, 3);
 }
