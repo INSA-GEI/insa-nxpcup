@@ -11,6 +11,7 @@
 #include <ImageProcessing/ImageProcessing.hpp>
 
 void buggy_run(void);
-void buggy_affiche_cam(void);
+void buggy_readCMD(void);
+void buggy_afficheData(void);
 
 #endif /* BUGGY_MAIN_H_ */

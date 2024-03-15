@@ -22,12 +22,11 @@
 
 
 void Camera_Initiate(void);
-void Camera_Affiche(int ID_Camera);
 void Camera_Initialise_Middle (void);
 float Camera_Calculate_Servo_Angle(void);
 void Camera_Actualise_Servo_2_Camera_Moyenne_Simple (void);
 void  Camera_Actualise_Servo_2_Camera_Moyenne_Ponderee_1 (void);
 
-
+uint16_t * Camera_getData(int ID_Camera);
 
 #endif /* IMAGEPROCESSING_IMAGEPROCESSING_COMMANDE_HPP_ */

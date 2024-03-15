@@ -6,7 +6,7 @@
  */
 
 #include <ImageProcessing/ImageProcessing_Commande.hpp>
-#include "debug/bluetooth_bee.h"
+#include "monitor/bluetooth_bee.h"
 
 
 // Crée 2 objets caméra
@@ -20,15 +20,6 @@ void Camera_Initiate(void){
 	else if (Nombre_de_Camera == 2){
 		Camera_1.init();
 		Camera_2.init();
-	}
-}
-
-void Camera_Affiche(int ID_Camera){
-	if (ID_Camera == 1){
-		bee_sendData(Camera_1.ImageData, 128*2);
-	}
-	else if (ID_Camera == 2){
-		bee_sendData(Camera_2.ImageData, 128*2);
 	}
 }
 
@@ -132,6 +123,14 @@ void Camera_Initialise_Middle (void){
 
 }
 
-
+uint16_t * Camera_getData(int ID_Camera){
+	if (ID_Camera == 1){
+		return Camera_1.ImageData;
+	}
+	else if (ID_Camera == 2){
+		return Camera_2.ImageData;
+	}
+	return NULL;
+}
 
 

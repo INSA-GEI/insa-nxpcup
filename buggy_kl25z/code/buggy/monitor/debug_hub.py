@@ -1,8 +1,8 @@
 import serial
 from read_data import *
-from plot_data import *
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+# from plot_data import *
+# matplotlib.pyplot as plt
+# from matplotlib.animation import FuncAnimation
 import numpy as np
 
 # Define the COM port and baud rate
@@ -14,10 +14,13 @@ ser = serial.Serial(COM_PORT, BAUD_RATE)
 
 try:
     # Continuous loop to receive and process data
+    print("Starting...")
     while True:     
-        if (checkReceivedData(ser)):
-            getData(ser)
-        
+        # printDataRaw(ser)
+        printAllAsInteger(ser)
+        # printData(ser)
+        # getData(ser)
+       
 # Handle keyboard interrupt (Ctrl+C) to gracefully exit
 except KeyboardInterrupt:
     print("Exiting...")

@@ -52,7 +52,7 @@ extern "C" {
 #define SERVO_HARD_RIGHT 		3800
 */
 
-#define SERVO_FREQUENCY 		100
+#define SERVO_FREQUENCY 		50			//Changer à 100 selon servo !!!!!!!!!!!!!!!!!!!!!
 
 
 /*Les angles de braquage max sont à remesurer en fonction des voitures, les deux côtés

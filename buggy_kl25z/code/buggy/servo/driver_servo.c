@@ -12,9 +12,13 @@
 #define SERVO_HARD_LEFT 		4200
 #define SERVO_HARD_RIGHT 		1600        // initial 1800
 
+/*
+// Define for new servo DM996
+#define SERVO_CENTER_POS		4050 4900 3150
+ * */
 
 const tpm_config_t TPM_config = {
-		.prescale = kTPM_Prescale_Divide_8,
+		.prescale = kTPM_Prescale_Divide_16,		//Changer à 8 si utiliser 100Hz
 		.triggerSelect = kTPM_Trigger_Select_0,
         .enableDoze = false,
         .enableDebugMode = false,
@@ -49,27 +53,30 @@ void servo_init(void) {
 
 	//TPM_UpdatePwmDutycycle(SERVO_TPM_PWM, SERVO_CHANNEL_PWM, kTPM_EdgeAlignedPwm, SERVO_CENTER_POS);
 
-	SERVO_TPM_PWM->CONTROLS[SERVO_CHANNEL_PWM].CnV = SERVO_CENTER_POS;
-
+	//SERVO_TPM_PWM->CONTROLS[SERVO_CHANNEL_PWM].CnV = SERVO_CENTER_POS;
+	/*
 	TPM_EnableInterrupts(SERVO_TPM_PWM,kTPM_TimeOverflowInterruptEnable);
 
 	//Clear pending interrupts 18 (TPM = FTM1) in NVIC
 	DisableIRQ(TPM1_IRQn);
 	//Enable interrupts 18 (TPM = FTM1) in NVIC
 	EnableIRQ(TPM1_IRQn);
-
+	*/
 }
 
 
 void servo_setPos(int angle)
 {
 	int pos = SERVO_CENTER_POS;
-
+	/*
 	if(angle>0){
 		pos+=angle*(SERVO_HARD_RIGHT-SERVO_CENTER_POS)/SERVO_MAX_RIGHT_ANGLE;
 	}else{
 		pos+=angle*(SERVO_HARD_LEFT-SERVO_CENTER_POS)/SERVO_MAX_LEFT_ANGLE;
 	}
-  	SERVO_TPM_PWM->CONTROLS[SERVO_CHANNEL_PWM].CnV = pos;
-	//TPM_UpdatePwmDutycycle(SERVO_TPM_PWM, SERVO_CHANNEL_PWM, kTPM_EdgeAlignedPwm, 3);
+	*/
+  	//SERVO_TPM_PWM->CONTROLS[SERVO_CHANNEL_PWM].CnV = pos;
+	SERVO_TPM_PWM->CONTROLS[SERVO_CHANNEL_PWM].CnV = angle;
+
+	//TPM_UpdatePwmDutycycle(SERVO_TPM_PWM, SERVO_CHANNEL_PWM, kTPM_EdgeAlignedPwm, 7);
 }
