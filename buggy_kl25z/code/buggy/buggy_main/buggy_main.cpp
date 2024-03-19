@@ -14,11 +14,11 @@
 //#include "movement/driver_movement.h"
 
 unsigned int V=1800;	// Entre 1000 et 9000 // Vitese initiale
-unsigned int Vset=3000; // Vitesse target
+unsigned int Vset=2300; // Vitesse target
 
 //unsigned int V=0;	// Entre 1000 et 9000 // Vitese initiale
 //unsigned int Vset=0; // Vitesse target
- unsigned int Vslow=2500;
+ unsigned int Vslow=2100;
 // unsigned int VslowTH=500;
 // const float ADAPTIVE_SPEED_ANGLE = 10.0;
 // const float ADAPTIVE_SPEED_HYST = 2.0;
@@ -42,7 +42,6 @@ void buggy_run(void){
 	movement_set(V, 0);
 	movement_regulate();
 
-	//servo_init();
 }
 
 void TPM1_IRQHandler(){

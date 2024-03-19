@@ -8,13 +8,13 @@
 #include "driver_servo.h"
 
 //premier servo LED casse
-#define SERVO_CENTER_POS 		3000		// initial servo position (center)
-#define SERVO_HARD_LEFT 		4000
-#define SERVO_HARD_RIGHT 		2000        // initial 1800
+#define SERVO_CENTER_POS 		4050		// initial servo position (center)
+#define SERVO_HARD_LEFT 		3150
+#define SERVO_HARD_RIGHT 		4850        // initial 1800
 
 
 const tpm_config_t TPM_config = {
-		.prescale = kTPM_Prescale_Divide_8,
+		.prescale = kTPM_Prescale_Divide_16,
 		.triggerSelect = kTPM_Trigger_Select_0,
         .enableDoze = false,
         .enableDebugMode = false,
