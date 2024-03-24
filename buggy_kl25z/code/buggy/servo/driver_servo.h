@@ -46,11 +46,11 @@ extern "C" {
 #define SERVO_PWN_PIN			12
 
 
-#define SERVO_FREQUENCY 		100
+#define SERVO_FREQUENCY 		50
 
 
-#define SERVO_MAX_LEFT_ANGLE -22
-#define SERVO_MAX_RIGHT_ANGLE 28
+#define SERVO_MAX_LEFT_ANGLE -40
+#define SERVO_MAX_RIGHT_ANGLE 22
 
 /***********************************************************************************************************************
  * Exported functions
