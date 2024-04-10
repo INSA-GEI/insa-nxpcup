@@ -9,7 +9,7 @@
 
 //premier servo LED casse
 #define SERVO_CENTER_POS 		4050		// initial servo position (center)
-#define SERVO_HARD_LEFT 		3150
+#define SERVO_HARD_LEFT 		2900
 #define SERVO_HARD_RIGHT 		4850        // initial 1800
 
 

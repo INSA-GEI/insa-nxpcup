@@ -7,58 +7,88 @@
 
 
 //#include <ImageProcessing/ImageProcessing.hpp>
+#include <ImageProcessing/Camera_Commande.hpp>
 #include "buggy_main.hpp"
 #include "camera_led/cam_led.h"
-#include "ImageProcessing/ImageProcessing_Commande.hpp"
 #include "MKL25Z4.h"
+#include "lidar/driver_lidar.hpp"
 //#include "movement/driver_movement.h"
 
-unsigned int V=1800;	// Entre 1000 et 9000 // Vitese initiale
-unsigned int Vset=2300; // Vitesse target
+unsigned int Vstart=2500;	// Entre 1000 et 9000 // Vitese initiale
+unsigned int Vtarget=3000; // Vitesse target
 
 //unsigned int V=0;	// Entre 1000 et 9000 // Vitese initiale
 //unsigned int Vset=0; // Vitesse target
- unsigned int Vslow=2100;
+ unsigned int Vturn=2700;
 // unsigned int VslowTH=500;
 // const float ADAPTIVE_SPEED_ANGLE = 10.0;
 // const float ADAPTIVE_SPEED_HYST = 2.0;
 
-int n=0;
-int c=0;
-int cnt=0;
-bool FLAG_SEND_IMG=false;
-bool FLAG_ENABLE_LOG_IMG=false;
-bool FLAG_ENABLE_LOG_SERVO=false;
-
-
+int cnt_ostacle=0;
 
 void buggy_run(void){
-
 	// BASE
+	//LIDAR_Init();
 	cam_led_init();
 	Camera_Initiate();
 	//Camera_Initialise_Middle();
 	movement_init();
-	movement_set(V, 0);
+	movement_set(Vstart, 0);
 	movement_regulate();
 
 }
 
-void TPM1_IRQHandler(){
 
-	float angle_servo = Camera_Calculate_Servo_Angle();
-	if (Camera_Calculate_Servo_Angle() > 20 || Camera_Calculate_Servo_Angle() < -18)
+void Ostacle_Detection(void){
+
+	if(LIDAR_CheckObstacle())
 	{
-		movement_set(Vslow,angle_servo);
+		cnt_ostacle++;
+		if (cnt_ostacle > 5)
+		{
+			movement_stop();
+		}
 	}
 	else
 	{
-		movement_set(Vset,angle_servo);
+		cnt_ostacle = 0;
 	}
-	TPM_ClearStatusFlags(TPM1, kTPM_Chnl0Flag);
+
 }
+
+// Servomotor Interrupt 50Hz
+void TPM1_IRQHandler(){
+	float angle_servo = Camera_Calculate_Servo_Angle();
+	if (angle_servo > 20 || angle_servo < -22)
+	{
+		movement_set(Vturn,angle_servo);
+	}
+	else
+	{
+		movement_set(Vtarget,angle_servo);
+	}
+
+	TPM_ClearStatusFlags(TPM1, kTPM_Chnl0Flag);
+
+}
+
+// Encoder Interrupt
 void TPM2_IRQHandler(){
 	encoders_IRQHandler();
 	movement_regulate();
 }
 
+void Buggy_Set_Vstart(int v)
+{
+	Vstart = v;
+}
+
+void Buggy_Set_Vtarget(int v)
+{
+	Vtarget = v;
+}
+
+void Buggy_Set_Vturn(int v)
+{
+	Vturn = v;
+}

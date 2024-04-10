@@ -103,6 +103,7 @@ void movement_stop(void) {
 	MOTOR_Right_Speed_Forward(0);
 	MOTOR_Left_Disable();
 	MOTOR_Right_Disable();
+	servo_setPos(0);
 }
 
 

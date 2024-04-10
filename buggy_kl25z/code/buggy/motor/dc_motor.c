@@ -77,9 +77,6 @@ void MOTOR_init(void){
 	//enable the motors
 	MOTOR_Left_Enable();
 	MOTOR_Right_Enable();
-
-
-
 }
 
 void MOTOR_Left_Enable(void)
