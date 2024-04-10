@@ -7,13 +7,13 @@
 
 #include "driver_encoder.h"
 //Number of rising fronts per mm = 360/(Pi*Diameter) (fronts/mm)
-const float FRONT_PAR_M = NUMBER_RISING_FRONT_PER_ROUND / (PI * WHEEL_DIAMETER);
+const float FRONT_PAR_MM = NUMBER_RISING_FRONT_PER_ROUND / (PI * WHEEL_DIAMETER);
 
 //Timer frequency (before ARR) = FCPU/ENCODER_PRECALER (/s)
 const float ENCODER_FREQ_TIM = (float)CPU_FREQUENCY / (float)ENCODERS_TPM_PRESCALER;
 
 //Constant to calculate the car speed = (Timer frequency before ARR)/(Number of rising fronts per mm) (mm/s/front)
-const float ENCODER_CAL_SPEED = ENCODER_FREQ_TIM / FRONT_PAR_M;
+const float ENCODER_CAL_SPEED = ENCODER_FREQ_TIM / FRONT_PAR_MM;
 
 
 gpio_pin_config_t config_input_gpio = {kGPIO_DigitalInput};		// input logic configuration
@@ -87,7 +87,7 @@ void encoders_init(void){
 	TPM_SetTimerPeriod(ENCODERS_TPM,ENCODERS_TPM_AUTORELOAD);					//set value of auto-reload of ENCODERS_TPM
 
 	//Enable interrupts for TPM2 CH1, TPM2 CH2, TimeOverflow
-	TPM_EnableInterrupts(ENCODERS_TPM,kTPM_Chnl0InterruptEnable |kTPM_Chnl1InterruptEnable | kTPM_TimeOverflowInterruptEnable);
+	TPM_EnableInterrupts(ENCODERS_TPM,kTPM_Chnl0InterruptEnable | kTPM_Chnl1InterruptEnable | kTPM_TimeOverflowInterruptEnable);
 
 	TPM_StartTimer(ENCODERS_TPM,kTPM_SystemClock);		//start clock tpm2 of the encoders
 

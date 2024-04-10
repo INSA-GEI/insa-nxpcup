@@ -103,6 +103,7 @@ void movement_stop(void) {
 	MOTOR_Right_Speed_Forward(0);
 	MOTOR_Left_Disable();
 	MOTOR_Right_Disable();
+	servo_setPos(0);
 }
 
 
@@ -132,15 +133,4 @@ void movement_regulate(void) {
 
 	applySpeeds();
 }
-
-
-//void TPM1_IRQHandler(){
-	//(*ptrServoIRQ_Handler)();
-//}
-
-//void TPM2_IRQHandler(){
-	//encoders_IRQHandler();
-	//movement_regulate();
-//}
-
 

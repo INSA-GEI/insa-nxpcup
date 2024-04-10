@@ -11,6 +11,10 @@
 #include <ImageProcessing/ImageProcessing.hpp>
 
 void buggy_run(void);
+void Buggy_Set_Vstart(int v);
+void Buggy_Set_Vtarget(int v);
+void Buggy_Set_Vturn(int v);
+void Ostacle_Detection(void);
 void buggy_readCMD(void);
 void buggy_afficheData(void);
 

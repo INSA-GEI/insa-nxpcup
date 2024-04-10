@@ -2,7 +2,7 @@
  * buggy_source.c
  *
  *  Created on: 2 févr. 2024
- *      Author: Triet NGUYEN$$
+ *      Author: Triet NGUYEN
  */
 
 
@@ -12,14 +12,20 @@
 #include "camera_led/cam_led.h"
 #include "monitor/bluetooth_bee.h"
 #include "MKL25Z4.h"
+#include "lidar/driver_lidar.hpp"
+//#include "movement/driver_movement.h"
 
-unsigned int V=2000;	// Entre 1000 et 9000 // Vitese initiale
-unsigned int Vset=2300; // Vitesse target
-// unsigned int Vslow=500;
+unsigned int Vstart=2500;	// Entre 1000 et 9000 // Vitese initiale
+unsigned int Vtarget=3000; // Vitesse target
+
+//unsigned int V=0;	// Entre 1000 et 9000 // Vitese initiale
+//unsigned int Vset=0; // Vitesse target
+ unsigned int Vturn=2700;
 // unsigned int VslowTH=500;
 // const float ADAPTIVE_SPEED_ANGLE = 10.0;
 // const float ADAPTIVE_SPEED_HYST = 2.0;
 
+int cnt_ostacle=0;
 int n=0;
 int c=0;
 int cnt=0;
@@ -36,6 +42,7 @@ int pos_servo_test;
 
 void buggy_run(void){
 	// BASE
+	//LIDAR_Init();
 	/*
 	cam_led_init();
 
@@ -48,11 +55,12 @@ void buggy_run(void){
 	//Camera_Initialise_Middle();
 
 	movement_init();
-	movement_set(V, 0);
+	movement_set(Vstart, 0);
 	movement_regulate();
 	//bee_enableSendCameraData(test_data, lengthDatatest);
 	*/
 
+// Servomotor Interrupt 50Hz
 	//-----TEST---- Pas necessaire--------
 
 	servo_init();
@@ -64,6 +72,25 @@ void buggy_run(void){
 	//Camera_Calculate_Servo_Angle();
 	//}
 }
+
+
+void Ostacle_Detection(void){
+
+	if(LIDAR_CheckObstacle())
+	{
+		cnt_ostacle++;
+		if (cnt_ostacle > 5)
+		{
+			movement_stop();
+		}
+	}
+	else
+	{
+		cnt_ostacle = 0;
+	}
+
+}
+
 
 void buggy_readCMD(void){
 	uint8_t id_cmd;
@@ -84,33 +111,33 @@ void buggy_readCMD(void){
 	{
 		case CMD_ID_CAMERA_NEAR_DATA_DIFF:
 			watch_flag = CMD_ID_CAMERA_NEAR_DATA_DIFF;
-			bee_enableSendData(Camera_getData(1, 'd'), 256);
+			bee_enableSendData(Camera_Get_ImageDataDiff(CAM_NEAR_ID), 256);
 			break;
 		case CMD_ID_CAMERA_NEAR_DATA:
 			watch_flag = CMD_ID_CAMERA_NEAR_DATA;
-			bee_enableSendData(Camera_getData(1, 'i'), 256);
+			bee_enableSendData(Camera_Get_ImageData(CAM_NEAR_ID), 256);
 			break;
 		case CMD_ID_CAMERA_NEAR_OTHERS:
 			watch_flag = CMD_ID_CAMERA_NEAR_OTHERS;
-			bee_enableSendData(Camera_getData(1, 'o'), 8);
+			bee_enableSendData(Camera_Get_OthersInfo(CAM_NEAR_ID), 8);
 		case CMD_ID_CAMERA_NEAR_NUM_BORDERS:
 			watch_flag = CMD_ID_CAMERA_NEAR_NUM_BORDERS;
-			bee_enableSendData(Camera_getData(1, 'e'), 2);
+			bee_enableSendData(Camera_Get_NbrEdges(CAM_NEAR_ID), 2);
 
 		case CMD_ID_CAMERA_FAR_DATA_DIFF:
 			watch_flag = CMD_ID_CAMERA_FAR_DATA_DIFF;
-			bee_enableSendData(Camera_getData(2, 'd'), 256);
+			bee_enableSendData(Camera_Get_ImageDataDiff(CAM_FAR_ID), 256);
 			break;
 		case CMD_ID_CAMERA_FAR_DATA:
 			watch_flag = CMD_ID_CAMERA_FAR_DATA;
-			bee_enableSendData(Camera_getData(2, 'i'), 256);
+			bee_enableSendData(Camera_Get_ImageData(CAM_FAR_ID), 256);
 			break;
 		case CMD_ID_CAMERA_FAR_OTHERS:
 			watch_flag = CMD_ID_CAMERA_FAR_OTHERS;
-			bee_enableSendData(Camera_getData(2, 'o'), 8);
+			bee_enableSendData(Camera_Get_OthersInfo(CAM_FAR_ID), 8);
 		case CMD_ID_CAMERA_FAR_NUM_BORDERS:
 			watch_flag = CMD_ID_CAMERA_FAR_NUM_BORDERS;
-			bee_enableSendData(Camera_getData(2, 'e'), 2);
+			bee_enableSendData(Camera_Get_NbrEdges(CAM_FAR_ID), 2);
 		case CMD_ID_STOP_WATCH:
 			watch_flag = CMD_ID_STOP_WATCH;
 			bee_disableSendData();
@@ -165,17 +192,42 @@ void buggy_afficheData(void){
 */
 }
 
-/*
+
 void TPM1_IRQHandler(){
-	movement_set(Vset,Camera_Calculate_Servo_Angle());
+	float angle_servo = Camera_Calculate_Servo_Angle();
+	if (angle_servo > 20 || angle_servo < -22)
+	{
+		movement_set(Vturn,angle_servo);
+	}
+	else
+	{
+		movement_set(Vtarget,angle_servo);
+	}
+
 	if (watch_flag != 0){
 		bee_sendData();
 	}
 	TPM_ClearStatusFlags(TPM1, kTPM_Chnl0Flag);
+
 }
 
+// Encoder Interrupt
 void TPM2_IRQHandler(){
 	encoders_IRQHandler();
 	movement_regulate();
 }
-*/
+
+void Buggy_Set_Vstart(int v)
+{
+	Vstart = v;
+}
+
+void Buggy_Set_Vtarget(int v)
+{
+	Vtarget = v;
+}
+
+void Buggy_Set_Vturn(int v)
+{
+	Vturn = v;
+}
