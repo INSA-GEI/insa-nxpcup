@@ -7,14 +7,14 @@
 
 
 //#include <ImageProcessing/ImageProcessing.hpp>
+#include <ImageProcessing/Camera_Commande.hpp>
 #include "buggy_main.hpp"
 #include "camera_led/cam_led.h"
-#include "ImageProcessing/ImageProcessing_Commande.hpp"
 #include "monitor/bluetooth_bee.h"
 #include "MKL25Z4.h"
 
-unsigned int V=0;	// Entre 1000 et 9000 // Vitese initiale
-unsigned int Vset=0; // Vitesse target
+unsigned int V=2000;	// Entre 1000 et 9000 // Vitese initiale
+unsigned int Vset=2300; // Vitesse target
 // unsigned int Vslow=500;
 // unsigned int VslowTH=500;
 // const float ADAPTIVE_SPEED_ANGLE = 10.0;
@@ -24,33 +24,19 @@ int n=0;
 int c=0;
 int cnt=0;
 
-/* CMD Flag for logging data*/
-bool FLAG_CAMERA_NEAR_DATA = true;  /* !!!!!!!!!!!!!!!!!!!!  FIX THIS to false !!!!!!!!!!!*/
-bool FLAG_CAMERA_NEAR_BORDER = false;
-bool FLAG_CAMERA_NEAR_CENTER = false;
-bool FLAG_CAMERA_FAR_DATA = false;
-bool FLAG_CAMERA_FAR_BORDER = false;
-bool FLAG_CAMERA_FAR_CENTER = false;
-bool FLAG_CAMERA_COMBINED_CENTER = false;
-bool FLAG_SPEED_LEFT = false;
-bool FLAG_SPEED_RIGHT = false;
-bool FLAG_SERVO_ANGLE = false;
+/* Variable for receiving command from Bluetooth Bee */
+uint8_t bufferCommand[BEE_CMD_LENGTH];
+
+/* Flag to indicate what data is monitoring */
+uint8_t watch_flag = 0;
 
 /* Data for test */
-uint16_t test_data[128];
 int pos_servo_test;
-uint8_t bufferCommand[4];
+
 
 void buggy_run(void){
-	uint32_t lengthDatatest = 256;
-	//-----TEST---- 
-	test_data[0] = 0xFF;
-	for (int i = 1; i < 128; i++){
-		test_data[i] = 0x401;
-	}
-
 	// BASE
-
+	/*
 	cam_led_init();
 
 	bee_initCommunication(buggy_readCMD, bufferCommand);
@@ -64,14 +50,13 @@ void buggy_run(void){
 	movement_init();
 	movement_set(V, 0);
 	movement_regulate();
-	//bee_enableSendCameraData(Camera_getData(1), lengthDatatest);
-	bee_enableSendCameraData(test_data, lengthDatatest);
-
+	//bee_enableSendCameraData(test_data, lengthDatatest);
+	*/
 
 	//-----TEST---- Pas necessaire--------
 
-	//servo_init();
-
+	servo_init();
+	servo_setPos(4050);
 
 	//MOTOR_Left_Speed_Forward(20);
 	//MOTOR_Right_Speed_Forward(20);
@@ -81,137 +66,111 @@ void buggy_run(void){
 }
 
 void buggy_readCMD(void){
-	uint8_t id_CMD;
+	uint8_t id_cmd;
 	uint8_t dataMSB;
 	uint8_t dataLSB;
 	uint8_t checksum;
 
-	id_CMD = bufferCommand[0];
+	id_cmd = bufferCommand[0];
 	dataMSB = bufferCommand[1];
 	dataLSB = bufferCommand[2];
 	checksum = bufferCommand[3];
 
-	if (checksum != (id_CMD ^ dataMSB ^ dataLSB)){
+	if (checksum != (id_cmd ^ dataMSB ^ dataLSB)){
 		return;
 	}
 
-	switch (id_CMD)
+	switch (id_cmd)
 	{
-		case CMD_ID_ENGINE:
-			/* code */
+		case CMD_ID_CAMERA_NEAR_DATA_DIFF:
+			watch_flag = CMD_ID_CAMERA_NEAR_DATA_DIFF;
+			bee_enableSendData(Camera_getData(1, 'd'), 256);
 			break;
-		case CMD_ID_CAMERA_MODE:
-			/* code */
-			break;
-		case CMD_ID_CAMERA_KP:
-			/* code */
-			break;
-		case CMD_ID_CAMERA_KI:
-			/* code */
-			break;
-		case CMD_ID_CAMERA_KD:
-			/* code */
-			break;
-		case CMD_ID_DIFFERENTIAL_KP:
-			/* code */
-			break;
-		case CMD_ID_DIFFERENTIAL_KI:
-			/* code */
-			break;
-		case CMD_ID_DIFFERENTIAL_KD:
-			/* code */
-			break;
-		case CMD_ID_SPEED_START:
-			/* code */
-			break;
-		case CMD_ID_SPEED_LIMIT:
-			/* code */
-			break;
-		case CMD_ID_SPEED_TURN:
-			/* code */
-			break;
-
 		case CMD_ID_CAMERA_NEAR_DATA:
+			watch_flag = CMD_ID_CAMERA_NEAR_DATA;
+			bee_enableSendData(Camera_getData(1, 'i'), 256);
+			break;
+		case CMD_ID_CAMERA_NEAR_OTHERS:
+			watch_flag = CMD_ID_CAMERA_NEAR_OTHERS;
+			bee_enableSendData(Camera_getData(1, 'o'), 8);
+		case CMD_ID_CAMERA_NEAR_NUM_BORDERS:
+			watch_flag = CMD_ID_CAMERA_NEAR_NUM_BORDERS;
+			bee_enableSendData(Camera_getData(1, 'e'), 2);
 
-			if (dataLSB == 0x01){
-				FLAG_CAMERA_NEAR_DATA = true;
-			}
-			else{
-				FLAG_CAMERA_NEAR_DATA = false;
-			}
-			break;
-		case CMD_ID_CAMERA_NEAR_BORDER:
-			/* code */
-			break;
-		case CMD_ID_CAMERA_NEAR_CENTER:
-			/* code */
+		case CMD_ID_CAMERA_FAR_DATA_DIFF:
+			watch_flag = CMD_ID_CAMERA_FAR_DATA_DIFF;
+			bee_enableSendData(Camera_getData(2, 'd'), 256);
 			break;
 		case CMD_ID_CAMERA_FAR_DATA:
-			/* code */
+			watch_flag = CMD_ID_CAMERA_FAR_DATA;
+			bee_enableSendData(Camera_getData(2, 'i'), 256);
 			break;
-		case CMD_ID_CAMERA_FAR_BORDER:
-			/* code */
+		case CMD_ID_CAMERA_FAR_OTHERS:
+			watch_flag = CMD_ID_CAMERA_FAR_OTHERS;
+			bee_enableSendData(Camera_getData(2, 'o'), 8);
+		case CMD_ID_CAMERA_FAR_NUM_BORDERS:
+			watch_flag = CMD_ID_CAMERA_FAR_NUM_BORDERS;
+			bee_enableSendData(Camera_getData(2, 'e'), 2);
+		case CMD_ID_STOP_WATCH:
+			watch_flag = CMD_ID_STOP_WATCH;
+			bee_disableSendData();
+		default:
 			break;
-		case CMD_ID_CAMERA_FAR_CENTER:
-			/* code */
-			break;
-		case CMD_ID_CAMERA_COMBINED_CENTER:
-			/* code */
-			break;
-		case CMD_ID_SPEED:
-			/* code */
-			break;
-		case CMD_ID_SERVO_ANGLE:
-			/* code */
-			break;
-	default:
-		break;
 	}
 }
 
 
 void buggy_afficheData(void){
-	servo_setPos(4850);
+
+		servo_setPos(4100);
+
+		volatile uint32_t j = 0;
+		for (j = 0; j < 1200000; ++j)
+		{
+			__asm("NOP"); // delay
+		}
+/*
+	servo_setPos(2900);
 
 	volatile uint32_t i = 0;
 	for (i = 0; i < 1200000; ++i)
 	{
-		__asm("NOP"); /* delay */
+		__asm("NOP"); // delay
 	}
-
-	servo_setPos(4050);
+*/
+/*
+	servo_setPos(3950);
 
 	volatile uint32_t j = 0;
 	for (j = 0; j < 1200000; ++j)
 	{
-		__asm("NOP"); /* delay */
+		__asm("NOP"); // delay
 	}
 
-	servo_setPos(3150);
+	servo_setPos(4850);
 
 	volatile uint32_t k = 0;
 	for (k = 0; k < 1200000; ++k)
 	{
-		__asm("NOP"); /* delay */
+		__asm("NOP"); // delay
 	}
 
-	servo_setPos(4050);
+	servo_setPos(3950);
 
 	volatile uint32_t h = 0;
 	for (h = 0; h < 1200000; ++h)
 	{
-		__asm("NOP"); /* delay */
+		__asm("NOP"); // delay
 	}
+*/
 }
 
-
+/*
 void TPM1_IRQHandler(){
-
 	movement_set(Vset,Camera_Calculate_Servo_Angle());
-	if (FLAG_CAMERA_NEAR_DATA){
-		bee_sendCameraData();
+	if (watch_flag != 0){
+		bee_sendData();
 	}
-
 	TPM_ClearStatusFlags(TPM1, kTPM_Chnl0Flag);
 }
 
@@ -219,4 +178,4 @@ void TPM2_IRQHandler(){
 	encoders_IRQHandler();
 	movement_regulate();
 }
-
+*/

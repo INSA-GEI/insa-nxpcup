@@ -17,19 +17,11 @@
  * 	*/
 
 /**
- * Message format (Send direction):
- *     - Message ID : See MESSAGE_ID enum
- *     - Data Length MSB : 1 byte
- *     - Data Length LSB : 1 byte
- *     - Data : 0 - 1023 bytes
- */
-
-/**
  * Command format (Receive direction):
- *     - Command ID : See CMD_ID enum
+ *     - CMD_ID : 1 byte
  *     - DataMSB : 1 byte
  *     - DataLSB : 1 byte
- *     - Checksum : 1 byte (XOR of all bytes from Command ID to DataLSB)
+ *     - Checksum : 1 byte (XOR of all bytes from CMD_ID to DataLSB)
  */
 
 #ifndef BLUETOOTH_BEE_H_
@@ -39,24 +31,10 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#define BEE_BUFFER_SIZE	 30
 #define BEE_CMD_LENGTH    4
 
 typedef enum{
-    MESSAGE_ID_CAMERA_NEAR_DATA = 0x01,
-    MESSAGE_ID_CAMERA_NEAR_BORDER = 0x02,
-    MESSAGE_ID_CAMERA_NEAR_CENTER = 0x03,
-    MESSAGE_ID_CAMERA_FAR_DATA = 0x04,
-    MESSAGE_ID_CAMERA_FAR_BORDER = 0x05,
-    MESSAGE_ID_CAMERA_FAR_CENTER = 0x06,
-    MESSAGE_ID_CAMERA_COMBINED_CENTER = 0x07,
-    MESSAGE_ID_SPEED_LEFT = 0x08,
-    MESSAGE_ID_SPEED_RIGHT = 0x09,
-    MESSAGE_ID_SERVO_ANGLE = 0x0A,
-} MESSAGE_ID;
-
-typedef enum {
-    /* CMD for changing parameters*/
+    /* Command for changing parameters */
     CMD_ID_ENGINE = 0x01,
     CMD_ID_CAMERA_MODE = 0x02,
     CMD_ID_CAMERA_KP = 0x03,
@@ -64,20 +42,23 @@ typedef enum {
     CMD_ID_CAMERA_KD = 0x05,
     CMD_ID_DIFFERENTIAL_KP = 0x06,
     CMD_ID_DIFFERENTIAL_KI = 0x07,
-    CMD_ID_DIFFERENTIAL_KD = 0x08,
+    CMD_ID_DIFFERENTIAL_KDP = 0x08,
     CMD_ID_SPEED_START = 0x09,
     CMD_ID_SPEED_LIMIT = 0x0A,
     CMD_ID_SPEED_TURN = 0x0B,
-    /* CMD for logging data */
+    /* Command for choosing watch data */
     CMD_ID_CAMERA_NEAR_DATA = 0x0C,
-    CMD_ID_CAMERA_NEAR_BORDER = 0x0D,
-    CMD_ID_CAMERA_NEAR_CENTER = 0x0E,
-    CMD_ID_CAMERA_FAR_DATA = 0x0F,
-    CMD_ID_CAMERA_FAR_BORDER = 0x10,
-    CMD_ID_CAMERA_FAR_CENTER = 0x11,
-    CMD_ID_CAMERA_COMBINED_CENTER = 0x12,
-    CMD_ID_SPEED = 0x13,
-    CMD_ID_SERVO_ANGLE = 0x14,   
+    CMD_ID_CAMERA_NEAR_DATA_DIFF = 0x0D,
+    CMD_ID_CAMERA_NEAR_OTHERS = 0x0E,		// RoadMiddle, RoadMiddle_old, BlackLineRight, BlackLineLeft
+    CMD_ID_CAMERA_NEAR_NUM_BORDERS = 0x0F,
+    CMD_ID_CAMERA_FAR_DATA = 0x10,
+    CMD_ID_CAMERA_FAR_DATA_DIFF = 0x11,
+    CMD_ID_CAMERA_FAR_OTHERS = 0x12,		// RoadMiddle, RoadMiddle_old, BlackLineRight, BlackLineLeft
+    CMD_ID_CAMERA_FAR_NUM_BORDERS = 0x13,
+    CMD_ID_CAMERA_COMBINED_CENTER = 0x14,
+    CMD_ID_SPEED = 0x15,
+    CMD_ID_SERVO_ANGLE = 0x16,
+	CMD_ID_STOP_WATCH = 0x017,
 } CMD_ID;
 
 extern uint8_t bee_CmdReceive[BEE_CMD_LENGTH];
@@ -104,17 +85,23 @@ void bee_startReceivingData(void);
 bool bee_checkCMDReceived(void);
 
 /**
- * @brief Enable to send camera data to computer via Bluetooth Bee module
- * @param cameraData : Pointer to camera data
- * @param lengthInByte : Length of camera data in byte
+ * @brief Enable to send data to computer via Bluetooth Bee module
+ * @param ptrData : Pointer to data to send
+ * @param lengthInByte : Length of data in byte
  */
-void bee_enableSendCameraData(uint16_t * cameraData, uint32_t lengthInByte);
+void bee_enableSendData(uint16_t * ptrData, uint32_t lengthInByte);
 
 /**
- * @brief Send camera data to computer via Bluetooth Bee module
+ * @brief Stop sending data to Bluetooth Bee
+ * @param none
+ */
+void bee_disableSendData(void);
+
+/**
+ * @brief Send data to computer via Bluetooth Bee module
  * @param None
  */
-void bee_sendCameraData(void);
+void bee_sendData(void);
 
 
 void bee_initTransferData(void);

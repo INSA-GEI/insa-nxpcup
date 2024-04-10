@@ -5,7 +5,7 @@
  *      Author: Ordi Axel
  */
 
-#include <ImageProcessing/ImageProcessing_Commande.hpp>
+#include <ImageProcessing/Camera_Commande.hpp>
 #include "monitor/bluetooth_bee.h"
 
 
@@ -23,6 +23,13 @@ void Camera_Initiate(void){
 	}
 }
 
+void affiche_image(ImageProcessing * camera){
+	for (int i = 0; i < 128; i++){
+		PRINTF("| %d |", camera->ImageData[i]);
+	}
+	PRINTF("\n");
+}
+
 float Camera_Calculate_Servo_Angle(void){
 	if (Nombre_de_Camera == 1){
 		Camera_1.capture();
@@ -31,8 +38,8 @@ float Camera_Calculate_Servo_Angle(void){
 		Camera_1.calculateMiddle();
 		Camera_1.Actualise_Servo_1_Camera();
 		Camera_1.compute_data_threshold();
-		//Camera_1.affiche_image();
-		}
+		//affiche_image(&Camera_1);
+	}
 	else if (Nombre_de_Camera == 2){
 
 		// Capture des données sur les deux caméra.
@@ -44,7 +51,7 @@ float Camera_Calculate_Servo_Angle(void){
 		Camera_1.differentiate();
 		Camera_1.process();
 		Camera_1.calculateMiddle();
-		//Camera_1.affiche_image();
+
 
 		//Traitement de la caméra 2
 		Camera_2.differentiate();
@@ -63,6 +70,7 @@ float Camera_Calculate_Servo_Angle(void){
 		//actualisation threshold
 		Camera_1.compute_data_threshold();
 		Camera_2.compute_data_threshold();
+		//	affiche_image(&Camera_1);
 		}
 	return Camera_1.servo_angle;
 }
@@ -123,14 +131,31 @@ void Camera_Initialise_Middle (void){
 
 }
 
-uint16_t * Camera_getData(int ID_Camera){
+uint16_t * Camera_getData(int ID_Camera, char op){
+	ImageProcessing * ptrCam;
 	if (ID_Camera == 1){
-		return Camera_1.ImageData;
+		ptrCam = &Camera_1;
 	}
 	else if (ID_Camera == 2){
-		return Camera_2.ImageData;
+		ptrCam = &Camera_2;
 	}
-	return NULL;
+	switch (op){
+	case 'i':
+		return ptrCam->ImageData;
+		break;
+	case 'd':
+		return ptrCam->ImageDataDifference;
+		break;
+	case 'o':
+		return &(ptrCam->RoadMiddle);
+		break;
+	case 'e':
+		return &(ptrCam->number_edges);
+		break;
+	default:
+		return NULL;
+		break;
+	}
 }
 
 

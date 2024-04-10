@@ -5,8 +5,8 @@
  *      Author: Ordi Axel
  */
 
-#ifndef IMAGEPROCESSING_IMAGEPROCESSING_COMMANDE_HPP_
-#define IMAGEPROCESSING_IMAGEPROCESSING_COMMANDE_HPP_
+#ifndef IMAGEPROCESSING_CAMERA_COMMANDE_HPP_
+#define IMAGEPROCESSING_CAMERA_COMMANDE_HPP_
 
 
 
@@ -27,6 +27,6 @@ float Camera_Calculate_Servo_Angle(void);
 void Camera_Actualise_Servo_2_Camera_Moyenne_Simple (void);
 void  Camera_Actualise_Servo_2_Camera_Moyenne_Ponderee_1 (void);
 
-uint16_t * Camera_getData(int ID_Camera);
+uint16_t * Camera_getData(int ID_Camera, char op);
 
-#endif /* IMAGEPROCESSING_IMAGEPROCESSING_COMMANDE_HPP_ */
+#endif /* IMAGEPROCESSING_CAMERA_COMMANDE_HPP_ */
