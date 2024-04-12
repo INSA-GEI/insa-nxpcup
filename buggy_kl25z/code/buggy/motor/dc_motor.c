@@ -74,9 +74,7 @@ void MOTOR_init(void){
 	//set forward direction for motors
 	MOTOR_Left_Direction_Forward();
 	MOTOR_Right_Direction_Forward();
-	//enable the motors
-	MOTOR_Left_Enable();
-	MOTOR_Right_Enable();
+	//To enable motors, call mouvement_start()
 }
 
 void MOTOR_Left_Enable(void)

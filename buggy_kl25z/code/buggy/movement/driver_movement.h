@@ -64,6 +64,12 @@ void movement_setSpeed(float speed);
 
 /**
  * @fn void movement_stop(void)
+ * @brief enable motor
+ */
+void mouvement_start(void);
+
+/**
+ * @fn void movement_stop(void)
  * @brief stop the movement
  */
 void movement_stop(void);

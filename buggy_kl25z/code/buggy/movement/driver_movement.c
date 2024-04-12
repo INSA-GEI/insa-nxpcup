@@ -93,14 +93,22 @@ void movement_setSpeed(float speed) {
 	targetSpeedR=speed-deltaSpeed;
 }
 
+void mouvement_start(void){
+	MOTOR_Left_Enable();
+	MOTOR_Right_Enable();
+	movement_regulate();
+}
+
 
 void movement_stop(void) {
+	/*
 	targetSpeedL=0.0;
 	targetSpeedR=0.0;
 	actualSpeedL=0.0;
 	actualSpeedR=0.0;
 	MOTOR_Left_Speed_Forward(0);
 	MOTOR_Right_Speed_Forward(0);
+	*/
 	MOTOR_Left_Disable();
 	MOTOR_Right_Disable();
 	servo_setPos(0);

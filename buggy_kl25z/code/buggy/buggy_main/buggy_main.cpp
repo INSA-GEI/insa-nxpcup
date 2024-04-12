@@ -36,6 +36,9 @@ uint8_t bufferCommand[BEE_CMD_LENGTH];
 /* Flag to indicate what data is monitoring */
 uint8_t watch_flag = 0;
 
+/* Flag to indicate whether the motor is enabled (by remote control) */
+uint8_t enable_flag = 0;
+
 /* Data for test */
 int pos_servo_test;
 
@@ -43,7 +46,7 @@ int pos_servo_test;
 void buggy_run(void){
 	// BASE
 	//LIDAR_Init();
-	/*
+
 	cam_led_init();
 
 	bee_initCommunication(buggy_readCMD, bufferCommand);
@@ -56,16 +59,16 @@ void buggy_run(void){
 
 	movement_init();
 	movement_set(Vstart, 0);
-	movement_regulate();
+	//movement_regulate();
 	//bee_enableSendCameraData(test_data, lengthDatatest);
-	*/
+
 
 // Servomotor Interrupt 50Hz
 	//-----TEST---- Pas necessaire--------
-
+	/*
 	servo_init();
 	servo_setPos(4050);
-
+	*/
 	//MOTOR_Left_Speed_Forward(20);
 	//MOTOR_Right_Speed_Forward(20);
 	//while(1){
@@ -108,7 +111,17 @@ void buggy_readCMD(void){
 	}
 
 	switch (id_cmd)
-	{
+	{	
+		case CMD_ID_ENGINE:
+			if (dataLSB == 0x01){
+				mouvement_start();
+				enable_flag = 1;
+			}
+			else if (dataLSB == 0x00){
+				movement_stop();
+				enable_flag = 0;
+			}
+			break;
 		case CMD_ID_CAMERA_NEAR_DATA_DIFF:
 			watch_flag = CMD_ID_CAMERA_NEAR_DATA_DIFF;
 			bee_enableSendData(Camera_Get_ImageDataDiff(CAM_NEAR_ID), 256);
@@ -195,15 +208,16 @@ void buggy_afficheData(void){
 
 void TPM1_IRQHandler(){
 	float angle_servo = Camera_Calculate_Servo_Angle();
-	if (angle_servo > 20 || angle_servo < -22)
-	{
-		movement_set(Vturn,angle_servo);
+	if (enable_flag == 1){
+		if (angle_servo > 20 || angle_servo < -22)
+		{
+			movement_set(Vturn,angle_servo);
+		}
+		else
+		{
+			movement_set(Vtarget,angle_servo);
+		}
 	}
-	else
-	{
-		movement_set(Vtarget,angle_servo);
-	}
-
 	if (watch_flag != 0){
 		bee_sendData();
 	}
@@ -214,7 +228,9 @@ void TPM1_IRQHandler(){
 // Encoder Interrupt
 void TPM2_IRQHandler(){
 	encoders_IRQHandler();
-	movement_regulate();
+	if (enable_flag == 1){
+		movement_regulate();
+	}
 }
 
 void Buggy_Set_Vstart(int v)
