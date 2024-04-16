@@ -8,8 +8,6 @@ import matplotlib.pyplot as plt
 from inputUser import inputUser
 
 ### CONSTANTS
-COM_PORT = 'COM11'
-BAUD_RATE = 115200
 CAMERA_DATA_SIZE = 256
 CAMERA_RESOLUTION = 128
 CAMERA_VALUE_MAX = 1023
@@ -56,64 +54,43 @@ def watch(inputQueue, exit_event):
 # TEST CODE
 ######################################################################################################
 
-def plot(inputQueue, exit_event):
-    data = [100] * 128
+def plot(data, output_data_lock, exit_event):
     fig, ax = plt.subplots()
     # Initialize the plot with all values set to 0
     # x = range(128)
+    output_data_lock.acquire()
     line, = ax.plot(data)
+    output_data_lock.release()
     try:
-        ser = serial.Serial(COM_PORT, baudrate=BAUD_RATE)
-        ser.flush()
-        print("Serial port opened")
-
         # Function to update the plot
-        def update_plot(frames, ser, data):
-            if ser.in_waiting:
-                data = ser.read(CAMERA_DATA_SIZE)
-                if len(data) == CAMERA_DATA_SIZE:
-                    data = struct.unpack('h' * (len(data) // 2), data)
-            line.set_ydata(data)  # Update the y-values of the plot
+        def update_plot(frames, data, output_data_lock, exit_event):
+            output_data_lock.acquire()
+            line.set_ydata(list(data))  # Update the y-values of the plot
+            output_data_lock.release()
+            if exit_event.is_set():
+                plt.close('all')
             return line,
-
-    
         
         # Set the plot title and labels
         ax.set_title("Real-time Camera Data Plot")
         ax.set_xlabel("Coordinate Index")
         ax.set_ylabel("Brightness Value")
         ax.set_xlim(0, 127)
-        ax.set_ylim(0, 1023)
+        ax.set_ylim(0, 500)
         # Create the animation
 
-        animation = FuncAnimation(fig, update_plot, fargs=(ser, data), interval=25, blit = True, cache_frame_data=False)
+        animation = FuncAnimation(fig, update_plot, fargs=(data, output_data_lock, exit_event), interval=25, blit = True, cache_frame_data=False)
 
         # Show the plot
-        plt.ion()
         plt.show()
-
-        while not exit_event.is_set():
-            if not inputQueue.empty():
-                command = inputQueue.get()
-                print(command)
-                ser.flush()
-                ser.write(command)
-                print("Command sent")
-
-    # Exit
-        ser.close()
-        print("Serial port closed")
+        # Exit when window is closed
         print("Exiting watch")
-    except serial.SerialException:
-        print("Error: Could not open serial port")
         exit_event.set()
-        return
     except KeyboardInterrupt:
-        print("Closing serial port")
-        ser.close()
-        exit_event.set()
+        plt.close()
         print("Exiting watch")
-        return
+        exit_event.set()  
+    
 
 def test_print(inputQueue):
     try:
