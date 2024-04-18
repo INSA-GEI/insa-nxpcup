@@ -49,8 +49,8 @@ extern "C" {
 #define SERVO_FREQUENCY 		50
 
 
-#define SERVO_MAX_LEFT_ANGLE 	-27
-#define SERVO_MAX_RIGHT_ANGLE 	22
+#define SERVO_MAX_LEFT_ANGLE 	-40
+#define SERVO_MAX_RIGHT_ANGLE 	40
 
 /***********************************************************************************************************************
  * Exported functions

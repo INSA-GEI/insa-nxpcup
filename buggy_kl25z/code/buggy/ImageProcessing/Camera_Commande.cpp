@@ -111,7 +111,7 @@ void  Camera_Actualise_Servo_2_Camera_Moyenne_Ponderee_1 (void){
 	}
 	else
 	{*/
-		Camera_Near.diff =  64 - (K_CAMERA_NEAR *Camera_Near.RoadMiddle + K_CAMERA_FAR*Camera_Far.RoadMiddle) ;
+		Camera_Near.diff =  64 - (K_CAMERA_NEAR *(Camera_Near.RoadMiddle)  + K_CAMERA_FAR*(Camera_Far.RoadMiddle)) ;
 	//}
 
 	// plausibility check
@@ -195,10 +195,10 @@ uint16_t * Camera_Get_NbrEdges(int i){
 
 void Camera_Set_KDP (float KDP)
 {
-	ImageProcessing::KDP_TURN = KDP;
+	ImageProcessing::set_KdpTurn(KDP);
 }
 
 void Camera_Set_KP (float KP)
 {
-	ImageProcessing::KP_TURN = KP;
+	ImageProcessing::set_KpTurn(KP);
 }

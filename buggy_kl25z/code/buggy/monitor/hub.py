@@ -18,6 +18,9 @@ def test_receive_serial(outputBuffer, output_data_lock, exit_event):
     except KeyboardInterrupt:
         print("Exiting test")
 
+def outputMethodSelect(outputBuffer, output_data_lock, outputMethod, exit_event):
+    print("")
+
 if __name__ == "__main__":
    
     data = Array('i', [100] * 128)  # Create a shared array
@@ -26,15 +29,15 @@ if __name__ == "__main__":
         exit_event = Event()
         output_data_lock = Lock()
         inputQueue = Queue()
-        
+        outputMethod = Queue()
 
-        p_serial = Process(target=runSerial, args=(inputQueue, data, output_data_lock, exit_event))
+        p_serial = Process(target=runSerial, args=(inputQueue, data, output_data_lock, exit_event,))
         p_serial.start()
 
-        p_input = Process(target=inputUser, args=(inputQueue, exit_event,))
+        p_input = Process(target=inputUser, args=(inputQueue, outputMethod, exit_event,))
         p_input.start()
 
-        p_output = Process(target=plot, args=(data, output_data_lock, exit_event))
+        p_output = Process(target=plot, args=(data, output_data_lock, exit_event,))
         p_output.start()
         """
 

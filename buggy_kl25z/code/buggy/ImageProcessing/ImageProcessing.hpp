@@ -111,6 +111,14 @@ public:
 	void compute_data_threshold(void);
 	void affiche_edge(void);
 
+	static void set_KpTurn(float newKp){
+		KP_TURN = newKp;
+	};
+
+	static void set_KdpTurn(float newKdp){
+		KDP_TURN = newKdp;
+	};
+
 private:
 	int CompareData_classic;			// set data for comparison to find max IN BASE ALGORITHM
 	int CompareData_low;				// set data for comparison to find max with low threshold

@@ -10,9 +10,6 @@
 
 #define PI 						3.14159265358979323846	// value of PI
 
-float ImageProcessing::KP_TURN = 1.0;
-float ImageProcessing::KDP_TURN = .6;
-
 /* Camera_Near Info
  * Position : High
  * Vision : Near
@@ -53,6 +50,9 @@ ImageProcessing::ImageProcessing(int i):Numero_Camera(i){
 	// ADC0 SE11 --> Numero_Camera = 1
 	// ADC0 SE15 --> Numero_Camera = 2
 }
+
+float ImageProcessing::KP_TURN = 1.8;
+float ImageProcessing::KDP_TURN = 1.0;
 
 void ImageProcessing::init(){
 	if (this->Numero_Camera == 1){

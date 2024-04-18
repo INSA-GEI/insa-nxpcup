@@ -15,12 +15,12 @@
 #include "lidar/driver_lidar.hpp"
 //#include "movement/driver_movement.h"
 
-unsigned int Vstart=2500;	// Entre 1000 et 9000 // Vitese initiale
+unsigned int Vstart=2700;	// Entre 1000 et 9000 // Vitese initiale
 unsigned int Vtarget=3000; // Vitesse target
 
 //unsigned int V=0;	// Entre 1000 et 9000 // Vitese initiale
 //unsigned int Vset=0; // Vitesse target
- unsigned int Vturn=2700;
+ unsigned int Vturn=2300;
 // unsigned int VslowTH=500;
 // const float ADAPTIVE_SPEED_ANGLE = 10.0;
 // const float ADAPTIVE_SPEED_HYST = 2.0;
@@ -37,7 +37,7 @@ uint8_t bufferCommand[BEE_CMD_LENGTH];
 uint8_t watch_flag = 0;
 
 /* Flag to indicate whether the motor is enabled (by remote control) */
-uint8_t enable_flag = 0;
+uint8_t enable_flag = 0; // 0 if you want to enable remotely
 
 /* Data for test */
 int pos_servo_test;
@@ -58,17 +58,21 @@ void buggy_run(void){
 	//Camera_Initialise_Middle();
 
 	movement_init();
+	//mouvement_start();
 	movement_set(Vstart, 0);
-	//movement_regulate();
+	movement_regulate();
+
+	//watch_flag = CMD_ID_CAMERA_NEAR_DATA_DIFF;
+	//bee_enableSendData(Camera_Get_ImageDataDiff(CAM_NEAR_ID), 256);
 	//bee_enableSendCameraData(test_data, lengthDatatest);
 
 
 // Servomotor Interrupt 50Hz
 	//-----TEST---- Pas necessaire--------
-	/*
-	servo_init();
-	servo_setPos(4050);
-	*/
+
+//	servo_init();
+//	servo_setPos(4050);
+
 	//MOTOR_Left_Speed_Forward(20);
 	//MOTOR_Right_Speed_Forward(20);
 	//while(1){
@@ -100,6 +104,7 @@ void buggy_readCMD(void){
 	uint8_t dataMSB;
 	uint8_t dataLSB;
 	uint8_t checksum;
+	float param;
 
 	id_cmd = bufferCommand[0];
 	dataMSB = bufferCommand[1];
@@ -113,14 +118,31 @@ void buggy_readCMD(void){
 	switch (id_cmd)
 	{	
 		case CMD_ID_ENGINE:
-			if (dataLSB == 0x01){
+			if (dataLSB == 0xAA){
 				mouvement_start();
 				enable_flag = 1;
 			}
-			else if (dataLSB == 0x00){
+			else if (dataLSB == 0x55){
 				movement_stop();
 				enable_flag = 0;
 			}
+			break;
+		case CMD_ID_CAMERA_KP:
+			param = (float)((dataMSB << 8) | dataLSB) / 100.0;
+			Camera_Set_KP(param);
+			break;
+		case CMD_ID_CAMERA_KD:
+			param = (float)((dataMSB << 8) | dataLSB) / 100.0;
+			Camera_Set_KDP(param);
+			break;
+		case CMD_ID_SPEED_START:
+			Buggy_Set_Vstart((dataMSB << 8) | dataLSB);
+			break;
+		case CMD_ID_SPEED_TURN:
+			Buggy_Set_Vturn((dataMSB << 8) | dataLSB);
+			break;
+		case CMD_ID_SPEED_TARGET:
+			Buggy_Set_Vtarget((dataMSB << 8) | dataLSB);
 			break;
 		case CMD_ID_CAMERA_NEAR_DATA_DIFF:
 			watch_flag = CMD_ID_CAMERA_NEAR_DATA_DIFF;
@@ -162,39 +184,39 @@ void buggy_readCMD(void){
 
 void buggy_afficheData(void){
 
-		servo_setPos(4100);
-
-		volatile uint32_t j = 0;
-		for (j = 0; j < 1200000; ++j)
-		{
-			__asm("NOP"); // delay
-		}
-/*
-	servo_setPos(2900);
-
-	volatile uint32_t i = 0;
-	for (i = 0; i < 1200000; ++i)
-	{
-		__asm("NOP"); // delay
-	}
-*/
-/*
-	servo_setPos(3950);
-
-	volatile uint32_t j = 0;
-	for (j = 0; j < 1200000; ++j)
-	{
-		__asm("NOP"); // delay
-	}
-
-	servo_setPos(4850);
-
-	volatile uint32_t k = 0;
-	for (k = 0; k < 1200000; ++k)
-	{
-		__asm("NOP"); // delay
-	}
-
+//		servo_setPos(-27);
+//
+//		volatile uint32_t j = 0;
+//		for (j = 0; j < 1200000; ++j)
+//		{
+//			__asm("NOP"); // delay
+//		}
+//
+//	servo_setPos(0);
+//
+//	volatile uint32_t i = 0;
+//	for (i = 0; i < 1200000; ++i)
+//	{
+//		__asm("NOP"); // delay
+//	}
+//
+//
+//	servo_setPos(27);
+//
+//	volatile uint32_t n = 0;
+//	for (n = 0; n < 1200000; ++n)
+//	{
+//		__asm("NOP"); // delay
+//	}
+//
+//	servo_setPos(0);
+//
+//	volatile uint32_t k = 0;
+//	for (k = 0; k < 1200000; ++k)
+//	{
+//		__asm("NOP"); // delay
+//	}
+	/*
 	servo_setPos(3950);
 
 	volatile uint32_t h = 0;
@@ -209,7 +231,7 @@ void buggy_afficheData(void){
 void TPM1_IRQHandler(){
 	float angle_servo = Camera_Calculate_Servo_Angle();
 	if (enable_flag == 1){
-		if (angle_servo > 20 || angle_servo < -22)
+		if (angle_servo > 0 || angle_servo < -20)
 		{
 			movement_set(Vturn,angle_servo);
 		}
@@ -218,9 +240,11 @@ void TPM1_IRQHandler(){
 			movement_set(Vtarget,angle_servo);
 		}
 	}
+	/*
 	if (watch_flag != 0){
 		bee_sendData();
 	}
+	*/
 	TPM_ClearStatusFlags(TPM1, kTPM_Chnl0Flag);
 
 }

@@ -5,15 +5,15 @@ import multiprocessing as mp
 ### Constants
 # PARAMETERS
 CMD_ID_ENGINE = 0x01
-CMD_ID_CAMERA_MODE = 0x02
+CMD_ID_CAMERA_MODE = 0x02   # Not used
 CMD_ID_CAMERA_KP = 0x03
-CMD_ID_CAMERA_KI = 0x04
+CMD_ID_CAMERA_KI = 0x04     # Not used
 CMD_ID_CAMERA_KD = 0x05
 CMD_ID_DIFFERENTIAL_KP = 0x06
 CMD_ID_DIFFERENTIAL_KI = 0x07
 CMD_ID_DIFFERENTIAL_KDP = 0x08
 CMD_ID_SPEED_START = 0x09
-CMD_ID_SPEED_LIMIT = 0x0A
+CMD_ID_SPEED_TARGET = 0x0A
 CMD_ID_SPEED_TURN = 0x0B
 # WATCH
 CMD_ID_CAMERA_FAR_DATA = 0x0C
@@ -29,7 +29,7 @@ CMD_ID_SPEED = 0x15
 CMD_ID_SERVO_ANGLE = 0x16
 CMD_ID_STOP_WATCH = 0x17
 
-def inputUser(inputQueue, exit_event):
+def inputUser(inputQueue, outputMethod, exit_event):
     def buildCMD(cmd_id, data = [0,0]) -> list:
         cmd = [cmd_id]
         cmd.append(data[0])
@@ -80,7 +80,7 @@ def inputUser(inputQueue, exit_event):
     
     ### Functions for changing parameters ###################################
     param_choice_maked = {
-        "Parameter": "Camera Mode"
+        "Parameter": 0
     }
 
     def update_param_choice(*args):
@@ -88,46 +88,68 @@ def inputUser(inputQueue, exit_event):
 
     def retrieve_input():
         cmd = 0
+        if param_choice_maked["Parameter"] == 0:
+            print("No parameter selected")
+            return
         input_value = entryParam.get()
+        if input_value == "":
+            print("No input value")
+            return
+        #if input_value.isnumeric() == False:
+        #    print("Invalid input value, must be a number")
+        #    return
         if param_choice_maked["Parameter"] == "Camera Mode":
-            input_value = int(input_value) 
-            if input_value > 0 and input_value < 5:
-                cmd = buildCMD(CMD_ID_CAMERA_MODE, [0, input_value])
-            else:
-                print("Invalid value for Camera Mode")
+            print("Camera Mode not used (use only mode 2)")
+            #input_value = int(input_value) 
+            #if input_value > 0 and input_value < 5:
+                #cmd = buildCMD(CMD_ID_CAMERA_MODE, [0, input_value])
+                #print("Camera Mode updated: ", input_value)
+            #else:
+                #print("Invalid value for Camera Mode")
         elif param_choice_maked["Parameter"] == "Camera KP":
-            input_value = float(input_value)*100
+            print("Camera KP updated: ", float(input_value))
+            input_value = round(float(input_value)*100, 2)
             input_value = int(input_value)
-            cmd = buildCMD(CMD_ID_CAMERA_KP, [input_value & 0xFF00, input_value & 0x00FF])
+            cmd = buildCMD(CMD_ID_CAMERA_KP, [(input_value & 0xFF00) >> 8, input_value & 0x00FF])
         elif param_choice_maked["Parameter"] == "Camera KI":
-            input_value = float(input_value)*100
-            input_value = int(input_value)
-            cmd = buildCMD(CMD_ID_CAMERA_KI, [input_value & 0xFF00, input_value & 0x00FF])
+            print("Camera KI not used")
+            #print("Camera KI updated: ", float(input_value))
+            #input_value = round(float(input_value)*100, 2)
+            #print(input_value)
+            #input_value = int(input_value)
+            #cmd = buildCMD(CMD_ID_CAMERA_KI, [input_value & 0xFF00, input_value & 0x00FF])
         elif param_choice_maked["Parameter"] == "Camera KD":
+            print("Camera KD updated: ", float(input_value))
             input_value = float(input_value)*100
             input_value = int(input_value)
-            cmd = buildCMD(CMD_ID_CAMERA_KD, [input_value & 0xFF00, input_value & 0x00FF])
+            cmd = buildCMD(CMD_ID_CAMERA_KD, [(input_value & 0xFF00) >> 8, input_value & 0x00FF])
         elif param_choice_maked["Parameter"] == "Differential KP":
+            print("Differential KP updated: ", float(input_value))
             input_value = float(input_value)*100
             input_value = int(input_value)
-            cmd = buildCMD(CMD_ID_DIFFERENTIAL_KP, [input_value & 0xFF00, input_value & 0x00FF])
+            cmd = buildCMD(CMD_ID_DIFFERENTIAL_KP, [(input_value & 0xFF00) >> 8, input_value & 0x00FF])
         elif param_choice_maked["Parameter"] == "Differential KI":
+            print("Differential KI updated: ", float(input_value))
             input_value = float(input_value)*100
             input_value = int(input_value)
-            cmd = buildCMD(CMD_ID_DIFFERENTIAL_KI, [input_value & 0xFF00, input_value & 0x00FF])
+            cmd = buildCMD(CMD_ID_DIFFERENTIAL_KI, [(input_value & 0xFF00) >> 8, input_value & 0x00FF])
         elif param_choice_maked["Parameter"] == "Differential KDP":
+            print("Differential KDP updated: ", float(input_value))
             input_value = float(input_value)*100
             input_value = int(input_value)
-            cmd = buildCMD(CMD_ID_DIFFERENTIAL_KDP, [input_value & 0xFF00, input_value & 0x00FF])
+            cmd = buildCMD(CMD_ID_DIFFERENTIAL_KDP, [(input_value & 0xFF00) >> 8, input_value & 0x00FF])
         elif param_choice_maked["Parameter"] == "Speed Start":
             input_value = int(input_value)
-            cmd = buildCMD(CMD_ID_SPEED_START, [input_value & 0xFF00, input_value & 0x00FF])
-        elif param_choice_maked["Parameter"] == "Speed Limit":
+            print("Speed Start updated: ", input_value)
+            cmd = buildCMD(CMD_ID_SPEED_START, [(input_value & 0xFF00) >> 8, input_value & 0x00FF])
+        elif param_choice_maked["Parameter"] == "Speed Target":
             input_value = int(input_value)
-            cmd = buildCMD(CMD_ID_SPEED_LIMIT, [input_value & 0xFF00, input_value & 0x00FF])
+            print("Speed Target updated: ", input_value)
+            cmd = buildCMD(CMD_ID_SPEED_TARGET, [(input_value & 0xFF00) >> 8, input_value & 0x00FF])
         elif param_choice_maked["Parameter"] == "Speed Turn":
             input_value = int(input_value)
-            cmd = buildCMD(CMD_ID_SPEED_TURN, [input_value & 0xFF00, input_value & 0x00FF])
+            print("Speed Turn updated: ", input_value)
+            cmd = buildCMD(CMD_ID_SPEED_TURN, [(input_value & 0xFF00) >> 8, input_value & 0x00FF])
 
         # Send command to the queue
         inputQueue.put(cmd)    
@@ -180,7 +202,7 @@ def inputUser(inputQueue, exit_event):
     label.grid(column=3, row=0)
     param_choice_var = tk.StringVar(root)
     param_choice_var.trace_add('write', update_param_choice)  
-    param_choices = ['Camera Mode', 'Camera KP', 'Camera KI', 'Camera KD', 'Differential KP', 'Differential KI', 'Differential KDP', 'Speed Start', 'Speed Limit', 'Speed Turn']
+    param_choices = ['Camera Mode', 'Camera KP', 'Camera KI', 'Camera KD', 'Differential KP', 'Differential KI', 'Differential KDP', 'Speed Start', 'Speed Target', 'Speed Turn']
     dropdown_param = tk.OptionMenu(root, param_choice_var, *param_choices)
     dropdown_param.grid(column=3, row=1)  # Place in column 3
 
@@ -215,6 +237,7 @@ def inputUser(inputQueue, exit_event):
         root.mainloop() 
     except KeyboardInterrupt:
         print("Exiting inputUser")
+        
 
 def test_inputUser(inputQueue, exit_event):
     print("Start Test")
@@ -230,11 +253,12 @@ def test_inputUser(inputQueue, exit_event):
 
 if __name__ == "__main__":
     inputQueue = mp.Queue()
+    outputMethod = mp.Queue()
     exit_event = mp.Event()
 
     #p_main = mp.Process(target=watch, args=(inputQueue, ))
 
-    p_input = mp.Process(target=inputUser, args=(inputQueue, exit_event,))
+    p_input = mp.Process(target=inputUser, args=(inputQueue, outputMethod ,exit_event,))
     p_input.start()
 
     p_output = mp.Process(target=test_inputUser, args=(inputQueue, exit_event,))

@@ -44,7 +44,7 @@ typedef enum{
     CMD_ID_DIFFERENTIAL_KI = 0x07,
     CMD_ID_DIFFERENTIAL_KDP = 0x08,
     CMD_ID_SPEED_START = 0x09,
-    CMD_ID_SPEED_LIMIT = 0x0A,
+    CMD_ID_SPEED_TARGET = 0x0A,
     CMD_ID_SPEED_TURN = 0x0B,
     /* Command for choosing watch data */
     CMD_ID_CAMERA_NEAR_DATA = 0x0C,

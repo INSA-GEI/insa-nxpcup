@@ -76,7 +76,7 @@ def plot(data, output_data_lock, exit_event):
         ax.set_xlabel("Coordinate Index")
         ax.set_ylabel("Brightness Value")
         ax.set_xlim(0, 127)
-        ax.set_ylim(0, 500)
+        ax.set_ylim(0, 1000)
         # Create the animation
 
         animation = FuncAnimation(fig, update_plot, fargs=(data, output_data_lock, exit_event), interval=25, blit = True, cache_frame_data=False)
