@@ -16,20 +16,20 @@ CMD_ID_SPEED_START = 0x09
 CMD_ID_SPEED_TARGET = 0x0A
 CMD_ID_SPEED_TURN = 0x0B
 # WATCH
-CMD_ID_CAMERA_FAR_DATA = 0x0C
-CMD_ID_CAMERA_FAR_DATA_DIFF = 0x0D
-CMD_ID_CAMERA_FAR_OTHERS = 0x0E
-CMD_ID_CAMERA_FAR_NUM_BORDERS = 0x0F
-CMD_ID_CAMERA_NEAR_DATA = 0x10
-CMD_ID_CAMERA_NEAR_DATA_DIFF = 0x11
-CMD_ID_CAMERA_NEAR_OTHERS = 0x12
-CMD_ID_CAMERA_NEAR_NUM_BORDERS = 0x13
+CMD_ID_CAMERA_NEAR_DATA = 0x0C
+CMD_ID_CAMERA_NEAR_DATA_DIFF = 0x0D
+CMD_ID_CAMERA_NEAR_OTHERS = 0x0E
+CMD_ID_CAMERA_NEAR_NUM_BORDERS = 0x0F
+CMD_ID_CAMERA_FAR_DATA = 0x10
+CMD_ID_CAMERA_FAR_DATA_DIFF = 0x11
+CMD_ID_CAMERA_FAR_OTHERS = 0x12
+CMD_ID_CAMERA_FAR_NUM_BORDERS = 0x13
 CMD_ID_CAMERA_COMBINED_CENTER = 0x14        # Not used
 CMD_ID_SPEED = 0x15
 CMD_ID_SERVO_ANGLE = 0x16
 CMD_ID_STOP_WATCH = 0x17
 
-def inputUser(inputQueue, outputMethod, exit_event):
+def inputUser(inputQueue, exit_event):
     def buildCMD(cmd_id, data = [0,0]) -> list:
         cmd = [cmd_id]
         cmd.append(data[0])
@@ -56,19 +56,11 @@ def inputUser(inputQueue, outputMethod, exit_event):
                 #print(buildCMD(CMD_ID_CAMERA_NEAR_DATA, ACTIVATE))
             elif watch_choice_maked["Watch"] == "Data Diff":
                 cmd = buildCMD(CMD_ID_CAMERA_NEAR_DATA_DIFF)
-            elif watch_choice_maked["Watch"] == "NumberEdge":
-                cmd = buildCMD(CMD_ID_CAMERA_NEAR_NUM_BORDERS)
-            elif watch_choice_maked["Watch"] == "Others":
-                cmd = buildCMD(CMD_ID_CAMERA_NEAR_OTHERS)
         if watch_choice_maked["Objet"] == "Camera Far":
             if watch_choice_maked["Watch"] == "Data":
                 cmd = buildCMD(CMD_ID_CAMERA_FAR_DATA)
             elif watch_choice_maked["Watch"] == "Data Diff":
                 cmd = buildCMD(CMD_ID_CAMERA_FAR_DATA_DIFF)
-            elif watch_choice_maked["Watch"] == "NumberEdge":
-                cmd = buildCMD(CMD_ID_CAMERA_FAR_NUM_BORDERS)
-            elif watch_choice_maked["Watch"] == "Others":
-                cmd = buildCMD(CMD_ID_CAMERA_FAR_OTHERS)
         if watch_choice_maked["Objet"] == "Speed":
             cmd = buildCMD(CMD_ID_SPEED)
         if watch_choice_maked["Objet"] == "Servo":
@@ -95,17 +87,8 @@ def inputUser(inputQueue, outputMethod, exit_event):
         if input_value == "":
             print("No input value")
             return
-        #if input_value.isnumeric() == False:
-        #    print("Invalid input value, must be a number")
-        #    return
         if param_choice_maked["Parameter"] == "Camera Mode":
             print("Camera Mode not used (use only mode 2)")
-            #input_value = int(input_value) 
-            #if input_value > 0 and input_value < 5:
-                #cmd = buildCMD(CMD_ID_CAMERA_MODE, [0, input_value])
-                #print("Camera Mode updated: ", input_value)
-            #else:
-                #print("Invalid value for Camera Mode")
         elif param_choice_maked["Parameter"] == "Camera KP":
             print("Camera KP updated: ", float(input_value))
             input_value = round(float(input_value)*100, 2)
@@ -113,11 +96,6 @@ def inputUser(inputQueue, outputMethod, exit_event):
             cmd = buildCMD(CMD_ID_CAMERA_KP, [(input_value & 0xFF00) >> 8, input_value & 0x00FF])
         elif param_choice_maked["Parameter"] == "Camera KI":
             print("Camera KI not used")
-            #print("Camera KI updated: ", float(input_value))
-            #input_value = round(float(input_value)*100, 2)
-            #print(input_value)
-            #input_value = int(input_value)
-            #cmd = buildCMD(CMD_ID_CAMERA_KI, [input_value & 0xFF00, input_value & 0x00FF])
         elif param_choice_maked["Parameter"] == "Camera KD":
             print("Camera KD updated: ", float(input_value))
             input_value = float(input_value)*100
@@ -190,7 +168,7 @@ def inputUser(inputQueue, outputMethod, exit_event):
     label_watch_choice.grid(column=0, row=2) 
     watch_choice_var = tk.StringVar(root)
     watch_choice_var.trace_add('write', update_watch_choice)  
-    watch_choices = ['Data', 'Data Diff', 'Others', 'NumberEdge', 'None']
+    watch_choices = ['Data', 'Data Diff', 'None']
     dropdown_watch = tk.OptionMenu(root, watch_choice_var, *watch_choices)
     dropdown_watch.grid(column=0, row=3)  # Place in column 1
 
@@ -237,42 +215,3 @@ def inputUser(inputQueue, outputMethod, exit_event):
         root.mainloop() 
     except KeyboardInterrupt:
         print("Exiting inputUser")
-        
-
-def test_inputUser(inputQueue, exit_event):
-    print("Start Test")
-    try:
-        while not exit_event.is_set():
-            if not inputQueue.empty():
-                command = inputQueue.get()
-                if command != 0 :
-                    print(command)
-        print("Exiting test")
-    except KeyboardInterrupt:
-        print("Exiting test")
-
-if __name__ == "__main__":
-    inputQueue = mp.Queue()
-    outputMethod = mp.Queue()
-    exit_event = mp.Event()
-
-    #p_main = mp.Process(target=watch, args=(inputQueue, ))
-
-    p_input = mp.Process(target=inputUser, args=(inputQueue, outputMethod ,exit_event,))
-    p_input.start()
-
-    p_output = mp.Process(target=test_inputUser, args=(inputQueue, exit_event,))
-    p_output.start()
-    try:
-        # Wait for both processes to finish
-        p_input.join()
-        p_output.join()
-    except KeyboardInterrupt:
-        # If the main process receives a KeyboardInterrupt (Ctrl+C), it sets the exit_event.
-        # This signals the subprocesses to exit their loops and finish execution.
-        p_input.join()
-        p_output.join()
-        if p_input.is_alive() & p_output.is_alive():
-            print("Warning: process did not terminate correctly")
-        else:
-            print("Process terminated correctly")

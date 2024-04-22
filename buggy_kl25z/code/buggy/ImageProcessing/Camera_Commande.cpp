@@ -69,7 +69,7 @@ float Camera_Calculate_Servo_Angle(void){
 		//actualisation threshold
 		Camera_Near.compute_data_threshold();
 		Camera_Far.compute_data_threshold();
-		}
+	}
 	return Camera_Near.servo_angle;
 }
 

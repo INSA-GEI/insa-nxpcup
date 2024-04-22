@@ -86,10 +86,8 @@ bool bee_checkCMDReceived(void);
 
 /**
  * @brief Enable to send data to computer via Bluetooth Bee module
- * @param ptrData : Pointer to data to send
- * @param lengthInByte : Length of data in byte
  */
-void bee_enableSendData(uint16_t * ptrData, uint32_t lengthInByte);
+void bee_enableSendData(void);
 
 /**
  * @brief Stop sending data to Bluetooth Bee
@@ -99,12 +97,10 @@ void bee_disableSendData(void);
 
 /**
  * @brief Send data to computer via Bluetooth Bee module
- * @param None
+ * @param ptrData : Pointer to data to send
+ * @param lengthInByte : Length of data in bytess
  */
-void bee_sendData(void);
-
-
-void bee_initTransferData(void);
+void bee_sendData(uint8_t * ptrData, uint32_t lengthInByte);
 
 #ifdef __cplusplus
 }

@@ -6,10 +6,10 @@ COM_PORT = 'COM11'
 BAUD_RATE = 115200
 TIME_OUT = 1
 CAMERA_DATA_SIZE = 256
-CAMERA_OTHERS_SIZE = 8
+CAMERA_OTHERS_SIZE = 10
 
-def runSerial(inputQueue, outputBuffer, output_lock, exit_event):
-    nb_bytes_to_receive = 256 # !!! Fix to 0  # Number of bytes to receive depend on which data we are watching
+def runSerial(inputQueue, dataCamera, dataCamera_lock, dataCameraOthers, dataCameraOthers_lock, exit_event):
+    nb_bytes_to_receive = 8 # !!! Fix to 0  # Number of bytes to receive depend on which data we are watching
     try:
         ser = Serial(COM_PORT, baudrate=BAUD_RATE, timeout=TIME_OUT)
         ser.flush()
@@ -22,14 +22,25 @@ def runSerial(inputQueue, outputBuffer, output_lock, exit_event):
                     ser.write(command)
                     print("Command sent")
             if ser.in_waiting:
-                data_received = ser.read(nb_bytes_to_receive)
-                if len(data_received) == nb_bytes_to_receive:
+                dataCamera_received = ser.read(CAMERA_DATA_SIZE)
+                if len(dataCamera_received) == CAMERA_DATA_SIZE:
                     # Unpack the data, from [LSB MSB] to 2 octets intergers
-                    data_received = struct.unpack('h' * (len(data_received) // 2), data_received)
-                    output_lock.acquire()
-                    for i in range(len(data_received)):
-                        outputBuffer[i] = data_received[len(data_received)-1-i]
-                    output_lock.release()
+                    dataCamera_received = struct.unpack('h' * (CAMERA_DATA_SIZE // 2), dataCamera_received)
+                    dataCamera_lock.acquire()
+                    #print(len(dataCamera_received))
+                    for i in range(len(dataCamera_received)):
+                        dataCamera[i] = dataCamera_received[len(dataCamera_received)-1-i]
+                    dataCamera_lock.release()
+
+                dataCameraOthers_received = ser.read(CAMERA_OTHERS_SIZE)
+                if len(dataCameraOthers_received) == CAMERA_OTHERS_SIZE:
+                    # Unpack the data, from [LSB MSB] to 2 octets intergers
+                    dataCameraOthers_received = struct.unpack('h' * (CAMERA_OTHERS_SIZE // 2), dataCameraOthers_received)
+                    dataCameraOthers_lock.acquire()
+                    for i in range(len(dataCameraOthers_received)):
+                        dataCameraOthers[i] = dataCameraOthers_received[i]
+                    dataCameraOthers_lock.release()
+                
         ser.close()
         print("Serial port closed")   
     except SerialException:

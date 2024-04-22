@@ -89,10 +89,8 @@ void bee_startReceivingData(void){
 }
 
 
-void bee_enableSendData(uint16_t * ptrData, uint32_t lengthInByte){
+void bee_enableSendData(void){
 	/* Enable TX */
-	ptrDataToSend = (uint8_t *)ptrData;
-	bee_lengthDataToSend = lengthInByte;
 	LPSCI_EnableTx(BEE_LPSCI, true);
 }
 
@@ -100,6 +98,6 @@ void bee_disableSendData(){
 	//LPSCI_EnableTx(BEE_LPSCI, false);
 }
 
-void bee_sendData(void){
-	LPSCI_WriteBlocking(BEE_LPSCI, ptrDataToSend, bee_lengthDataToSend);
+void bee_sendData(uint8_t * ptrData, uint32_t lengthInByte){
+	LPSCI_WriteBlocking(BEE_LPSCI, ptrData, lengthInByte);
 }

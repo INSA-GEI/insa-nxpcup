@@ -33,7 +33,13 @@ int cnt=0;
 /* Variable for receiving command from Bluetooth Bee */
 uint8_t bufferCommand[BEE_CMD_LENGTH];
 
-/* Flag to indicate what data is monitoring */
+/* For data monitoring */
+#define LENGTH_CAMERA_DATA 256
+#define LENGTH_CAMERA_OTHERS 10
+
+uint8_t * ptr_cameraData = NULL;
+uint8_t * ptr_cameraOthers = NULL;
+
 uint8_t watch_flag = 0;
 
 /* Flag to indicate whether the motor is enabled (by remote control) */
@@ -51,7 +57,7 @@ void buggy_run(void){
 
 	bee_initCommunication(buggy_readCMD, bufferCommand);
 	bee_startReceivingData();
-
+	bee_enableSendData();
 
 	Camera_Initiate();
 
@@ -145,37 +151,29 @@ void buggy_readCMD(void){
 			Buggy_Set_Vtarget((dataMSB << 8) | dataLSB);
 			break;
 		case CMD_ID_CAMERA_NEAR_DATA_DIFF:
-			watch_flag = CMD_ID_CAMERA_NEAR_DATA_DIFF;
-			bee_enableSendData(Camera_Get_ImageDataDiff(CAM_NEAR_ID), 256);
+			watch_flag = 1;
+			ptr_cameraData = (uint8_t *)Camera_Get_ImageDataDiff(CAM_NEAR_ID);
+			ptr_cameraOthers = (uint8_t *)Camera_Get_OthersInfo(CAM_NEAR_ID);
 			break;
 		case CMD_ID_CAMERA_NEAR_DATA:
-			watch_flag = CMD_ID_CAMERA_NEAR_DATA;
-			bee_enableSendData(Camera_Get_ImageData(CAM_NEAR_ID), 256);
+			watch_flag = 1;
+			ptr_cameraData = (uint8_t *)Camera_Get_ImageData(CAM_NEAR_ID);
+			ptr_cameraOthers = (uint8_t *)Camera_Get_OthersInfo(CAM_NEAR_ID);
 			break;
-		case CMD_ID_CAMERA_NEAR_OTHERS:
-			watch_flag = CMD_ID_CAMERA_NEAR_OTHERS;
-			bee_enableSendData(Camera_Get_OthersInfo(CAM_NEAR_ID), 8);
-		case CMD_ID_CAMERA_NEAR_NUM_BORDERS:
-			watch_flag = CMD_ID_CAMERA_NEAR_NUM_BORDERS;
-			bee_enableSendData(Camera_Get_NbrEdges(CAM_NEAR_ID), 2);
-
 		case CMD_ID_CAMERA_FAR_DATA_DIFF:
-			watch_flag = CMD_ID_CAMERA_FAR_DATA_DIFF;
-			bee_enableSendData(Camera_Get_ImageDataDiff(CAM_FAR_ID), 256);
+			watch_flag = 1;
+			ptr_cameraData = (uint8_t *)Camera_Get_ImageDataDiff(CAM_FAR_ID);
+			ptr_cameraOthers = (uint8_t *)Camera_Get_OthersInfo(CAM_FAR_ID);
 			break;
 		case CMD_ID_CAMERA_FAR_DATA:
-			watch_flag = CMD_ID_CAMERA_FAR_DATA;
-			bee_enableSendData(Camera_Get_ImageData(CAM_FAR_ID), 256);
+			watch_flag = 1;
+			ptr_cameraData = (uint8_t *)Camera_Get_ImageDataDiff(CAM_FAR_ID);
+			ptr_cameraOthers = (uint8_t *)Camera_Get_OthersInfo(CAM_FAR_ID);
 			break;
-		case CMD_ID_CAMERA_FAR_OTHERS:
-			watch_flag = CMD_ID_CAMERA_FAR_OTHERS;
-			bee_enableSendData(Camera_Get_OthersInfo(CAM_FAR_ID), 8);
-		case CMD_ID_CAMERA_FAR_NUM_BORDERS:
-			watch_flag = CMD_ID_CAMERA_FAR_NUM_BORDERS;
-			bee_enableSendData(Camera_Get_NbrEdges(CAM_FAR_ID), 2);
 		case CMD_ID_STOP_WATCH:
 			watch_flag = CMD_ID_STOP_WATCH;
 			bee_disableSendData();
+			break;
 		default:
 			break;
 	}
@@ -240,11 +238,12 @@ void TPM1_IRQHandler(){
 			movement_set(Vtarget,angle_servo);
 		}
 	}
-	/*
+	
 	if (watch_flag != 0){
-		bee_sendData();
+		bee_sendData(ptr_cameraData, LENGTH_CAMERA_DATA);
+		bee_sendData(ptr_cameraOthers, LENGTH_CAMERA_OTHERS);
 	}
-	*/
+	
 	TPM_ClearStatusFlags(TPM1, kTPM_Chnl0Flag);
 
 }
