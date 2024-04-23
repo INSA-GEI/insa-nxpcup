@@ -167,7 +167,7 @@ void buggy_readCMD(void){
 			break;
 		case CMD_ID_CAMERA_FAR_DATA:
 			watch_flag = 1;
-			ptr_cameraData = (uint8_t *)Camera_Get_ImageDataDiff(CAM_FAR_ID);
+			ptr_cameraData = (uint8_t *)Camera_Get_ImageData(CAM_FAR_ID);
 			ptr_cameraOthers = (uint8_t *)Camera_Get_OthersInfo(CAM_FAR_ID);
 			break;
 		case CMD_ID_STOP_WATCH:
