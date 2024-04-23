@@ -7,9 +7,9 @@
 #ifndef ENCODER_DRIVER_ENCODER_H_
 #define ENCODER_DRIVER_ENCODER_H_
 
-#ifdef __cplusplus
+#if defined(__cplusplus)
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
 #include "pin_mux.h"
 #include "clock_config.h"
@@ -19,6 +19,7 @@ extern "C" {
 #include "fsl_gpio.h"
 #include "fsl_tpm.h"
 #include "fsl_port.h"
+#include "movement/driver_movement.h"
 /**
  * Attention :
  * In the movement, we use max speed = 9 m/s ~ 50% PWM
@@ -50,6 +51,8 @@ extern "C" {
 #define ENCODERS_TPM_CHANNEL_LEFT 			0
 #define ENCODERS_TPM_CHANNEL_RIGHT			1
 
+void encoders_IRQHandler(void);
+
 
 /**
  * @fn void encoders_init(void)
@@ -77,3 +80,5 @@ float encoder_getRightSpeed(void);
 #endif
 
 #endif /* ENCODER_DRIVER_ENCODER_H_ */
+
+

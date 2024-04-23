@@ -2,17 +2,15 @@
  * dc_motor.h
  *
  *  Created on: 3 janv. 2024
- *      Author: TANG Huong Cam (tanghuongcam)
+ *      Author: TANG Huong Cam (hctang@insa-toulouse.fr)
  */
 
 #ifndef DC_MOTOR_H_
 #define DC_MOTOR_H_
 
-#ifdef __cplusplus
+#if defined(__cplusplus)
 extern "C" {
-#endif
-
-
+#endif /* __cplusplus */
 
 #include "MKL25Z4.h"
 #include "fsl_port.h"
@@ -24,9 +22,9 @@ extern "C" {
  * 	- PTA4 : Motor Right In 1 (PWM for speed)
  * 	- PTA5 : Motor Right In 2 (GPIO for direction)
  * 	- PTC7 : Motor Right Enable
- * 	- PTA9 : Motor Left In 2 (PWM for speed)
- * 	- PTA8 : Motor Left In 1 (GPIO for direction)
- * 	- PTC0 : Motor Left Enable
+ * 	- PTC9 : Motor Left In 2 (PWM for speed)
+ * 	- PTC8 : Motor Left In 1 (GPIO for direction)
+ * 	- PTC0 : Motor Right Enable
  * 	- TPM0 : PWM for both motors
  * 		+ Channel 1 : PWM for motor Right
  * 		+ Channel 5 : PWM for motor Left

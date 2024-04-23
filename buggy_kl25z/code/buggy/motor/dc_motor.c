@@ -2,7 +2,7 @@
  * dc_motor.c
  *
  *  Created on: 3 janv. 2024
- *      Author: TANG Huong Cam (tanghuongcam)
+ *      Author: TANG Huong Cam (hctang@insa-toulouse.fr)
  */
 
 
@@ -66,17 +66,15 @@ void MOTOR_init(void){
 	GPIO_PinInit(GPIO_MOTOR_ENABLE,PIN_ENABLE_MOTOR_LEFT,&config_ouput_gpio);
 	GPIO_PinInit(GPIO_MOTOR_ENABLE,PIN_ENABLE_MOTOR_RIGHT,&config_ouput_gpio);
 
-	//set forward direction for motors
-	MOTOR_Left_Direction_Forward();
-	MOTOR_Right_Direction_Forward();
 
 	//set initial speed's motors as 0
 	MOTOR_Left_Speed_Forward(0);
 	MOTOR_Right_Speed_Forward(0);
 
-	//enable the motors
-	MOTOR_Left_Enable();
-	MOTOR_Right_Enable();
+	//set forward direction for motors
+	MOTOR_Left_Direction_Forward();
+	MOTOR_Right_Direction_Forward();
+	//To enable motors, call mouvement_start()
 }
 
 void MOTOR_Left_Enable(void)
