@@ -15,12 +15,12 @@
 #include "lidar/driver_lidar.hpp"
 //#include "movement/driver_movement.h"
 
-unsigned int Vstart=2700;	// Entre 1000 et 9000 // Vitese initiale
-unsigned int Vtarget=3000; // Vitesse target
+unsigned int Vstart=1000;	// Entre 1000 et 9000 // Vitese initiale
+unsigned int Vtarget=1000; // Vitesse target
 
 //unsigned int V=0;	// Entre 1000 et 9000 // Vitese initiale
 //unsigned int Vset=0; // Vitesse target
- unsigned int Vturn=2300;
+ unsigned int Vturn=1000;
 // unsigned int VslowTH=500;
 // const float ADAPTIVE_SPEED_ANGLE = 10.0;
 // const float ADAPTIVE_SPEED_HYST = 2.0;
@@ -36,9 +36,11 @@ uint8_t bufferCommand[BEE_CMD_LENGTH];
 /* For data monitoring */
 #define LENGTH_CAMERA_DATA 256
 #define LENGTH_CAMERA_OTHERS 10
+#define LENGTH_WHEEL_DATA 6
 
 uint8_t * ptr_cameraData = NULL;
 uint8_t * ptr_cameraOthers = NULL;
+uint16_t wheel_data[3] = {0, 0, 0}; // [0] : left, [1] : right, [2] : servo angle 
 
 uint8_t watch_flag = 0;
 
@@ -65,8 +67,9 @@ void buggy_run(void){
 
 	movement_init();
 	//mouvement_start();
-	movement_set(Vstart, 0);
-	movement_regulate();
+	//movement_set(Vstart, 0);
+	//movement_regulate();
+
 
 	//watch_flag = CMD_ID_CAMERA_NEAR_DATA_DIFF;
 	//bee_enableSendData(Camera_Get_ImageDataDiff(CAM_NEAR_ID), 256);
@@ -125,12 +128,14 @@ void buggy_readCMD(void){
 	{	
 		case CMD_ID_ENGINE:
 			if (dataLSB == 0xAA){
-				mouvement_start();
 				enable_flag = 1;
+				mouvement_start();
+				movement_set(Vstart, 0);
+				movement_regulate();
 			}
 			else if (dataLSB == 0x55){
-				movement_stop();
 				enable_flag = 0;
+				movement_stop();
 			}
 			break;
 		case CMD_ID_CAMERA_KP:
@@ -229,7 +234,7 @@ void buggy_afficheData(void){
 void TPM1_IRQHandler(){
 	float angle_servo = Camera_Calculate_Servo_Angle();
 	if (enable_flag == 1){
-		if (angle_servo > 0 || angle_servo < -20)
+		if (angle_servo > 20 || angle_servo < -20)
 		{
 			movement_set(Vturn,angle_servo);
 		}
@@ -238,15 +243,20 @@ void TPM1_IRQHandler(){
 			movement_set(Vtarget,angle_servo);
 		}
 	}
-	
+
 	if (watch_flag != 0){
+		wheel_data[0] = (uint16_t)movement_getSpeedLeft();
+		wheel_data[1] = (uint16_t)movement_getSpeedRight();
+		wheel_data[2] = (uint16_t)angle_servo;
 		bee_sendData(ptr_cameraData, LENGTH_CAMERA_DATA);
 		bee_sendData(ptr_cameraOthers, LENGTH_CAMERA_OTHERS);
+		bee_sendData((uint8_t *)wheel_data, LENGTH_WHEEL_DATA);
 	}
-	
+
 	TPM_ClearStatusFlags(TPM1, kTPM_Chnl0Flag);
 
 }
+
 
 // Encoder Interrupt
 void TPM2_IRQHandler(){

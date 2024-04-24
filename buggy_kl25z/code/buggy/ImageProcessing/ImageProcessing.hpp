@@ -38,17 +38,17 @@
 //#define KDP_TURN 						.6	// Derivative coefficient in turn
 
 //Gain correctif pour 2 camera (somme = 1)
-#define K_CAMERA_NEAR 						.3
-#define K_CAMERA_FAR						.7
+#define K_CAMERA_NEAR 						.7
+#define K_CAMERA_FAR						.3
 
 
 
 // Define thresholds for Camera Black Line recognition
-#define THRESHOLD_high				140			// Higher threshold : does not capture noise but may not capture all maximums.
-#define THRESHOLD_low				50			// Lower threshold : May capture more maximums than High threshold but can capture noise too.
+#define THRESHOLD_high				500			// Higher threshold : does not capture noise but may not capture all maximums.
+#define THRESHOLD_low				200			// Lower threshold : May capture more maximums than High threshold but can capture noise too.
 
-#define THRESHOLD_classic			120			// standard threshold : used in the basic image processing function
-
+//#define THRESHOLD_classic			120			// standard threshold : used in the basic image processing function
+#define THRESHOLD_classic			180	
 #define functionning_mode			2			// operating mode: from 1 to 4: algorithm more and more precise but heavy
 // Functionning mode 1: Problème de virage à droite
 // Functionning mode 2: Tour à gauche et droite effectuée
