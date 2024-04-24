@@ -28,48 +28,39 @@ void Camera_Initiate(void){
 }
 
 float Camera_Calculate_Servo_Angle(void){
-	if (Nombre_de_Camera == 1){
-		Camera_Near.capture();
-		Camera_Near.differentiate();
-		Camera_Near.process();
-		Camera_Near.calculateMiddle();
-		Camera_Near.Actualise_Servo_1_Camera();
-		Camera_Near.compute_data_threshold();
-		//Camera_Near.affiche_image();
-		}
-	else if (Nombre_de_Camera == 2){
-
-		// Capture des données sur les deux caméra.
-		// Capture en séquentiel car les 2 caméra sur le même ADC
-		Camera_Near.capture();
-		Camera_Far.capture();
-
-		//Traitement de la caméra 1
-		Camera_Near.differentiate();
-		Camera_Near.process();
-		Camera_Near.calculateMiddle();
-		//Camera_Near.affiche_image();
-		//Camera_Near.affiche_edge();
-
-		//Traitement de la caméra 2
-		Camera_Far.differentiate();
-		Camera_Far.process();
-		Camera_Far.calculateMiddle();
-		//Camera_Far.affiche_image();
-		//Camera_Far.affiche_edge();
-
-		//Option 1 du calcul servo_angle
-		//Prend la moyenne des deux milieux de route obtenue sans se soucier du FOV(field of view) des caméras.
-		//Camera_Actualise_Servo_2_Camera_Moyenne_Simple();
 
 
-		//Option 2 moyenne ponderee avec valeur arbitraire K_CAMERA_NEAR et K_CAMERA_FAR dans ImageProcessing.hpp
-		Camera_Actualise_Servo_2_Camera_Moyenne_Ponderee_1();
+	// Capture des données sur les deux caméra.
+	// Capture en séquentiel car les 2 caméra sur le même ADC
+	Camera_Near.capture();
+	Camera_Far.capture();
 
-		//actualisation threshold
-		Camera_Near.compute_data_threshold();
-		Camera_Far.compute_data_threshold();
-	}
+	//Traitement de la caméra 1
+	Camera_Near.differentiate();
+	Camera_Near.process();
+	Camera_Near.calculateMiddle();
+	//Camera_Near.affiche_image();
+	//Camera_Near.affiche_edge();
+
+	//Traitement de la caméra 2
+	Camera_Far.differentiate();
+	Camera_Far.process();
+	Camera_Far.calculateMiddle();
+	//Camera_Far.affiche_image();
+	//Camera_Far.affiche_edge();
+
+	//Option 1 du calcul servo_angle
+	//Prend la moyenne des deux milieux de route obtenue sans se soucier du FOV(field of view) des caméras.
+	//Camera_Actualise_Servo_2_Camera_Moyenne_Simple();
+
+
+	//Option 2 moyenne ponderee avec valeur arbitraire K_CAMERA_NEAR et K_CAMERA_FAR dans ImageProcessing.hpp
+	Camera_Actualise_Servo_2_Camera_Moyenne_Ponderee_1();
+
+	//actualisation threshold
+	Camera_Near.compute_data_threshold();
+	Camera_Far.compute_data_threshold();
+
 	return Camera_Near.servo_angle;
 }
 

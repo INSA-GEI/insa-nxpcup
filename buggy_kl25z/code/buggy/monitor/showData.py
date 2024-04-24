@@ -3,34 +3,36 @@ import os
 import multiprocessing as mp
 from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
-from inputUser import inputUser
 
 ### CONSTANTS
 CAMERA_DATA_SIZE = 256
 CAMERA_RESOLUTION = 128
 CAMERA_VALUE_MAX = 1023
 
-######################################################################################################
-# Function to plot the camera other data (RoadMiddle, RoadMiddleOld, BlackLineLeft, BlackLineRight, Nbr_edges)
-######################################################################################################
-def printOthersCameraData(dataCameraOthers, data_camera_others_lock, exit_event):
+########################################################################################################################################
+# Function to plot  others data (RoadMiddle, RoadMiddleOld, BlackLineLeft, BlackLineRight, Nbr_edges, SpeedLeft, SpeedRight, ServoAngle)
+########################################################################################################################################
+def printOthersData(dataOthers, data_others_lock, exit_event):
     try:
         while not exit_event.is_set():
             os.system('cls' if os.name == 'nt' else 'clear')
             print('\033[H')
-            data_camera_others_lock.acquire()
-            print("RoadMiddle: ", dataCameraOthers[0])
-            print("RoadMiddleOld: ", dataCameraOthers[1])
-            print("BlackLineLeft: ", dataCameraOthers[2])
-            print("BlackLineRight: ", dataCameraOthers[3])
-            print("Nbr_edges: ", dataCameraOthers[4])
-            data_camera_others_lock.release()
+            data_others_lock.acquire()
+            print("RoadMiddle: ", dataOthers[0])
+            print("RoadMiddleOld: ", dataOthers[1])
+            print("BlackLineLeft: ", dataOthers[2])
+            print("BlackLineRight: ", dataOthers[3])
+            print("Nbr_edges: ", dataOthers[4])
+            print("SpeedLeft: ", dataOthers[5])
+            print("SpeedRight: ", dataOthers[6])
+            print("ServoAngle: ", dataOthers[7])
+            data_others_lock.release()
             time.sleep(1)
         # Exit
-        print("Exiting printOthersCameraData")
+        print("Exiting printOthersData")
     except KeyboardInterrupt:
         exit_event.set()
-        print("Exiting printOthersCameraData")
+        print("Exiting printOthersData")
         return
 
 ######################################################################################################

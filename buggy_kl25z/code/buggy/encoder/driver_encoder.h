@@ -42,7 +42,7 @@ extern "C" {
 #define CPU_FREQUENCY 						48000000UL				//Frequency of Intern Clock
 #define ENCODERS_TPM_PRESCALER 				128 					//Divides the clock by 8
 #define ENCODERS_TPM_AUTORELOAD 			65535
-#define ENCODERS_MAX_OVF 					6 						//If no pulse for 1sec, reset speed count to invalid.
+#define ENCODERS_MAX_OVF 					3 						//If no pulse for 1sec, reset speed count to invalid.
 #define ENCODER_PORT 						PORTB
 #define ENCODER_GPIO 						GPIOB
 #define ENCODER_PIN_SA_LEFT 				2						//PB2 : CH0 TPM2
