@@ -17,7 +17,9 @@
 #define Nombre_de_Camera 2 // Donne le nombre de caméra sur la voiture ( 1 ou 2).
 // Si 1 Camera --> ADC0 SE11
 // Si 2 Camera --> ADC0 SE11 et SE15
-
+// Crée 2 objets caméra
+ImageProcessing Camera_1(1);
+ImageProcessing Camera_2(2);
 
 
 void Camera_Initiate(void);

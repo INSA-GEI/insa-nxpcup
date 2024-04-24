@@ -46,7 +46,7 @@ void buggy_run(void){
 
 void TPM1_IRQHandler(){
 
-	float angle_servo = Camera_Calculate_Servo_Angle();
+	float angle_servo = Camera_Calculate_Servo_Angle();// A changer pour qu'il prenne pas de capture
 	if (Camera_Calculate_Servo_Angle() > 20 || Camera_Calculate_Servo_Angle() < -18)
 	{
 		movement_set(Vslow,angle_servo);
@@ -62,3 +62,6 @@ void TPM2_IRQHandler(){
 	movement_regulate();
 }
 
+void ADCO_IRQHandler(){
+	Camera_1.CAMERA_1_capture();
+}

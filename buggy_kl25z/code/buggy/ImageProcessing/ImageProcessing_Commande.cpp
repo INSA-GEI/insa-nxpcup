@@ -12,18 +12,20 @@
 #include "stdio.h"
 #include "stdlib.h"
 
-// Crée 2 objets caméra
-ImageProcessing Camera_1(1);
-ImageProcessing Camera_2(2);
+
 
 
 void Camera_Initiate(void){
 	if (Nombre_de_Camera == 1){
 		Camera_1.init();
+		Camera_1.CAMERA_1_capture();
+		// Un premier lancement de l'ADC est nécessaire pour lancer le cycle d'interruption
 	}
 	else if (Nombre_de_Camera == 2){
 		Camera_1.init();
 		Camera_2.init();
+		Camera_1.CAMERA_1_capture();
+		//Camera_2.CAMERA_2_capture();
 	}
 }
 

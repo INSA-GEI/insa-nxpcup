@@ -36,7 +36,7 @@
 #define CAMERA_2_ADC_CHANNEL_NUMBER 15
 
 
-int i,j;
+int i,j,compteur_adc_interrupt;
 ImageProcessing::ImageProcessing():Numero_Camera(1){};
 ImageProcessing::ImageProcessing(int i):Numero_Camera(i){
 	// Permet d'initialiser la caméra sur ADC0 SE11 ou ADC0 SE15
@@ -69,53 +69,61 @@ void ImageProcessing::CAMERA_1_capture(void) {
 	 * et stocke les valeurs des pixels dans le tableau ImageData.
 	 * 128 valeurs sont stockées correspondant à une ligne de la caméra.
 	 */
+	// L'ADC et mis en EOC interrupt mode, donc la fonction est appelée à chaque fin de conversion
+	// Chaque fois que l'interruption est appelée, le compteur est incrémenté
+	// Le compteur est utilisé pour déterminer le pixel à capturer
+	// Le compteur est réinitialisé à 0 après avoir capturé les 128 pixels
+	// Le compteur est utilisé pour déterminer le pixel à capturer
+	// Le clk de la cmaéra permet de passer d'un pixel à l'autre
+	// Le SI permet le début de la capture des pixels
+
+	// Le but est de capturer de demander une conversion, pendant que la conversion se fait, on peut faire autre chose
+	// Lorsque la conversion est terminée, une interruption est générée et la fonction est appelée
+	// On peut alors lire la valeur de la conversion
 
     // Configuration spécifique pour le canal 11 de l'ADC
     const adc16_channel_config_t adc0_config_ch_11 = {
         .channelNumber = CAMERA_1_ADC_CHANNEL_NUMBER,
-        .enableInterruptOnConversionCompleted = false,
+        .enableInterruptOnConversionCompleted = true,// enable interrupt on conversion complete
         .enableDifferentialConversion = false,
     };
-
-    // Sélectionner le côté B du MUX pour le canal 11
+	// Sélectionner le côté B du MUX pour le canal 11
     ADC16_SetChannelMuxMode(CAMERA_1_ADC, kADC16_ChannelMuxB);
 
-    // Activer la ligne SI (Shift In) de la caméra
-    CAM_SI_HIGH_CAM_1;
-    CAM_DELAY; // Attente pour le délai CAM
+	
 
-    // Activer l'horloge de la caméra
-    CAM_CLK_HIGH_CAM_1;
-    CAM_DELAY; // Attente pour le délai CAM
+	if (compteur_adc_interrupt == 0){
 
-    // Désactiver la ligne SI de la caméra
-    CAM_SI_LOW_CAM_1;
-    CAM_DELAY; // Attente pour le délai CAM
+    	CAM_SI_HIGH_CAM_1;// Activer la ligne SI (Shift In) de la caméra
+   		CAM_DELAY; // Attente pour le délai CAM
 
-    // Entrée des données de la caméra pour le premier pixel
-    ADC16_SetChannelConfig(CAMERA_1_ADC, CAMERA_1_Channel_Group, &adc0_config_ch_11);
-    while (0U == (kADC16_ChannelConversionDoneFlag &
-                  ADC16_GetChannelStatusFlags(CAMERA_1_ADC, CAMERA_1_Channel_Group))) {
-        // Attente de la fin de la conversion pour prendre la valeur
-    }
-    ImageData[0] = ADC16_GetChannelConversionValue(CAMERA_1_ADC, CAMERA_1_Channel_Group);
-    CAM_CLK_LOW_CAM_1;
+    
+    	CAM_CLK_HIGH_CAM_1;// Activer l'horloge de la caméra
+   		CAM_DELAY; // Attente pour le délai CAM
 
-    // Boucle pour entrer les données de la caméra (un pixel à la fois)
-    for (int i = 1; i < 128; i++) {
-        CAM_DELAY; // Attente pour le délai CAM
-
-        CAM_CLK_HIGH_CAM_1; // Activer l'horloge de la caméra
-
-        // Entrée des données de la caméra (un pixel à chaque itération de la boucle)
-        ADC16_SetChannelConfig(CAMERA_1_ADC, CAMERA_1_Channel_Group, &adc0_config_ch_11);
-        while (0U == (kADC16_ChannelConversionDoneFlag &
-                      ADC16_GetChannelStatusFlags(CAMERA_1_ADC, CAMERA_1_Channel_Group))) {
-            // Attente de la fin de la conversion pour prendre la valeur
-        }
-        ImageData[i] = ADC16_GetChannelConversionValue(CAMERA_1_ADC, CAMERA_1_Channel_Group);
-        CAM_CLK_LOW_CAM_1; // Désactiver l'horloge de la caméra
-    }
+    	
+   		CAM_SI_LOW_CAM_1;// Désactiver la ligne SI de la caméra
+    	CAM_DELAY; // Attente pour le délai CAM
+		// Lance la conversion pour le premier pixel
+		ADC16_SetChannelConfig(CAMERA_1_ADC, CAMERA_1_Channel_Group, &adc0_config_ch_11);
+		compteur_adc_interrupt++;
+	}
+    else if (compteur_adc_interrupt =< 1 && compteur_adc_interrupt <= 127){
+		ImageData[compteur_adc_interrupt - 1] = ADC16_GetChannelConversionValue(CAMERA_1_ADC, CAMERA_1_Channel_Group);
+		CAM_DELAY; // Attente pour le délai CAM
+		CAM_CLK_HIGH_CAM_1; // Activer l'horloge de la caméra
+		// Entrée des données de la caméra (un pixel à chaque itération de la boucle)
+		ADC16_SetChannelConfig(CAMERA_1_ADC, CAMERA_1_Channel_Group, &adc0_config_ch_11);
+		compteur_adc_interrupt++;
+	}
+	else if (compteur_adc_interrupt == 128){
+		ImageData[compteur_adc_interrupt - 1] = ADC16_GetChannelConversionValue(CAMERA_1_ADC, CAMERA_1_Channel_Group);
+		CAM_CLK_LOW_CAM_1; // Désactiver l'horloge de la caméra
+		compteur_adc_interrupt = 0;
+		ADC16_SetChannelConfig(CAMERA_1_ADC, CAMERA_1_Channel_Group, &adc0_config_ch_11);
+	}
+	
+	
 }
 void ImageProcessing::CAMERA_2_capture(void) {
 
@@ -123,7 +131,7 @@ void ImageProcessing::CAMERA_2_capture(void) {
     // Configuration spécifique pour le canal 11 de l'ADC
     const adc16_channel_config_t adc0_config_ch = {
         .channelNumber = CAMERA_2_ADC_CHANNEL_NUMBER,
-        .enableInterruptOnConversionCompleted = false,
+        .enableInterruptOnConversionCompleted = true,// enable interrupt on conversion complete
         .enableDifferentialConversion = false,
     };
 
@@ -249,6 +257,10 @@ void ImageProcessing::CAMERA_1_init(){
 	GPIO_PinInit(GPIOC, CAMERA_1_PIN_ADC, &gpio_pin_input);
 	GPIO_PinInit(GPIOB, CAMERA_1_PIN_SI, &gpio_pin_output);
 	GPIO_PinInit(GPIOB, CAMERA_1_PIN_CLK, &gpio_pin_output);
+
+	// Autorisation de l'interruption dans le NVIC
+	EnableIRQ(ADC0_IRQn);
+	// Seulmement nécessaire pour camera 1 car elle est activé tout le temps
 
 }
 
