@@ -15,12 +15,12 @@
 #include "lidar/driver_lidar.hpp"
 //#include "movement/driver_movement.h"
 
-unsigned int Vstart=1000;	// Entre 1000 et 9000 // Vitese initiale
-unsigned int Vtarget=1000; // Vitesse target
+unsigned int Vstart=500;	// Entre 1000 et 9000 // Vitese initiale
+unsigned int Vtarget=900; // Vitesse target
 
 //unsigned int V=0;	// Entre 1000 et 9000 // Vitese initiale
 //unsigned int Vset=0; // Vitesse target
- unsigned int Vturn=1000;
+ unsigned int Vturn=750;
 // unsigned int VslowTH=500;
 // const float ADAPTIVE_SPEED_ANGLE = 10.0;
 // const float ADAPTIVE_SPEED_HYST = 2.0;
@@ -66,9 +66,12 @@ void buggy_run(void){
 	//Camera_Initialise_Middle();
 
 	movement_init();
-	//mouvement_start();
-	//movement_set(Vstart, 0);
-	//movement_regulate();
+	// Comment this for remote start
+//	enable_flag = 1;
+//	mouvement_start();
+//	movement_set(Vstart, 0);
+//	//--------------------------------
+//	movement_regulate();
 
 
 	//watch_flag = CMD_ID_CAMERA_NEAR_DATA_DIFF;
@@ -132,6 +135,7 @@ void buggy_readCMD(void){
 				mouvement_start();
 				movement_set(Vstart, 0);
 				movement_regulate();
+
 			}
 			else if (dataLSB == 0x55){
 				enable_flag = 0;
@@ -186,7 +190,6 @@ void buggy_readCMD(void){
 
 
 void buggy_afficheData(void){
-
 //		servo_setPos(-27);
 //
 //		volatile uint32_t j = 0;
@@ -233,8 +236,9 @@ void buggy_afficheData(void){
 
 void TPM1_IRQHandler(){
 	float angle_servo = Camera_Calculate_Servo_Angle();
+
 	if (enable_flag == 1){
-		if (angle_servo > 20 || angle_servo < -20)
+		if (angle_servo > 30 || angle_servo < -30)
 		{
 			movement_set(Vturn,angle_servo);
 		}
@@ -243,7 +247,6 @@ void TPM1_IRQHandler(){
 			movement_set(Vtarget,angle_servo);
 		}
 	}
-
 	if (watch_flag != 0){
 		wheel_data[0] = (uint16_t)movement_getSpeedLeft();
 		wheel_data[1] = (uint16_t)movement_getSpeedRight();

@@ -24,15 +24,15 @@ extern "C" {
  * Definitions
  **********************************************************************************************************************/
 
-#define MOVEMENT_ENTRAXE_COEFF 		0.003		// 0.005	// Distance between 2 wheels E=15cm
+#define MOVEMENT_ENTRAXE_COEFF 		0.0075		// 0.005	// Distance between 2 wheels E=15cm
 
 // Correcteur 
 #define MOVEMENT_CORR_THRESHOLD 	60 		// correct the speed only when we are more than 60 mm/s off target speed
 #define MOVEMENT_CORR_KP 			4			// amount of error to correct each iteration
-#define MOVEMENT_CORR_KI			0.002
+#define MOVEMENT_CORR_KI			0.0025
 
-#define MOVEMENT_SPEED_LIMIT_MM_S 	9000.0		// mm/s ~ 70% PWM
-#define MOVEMENT_SPEED_LIMIT_PWM	90.0		// 1000% ~ 9000 mm/s
+#define MOVEMENT_SPEED_LIMIT_MM_S 	10000.0		// mm/s ~ 50% PWM
+#define MOVEMENT_SPEED_LIMIT_PWM	90.0		// 4500 mm/s
 
 
 /***********************************************************************************************************************
@@ -40,6 +40,8 @@ extern "C" {
  **********************************************************************************************************************/
 extern void TPM1_IRQHandler();
 extern void TPM2_IRQHandler();
+
+
 /**
  * @fn void movement_init(void)
  * @brief initialize the necessary peripherals for the movement

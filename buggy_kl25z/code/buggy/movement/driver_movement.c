@@ -125,7 +125,8 @@ void movement_stop(void) {
 	actualSpeedR=0.0;
 	commandeSpeedL=0.0;
 	commandeSpeedR=0.0;
-
+	erreurIntegralL=0.0;
+	erreurIntegralR=0.0;
 	
 	MOTOR_Left_Disable();
 	MOTOR_Right_Disable();
@@ -135,22 +136,23 @@ void movement_stop(void) {
 
 void movement_regulate(void) {
 	//GPIOB_PTOR = DEBUG_RED_Pin;
+
 	float err = 0;
 	actualSpeedL=encoder_getLeftSpeed();
+	actualSpeedR=encoder_getRightSpeed();
+
 	if(actualSpeedL<0.0){	//detect invalid speed readings
 		actualSpeedL=0.0;
 	}
 
-
 	err=targetSpeedL-actualSpeedL;//calculate error
-
 	if(err>MOVEMENT_CORR_THRESHOLD || err<-MOVEMENT_CORR_THRESHOLD)
 	{//if error needs correction
 		erreurIntegralL = erreurIntegralL + MOVEMENT_CORR_KI*err;
 		commandeSpeedL=err*MOVEMENT_CORR_KP + erreurIntegralL;//compensate real speed command
 	}
 
-	actualSpeedR=encoder_getRightSpeed();
+
 	if(actualSpeedR<0.0)
 	{	//detect invalid speed readings
 		actualSpeedR=0.0;
@@ -162,6 +164,7 @@ void movement_regulate(void) {
 	}
 
 	applySpeeds();
+
 }
 
 float movement_getServoAngle(void)

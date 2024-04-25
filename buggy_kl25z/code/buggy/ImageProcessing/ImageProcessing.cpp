@@ -51,7 +51,7 @@ ImageProcessing::ImageProcessing(int i):Numero_Camera(i){
 	// ADC0 SE15 --> Numero_Camera = 2
 }
 
-float ImageProcessing::KP_TURN = 1.8;
+float ImageProcessing::KP_TURN = 2.0;
 float ImageProcessing::KDP_TURN = 1.0;
 
 void ImageProcessing::init(){
@@ -456,7 +456,6 @@ void ImageProcessing::calculateMiddle (void){
 	}
 	// if no line on left and right side
 	if (number_edges == 0){
-		Lost_Control = 1;
 		RoadMiddle = RoadMiddle_old;
 		//for (i = 0 ; i < 1000000 ; i++);
 	}
@@ -466,15 +465,15 @@ void ImageProcessing::calculateMiddle (void){
 		RoadMiddle = RoadMiddle_old;		// we continue on the same trajectory as before
 	}
 
-	if (RoadMiddle_old < 124 &&  RoadMiddle_old > 80 && RoadMiddle < 40 &&  RoadMiddle> 0)
-	{
-		RoadMiddle = RoadMiddle_old;		// we continue on the same trajectory as before
-	}
-
-	if (RoadMiddle_old < 40 &&  RoadMiddle_old > 0 && RoadMiddle < 124 &&  RoadMiddle> 80)
-	{
-		RoadMiddle = RoadMiddle_old;		// we continue on the same trajectory as before
-	}
+//	if (RoadMiddle_old < 124 &&  RoadMiddle_old > 80 && RoadMiddle < 40 &&  RoadMiddle> 0)
+//	{
+//		RoadMiddle = RoadMiddle_old;		// we continue on the same trajectory as before
+//	}
+//
+//	if (RoadMiddle_old < 40 &&  RoadMiddle_old > 0 && RoadMiddle < 124 &&  RoadMiddle> 80)
+//	{
+//		RoadMiddle = RoadMiddle_old;		// we continue on the same trajectory as before
+//	}
 }
 void ImageProcessing:: Actualise_Servo_1_Camera (void){
 	// Option apres calcumateMiddle pour une camera

@@ -59,6 +59,9 @@ void servo_init(void) {
 
 	//Clear pending interrupts 18 (TPM = FTM1) in NVIC
 	DisableIRQ(TPM1_IRQn);
+
+	NVIC_SetPriority(TPM1_IRQn,1);
+
 	//Enable interrupts 18 (TPM = FTM1) in NVIC
 	EnableIRQ(TPM1_IRQn);
 	
