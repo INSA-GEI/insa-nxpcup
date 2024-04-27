@@ -78,7 +78,7 @@ void  Camera_Actualise_Servo_2_Camera_Moyenne_Simple (void){
 	if (abs (Camera_Near.diff - Camera_Near.diff_old) > 50){
 		Camera_Near.diff = Camera_Near.diff_old;
 	}else{
-		Camera_Near.servo_angle=(ImageProcessing::KP_TURN*(float)Camera_Near.diff + ImageProcessing::KDP_TURN*(float)(Camera_Near.diff-Camera_Near.diff_old));
+		Camera_Near.servo_angle=(ImageProcessing::KP*(float)Camera_Near.diff + ImageProcessing::KD*(float)(Camera_Near.diff-Camera_Near.diff_old));
 		if(Camera_Near.servo_angle<SERVO_MAX_LEFT_ANGLE)Camera_Near.servo_angle=SERVO_MAX_LEFT_ANGLE;
 		if(Camera_Near.servo_angle>SERVO_MAX_RIGHT_ANGLE)Camera_Near.servo_angle=SERVO_MAX_RIGHT_ANGLE;
 	}
@@ -87,32 +87,28 @@ void  Camera_Actualise_Servo_2_Camera_Moyenne_Simple (void){
 void  Camera_Actualise_Servo_2_Camera_Moyenne_Ponderee_1 (void){
 	// Option apres calcumateMiddle pour deux camera
 	// Permet de changer l'angle du servo
-
 	// Store old value
 	Camera_Near.diff_old = Camera_Near.diff;
 	//Calcul de la différence de la voiture au centre de la route
 	// Ici centre de la route estimé par moyenne des roadmiddle des deux cameras
 
-	/*if(Camera_Far.Lost_Control && !Camera_Near.Lost_Control){
-		Camera_Near.diff = 64 - Camera_Near.RoadMiddle;
-	}
-	else if(Camera_Near.Lost_Control && !Camera_Far.Lost_Control)
-	{
-		Camera_Near.diff = 64 - Camera_Far.RoadMiddle;
-	}
-	else
-	{*/
-		Camera_Near.diff =  64 - (K_CAMERA_NEAR *(Camera_Near.RoadMiddle)  + K_CAMERA_FAR*(Camera_Far.RoadMiddle)) ;
-	//}
+		Camera_Near.diff =  64 - (K_CAMERA_NEAR *(Camera_Near.RoadMiddle)  + K_CAMERA_FAR*(Camera_Far.RoadMiddle));
 
 	// plausibility check
-	if (abs (Camera_Near.diff - Camera_Near.diff_old) > 50){
-		Camera_Near.diff = Camera_Near.diff_old;
-	}else{
-		Camera_Near.servo_angle=(ImageProcessing::KP_TURN*(float)Camera_Near.diff + ImageProcessing::KDP_TURN*(float)(Camera_Near.diff-Camera_Near.diff_old));
-		if(Camera_Near.servo_angle<SERVO_MAX_LEFT_ANGLE)Camera_Near.servo_angle=SERVO_MAX_LEFT_ANGLE;
-		if(Camera_Near.servo_angle>SERVO_MAX_RIGHT_ANGLE)Camera_Near.servo_angle=SERVO_MAX_RIGHT_ANGLE;
-	}
+//	if (abs (Camera_Near.diff - Camera_Near.diff_old) > 50){
+//		Camera_Near.diff = Camera_Near.diff_old;
+//	}else{
+//		Camera_Near.erreurIntegral = Camera_Near.erreurIntegral + ImageProcessing::KI*Camera_Near.diff;
+//		Camera_Near.servo_angle=Camera_Near.erreurIntegral + ImageProcessing::KP*(float)Camera_Near.diff + ImageProcessing::KD*(float)(Camera_Near.diff-Camera_Near.diff_old);
+//		if(Camera_Near.servo_angle<SERVO_MAX_LEFT_ANGLE)Camera_Near.servo_angle=SERVO_MAX_LEFT_ANGLE;
+//		if(Camera_Near.servo_angle>SERVO_MAX_RIGHT_ANGLE)Camera_Near.servo_angle=SERVO_MAX_RIGHT_ANGLE;
+//	}
+
+	Camera_Near.erreurIntegral = Camera_Near.erreurIntegral + ImageProcessing::KI*Camera_Near.diff;
+	Camera_Near.servo_angle=Camera_Near.erreurIntegral + ImageProcessing::KP*(float)Camera_Near.diff + ImageProcessing::KD*(float)(Camera_Near.diff-Camera_Near.diff_old);
+	if(Camera_Near.servo_angle<SERVO_MAX_LEFT_ANGLE)Camera_Near.servo_angle=SERVO_MAX_LEFT_ANGLE;
+	if(Camera_Near.servo_angle>SERVO_MAX_RIGHT_ANGLE)Camera_Near.servo_angle=SERVO_MAX_RIGHT_ANGLE;
+
 }
 
 void Camera_Initialise_Middle (void){
@@ -192,4 +188,18 @@ void Camera_Set_KDP (float KDP)
 void Camera_Set_KP (float KP)
 {
 	ImageProcessing::set_KpTurn(KP);
+}
+
+
+int Camera_Turn_Detection(void)
+{
+	if(ImageProcessing::KP == KP_Straight)
+	{
+		return 0;
+	}
+	else if(ImageProcessing::KP ==  KP_Turn)
+	{
+		return 1;
+	}
+	return 0;
 }

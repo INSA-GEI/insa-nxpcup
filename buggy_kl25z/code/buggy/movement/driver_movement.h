@@ -24,8 +24,10 @@ extern "C" {
  * Definitions
  **********************************************************************************************************************/
 
-#define MOVEMENT_ENTRAXE_COEFF 		0.0075		// 0.005	// Distance between 2 wheels E=15cm
-
+#define MOVEMENT_DIFF_GAIN_STRAIGHT 		0.0037		// 0.005	// Distance between 2 wheels E=15cm
+#define MOVEMENT_DIFF_GAIN_TURN 			0.025
+#define MOVEMENT_REEL_ANGLE_CONV			0.75
+#define MOVEMENT_ENTRAXE					15.75
 // Correcteur 
 #define MOVEMENT_CORR_THRESHOLD 	60 		// correct the speed only when we are more than 60 mm/s off target speed
 #define MOVEMENT_CORR_KP 			4			// amount of error to correct each iteration

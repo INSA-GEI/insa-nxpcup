@@ -15,16 +15,12 @@
 #include "lidar/driver_lidar.hpp"
 //#include "movement/driver_movement.h"
 
-unsigned int Vstart=500;	// Entre 1000 et 9000 // Vitese initiale
-unsigned int Vtarget=900; // Vitesse target
 
-//unsigned int V=0;	// Entre 1000 et 9000 // Vitese initiale
-//unsigned int Vset=0; // Vitesse target
- unsigned int Vturn=750;
-// unsigned int VslowTH=500;
+unsigned int Vstart=1500;	// Entre 1000 et 9000 // Vitese initiale
+unsigned int Vtarget=2000; 	// Vitesse target
+unsigned int Vturn=750;
 // const float ADAPTIVE_SPEED_ANGLE = 10.0;
 // const float ADAPTIVE_SPEED_HYST = 2.0;
-
 int cnt_ostacle=0;
 int n=0;
 int c=0;
@@ -48,7 +44,7 @@ uint8_t watch_flag = 0;
 uint8_t enable_flag = 0; // 0 if you want to enable remotely
 
 /* Data for test */
-int pos_servo_test;
+//int pos_servo_test;
 
 
 void buggy_run(void){
@@ -238,7 +234,7 @@ void TPM1_IRQHandler(){
 	float angle_servo = Camera_Calculate_Servo_Angle();
 
 	if (enable_flag == 1){
-		if (angle_servo > 30 || angle_servo < -30)
+		if (Camera_Turn_Detection() == 1)
 		{
 			movement_set(Vturn,angle_servo);
 		}

@@ -12,6 +12,13 @@
 #include "ImageProcessing.hpp"
 #include <servo/driver_servo.h>
 
+#define KP_Straight				0.8
+#define KD_Straight				0.5
+#define KI_Straight				0.0
+
+#define KP_Turn					2.5
+#define KD_Turn					1.5
+#define KI_Turn					0.0
 
 /* Camera_Near Info
  * Position : High
@@ -42,10 +49,9 @@ uint16_t * Camera_Get_ImageData(int i);
 uint16_t * Camera_Get_ImageDataDiff(int i);
 uint16_t * Camera_Get_OthersInfo(int i);
 uint16_t * Camera_Get_NbrEdges(int i);
-
-
 void Camera_Set_KDP (float KDP);
 void Camera_Set_KP (float KP);
+int Camera_Turn_Detection(void);
 
 
 

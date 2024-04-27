@@ -48,8 +48,6 @@ void applySpeeds(void)
 
 	MOTOR_Left_Speed_Forward((int)(commandeSpeedL*SPEED_TO_PWM));
 	MOTOR_Right_Speed_Forward((int)(commandeSpeedR*SPEED_TO_PWM));
-	//MOTOR_Left_Speed_Forward(20);
-	//MOTOR_Right_Speed_Forward(20);
 }
 
 void movement_init()
@@ -82,6 +80,8 @@ void movement_set(float speed, float angle) {
 
 
 void movement_setSpeed(float speed) {
+
+	float deltaSpeed = 0;
 	if(speed<0.0)
 	{
 		movement_stop();
@@ -93,20 +93,15 @@ void movement_setSpeed(float speed) {
 		speed=MOVEMENT_SPEED_LIMIT_MM_S;
 	}
 
-	//MOTOR_Right_Direction_Forward();
-	//MOTOR_Left_Direction_Forward();
+	if(speed > 1800)
+	{
+		deltaSpeed = servoAngle*MOVEMENT_DIFF_GAIN_STRAIGHT*speed;
+	}
+	else
+	{
+		deltaSpeed = servoAngle*MOVEMENT_DIFF_GAIN_TURN*speed;
+	}
 
-	float deltaSpeed=servoAngle*MOVEMENT_ENTRAXE_COEFF*speed;
-	/*
-	if (servoAngle < 0){
-		targetSpeedL = speed-deltaSpeed;
-		targetSpeedR = speed;
-	}
-	else{
-		targetSpeedR = speed+deltaSpeed;
-		targetSpeedL = speed;
-	}
-	*/
 	targetSpeedL=speed+deltaSpeed;
 	targetSpeedR=speed-deltaSpeed;
 }
@@ -127,10 +122,10 @@ void movement_stop(void) {
 	commandeSpeedR=0.0;
 	erreurIntegralL=0.0;
 	erreurIntegralR=0.0;
-	
+	servo_setPos(0);
+
 	MOTOR_Left_Disable();
 	MOTOR_Right_Disable();
-	servo_setPos(0);
 }
 
 

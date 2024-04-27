@@ -51,8 +51,9 @@ ImageProcessing::ImageProcessing(int i):Numero_Camera(i){
 	// ADC0 SE15 --> Numero_Camera = 2
 }
 
-float ImageProcessing::KP_TURN = 2.0;
-float ImageProcessing::KDP_TURN = 1.0;
+float ImageProcessing::KP = KP_Straight;
+float ImageProcessing::KD = KD_Straight;
+float ImageProcessing::KI = KI_Straight;
 
 void ImageProcessing::init(){
 	if (this->Numero_Camera == 1){
@@ -180,6 +181,8 @@ void ImageProcessing::CAMERA_FAR_capture(void) {
 
 void ImageProcessing::CAMERA_NEAR_init(){
 
+	erreurIntegral = 0.0;
+
 	/* Initialisation pour ImageProcessing
 	 *  - ADC0 channel 11 en mode single conversion. Entrée de l'ADC sur PORTC 2
 	 *  - PORTB 8 en sortie GPIO digitale. Controle le SI( Shift - In) de la caméra.
@@ -257,6 +260,7 @@ void ImageProcessing::CAMERA_NEAR_init(){
 
 void ImageProcessing::CAMERA_FAR_init(){
 
+	erreurIntegral = 0.0;
 	/* Initialisation pour ImageProcessing
 	 *  - ADC1 channel 11 en mode single conversion. Entrée de l'ADC sur PORTC 1
 	 *  - PORTB 10 en sortie GPIO digitale. Controle le SI( Shift - In) de la caméra.
@@ -438,8 +442,6 @@ void ImageProcessing::process (void){
 
 void ImageProcessing::calculateMiddle (void){
 
-	Lost_Control = 0;
-
 	// Store old RoadMiddle value
 	RoadMiddle_old = RoadMiddle;
 
@@ -449,31 +451,31 @@ void ImageProcessing::calculateMiddle (void){
 	// if a line is only on the the right side
 	if (BlackLineLeft < 3){
 		RoadMiddle = BlackLineRight - initial_middle;
+		Camera_Set_KDP(KD_Turn);
+		Camera_Set_KP(KP_Turn);
+
 	}
 	// if a line is only on the the left side
 	if (BlackLineRight > 124){
 		RoadMiddle = BlackLineLeft + initial_middle;
+		Camera_Set_KDP(KD_Turn);
+		Camera_Set_KP(KP_Turn);
+	}
+
+	if ((BlackLineRight < 124) && (BlackLineLeft > 3))
+	{
+		Camera_Set_KDP(KD_Straight);
+		Camera_Set_KP(KP_Straight);
 	}
 	// if no line on left and right side
 	if (number_edges == 0){
 		RoadMiddle = RoadMiddle_old;
-		//for (i = 0 ; i < 1000000 ; i++);
 	}
 
 	if ((BlackLineRight > 124) && (BlackLineLeft < 3)){
-		//Lost_Control = 1;
 		RoadMiddle = RoadMiddle_old;		// we continue on the same trajectory as before
 	}
 
-//	if (RoadMiddle_old < 124 &&  RoadMiddle_old > 80 && RoadMiddle < 40 &&  RoadMiddle> 0)
-//	{
-//		RoadMiddle = RoadMiddle_old;		// we continue on the same trajectory as before
-//	}
-//
-//	if (RoadMiddle_old < 40 &&  RoadMiddle_old > 0 && RoadMiddle < 124 &&  RoadMiddle> 80)
-//	{
-//		RoadMiddle = RoadMiddle_old;		// we continue on the same trajectory as before
-//	}
 }
 void ImageProcessing:: Actualise_Servo_1_Camera (void){
 	// Option apres calcumateMiddle pour une camera
@@ -489,10 +491,12 @@ void ImageProcessing:: Actualise_Servo_1_Camera (void){
 	if (abs (diff - diff_old) > 50){
 		diff = diff_old;
 	}else{
-		servo_angle=(ImageProcessing::KP_TURN*(float)diff + ImageProcessing::KDP_TURN*(float)(diff-diff_old));
+		servo_angle=(ImageProcessing::KP*(float)diff + ImageProcessing::KD*(float)(diff-diff_old));
 		if(servo_angle<SERVO_MAX_LEFT_ANGLE)servo_angle=SERVO_MAX_LEFT_ANGLE;
 		if(servo_angle>SERVO_MAX_RIGHT_ANGLE)servo_angle=SERVO_MAX_RIGHT_ANGLE;
 	}
+
+
 }
 
 //You may need to adjust the values of "CompareData_high" by modifying the macro "THRESHOLD_high".

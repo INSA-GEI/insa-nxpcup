@@ -17,9 +17,10 @@
 
 #include <MKL25Z4.h>
 #include "math.h"
-//#include <cmath>
 #include "stdio.h"
 #include "stdlib.h"
+#include "ImageProcessing.hpp"
+#include "Camera_Commande.hpp"
 
 
 #define CAM_DELAY							asm ("nop")							// minimal delay time
@@ -42,7 +43,6 @@
 #define K_CAMERA_FAR						.3
 
 
-
 // Define thresholds for Camera Black Line recognition
 #define THRESHOLD_high				500			// Higher threshold : does not capture noise but may not capture all maximums.
 #define THRESHOLD_low				200			// Lower threshold : May capture more maximums than High threshold but can capture noise too.
@@ -56,7 +56,6 @@
 #define SIGMA_1	 					2			// square root of the variance for the first gaussian filter
 #define SIGMA_2 					2.5			// square root of the variance for the second gaussian filter.
 
-
 #define THRESHOLD_FINISH_MIN 5				//Minimal threshold of edges for the finish
 #define THRESHOLD_FINISH_MAX 9				//Maximal threshold of edges for the finish
 #define COUNTER_THRESHOLD_FINISH 10
@@ -67,8 +66,9 @@
 class ImageProcessing {
 public:
 
-	static float KP_TURN;					// Proportional coefficient in turn
-	static float KDP_TURN;					// Derivative coefficient in turn
+	static float KP;					// Proportional coefficient in turn
+	static float KD;					// Derivative coefficient in turn
+	static float KI;					// Derivative coefficient in turn
 
 	uint16_t ImageData [128];				// array to store the LineScan image
 	uint16_t ImageDataDifference [128];		// array to store the PineScan pixel difference
@@ -88,7 +88,7 @@ public:
 	uint16_t BlackLineRight;					// position of the black line on the right side (127)
 	uint16_t BlackLineLeft;						// position of the black line on the left side
 	uint16_t number_edges;
-	bool Lost_Control;
+	float erreurIntegral;
 
 	//Constructors
 	ImageProcessing();
@@ -112,11 +112,11 @@ public:
 	void affiche_edge(void);
 
 	static void set_KpTurn(float newKp){
-		KP_TURN = newKp;
+		KP = newKp;
 	};
 
 	static void set_KdpTurn(float newKdp){
-		KDP_TURN = newKdp;
+		KD = newKdp;
 	};
 
 private:
@@ -127,7 +127,6 @@ private:
 
 	float gaussian1;					// gaussian filters used in gaussian differences method
 	float gaussian2;
-
 };
 
 
