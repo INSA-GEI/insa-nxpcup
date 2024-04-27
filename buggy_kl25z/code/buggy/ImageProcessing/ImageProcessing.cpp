@@ -257,6 +257,10 @@ void ImageProcessing::CAMERA_NEAR_init(){
 	GPIO_PinInit(GPIOB, CAMERA_NEAR_PIN_SI, &gpio_pin_output);
 	GPIO_PinInit(GPIOB, CAMERA_NEAR_PIN_CLK, &gpio_pin_output);
 
+	// Initialisation des variables
+	diff =0;
+	diff_old = 0;
+	diff_old_k_2 = 0;
 }
 
 void ImageProcessing::CAMERA_FAR_init(){
@@ -334,6 +338,11 @@ void ImageProcessing::CAMERA_FAR_init(){
 	GPIO_PinInit(GPIOC, CAMERA_FAR_PIN_ADC, &gpio_pin_input);
 	GPIO_PinInit(GPIOB, CAMERA_FAR_PIN_SI, &gpio_pin_output);
 	GPIO_PinInit(GPIOB, CAMERA_FAR_PIN_CLK, &gpio_pin_output);
+
+	// Initialisation des variables
+	diff =0;
+	diff_old = 0;
+	diff_old_k_2 = 0;
 
 }
 

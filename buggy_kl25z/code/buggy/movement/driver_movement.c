@@ -92,65 +92,79 @@ void movement_setSpeed(float speed) {
 		speed=MOVEMENT_SPEED_LIMIT_MM_S;
 	}
 
-	if(servoAngle > 5 && servoAngle < -5)
+	// if(servoAngle > 5 && servoAngle < -5)
+	// {
+	// 	float L = (MOVEMENT_ENTRAXE_HORIZONTAL / (float)tan(servoAngle /2 *MOVEMENT_REEL_ANGLE_CONV)) + (MOVEMENT_ENTRAXE_VERTICAL/2.0);
+	// 	float ratio = 1 + L/MOVEMENT_ENTRAXE_VERTICAL;
+	// 	if(servoAngle < 15 && servoAngle > 0)
+	// 	{
+	// 		targetSpeedL = speed * ratio;
+	// 		targetSpeedR = speed / ratio;
+	// 	}
+	// 	else if(servoAngle > -15 && servoAngle < 0)
+	// 	{
+	// 		targetSpeedR = speed * ratio;
+	// 		targetSpeedL = speed / ratio;
+	// 	}
+	// 	else if(servoAngle < -15)
+	// 	{
+	// 		//MOTOR_Left_Disable();
+	// 		targetSpeedR = speed * 2;
+	// 		targetSpeedL = speed / 2;
+	// 	}
+	// 	else if(servoAngle > 15)
+	// 	{
+	// 		//MOTOR_Right_Disable();
+	// 		targetSpeedL = speed * 2;
+	// 		targetSpeedR = speed / 2;
+	// 	}
+	// }
+	// else
+	// {
+	// 	targetSpeedR = speed;
+	// 	targetSpeedL = speed;
+	// }
+
+
+	// if(targetSpeedR>MOVEMENT_SPEED_LIMIT_MM_S)
+	// {
+	// 	targetSpeedR=MOVEMENT_SPEED_LIMIT_MM_S;
+	// }
+	// if(targetSpeedL>MOVEMENT_SPEED_LIMIT_MM_S)
+	// {
+	// 	targetSpeedL=MOVEMENT_SPEED_LIMIT_MM_S;
+	// }
+
+
+	if(speed == V_START || speed == V_TARGET)
 	{
-		float L = (MOVEMENT_ENTRAXE_HORIZONTAL / (float)tan(servoAngle*MOVEMENT_REEL_ANGLE_CONV)) + (MOVEMENT_ENTRAXE_VERTICAL/2.0);
-		float ratio = 1 + L/MOVEMENT_ENTRAXE_VERTICAL;
-		if(servoAngle < 30 && servoAngle > 0)
+		deltaSpeed = servoAngle*MOVEMENT_DIFF_GAIN_STRAIGHT*speed;
+	}
+	else if (servoAngle > 0)
+	{
+		deltaSpeed = servoAngle*MOVEMENT_DIFF_GAIN_TURN_DROITE*speed;
+		if(deltaSpeed > speed*DIFF_LIMIT_PERCENT_SPEED_DROITE)
 		{
-			targetSpeedL = speed * ratio;
-			targetSpeedR = speed / ratio;
+			deltaSpeed = speed*DIFF_LIMIT_PERCENT_SPEED_DROITE;
 		}
-		else if(servoAngle > -30 && servoAngle < 0)
+	}
+	else if (servoAngle < 0)
+	{
+		deltaSpeed = servoAngle*MOVEMENT_DIFF_GAIN_TURN*speed;
+		if(deltaSpeed > speed*DIFF_LIMIT_PERCENT_SPEED)
 		{
-			targetSpeedR = speed * ratio;
-			targetSpeedL = speed / ratio;
-		}
-		else if(servoAngle < -30)
-		{
-			//MOTOR_Left_Disable();
-			targetSpeedR = speed * 2;
-			targetSpeedL = speed / 2;
-		}
-		else if(servoAngle > 30)
-		{
-			//MOTOR_Right_Disable();
-			targetSpeedL = speed * 2;
-			targetSpeedR = speed / 2;
+			deltaSpeed = speed*DIFF_LIMIT_PERCENT_SPEED;
 		}
 	}
 	else
 	{
-		targetSpeedR = speed;
-		targetSpeedL = speed;
+		deltaSpeed = servoAngle*MOVEMENT_DIFF_GAIN_TURN*speed;
 	}
 
 
-	if(targetSpeedR>MOVEMENT_SPEED_LIMIT_MM_S)
-	{
-		targetSpeedR=MOVEMENT_SPEED_LIMIT_MM_S;
-	}
-	if(targetSpeedL>MOVEMENT_SPEED_LIMIT_MM_S)
-	{
-		targetSpeedL=MOVEMENT_SPEED_LIMIT_MM_S;
-	}
 
-
-//	if(speed == V_START || speed == V_TARGET)
-//	{
-//		deltaSpeed = servoAngle*MOVEMENT_DIFF_GAIN_STRAIGHT*speed;
-//	}
-//	else
-//	{
-//		deltaSpeed = servoAngle*MOVEMENT_DIFF_GAIN_TURN*speed;
-//	}
-//
-//	if(deltaSpeed > speed*DIFF_LIMIT_PERCENT_SPEED)
-//	{
-//		deltaSpeed = speed*DIFF_LIMIT_PERCENT_SPEED;
-//	}
-//	targetSpeedL=speed+deltaSpeed;
-//	targetSpeedR=speed-deltaSpeed;
+	targetSpeedL=speed+deltaSpeed;
+	targetSpeedR=speed-deltaSpeed;
 }
 
 void mouvement_start(void){

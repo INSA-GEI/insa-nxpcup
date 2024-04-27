@@ -20,7 +20,6 @@ ImageProcessing Camera_Far(2);
 #define CAMERA_FAR_MIDDLE    57
 
 
-
 void Camera_Initiate(void){
 	if (Nombre_de_Camera == 1){
 		Camera_Near.init();
@@ -73,6 +72,7 @@ void  Camera_Actualise_Servo_2_Camera_Moyenne_Simple (void){
 	// Permet de changer l'angle du servo
 
 	// Store old value
+	Camera_Near.diff_old_k_2 = Camera_Near.diff_old;
 	Camera_Near.diff_old = Camera_Near.diff;
 	//Calcul de la différence de la voiture au centre de la route
 	// Ici centre de la route estimé par moyenne des roadmiddle des deux cameras
@@ -98,6 +98,7 @@ void  Camera_Actualise_Servo_2_Camera_Moyenne_Ponderee_1 (void){
 	Camera_Far.diff	 =  K_CAMERA_FAR*(CAMERA_FAR_MIDDLE - (Camera_Far.RoadMiddle));
 	Camera_Near.diff =  K_CAMERA_NEAR*(CAMERA_NEAR_MIDDLE - (Camera_Near.RoadMiddle));
 	Camera_Near.diff += Camera_Far.diff;
+	
 
 	// plausibility check
 //	if (abs (Camera_Near.diff - Camera_Near.diff_old) > 50){

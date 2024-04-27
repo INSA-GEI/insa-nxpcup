@@ -75,8 +75,9 @@ public:
 
 	bool finish;							//indicates if we are at the end of the circuit
 	int edges_cnt;							//counter when the edges are currently detected between 7 and 10
-	int diff;								// actual difference from line middle position
-	int diff_old;
+	float diff;								// actual difference from line middle position
+	float diff_old;
+	float diff_old_k_2;
 	int threshold;								// actual position of the servo relative to middle
 	int black_middle_pos_rect1;
 	int black_middle_pos_rect2;

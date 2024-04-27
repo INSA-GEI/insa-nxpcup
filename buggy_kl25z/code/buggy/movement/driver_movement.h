@@ -24,15 +24,17 @@ extern "C" {
  * Definitions
  **********************************************************************************************************************/
 #define V_START 		1500
-#define V_TARGET 		1500
+#define V_TARGET 		1700
 #define V_TURN			1000
 
+#define DIFF_LIMIT_PERCENT_SPEED_DROITE     0.65
 #define DIFF_LIMIT_PERCENT_SPEED			0.45
 #define MOVEMENT_DIFF_GAIN_STRAIGHT 		0.0037		// 0.005	// Distance between 2 wheels E=15cm
-#define MOVEMENT_DIFF_GAIN_TURN 			0.015
-#define MOVEMENT_REEL_ANGLE_CONV			0.75
-#define MOVEMENT_ENTRAXE_HORIZONTAL			0.1575		//m
-#define MOVEMENT_ENTRAXE_VERTICAL			0.187326	//m
+#define MOVEMENT_DIFF_GAIN_TURN 			0.012      //0.015
+#define MOVEMENT_DIFF_GAIN_TURN_DROITE	    0.030      // 0.035
+// #define MOVEMENT_REEL_ANGLE_CONV			0.75
+// #define MOVEMENT_ENTRAXE_HORIZONTAL			0.1575		//m
+// #define MOVEMENT_ENTRAXE_VERTICAL			0.187326	//m
 
 // Correcteur 
 #define MOVEMENT_CORR_THRESHOLD 	60 		// correct the speed only when we are more than 60 mm/s off target speed
