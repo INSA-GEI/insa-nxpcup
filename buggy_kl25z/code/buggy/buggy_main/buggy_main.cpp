@@ -15,10 +15,33 @@
 #include "lidar/driver_lidar.hpp"
 //#include "movement/driver_movement.h"
 
+/**
+ * Voiture marche proprement suef le virage de 180°
+ * Vstart = 1000
+ * Vtarget = 1500
+ * Vturn = 800
+ *
+ * KP_Straight				0.8
+ * KD_Straight				0.5
+ * KI_Straight				0.0
+ * KP_Turn					2.0
+ * KD_Turn					1.0
+ * KI_Turn					0.0
+ *
+ *
+ * #define K_CAMERA_NEAR 						.7
+ * #define K_CAMERA_FAR						.3
+ *
+ * #define DIFF_LIMIT_PERCENT_SPEED			0.45
+ * #define MOVEMENT_DIFF_GAIN_STRAIGHT 		0.0037		// 0.005	// Distance between 2 wheels E=15cm
+ * #define MOVEMENT_DIFF_GAIN_TURN 			0.015
+ */
 
-unsigned int Vstart=1500;	// Entre 1000 et 9000 // Vitese initiale
-unsigned int Vtarget=2000; 	// Vitesse target
-unsigned int Vturn=750;
+
+unsigned int Vstart 	= V_START;	// Entre 1000 et 9000 // Vitese initiale
+unsigned int Vtarget 	= V_TARGET; 	// Vitesse target
+unsigned int Vturn 		= V_TURN;
+
 // const float ADAPTIVE_SPEED_ANGLE = 10.0;
 // const float ADAPTIVE_SPEED_HYST = 2.0;
 int cnt_ostacle=0;

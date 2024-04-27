@@ -9,7 +9,6 @@
 
 const float SPEED_TO_PWM = MOVEMENT_SPEED_LIMIT_PWM/MOVEMENT_SPEED_LIMIT_MM_S;
 
-
 float servoAngle;	//	degrees
 float targetSpeedL; //	mm/s
 float targetSpeedR; //	mm/s
@@ -93,17 +92,65 @@ void movement_setSpeed(float speed) {
 		speed=MOVEMENT_SPEED_LIMIT_MM_S;
 	}
 
-	if(speed > 1800)
+	if(servoAngle > 5 && servoAngle < -5)
 	{
-		deltaSpeed = servoAngle*MOVEMENT_DIFF_GAIN_STRAIGHT*speed;
+		float L = (MOVEMENT_ENTRAXE_HORIZONTAL / (float)tan(servoAngle*MOVEMENT_REEL_ANGLE_CONV)) + (MOVEMENT_ENTRAXE_VERTICAL/2.0);
+		float ratio = 1 + L/MOVEMENT_ENTRAXE_VERTICAL;
+		if(servoAngle < 30 && servoAngle > 0)
+		{
+			targetSpeedL = speed * ratio;
+			targetSpeedR = speed / ratio;
+		}
+		else if(servoAngle > -30 && servoAngle < 0)
+		{
+			targetSpeedR = speed * ratio;
+			targetSpeedL = speed / ratio;
+		}
+		else if(servoAngle < -30)
+		{
+			//MOTOR_Left_Disable();
+			targetSpeedR = speed * 2;
+			targetSpeedL = speed / 2;
+		}
+		else if(servoAngle > 30)
+		{
+			//MOTOR_Right_Disable();
+			targetSpeedL = speed * 2;
+			targetSpeedR = speed / 2;
+		}
 	}
 	else
 	{
-		deltaSpeed = servoAngle*MOVEMENT_DIFF_GAIN_TURN*speed;
+		targetSpeedR = speed;
+		targetSpeedL = speed;
 	}
 
-	targetSpeedL=speed+deltaSpeed;
-	targetSpeedR=speed-deltaSpeed;
+
+	if(targetSpeedR>MOVEMENT_SPEED_LIMIT_MM_S)
+	{
+		targetSpeedR=MOVEMENT_SPEED_LIMIT_MM_S;
+	}
+	if(targetSpeedL>MOVEMENT_SPEED_LIMIT_MM_S)
+	{
+		targetSpeedL=MOVEMENT_SPEED_LIMIT_MM_S;
+	}
+
+
+//	if(speed == V_START || speed == V_TARGET)
+//	{
+//		deltaSpeed = servoAngle*MOVEMENT_DIFF_GAIN_STRAIGHT*speed;
+//	}
+//	else
+//	{
+//		deltaSpeed = servoAngle*MOVEMENT_DIFF_GAIN_TURN*speed;
+//	}
+//
+//	if(deltaSpeed > speed*DIFF_LIMIT_PERCENT_SPEED)
+//	{
+//		deltaSpeed = speed*DIFF_LIMIT_PERCENT_SPEED;
+//	}
+//	targetSpeedL=speed+deltaSpeed;
+//	targetSpeedR=speed-deltaSpeed;
 }
 
 void mouvement_start(void){

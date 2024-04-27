@@ -16,6 +16,10 @@
 ImageProcessing Camera_Near(1);
 ImageProcessing Camera_Far(2);
 
+#define CAMERA_NEAR_MIDDLE   57
+#define CAMERA_FAR_MIDDLE    57
+
+
 
 void Camera_Initiate(void){
 	if (Nombre_de_Camera == 1){
@@ -91,8 +95,9 @@ void  Camera_Actualise_Servo_2_Camera_Moyenne_Ponderee_1 (void){
 	Camera_Near.diff_old = Camera_Near.diff;
 	//Calcul de la différence de la voiture au centre de la route
 	// Ici centre de la route estimé par moyenne des roadmiddle des deux cameras
-
-		Camera_Near.diff =  64 - (K_CAMERA_NEAR *(Camera_Near.RoadMiddle)  + K_CAMERA_FAR*(Camera_Far.RoadMiddle));
+	Camera_Far.diff	 =  K_CAMERA_FAR*(CAMERA_FAR_MIDDLE - (Camera_Far.RoadMiddle));
+	Camera_Near.diff =  K_CAMERA_NEAR*(CAMERA_NEAR_MIDDLE - (Camera_Near.RoadMiddle));
+	Camera_Near.diff += Camera_Far.diff;
 
 	// plausibility check
 //	if (abs (Camera_Near.diff - Camera_Near.diff_old) > 50){
@@ -111,21 +116,21 @@ void  Camera_Actualise_Servo_2_Camera_Moyenne_Ponderee_1 (void){
 
 }
 
-void Camera_Initialise_Middle (void){
-	for (int i =0;i<10;i++){
-		//Captuire dans le vide pour initialiser threshold
-		Camera_Calculate_Servo_Angle();
-	}
-	Camera_Calculate_Servo_Angle();
-	if (Nombre_de_Camera == 1){
-			Camera_Near.initial_middle=(Camera_Near.BlackLineLeft + Camera_Near.BlackLineRight) / 2;
-		}
-		else if (Nombre_de_Camera == 2){
-			Camera_Near.initial_middle=Camera_Near.initial_middle=(Camera_Near.BlackLineLeft + Camera_Near.BlackLineRight) / 2;
-			Camera_Far.initial_middle=Camera_Far.initial_middle=(Camera_Far.BlackLineLeft + Camera_Far.BlackLineRight) / 2;
-		}
-
-}
+//void Camera_Initialise_Middle (void){
+//	for (int i =0;i<10;i++){
+//		//Captuire dans le vide pour initialiser threshold
+//		Camera_Calculate_Servo_Angle();
+//	}
+//	Camera_Calculate_Servo_Angle();
+//	if (Nombre_de_Camera == 1){
+//			Camera_Near.initial_middle=(Camera_Near.BlackLineLeft + Camera_Near.BlackLineRight) / 2;
+//		}
+//		else if (Nombre_de_Camera == 2){
+//			Camera_Near.initial_middle=Camera_Near.initial_middle=(Camera_Near.BlackLineLeft + Camera_Near.BlackLineRight) / 2;
+//			Camera_Far.initial_middle=Camera_Far.initial_middle=(Camera_Far.BlackLineLeft + Camera_Far.BlackLineRight) / 2;
+//		}
+//
+//}
 
 uint16_t * Camera_Get_ImageData(int i){
 	//Retourne le pointeur vers le tableau contenant les valeurs des pixels de la camera 1 ou 2

@@ -16,6 +16,7 @@
  * ADC0 : SE11
  * */
 
+
 #define CAMERA_NEAR_ADC ADC0
 #define CAMERA_NEAR_Channel_Group 0u // Utilisé pour le receuil de donnée de l'ADC0. Seul channel group avec software trigger
 #define CAMERA_NEAR_PIN_ADC 2u
