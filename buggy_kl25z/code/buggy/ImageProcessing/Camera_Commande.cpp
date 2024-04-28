@@ -11,6 +11,8 @@
 #include "math.h"
 #include "stdio.h"
 #include "stdlib.h"
+#include "servo/driver_servo.h"
+
 
 //Create 2 objects camera
 ImageProcessing Camera_Near(1);
@@ -89,6 +91,7 @@ void  Camera_Actualise_Servo_2_Camera_Moyenne_Simple (void){
 }
 
 void  Camera_Actualise_Servo_2_Camera_Moyenne_Ponderee_1 (void){
+	int commande_servo;
 	// Option apres calcumateMiddle pour deux camera
 	// Permet de changer l'angle du servo
 	// Store old value
@@ -98,20 +101,14 @@ void  Camera_Actualise_Servo_2_Camera_Moyenne_Ponderee_1 (void){
 	Camera_Far.diff	 =  K_CAMERA_FAR*(CAMERA_FAR_MIDDLE - (Camera_Far.RoadMiddle));
 	Camera_Near.diff =  K_CAMERA_NEAR*(CAMERA_NEAR_MIDDLE - (Camera_Near.RoadMiddle));
 	Camera_Near.diff += Camera_Far.diff;
-	
-
-	// plausibility check
-//	if (abs (Camera_Near.diff - Camera_Near.diff_old) > 50){
-//		Camera_Near.diff = Camera_Near.diff_old;
-//	}else{
-//		Camera_Near.erreurIntegral = Camera_Near.erreurIntegral + ImageProcessing::KI*Camera_Near.diff;
-//		Camera_Near.servo_angle=Camera_Near.erreurIntegral + ImageProcessing::KP*(float)Camera_Near.diff + ImageProcessing::KD*(float)(Camera_Near.diff-Camera_Near.diff_old);
-//		if(Camera_Near.servo_angle<SERVO_MAX_LEFT_ANGLE)Camera_Near.servo_angle=SERVO_MAX_LEFT_ANGLE;
-//		if(Camera_Near.servo_angle>SERVO_MAX_RIGHT_ANGLE)Camera_Near.servo_angle=SERVO_MAX_RIGHT_ANGLE;
-//	}
 
 	Camera_Near.erreurIntegral = Camera_Near.erreurIntegral + ImageProcessing::KI*Camera_Near.diff;
-	Camera_Near.servo_angle=Camera_Near.erreurIntegral + ImageProcessing::KP*(float)Camera_Near.diff + ImageProcessing::KD*(float)(Camera_Near.diff-Camera_Near.diff_old);
+	commande_servo = Camera_Near.erreurIntegral + ImageProcessing::KP*(float)Camera_Near.diff + ImageProcessing::KD*(float)(Camera_Near.diff-Camera_Near.diff_old);
+	if(Camera_Near.servo_angle - commande_servo > -70 && Camera_Near.servo_angle - commande_servo < 70)
+	{
+		Camera_Near.servo_angle=commande_servo;
+	}
+
 	if(Camera_Near.servo_angle<SERVO_MAX_LEFT_ANGLE)Camera_Near.servo_angle=SERVO_MAX_LEFT_ANGLE;
 	if(Camera_Near.servo_angle>SERVO_MAX_RIGHT_ANGLE)Camera_Near.servo_angle=SERVO_MAX_RIGHT_ANGLE;
 

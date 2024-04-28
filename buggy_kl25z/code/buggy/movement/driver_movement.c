@@ -92,49 +92,6 @@ void movement_setSpeed(float speed) {
 		speed=MOVEMENT_SPEED_LIMIT_MM_S;
 	}
 
-	// if(servoAngle > 5 && servoAngle < -5)
-	// {
-	// 	float L = (MOVEMENT_ENTRAXE_HORIZONTAL / (float)tan(servoAngle /2 *MOVEMENT_REEL_ANGLE_CONV)) + (MOVEMENT_ENTRAXE_VERTICAL/2.0);
-	// 	float ratio = 1 + L/MOVEMENT_ENTRAXE_VERTICAL;
-	// 	if(servoAngle < 15 && servoAngle > 0)
-	// 	{
-	// 		targetSpeedL = speed * ratio;
-	// 		targetSpeedR = speed / ratio;
-	// 	}
-	// 	else if(servoAngle > -15 && servoAngle < 0)
-	// 	{
-	// 		targetSpeedR = speed * ratio;
-	// 		targetSpeedL = speed / ratio;
-	// 	}
-	// 	else if(servoAngle < -15)
-	// 	{
-	// 		//MOTOR_Left_Disable();
-	// 		targetSpeedR = speed * 2;
-	// 		targetSpeedL = speed / 2;
-	// 	}
-	// 	else if(servoAngle > 15)
-	// 	{
-	// 		//MOTOR_Right_Disable();
-	// 		targetSpeedL = speed * 2;
-	// 		targetSpeedR = speed / 2;
-	// 	}
-	// }
-	// else
-	// {
-	// 	targetSpeedR = speed;
-	// 	targetSpeedL = speed;
-	// }
-
-
-	// if(targetSpeedR>MOVEMENT_SPEED_LIMIT_MM_S)
-	// {
-	// 	targetSpeedR=MOVEMENT_SPEED_LIMIT_MM_S;
-	// }
-	// if(targetSpeedL>MOVEMENT_SPEED_LIMIT_MM_S)
-	// {
-	// 	targetSpeedL=MOVEMENT_SPEED_LIMIT_MM_S;
-	// }
-
 
 	if(speed == V_START || speed == V_TARGET)
 	{

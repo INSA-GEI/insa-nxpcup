@@ -16,8 +16,8 @@
 #define KD_Straight				0.5
 #define KI_Straight				0.0
 
-#define KP_Turn					1.5
-#define KD_Turn					1.8
+#define KP_Turn					1.5		//1.5
+#define KD_Turn					1.8		//1.8
 #define KI_Turn					0.0
 
 /* Camera_Near Info

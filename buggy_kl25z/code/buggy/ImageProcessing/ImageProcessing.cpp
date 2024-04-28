@@ -63,6 +63,7 @@ void ImageProcessing::init(){
 	else if (this->Numero_Camera == 2){
 		CAMERA_FAR_init();
 	}
+	servo_angle = 0;
 }
 
 void ImageProcessing::capture(){
