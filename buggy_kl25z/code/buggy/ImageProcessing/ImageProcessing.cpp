@@ -463,21 +463,21 @@ void ImageProcessing::calculateMiddle (void){
 		// if a line is only on the the right side
 		if (BlackLineLeft < 3){
 			RoadMiddle = BlackLineRight - initial_middle;
-			Camera_Set_KDP(KD_Turn_Left);
-			Camera_Set_KP(KP_Turn_Left);
+			//Camera_Set_KDP(KD_Turn_Left);
+			//Camera_Set_KP(KP_Turn_Left);
 
 		}
 		// if a line is only on the the left side
 		if (BlackLineRight > 124){
 			RoadMiddle = BlackLineLeft + initial_middle;
-			Camera_Set_KDP(KD_Turn_Right);
-			Camera_Set_KP(KP_Turn_Right);
+			//Camera_Set_KDP(KD_Turn_Right);
+			//Camera_Set_KP(KP_Turn_Right);
 		}
 
 		if ((BlackLineRight < 124) && (BlackLineLeft > 3))
 		{
-			Camera_Set_KDP(KD_Straight);
-			Camera_Set_KP(KP_Straight);
+			//Camera_Set_KDP(KD_Straight);
+			//Camera_Set_KP(KP_Straight);
 		}
 	}
 	else

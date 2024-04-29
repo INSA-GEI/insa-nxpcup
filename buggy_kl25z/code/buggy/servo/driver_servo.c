@@ -8,9 +8,9 @@
 #include "driver_servo.h"
 
 //premier servo LED casse
-#define SERVO_CENTER_POS 		4050		// initial servo position (center)
-#define SERVO_HARD_LEFT 		2900
-#define SERVO_HARD_RIGHT 		4850        // initial 1800
+#define SERVO_CENTER_POS 		3800		// initial servo position (center)
+#define SERVO_HARD_LEFT 		2850
+#define SERVO_HARD_RIGHT 		4500        // initial 1800
 
 /*
 // Define for new servo DM996
@@ -60,7 +60,7 @@ void servo_init(void) {
 	//Clear pending interrupts 18 (TPM = FTM1) in NVIC
 	DisableIRQ(TPM1_IRQn);
 
-	NVIC_SetPriority(TPM1_IRQn,1);
+	NVIC_SetPriority(TPM1_IRQn,2);
 
 	//Enable interrupts 18 (TPM = FTM1) in NVIC
 	EnableIRQ(TPM1_IRQn);

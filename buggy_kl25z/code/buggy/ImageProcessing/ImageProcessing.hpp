@@ -39,8 +39,8 @@
 //#define KDP_TURN 						.6	// Derivative coefficient in turn
 
 //Gain correctif pour 2 camera (somme = 1)
-#define K_CAMERA_NEAR 						.7
-#define K_CAMERA_FAR						.3
+#define K_CAMERA_NEAR 						.9
+#define K_CAMERA_FAR						.1
 #define CAMERA_FAR_ID						2
 #define CAMERA_NEAR_ID						1
 
