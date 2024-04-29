@@ -102,6 +102,10 @@ void  Camera_Actualise_Servo_2_Camera_Moyenne_Ponderee_1 (void){
 	Camera_Far.diff	 =  K_CAMERA_FAR*(CAMERA_FAR_MIDDLE - (Camera_Far.RoadMiddle));
 	Camera_Near.diff =  K_CAMERA_NEAR*(CAMERA_NEAR_MIDDLE - (Camera_Near.RoadMiddle));
 	Camera_Near.diff += Camera_Far.diff;
+	// if(Camera_Near.diff - Camera_Near.diff_old < - THRESHOLD_LOW_PASS_FILTER ||  Camera_Near.diff - Camera_Near.diff_old > THRESHOLD_LOW_PASS_FILTER)
+	// {
+	// 	Camera_Near.diff= Camera_Near.diff_old;
+	// }
 	if(Camera_Near.diff < -TURN_DETECTION_THRESHOLD){
 		Camera_Set_KDP(KD_Turn_Left);
 		Camera_Set_KP(KP_Turn_Left);
@@ -123,7 +127,7 @@ void  Camera_Actualise_Servo_2_Camera_Moyenne_Ponderee_1 (void){
 
 	Camera_Near.erreurIntegral = Camera_Near.erreurIntegral + ImageProcessing::KI*Camera_Near.diff;
 	commande_servo = Camera_Near.erreurIntegral + ImageProcessing::KP*(float)Camera_Near.diff + ImageProcessing::KD*(float)(Camera_Near.diff-Camera_Near.diff_old);
-	if(Camera_Near.servo_angle - commande_servo > -70 && Camera_Near.servo_angle - commande_servo < 70)
+	if(Camera_Near.servo_angle - commande_servo > - THRESHOLD_LOW_PASS_FILTER && Camera_Near.servo_angle - commande_servo < THRESHOLD_LOW_PASS_FILTER)
 	{
 		Camera_Near.servo_angle=commande_servo;
 	}

@@ -16,15 +16,16 @@
 #define KD_Straight				0.5
 #define KI_Straight				0.0
 
-#define KP_Turn_Left					1.7		//1.5
-#define KD_Turn_Left					1.2		//1.8
+#define KP_Turn_Left					1.5		//1.5
+#define KD_Turn_Left					1.8		//1.8
 #define KI_Turn_Left					0.0
 
-#define KP_Turn_Right					1.7		//1.5
-#define KD_Turn_Right					1.2		//1.8
+#define KP_Turn_Right					1.8		//1.5
+#define KD_Turn_Right					1.9		//1.8
 #define KI_Turn_Right					0.0
 
-#define TURN_DETECTION_THRESHOLD		10
+#define TURN_DETECTION_THRESHOLD		10  //7
+#define THRESHOLD_LOW_PASS_FILTER       60
 
 /* Camera_Near Info
  * Position : High
