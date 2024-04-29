@@ -16,9 +16,13 @@
 #define KD_Straight				0.5
 #define KI_Straight				0.0
 
-#define KP_Turn					1.5		//1.5
-#define KD_Turn					1.8		//1.8
-#define KI_Turn					0.0
+#define KP_Turn_Left					1.5		//1.5
+#define KD_Turn_Left					1.8		//1.8
+#define KI_Turn_Left					0.0
+
+#define KP_Turn_Right					1.8		//1.5
+#define KD_Turn_Right					1.8		//1.8
+#define KI_Turn_Right					0.0
 
 /* Camera_Near Info
  * Position : High

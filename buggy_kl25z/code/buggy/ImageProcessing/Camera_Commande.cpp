@@ -200,7 +200,7 @@ int Camera_Turn_Detection(void)
 	{
 		return 0;
 	}
-	else if(ImageProcessing::KP ==  KP_Turn)
+	else
 	{
 		return 1;
 	}

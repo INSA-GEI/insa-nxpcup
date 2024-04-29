@@ -57,20 +57,20 @@ float ImageProcessing::KD = KD_Straight;
 float ImageProcessing::KI = KI_Straight;
 
 void ImageProcessing::init(){
-	if (this->Numero_Camera == 1){
+	if (this->Numero_Camera == CAMERA_NEAR_ID){
 		CAMERA_NEAR_init();
 	}
-	else if (this->Numero_Camera == 2){
+	else if (this->Numero_Camera == CAMERA_FAR_ID){
 		CAMERA_FAR_init();
 	}
 	servo_angle = 0;
 }
 
 void ImageProcessing::capture(){
-	if (this->Numero_Camera == 1){
+	if (this->Numero_Camera == CAMERA_NEAR_ID){
 		CAMERA_NEAR_capture();
 	}
-	else if (this->Numero_Camera == 2){
+	else if (this->Numero_Camera == CAMERA_FAR_ID){
 		CAMERA_FAR_capture();
 	}
 }
@@ -459,25 +459,39 @@ void ImageProcessing::calculateMiddle (void){
 	// Find middle of the road, 64 for strait road
 	RoadMiddle = (BlackLineLeft + BlackLineRight)/2;
 
-	// if a line is only on the the right side
-	if (BlackLineLeft < 3){
-		RoadMiddle = BlackLineRight - initial_middle;
-		Camera_Set_KDP(KD_Turn);
-		Camera_Set_KP(KP_Turn);
+	if (this->Numero_Camera == CAMERA_FAR_ID){
+		// if a line is only on the the right side
+		if (BlackLineLeft < 3){
+			RoadMiddle = BlackLineRight - initial_middle;
+			Camera_Set_KDP(KD_Turn_Left);
+			Camera_Set_KP(KP_Turn_Left);
 
-	}
-	// if a line is only on the the left side
-	if (BlackLineRight > 124){
-		RoadMiddle = BlackLineLeft + initial_middle;
-		Camera_Set_KDP(KD_Turn);
-		Camera_Set_KP(KP_Turn);
-	}
+		}
+		// if a line is only on the the left side
+		if (BlackLineRight > 124){
+			RoadMiddle = BlackLineLeft + initial_middle;
+			Camera_Set_KDP(KD_Turn_Right);
+			Camera_Set_KP(KP_Turn_Right);
+		}
 
-	if ((BlackLineRight < 124) && (BlackLineLeft > 3))
+		if ((BlackLineRight < 124) && (BlackLineLeft > 3))
+		{
+			Camera_Set_KDP(KD_Straight);
+			Camera_Set_KP(KP_Straight);
+		}
+	}
+	else
 	{
-		Camera_Set_KDP(KD_Straight);
-		Camera_Set_KP(KP_Straight);
+		// if a line is only on the the right side
+		if (BlackLineLeft < 3){
+			RoadMiddle = BlackLineRight - initial_middle;
+		}
+		// if a line is only on the the left side
+		if (BlackLineRight > 124){
+			RoadMiddle = BlackLineLeft + initial_middle;
+		}
 	}
+
 	// if no line on left and right side
 	if (number_edges == 0){
 		RoadMiddle = RoadMiddle_old;

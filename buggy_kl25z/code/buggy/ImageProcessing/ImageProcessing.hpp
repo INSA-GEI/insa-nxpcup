@@ -41,7 +41,8 @@
 //Gain correctif pour 2 camera (somme = 1)
 #define K_CAMERA_NEAR 						.7
 #define K_CAMERA_FAR						.3
-
+#define CAMERA_FAR_ID						2
+#define CAMERA_NEAR_ID						1
 
 // Define thresholds for Camera Black Line recognition
 #define THRESHOLD_high				500			// Higher threshold : does not capture noise but may not capture all maximums.
