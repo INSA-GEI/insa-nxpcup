@@ -132,6 +132,21 @@ void  Camera_Actualise_Servo_2_Camera_Moyenne_Ponderee_1 (void){
 		Camera_Near.servo_angle=commande_servo;
 	}
 
+//	if(Camera_Near.servo_angle > 10 && commande_servo < -30)
+//	{
+//
+//	}
+//	else if (Camera_Near.servo_angle < -10 && commande_servo > 30)
+//	{
+//
+//	}
+//	else
+//	{
+//		Camera_Near.servo_angle=commande_servo;
+//
+//	}
+
+
 	if(Camera_Near.servo_angle<SERVO_MAX_LEFT_ANGLE)Camera_Near.servo_angle=SERVO_MAX_LEFT_ANGLE;
 	if(Camera_Near.servo_angle>SERVO_MAX_RIGHT_ANGLE)Camera_Near.servo_angle=SERVO_MAX_RIGHT_ANGLE;
 

@@ -20,8 +20,8 @@
 #define KD_Turn_Left					1.8		//1.8
 #define KI_Turn_Left					0.0
 
-#define KP_Turn_Right					1.8		//1.5
-#define KD_Turn_Right					1.9		//1.8
+#define KP_Turn_Right					1.5		//1.5
+#define KD_Turn_Right					1.8		//1.8
 #define KI_Turn_Right					0.0
 
 #define TURN_DETECTION_THRESHOLD		10  //7

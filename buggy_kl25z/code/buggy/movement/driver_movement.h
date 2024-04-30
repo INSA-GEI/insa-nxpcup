@@ -27,11 +27,11 @@ extern "C" {
 #define V_TARGET 		1700
 #define V_TURN			1000
 
-#define DIFF_LIMIT_PERCENT_SPEED_DROITE     0.45
+#define DIFF_LIMIT_PERCENT_SPEED_DROITE     0.60
 #define DIFF_LIMIT_PERCENT_SPEED			0.45
 #define MOVEMENT_DIFF_GAIN_STRAIGHT 		0.0		// 0.0037	// Distance between 2 wheels E=15cm
 #define MOVEMENT_DIFF_GAIN_TURN 			0.012      //0.015
-#define MOVEMENT_DIFF_GAIN_TURN_DROITE	    0.012      // 0.035
+#define MOVEMENT_DIFF_GAIN_TURN_DROITE	    0.03      // 0.035
 
 
 // Correcteur 
