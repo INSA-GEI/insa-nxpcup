@@ -49,6 +49,16 @@ team work should use int_team_x branch as their main branch and integrate inside
 Old branchs:
 	git checkout stable    : stable branch (Obsolete)
 	git checkout dev       : work in progress (Obsolete)
+	
+	
+# Amélioration possible
+- Détection du soleil et traitement de l'image en fonction
+- Image en 2D
+- Détection des erreurs de détection de ligne de fin
+- caméra inclinable pour anticiper les virages
+
+# Ajout du servo_CAM sur le port PTD0 ou PTD5
+
 
 
 	

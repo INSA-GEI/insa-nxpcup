@@ -1,0 +1,3 @@
+# Suppression des repertoires de build
+driver_examples_i2c_read_accel_value_transfer/Debug/
+Projet_NXPCup/Debug/
