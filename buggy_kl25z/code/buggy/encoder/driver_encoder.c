@@ -99,7 +99,7 @@ void encoders_init(void){
 
 	//Clear pending interrupts 19 (TPM = FTM2) in NVIC
 	DisableIRQ(TPM2_IRQn);
-	NVIC_SetPriority(TPM2_IRQn,1);
+	NVIC_SetPriority(TPM2_IRQn,2);
 
 	//Enable interrupts 19 (TPM = FTM2) in NVIC
 	EnableIRQ(TPM2_IRQn);

@@ -29,14 +29,27 @@ if __name__ == "__main__":
     dataCamera = Array('i', [100] * 128)  # Create a shared array for the camera data
     dataOthers = Array('i', [100] * 8)  # Create a shared array for others data (RoadMiddle, RoadMiddleOld, BlackLineLeft, BlackLineRight, Nbr_edges, SpeedLeft, SpeedRight, ServoAngle)
 
+    for i in range(len(dataCamera)):
+        dataCamera[i] = 50 + i%3
+    dataCamera[20] = 400
+    dataCamera[21] = 405
+    dataCamera[22] = 406
+    dataCamera[80] = 430
+    dataCamera[81] = 435
+    dataCamera[82] = 418
+    dataCamera[105] = 100
+    
+    for i in range(len(dataOthers)):
+        dataOthers[i] = i
+
     try :
         exit_event = Event()
         data_camera_lock = Lock()
         data_others_lock = Lock()
         inputQueue = Queue()
 
-        p_serial = Process(target=runSerial, args=(inputQueue, dataCamera, data_camera_lock, dataOthers, data_others_lock, exit_event,))
-        p_serial.start()
+        # p_serial = Process(target=runSerial, args=(inputQueue, dataCamera, data_camera_lock, dataOthers, data_others_lock, exit_event,))
+        # p_serial.start()
 
         p_input = Process(target=inputUser, args=(inputQueue, exit_event,))
         p_input.start()
@@ -55,7 +68,7 @@ if __name__ == "__main__":
 
         # Wait for the processes to finish
         
-        p_serial.join()
+        # p_serial.join()
         p_input.join()
         p_plot.join()
         #p_print.join()
@@ -65,11 +78,11 @@ if __name__ == "__main__":
         # This signals the subprocesses to exit their loops and finish execution.
         exit_event.set()
         
-        p_serial.join()
+        # p_serial.join()
         p_input.join()
         p_plot.join()
         #p_print.join()
-        if p_serial.is_alive() & p_input.is_alive() & p_plot.is_alive() :
+        if p_input.is_alive() & p_plot.is_alive() :
             print("Warning: processes did not terminate correctly")
         else:
             print("Process terminated correctly")

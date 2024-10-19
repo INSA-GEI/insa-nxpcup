@@ -2,7 +2,7 @@ from serial import Serial, SerialException
 import struct
 
 # Constants
-COM_PORT = 'COM5'
+COM_PORT = 'COM13'
 BAUD_RATE = 115200
 TIME_OUT = 1
 CAMERA_DATA_SIZE = 256

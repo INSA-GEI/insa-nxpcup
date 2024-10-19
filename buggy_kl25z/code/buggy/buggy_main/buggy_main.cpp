@@ -13,6 +13,7 @@
 #include "monitor/bluetooth_bee.h"
 #include "MKL25Z4.h"
 #include "lidar/driver_lidar.hpp"
+#include "button/button.h"
 //#include "movement/driver_movement.h"
 
 /**
@@ -69,13 +70,15 @@ uint8_t enable_flag = 0; // 0 if you want to enable remotely
 /* Data for test */
 //int pos_servo_test;
 
+void Buggy_SW3Pressed(void);
+void Buggy_SW4Pressed(void);
 
 void buggy_run(void){
 	// BASE
 	//LIDAR_Init();
 
 	cam_led_init();
-
+	//BUTTON_Init(Buggy_SW3Pressed, Buggy_SW4Pressed);
 	bee_initCommunication(buggy_readCMD, bufferCommand);
 	bee_startReceivingData();
 	bee_enableSendData();
@@ -86,9 +89,9 @@ void buggy_run(void){
 
 	movement_init();
 	// Comment this for remote start
-//	enable_flag = 1;
-//	mouvement_start();
-//	movement_set(Vstart, 0);
+	enable_flag = 1;
+	mouvement_start();
+	movement_set(Vstart, 0);
 //	//--------------------------------
 //	movement_regulate();
 
@@ -301,4 +304,22 @@ void Buggy_Set_Vtarget(int v)
 void Buggy_Set_Vturn(int v)
 {
 	Vturn = v;
+}
+
+void Buggy_SW3Pressed(void){
+	Vstart = 1500;
+	Vturn = 1000;
+	Vtarget = 1700;
+	enable_flag = 1;
+	mouvement_start();
+	movement_set(Vstart, 0);
+}
+
+void Buggy_SW4Pressed(void){
+	Vstart = 1000;
+	Vturn = 1000;
+	Vtarget = 1000;
+	enable_flag = 1;
+	mouvement_start();
+	movement_set(Vstart, 0);
 }

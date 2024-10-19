@@ -105,7 +105,7 @@ void movement_setSpeed(float speed) {
 			deltaSpeed = speed*DIFF_LIMIT_PERCENT_SPEED_DROITE;
 		}
 	}
-	else if (servoAngle < 0)
+	else if (servoAngle < -0)
 	{
 		deltaSpeed = servoAngle*MOVEMENT_DIFF_GAIN_TURN*speed;
 		if(deltaSpeed > speed*DIFF_LIMIT_PERCENT_SPEED)

@@ -76,7 +76,7 @@ void bee_initCommunication(void (*callback)(void), uint8_t * receiveBuffer){
 	/* Configure and Init DMA for RX */
 	bee_receiveCallback = callback;
 	DMA_Init(DMA0);
-	NVIC_SetPriority(DMA0_IRQn, 0);
+	NVIC_SetPriority(DMA0_IRQn, 1);
 	DMA_CreateHandle(&bee_dmaReceiveHandle, DMA0, BEE_DMA_RECEIVE_CHANNEL);
 	DMA_SetCallback(&bee_dmaReceiveHandle, bee_dmaReceiveCallback, NULL);
 	DMA_PrepareTransfer(&bee_dmaReceiveTransferConfig, (uint32_t *) LPSCI_GetDataRegisterAddress(BEE_LPSCI), sizeof(uint8_t), receiveBuffer, sizeof(receiveBuffer[0]), BEE_CMD_LENGTH, kDMA_PeripheralToMemory);

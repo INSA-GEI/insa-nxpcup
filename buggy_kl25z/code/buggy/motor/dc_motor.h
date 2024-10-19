@@ -63,7 +63,8 @@ extern "C" {
 
 /**
  * @fn void dc_motors_init(void)
- * @brief initialize motors in mode forward direction, set null the speed's motors
+ * @brief initialize motors in mode forward direction, 
+ *        set the motors speed to 0
  *
  */
 void MOTOR_init(void);

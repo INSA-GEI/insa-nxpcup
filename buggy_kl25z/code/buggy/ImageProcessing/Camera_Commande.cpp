@@ -19,7 +19,7 @@ int flag_turn_detection =0;
 ImageProcessing Camera_Near(1);
 ImageProcessing Camera_Far(2);
 
-#define CAMERA_NEAR_MIDDLE   61
+#define CAMERA_NEAR_MIDDLE   62
 #define CAMERA_FAR_MIDDLE    54
 
 
@@ -99,13 +99,10 @@ void  Camera_Actualise_Servo_2_Camera_Moyenne_Ponderee_1 (void){
 	Camera_Near.diff_old = Camera_Near.diff;
 	//Calcul de la différence de la voiture au centre de la route
 	// Ici centre de la route estimé par moyenne des roadmiddle des deux cameras
-	Camera_Far.diff	 =  K_CAMERA_FAR*(CAMERA_FAR_MIDDLE - (Camera_Far.RoadMiddle));
+	//Camera_Far.diff	 =  K_CAMERA_FAR*(CAMERA_FAR_MIDDLE - (Camera_Far.RoadMiddle));
 	Camera_Near.diff =  K_CAMERA_NEAR*(CAMERA_NEAR_MIDDLE - (Camera_Near.RoadMiddle));
-	Camera_Near.diff += Camera_Far.diff;
-	// if(Camera_Near.diff - Camera_Near.diff_old < - THRESHOLD_LOW_PASS_FILTER ||  Camera_Near.diff - Camera_Near.diff_old > THRESHOLD_LOW_PASS_FILTER)
-	// {
-	// 	Camera_Near.diff= Camera_Near.diff_old;
-	// }
+	//Camera_Near.diff += Camera_Far.diff;
+
 	if(Camera_Near.diff < -TURN_DETECTION_THRESHOLD){
 		Camera_Set_KDP(KD_Turn_Left);
 		Camera_Set_KP(KP_Turn_Left);
@@ -132,20 +129,11 @@ void  Camera_Actualise_Servo_2_Camera_Moyenne_Ponderee_1 (void){
 		Camera_Near.servo_angle=commande_servo;
 	}
 
-//	if(Camera_Near.servo_angle > 10 && commande_servo < -30)
-//	{
-//
-//	}
-//	else if (Camera_Near.servo_angle < -10 && commande_servo > 30)
-//	{
-//
-//	}
-//	else
-//	{
-//		Camera_Near.servo_angle=commande_servo;
-//
-//	}
+	else
+	{
+		Camera_Near.servo_angle=commande_servo*0.01;
 
+	}
 
 	if(Camera_Near.servo_angle<SERVO_MAX_LEFT_ANGLE)Camera_Near.servo_angle=SERVO_MAX_LEFT_ANGLE;
 	if(Camera_Near.servo_angle>SERVO_MAX_RIGHT_ANGLE)Camera_Near.servo_angle=SERVO_MAX_RIGHT_ANGLE;
