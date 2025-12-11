@@ -1,0 +1,3 @@
+../drivers/fsl_lptmr.c:80:6:LPTMR_Init	16	static
+../drivers/fsl_lptmr.c:112:6:LPTMR_Deinit	16	static
+../drivers/fsl_lptmr.c:147:6:LPTMR_GetDefaultConfig	16	static

@@ -1,0 +1,5 @@
+../application/Encoder.cpp:13:1:Encoder::Encoder()	16	static
+../application/Encoder.cpp:21:6:void Encoder::init()	16	static
+../application/Encoder.cpp:50:5:int Encoder::getLeftSpeed()	16	static
+../application/Encoder.cpp:55:5:int Encoder::getRightSpeed()	16	static
+../application/Encoder.cpp:61:6:void Encoder::interruptHandler()	24	static

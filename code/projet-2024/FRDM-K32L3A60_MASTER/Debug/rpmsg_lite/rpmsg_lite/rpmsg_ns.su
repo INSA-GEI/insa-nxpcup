@@ -1,0 +1,4 @@
+../rpmsg_lite/rpmsg_lite/rpmsg_ns.c:71:16:rpmsg_ns_rx_cb	40	static
+../rpmsg_lite/rpmsg_lite/rpmsg_ns.c:88:17:rpmsg_ns_bind	40	static
+../rpmsg_lite/rpmsg_lite/rpmsg_ns.c:148:9:rpmsg_ns_unbind	24	static
+../rpmsg_lite/rpmsg_lite/rpmsg_ns.c:166:9:rpmsg_ns_announce	72	static

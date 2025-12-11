@@ -1,0 +1,2 @@
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A60_MASTER/drivers/fsl_clock.h:766:20:CLOCK_SetIpSrc	24	static
+../board/board.c:23:6:BOARD_InitDebugConsole	16	static

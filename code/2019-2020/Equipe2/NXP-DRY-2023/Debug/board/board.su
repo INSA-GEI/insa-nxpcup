@@ -1,0 +1,2 @@
+/home/dimercur/Travail/git/insa-nxpcup/code/2019-2020/Equipe2/NXP-DRY-2023/drivers/fsl_clock.h:620:20:CLOCK_SetLpsci0Clock	16	static
+../board/board.c:44:6:BOARD_InitDebugConsole	16	static

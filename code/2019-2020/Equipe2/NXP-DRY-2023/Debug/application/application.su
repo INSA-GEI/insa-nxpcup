@@ -1,0 +1,6 @@
+../application/application.cpp:27:5:int application()	24	static
+../application/application.cpp:115:6:void delay_time(int)	24	static
+../application/application.cpp:120:6:void FTM1_IRQHandler()	8	static
+../application/application.cpp:155:6:void FTM2_IRQHandler()	8	static
+../application/application.cpp:159:1:void __static_initialization_and_destruction_0(int, int)	16	static
+../application/application.cpp:159:1:cpp)	8	static

@@ -1,0 +1,13 @@
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A60_MASTER/drivers/fsl_clock.h:723:20:CLOCK_EnableClock	16	static
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A60_MASTER/drivers/fsl_port.h:355:20:PORT_SetPinConfig	32	static
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A60_MASTER/drivers/fsl_port.h:458:20:PORT_SetPinMux	24	static
+../board/pin_mux.c:40:6:BOARD_InitBootPins	8	static
+../board/pin_mux.c:63:6:BOARD_InitPins_cm4	4	static
+../board/pin_mux.c:92:6:BOARD_InitButtonsPins	40	static
+../board/pin_mux.c:223:6:BOARD_InitLEDsPins	40	static
+../board/pin_mux.c:350:6:BOARD_InitDEBUG_UARTPins	8	static
+../board/pin_mux.c:419:6:BOARD_InitOSCPins	4	static
+../board/pin_mux.c:449:6:BOARD_InitACCELPins	40	static
+../board/pin_mux.c:581:6:BOARD_InitLIGHT_SENSORPins	8	static
+../board/pin_mux.c:609:6:BOARD_InitUSBPins	4	static
+../board/pin_mux.c:643:6:BOARD_InitSDHCPins	24	static

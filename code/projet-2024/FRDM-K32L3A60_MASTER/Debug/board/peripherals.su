@@ -1,0 +1,4 @@
+../board/peripherals.c:138:6:ACCEL_init	8	static
+../board/peripherals.c:196:6:DEBUG_UART_init	8	static
+../board/peripherals.c:203:6:BOARD_InitPeripherals_cm4	8	static
+../board/peripherals.c:213:6:BOARD_InitBootPeripherals	8	static

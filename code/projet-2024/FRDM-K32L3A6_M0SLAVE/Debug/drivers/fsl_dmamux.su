@@ -1,0 +1,5 @@
+../drivers/fsl_clock.h:723:20:CLOCK_EnableClock	16	static
+../drivers/fsl_clock.h:735:20:CLOCK_DisableClock	16	static
+../drivers/fsl_dmamux.c:46:17:DMAMUX_GetInstance	24	static
+../drivers/fsl_dmamux.c:72:6:DMAMUX_Init	16	static
+../drivers/fsl_dmamux.c:86:6:DMAMUX_Deinit	16	static

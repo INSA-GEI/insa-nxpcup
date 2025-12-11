@@ -1,0 +1,20 @@
+rpmsg_lite/virtio/virtqueue.o rpmsg_lite/virtio/virtqueue.d: \
+ ../rpmsg_lite/virtio/virtqueue.c \
+ /home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/rpmsg_lite/include/rpmsg_env.h \
+ /home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/rpmsg_lite/include/rpmsg_default_config.h \
+ /home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/source/rpmsg_config.h \
+ /home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/rpmsg_lite/include/environment/bm/rpmsg_env_specific.h \
+ /home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/rpmsg_lite/include/rpmsg_default_config.h \
+ /home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/rpmsg_lite/include/platform/k32l3a6/rpmsg_platform.h \
+ /home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/rpmsg_lite/include/virtqueue.h \
+ /home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/rpmsg_lite/include/virtio_ring.h \
+ /home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/rpmsg_lite/include/llist.h
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/rpmsg_lite/include/rpmsg_env.h:
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/rpmsg_lite/include/rpmsg_default_config.h:
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/source/rpmsg_config.h:
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/rpmsg_lite/include/environment/bm/rpmsg_env_specific.h:
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/rpmsg_lite/include/rpmsg_default_config.h:
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/rpmsg_lite/include/platform/k32l3a6/rpmsg_platform.h:
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/rpmsg_lite/include/virtqueue.h:
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/rpmsg_lite/include/virtio_ring.h:
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/rpmsg_lite/include/llist.h:

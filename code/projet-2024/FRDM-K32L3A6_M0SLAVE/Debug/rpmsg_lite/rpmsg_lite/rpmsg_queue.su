@@ -1,0 +1,7 @@
+../rpmsg_lite/rpmsg_lite/rpmsg_queue.c:36:9:rpmsg_queue_rx_cb	40	static
+../rpmsg_lite/rpmsg_lite/rpmsg_queue.c:57:20:rpmsg_queue_create	40	static
+../rpmsg_lite/rpmsg_lite/rpmsg_queue.c:87:9:rpmsg_queue_destroy	16	static
+../rpmsg_lite/rpmsg_lite/rpmsg_queue.c:102:9:rpmsg_queue_recv	48	static
+../rpmsg_lite/rpmsg_lite/rpmsg_queue.c:156:9:rpmsg_queue_recv_nocopy	48	static
+../rpmsg_lite/rpmsg_lite/rpmsg_queue.c:198:9:rpmsg_queue_nocopy_free	16	static
+../rpmsg_lite/rpmsg_lite/rpmsg_queue.c:213:9:rpmsg_queue_get_current_size	16	static

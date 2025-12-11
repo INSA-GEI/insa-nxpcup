@@ -1,0 +1,13 @@
+../sdmmc/osa/fsl_sdmmc_osa.c:28:6:SDMMC_OSAInit	4	static
+../sdmmc/osa/fsl_sdmmc_osa.c:38:10:SDMMC_OSAEventCreate	16	static
+../sdmmc/osa/fsl_sdmmc_osa.c:60:10:SDMMC_OSAEventWait	32	static
+../sdmmc/osa/fsl_sdmmc_osa.c:110:10:SDMMC_OSAEventSet	24	static
+../sdmmc/osa/fsl_sdmmc_osa.c:135:10:SDMMC_OSAEventGet	24	static
+../sdmmc/osa/fsl_sdmmc_osa.c:155:10:SDMMC_OSAEventClear	24	static
+../sdmmc/osa/fsl_sdmmc_osa.c:175:10:SDMMC_OSAEventDestroy	16	static
+../sdmmc/osa/fsl_sdmmc_osa.c:193:10:SDMMC_OSAMutexCreate	16	static
+../sdmmc/osa/fsl_sdmmc_osa.c:211:10:SDMMC_OSAMutexLock	16	static
+../sdmmc/osa/fsl_sdmmc_osa.c:225:10:SDMMC_OSAMutexUnlock	16	static
+../sdmmc/osa/fsl_sdmmc_osa.c:238:10:SDMMC_OSAMutexDestroy	16	static
+../sdmmc/osa/fsl_sdmmc_osa.c:251:6:SDMMC_OSADelay	16	static
+../sdmmc/osa/fsl_sdmmc_osa.c:265:10:SDMMC_OSADelayUs	24	static

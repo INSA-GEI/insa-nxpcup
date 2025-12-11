@@ -1,0 +1,5 @@
+../fatfs/source/diskio.c:49:9:disk_status	24	static
+../fatfs/source/diskio.c:98:9:disk_initialize	24	static
+../fatfs/source/diskio.c:148:9:disk_read	32	static
+../fatfs/source/diskio.c:203:9:disk_write	32	static
+../fatfs/source/diskio.c:256:9:disk_ioctl	24	static

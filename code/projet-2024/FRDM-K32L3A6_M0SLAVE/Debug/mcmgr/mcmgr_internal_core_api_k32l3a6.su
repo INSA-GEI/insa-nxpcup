@@ -1,0 +1,15 @@
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/CMSIS/core_cm0plus.h:741:22:__NVIC_EnableIRQ	16	static
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/CMSIS/core_cm0plus.h:850:22:__NVIC_SetPriority	24	static
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/drivers/fsl_clock.h:723:20:CLOCK_EnableClock	16	static
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/drivers/fsl_mu.h:203:20:MU_SendMsgNonBlocking	24	static
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/drivers/fsl_mu.h:242:24:MU_ReceiveMsgNonBlocking	16	static
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/drivers/fsl_mu.h:451:20:MU_EnableInterrupts	24	static
+../mcmgr/mcmgr_internal_core_api_k32l3a6.c:49:16:mcmgr_early_init_internal	16	static
+../mcmgr/mcmgr_internal_core_api_k32l3a6.c:73:16:mcmgr_late_init_internal	16	static
+../mcmgr/mcmgr_internal_core_api_k32l3a6.c:102:16:mcmgr_start_core_internal	16	static
+../mcmgr/mcmgr_internal_core_api_k32l3a6.c:132:16:mcmgr_get_startup_data_internal	16	static
+../mcmgr/mcmgr_internal_core_api_k32l3a6.c:154:16:mcmgr_stop_core_internal	16	static
+../mcmgr/mcmgr_internal_core_api_k32l3a6.c:173:16:mcmgr_get_core_property_internal	24	static
+../mcmgr/mcmgr_internal_core_api_k32l3a6.c:260:14:mcmgr_get_current_core_internal	8	static
+../mcmgr/mcmgr_internal_core_api_k32l3a6.c:267:16:mcmgr_trigger_event_internal	16	static
+../mcmgr/mcmgr_internal_core_api_k32l3a6.c:297:6:MU_Rx3FullFlagISR	16	static

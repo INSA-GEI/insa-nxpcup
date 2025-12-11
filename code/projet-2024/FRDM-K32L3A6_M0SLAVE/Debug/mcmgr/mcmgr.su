@@ -1,0 +1,15 @@
+../mcmgr/mcmgr.c:16:16:MCMGR_RegisterEvent	24	static
+../mcmgr/mcmgr.c:32:23:MCMGR_TriggerEventCommon	32	static
+../mcmgr/mcmgr.c:50:16:MCMGR_TriggerEvent	16	static
+../mcmgr/mcmgr.c:55:16:MCMGR_TriggerEventForce	16	static
+../mcmgr/mcmgr.c:60:13:MCMGR_StartupDataEventHandler	24	static
+../mcmgr/mcmgr.c:85:13:MCMGR_FeedStartupDataEventHandler	24	static
+../mcmgr/mcmgr.c:113:16:MCMGR_EarlyInit	24	static
+../mcmgr/mcmgr.c:124:16:MCMGR_Init	24	static
+../mcmgr/mcmgr.c:149:16:MCMGR_StartCore	48	static
+../mcmgr/mcmgr.c:175:16:MCMGR_GetStartupData	32	static
+../mcmgr/mcmgr.c:196:16:MCMGR_StopCore	16	static
+../mcmgr/mcmgr.c:205:9:MCMGR_GetVersion	8	static
+../mcmgr/mcmgr.c:210:16:MCMGR_GetCoreProperty	32	static
+../mcmgr/mcmgr.c:222:10:MCMGR_GetCoreCount	8	static
+../mcmgr/mcmgr.c:227:14:MCMGR_GetCurrentCore	8	static

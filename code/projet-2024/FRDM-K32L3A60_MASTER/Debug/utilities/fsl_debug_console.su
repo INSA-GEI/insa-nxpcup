@@ -1,0 +1,11 @@
+../utilities/fsl_debug_console.c:424:10:DbgConsole_ReadOneCharacter	24	static
+../utilities/fsl_debug_console.c:495:5:DbgConsole_SendData	24	static
+../utilities/fsl_debug_console.c:548:5:DbgConsole_SendDataReliable	24	static
+../utilities/fsl_debug_console.c:629:5:DbgConsole_ReadLine	24	static
+../utilities/fsl_debug_console.c:695:5:DbgConsole_ReadCharacter	24	static
+../utilities/fsl_debug_console.c:772:10:DbgConsole_Init	64	static
+../utilities/fsl_debug_console.c:935:10:DbgConsole_EnterLowpower	16	static
+../utilities/fsl_debug_console.c:946:10:DbgConsole_ExitLowpower	16	static
+../utilities/fsl_debug_console.c:957:10:DbgConsole_Deinit	8	static
+/usr/local/mcuxpressoide-11.7.0_9198/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.7.0.202209140929/tools/redlib/include/sys/libconfig-arm.h:247:5:__sys_write	24	static
+/usr/local/mcuxpressoide-11.7.0_9198/ide/plugins/com.nxp.mcuxpresso.tools.linux_11.7.0.202209140929/tools/redlib/include/sys/libconfig-arm.h:241:5:__sys_readc	16	static

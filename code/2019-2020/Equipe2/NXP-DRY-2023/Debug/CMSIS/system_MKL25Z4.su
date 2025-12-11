@@ -1,0 +1,2 @@
+../CMSIS/system_MKL25Z4.c:121:6:SystemInit	8	static
+../CMSIS/system_MKL25Z4.c:133:6:SystemCoreClockUpdate	16	static

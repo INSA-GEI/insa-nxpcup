@@ -1,0 +1,5 @@
+../drivers/fsl_gpio.h:157:20:GPIO_WritePinOutput	24	static
+../drivers/fsl_gpio.c:55:17:GPIO_GetInstance	24	static
+../drivers/fsl_gpio.c:73:6:GPIO_PinInit	24	static
+../drivers/fsl_gpio.c:88:10:GPIO_GetPinsInterruptFlags	24	static
+../drivers/fsl_gpio.c:97:6:GPIO_ClearPinsInterruptFlags	24	static

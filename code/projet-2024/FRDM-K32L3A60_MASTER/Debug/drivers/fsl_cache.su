@@ -1,0 +1,2 @@
+../drivers/fsl_cache.h:61:20:L1CACHE_InvalidateCodeCache	4	static
+../drivers/fsl_cache.c:29:6:L1CACHE_InvalidateICacheByRange	16	static

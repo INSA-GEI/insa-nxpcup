@@ -1,0 +1,11 @@
+../drivers/fsl_msmc.c:22:10:SMC_SetPowerModeRun	24	static
+../drivers/fsl_msmc.c:41:10:SMC_SetPowerModeHsrun	24	static
+../drivers/fsl_msmc.c:60:10:SMC_SetPowerModeWait	16	static
+../drivers/fsl_msmc.c:78:10:SMC_SetPowerModeStop	24	static
+../drivers/fsl_msmc.c:121:10:SMC_SetPowerModeVlpr	24	static
+../drivers/fsl_msmc.c:140:10:SMC_SetPowerModeVlpw	16	static
+../drivers/fsl_msmc.c:158:10:SMC_SetPowerModeVlps	24	static
+../drivers/fsl_msmc.c:201:10:SMC_SetPowerModeLls	24	static
+../drivers/fsl_msmc.c:247:10:SMC_SetPowerModeVlls0	24	static
+../drivers/fsl_msmc.c:277:10:SMC_SetPowerModeVlls2	24	static
+../drivers/fsl_msmc.c:353:6:SMC_ConfigureResetPinFilter	24	static
