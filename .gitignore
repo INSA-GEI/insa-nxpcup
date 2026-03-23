@@ -39,6 +39,7 @@
 # STM32CubeIDE build directories
 Debug/
 Release/
+*.launch
 
 # Kicad files
 *.lck
