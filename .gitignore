@@ -1,0 +1,122 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Various GCC outputs
+*.cyclo
+*.su
+
+# Executables
+*.exe
+*.out
+*.app
+*.elf
+
+# STM32CubeIDE build directories
+Debug/
+Release/
+
+# Kicad files
+*.lck
+*#
+fp-info-cache
+sym-info-cache
+_autosave*
+*.kicad_sch-bak
+*.kicad_pcb-bak
+*.bak
+
+# Gerber files
+*.gbr
+*.GBR
+*.gerber
+*.GB
+*.geb
+*.drl
+*.pos
+*.gbrjob
+
+# ROS2
+*.pyc
+build/
+install/
+log/
+
+# Freecad
+*.FCBak
+*.step
+*.STEP
+*.stp
+*.STP
+*.stl
+*.STL
+*.bak
+
+# Others CAD files
+*.x_t
+*.SLDPRT
+*.sldprt
+*.SLDASM
+*.sldasm
+*.SLDDRW
+*.slddrw
+*.SLDDRT
+*.slddrt
+*.f3d
+*.f3z
+*.f3dbackup
+*.dxf
+*.DXF
+
+# Fichiers Divers
+*.pdf
+*.PDF
+
+*.7z
+*.zip
+*.arc
+*.rar
+
+*.mov
+*.avi
+*.mp4
+*.mp3
+*.mkv
+
+*.jpeg
+*.JPEG
+*.jpg
+*.JPG
+*.png
+*.PNG
+*.bmp
+*.BMP
+*.gif
+*.GIF
+
+*.log
+*.csv
