@@ -1,0 +1,32 @@
+NXP Software Content Register
+
+Package:                   dm-mcxn236-camera-interface-by-smartdma
+
+Version:                   1.0
+Outgoing License:          BSD-3-Clause
+License File:              LICENSE
+Description and comments:  This demo mainly implements parallel camera solution for MCXN236.
+Release Location:          https://github.com/nxp-appcodehub/dm-mcxn236-camera-interface-by-smartdma
+Origin:                    NXP (BSD-3-Clause)
+                           cmsis - ARM (Apache-2.0) - https://github.com/ARM-software/CMSIS_5/
+
+cmsis                      Name: CMSIS                                       
+                           Version: 5.4.0                                    
+                           Outgoing License: Apache License 2.0              
+                           License File: CMSIS/LICENSE.txt                  
+                           Format: source code                               
+                           Description and comments: Vendor-independent hardware          
+                           abstraction layer for microcontrollers that are   
+                           based on Arm Cortex processors, distributed by ARM. cores    
+                           Release Location:https://github.com/nxp-appcodehub/dm-mcxn236-camera-interface-by-smartdma/tree/main/CMSIS/    
+                           Origin: ARM (Apache-2.0) - https://github.com/ARM-software/CMSIS_5/ 
+
+SDK_Components             Name: SDK components and board peripheral drivers 
+                           Version: NA                                       
+                           Outgoing License: BSD-3-Clause                    
+                           License File: LICENSE                       
+                           Format: source code                               
+                           Description: SDK components and board peripheral  
+                           drivers, for example, flash and codec drivers.    
+                           Location: components/                             
+                           Origin: NXP (BSD-3-Clause)
