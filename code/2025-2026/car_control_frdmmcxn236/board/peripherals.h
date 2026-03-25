@@ -10,16 +10,77 @@
  * Included files
  **********************************************************************************************************************/
 #include "fsl_common.h"
+#include "fsl_pwm.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif /* __cplusplus */
 
 /***********************************************************************************************************************
+ * Definitions
+ **********************************************************************************************************************/
+/* Definitions for BOARD_InitPWM1 functional group */
+/* Definition of peripheral ID */
+#define PWM1_2_PERIPHERAL PWM1
+/* Definition of submodule 0 ID */
+#define PWM1_2_SM0 kPWM_Module_0
+/* Definition of clock source of submodule 0 frequency in Hertz */
+#define PWM1_2_SM0_SM_CLK_SOURCE_FREQ_HZ 150000000U
+/* Definition of submodule 0 counter clock source frequency in Hertz - PWM1_2_SM0_SM_CLK_SOURCE_FREQ_HZ divided by prescaler */
+#define PWM1_2_SM0_COUNTER_CLK_SOURCE_FREQ_HZ 150000000U
+/* Definition of submodule 0 counter (PWM) frequency in Hertz */
+#define PWM1_2_SM0_COUNTER_FREQ_HZ 16000U
+/* Definition of submodule 0 channel A ID */
+#define PWM1_2_SM0_A kPWM_PwmA
+/* Definition of submodule 0 channel B ID */
+#define PWM1_2_SM0_B kPWM_PwmB
+/* Definition of submodule 0 channel X ID */
+#define PWM1_2_SM0_X kPWM_PwmX
+/* Definition of submodule 1 ID */
+#define PWM1_2_SM1 kPWM_Module_1
+/* Definition of clock source of submodule 1 frequency in Hertz */
+#define PWM1_2_SM1_SM_CLK_SOURCE_FREQ_HZ 150000000U
+/* Definition of submodule 1 counter clock source frequency in Hertz - PWM1_2_SM1_SM_CLK_SOURCE_FREQ_HZ divided by prescaler */
+#define PWM1_2_SM1_COUNTER_CLK_SOURCE_FREQ_HZ 1171875U
+/* Definition of submodule 1 counter (PWM) frequency in Hertz */
+#define PWM1_2_SM1_COUNTER_FREQ_HZ 50U
+/* Definition of submodule 1 channel A ID */
+#define PWM1_2_SM1_A kPWM_PwmA
+/* Definition of submodule 1 channel B ID */
+#define PWM1_2_SM1_B kPWM_PwmB
+/* Definition of submodule 1 channel X ID */
+#define PWM1_2_SM1_X kPWM_PwmX
+/* Definition of fault Fault0 ID */
+#define PWM1_2_F0_FAULT0 kPWM_Fault_0
+/* Definition of fault Fault1 ID */
+#define PWM1_2_F0_FAULT1 kPWM_Fault_1
+/* Definition of fault Fault2 ID */
+#define PWM1_2_F0_FAULT2 kPWM_Fault_2
+/* Definition of fault Fault3 ID */
+#define PWM1_2_F0_FAULT3 kPWM_Fault_3
+
+/***********************************************************************************************************************
+ * Global variables
+ **********************************************************************************************************************/
+extern pwm_config_t PWM1_2_SM0_config;
+
+extern pwm_signal_param_t PWM1_2_SM0_pwm_function_config[2];
+extern pwm_config_t PWM1_2_SM1_config;
+
+extern pwm_signal_param_t PWM1_2_SM1_pwm_function_config[2];
+extern const pwm_fault_input_filter_param_t PWM1_2_faultInputFilter_config;
+extern const pwm_fault_param_t PWM1_2_Fault0_fault_config;
+extern const pwm_fault_param_t PWM1_2_Fault1_fault_config;
+extern const pwm_fault_param_t PWM1_2_Fault2_fault_config;
+extern const pwm_fault_param_t PWM1_2_Fault3_fault_config;
+
+/***********************************************************************************************************************
  * Initialization functions
  **********************************************************************************************************************/
 
 void BOARD_InitPeripherals(void);
+
+void BOARD_InitPWM1(void);
 
 /***********************************************************************************************************************
  * BOARD_InitBootPeripherals function

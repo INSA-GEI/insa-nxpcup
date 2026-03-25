@@ -30,6 +30,8 @@ pin_labels:
 - {pin_num: G5, pin_signal: PIO1_19/WUU0_IN15/FREQME_CLK_IN1/FC5_P3/CT3_MAT1/FLEXIO0_D27/SMARTDMA_PIO15/CAN0_RXD/ADC1_A19, label: CAM_RST, identifier: CAM_RST}
 - {pin_num: G4, pin_signal: PIO1_18/FREQME_CLK_IN0/FC5_P2/FC3_P6/CT3_MAT0/FLEXIO0_D26/SMARTDMA_PIO14/CAN0_TXD/ADC1_A18, label: CAM_PDWN, identifier: CAM_PDWN}
 - {pin_num: B6, pin_signal: PIO0_24/FC1_P0/CT0_MAT0/ADC0_B16, label: RS, identifier: RS_rev4;RS_revc;RS_revC;RS}
+- {pin_num: G16, pin_signal: PIO3_12/FC7_P4/FC6_P4/CT1_MAT2/PWM1_A0/FLEXIO0_D20/SMARTDMA_PIO12/SAI0_RXD1, label: A0, identifier: A0}
+- {pin_num: H16, pin_signal: PIO3_13/FC7_P5/FC6_P5/CT1_MAT3/PWM1_B0/FLEXIO0_D21/SMARTDMA_PIO13/SAI0_TXD1, label: B0, identifier: B0}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -50,6 +52,7 @@ void BOARD_InitBootPins(void)
     BOARD_InitPins();
     LCDFXIOPins_LCD();
     SmartDMACameraPins();
+    PWM1_SERVO();
 }
 
 /* clang-format off */
@@ -653,6 +656,72 @@ void SmartDMACameraPins(void)
 
                      /* Input Buffer Enable: Enables. */
                      | PORT_PCR_IBE(PCR_IBE_ibe1));
+}
+
+/* clang-format off */
+/*
+ * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+PWM1_SERVO:
+- options: {callFromInitBoot: 'true', coreID: cm33_core0, enableClock: 'true'}
+- pin_list:
+  - {pin_num: G16, peripheral: PWM1, signal: 'A, 0', pin_signal: PIO3_12/FC7_P4/FC6_P4/CT1_MAT2/PWM1_A0/FLEXIO0_D20/SMARTDMA_PIO12/SAI0_RXD1, direction: OUTPUT}
+  - {pin_num: H16, peripheral: PWM1, signal: 'B, 0', pin_signal: PIO3_13/FC7_P5/FC6_P5/CT1_MAT3/PWM1_B0/FLEXIO0_D21/SMARTDMA_PIO13/SAI0_TXD1, direction: OUTPUT}
+  - {pin_num: H17, peripheral: PWM1, signal: 'A, 1', pin_signal: PIO3_14/WUU0_IN25/CT_INP6/PWM1_A1/FLEXIO0_D22/SMARTDMA_PIO14/SAI0_RX_BCLK, direction: OUTPUT}
+  - {pin_num: H15, peripheral: PWM1, signal: 'B, 1', pin_signal: PIO3_15/CT_INP7/PWM1_B1/FLEXIO0_D23/SMARTDMA_PIO15/SAI0_RX_FS, direction: OUTPUT}
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
+ */
+/* clang-format on */
+
+/* FUNCTION ************************************************************************************************************
+ *
+ * Function Name : PWM1_SERVO
+ * Description   : Configures pin routing and optionally pin electrical features.
+ *
+ * END ****************************************************************************************************************/
+void PWM1_SERVO(void)
+{
+    /* Enables the clock for PORT3: Enables clock */
+    CLOCK_EnableClock(kCLOCK_Port3);
+
+    /* PORT3_12 (pin G16) is configured as PWM1_A0 */
+    PORT_SetPinMux(PWM1_SERVO_A0_PORT, PWM1_SERVO_A0_PIN, kPORT_MuxAlt5);
+
+    PORT3->PCR[12] = ((PORT3->PCR[12] &
+                       /* Mask bits to zero which are setting */
+                       (~(PORT_PCR_IBE_MASK)))
+
+                      /* Input Buffer Enable: Enables. */
+                      | PORT_PCR_IBE(PCR_IBE_ibe1));
+
+    /* PORT3_13 (pin H16) is configured as PWM1_B0 */
+    PORT_SetPinMux(PWM1_SERVO_B0_PORT, PWM1_SERVO_B0_PIN, kPORT_MuxAlt5);
+
+    PORT3->PCR[13] = ((PORT3->PCR[13] &
+                       /* Mask bits to zero which are setting */
+                       (~(PORT_PCR_IBE_MASK)))
+
+                      /* Input Buffer Enable: Enables. */
+                      | PORT_PCR_IBE(PCR_IBE_ibe1));
+
+    /* PORT3_14 (pin H17) is configured as PWM1_A1 */
+    PORT_SetPinMux(PORT3, 14U, kPORT_MuxAlt5);
+
+    PORT3->PCR[14] = ((PORT3->PCR[14] &
+                       /* Mask bits to zero which are setting */
+                       (~(PORT_PCR_IBE_MASK)))
+
+                      /* Input Buffer Enable: Enables. */
+                      | PORT_PCR_IBE(PCR_IBE_ibe1));
+
+    /* PORT3_15 (pin H15) is configured as PWM1_B1 */
+    PORT_SetPinMux(PORT3, 15U, kPORT_MuxAlt5);
+
+    PORT3->PCR[15] = ((PORT3->PCR[15] &
+                       /* Mask bits to zero which are setting */
+                       (~(PORT_PCR_IBE_MASK)))
+
+                      /* Input Buffer Enable: Enables. */
+                      | PORT_PCR_IBE(PCR_IBE_ibe1));
 }
 /***********************************************************************************************************************
  * EOF

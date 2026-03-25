@@ -25,31 +25,21 @@
 /*
  * @brief   Application entry point.
  */
- int main(void) {
+int main(void) {
 
-	 /* Init board hardware. */
-	 BOARD_InitBootPins();
-	 BOARD_InitBootClocks();
-	 BOARD_InitBootPeripherals();
+	/* Init board hardware. */
+	BOARD_InitBootPins();
+	BOARD_InitBootClocks();
+	BOARD_InitBootPeripherals();
 #ifndef BOARD_INIT_DEBUG_CONSOLE_PERIPHERAL
-	 /* Init FSL debug console. */
-	 BOARD_InitDebugConsole();
+	/* Init FSL debug console. */
+	BOARD_InitDebugConsole();
 #endif
 
-	 APP_Init();
+	PRINTF("Hello World\r\n");
 
-	 PRINTF("Hello World\r\n");
+	APP_Init();
+	// aucun retour apres ça, la suite est dans APP_Run, appelée par la tache xxxx
+	for (;;);
+}
 
-	 APP_Run();
-
-	 /* Force the counter to be placed into memory. */
-	 volatile static int i = 0 ;
-	 /* Enter an infinite loop, just incrementing a counter. */
-	 while(1) {
-		 i++ ;
-		 /* 'Dummy' NOP to allow source level single stepping of
-            tight while() loop */
-		 __asm volatile ("nop");
-	 }
-	 return 0 ;
- }

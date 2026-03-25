@@ -288,6 +288,32 @@ void LCDFXIOPins_LCD(void);
  */
 void SmartDMACameraPins(void);
 
+#define PCR_IBE_ibe1 0x01u /*!<@brief Input Buffer Enable: Enables */
+
+/*! @name PORT3_12 (coord G16), A0
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define PWM1_SERVO_A0_PORT PORT3                /*!<@brief PORT peripheral base pointer */
+#define PWM1_SERVO_A0_PIN 12U                   /*!<@brief PORT pin number */
+#define PWM1_SERVO_A0_PIN_MASK (1U << 12U)      /*!<@brief PORT pin mask */
+                                                /* @} */
+
+/*! @name PORT3_13 (coord H16), B0
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define PWM1_SERVO_B0_PORT PORT3                /*!<@brief PORT peripheral base pointer */
+#define PWM1_SERVO_B0_PIN 13U                   /*!<@brief PORT pin number */
+#define PWM1_SERVO_B0_PIN_MASK (1U << 13U)      /*!<@brief PORT pin mask */
+                                                /* @} */
+
+/*!
+ * @brief Configures pin routing and optionally pin electrical features.
+ *
+ */
+void PWM1_SERVO(void);
+
 #if defined(__cplusplus)
 }
 #endif
