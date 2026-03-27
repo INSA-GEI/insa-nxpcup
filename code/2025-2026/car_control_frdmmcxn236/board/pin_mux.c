@@ -32,6 +32,9 @@ pin_labels:
 - {pin_num: B6, pin_signal: PIO0_24/FC1_P0/CT0_MAT0/ADC0_B16, label: RS, identifier: RS_rev4;RS_revc;RS_revC;RS}
 - {pin_num: G16, pin_signal: PIO3_12/FC7_P4/FC6_P4/CT1_MAT2/PWM1_A0/FLEXIO0_D20/SMARTDMA_PIO12/SAI0_RXD1, label: A0, identifier: A0}
 - {pin_num: H16, pin_signal: PIO3_13/FC7_P5/FC6_P5/CT1_MAT3/PWM1_B0/FLEXIO0_D21/SMARTDMA_PIO13/SAI0_TXD1, label: B0, identifier: B0}
+- {pin_num: N7, pin_signal: PIO4_6/TRIG_OUT4/FC2_P6/CT_INP18/SMARTDMA_PIO30/ADC0_A3/ADC1_A3, label: T1, identifier: T1}
+- {pin_num: T8, pin_signal: PIO4_15/WUU0_IN21/TRIG_OUT4/USB1_VBUS_DIG/CT4_MAT3/FLEXIO0_D23/CAN1_RXD/ADC0_A1/CMP0_IN4P, label: T2, identifier: T2}
+- {pin_num: R8, pin_signal: PIO4_16/FC2_P2/USB1_OTG_PWR/CT3_MAT0/FLEXIO0_D24/CAN1_TXD/ADC0_A6, label: T3, identifier: T3}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -53,6 +56,7 @@ void BOARD_InitBootPins(void)
     LCDFXIOPins_LCD();
     SmartDMACameraPins();
     PWM1_SERVO();
+    DEBUG_GPIO();
 }
 
 /* clang-format off */
@@ -722,6 +726,84 @@ void PWM1_SERVO(void)
 
                       /* Input Buffer Enable: Enables. */
                       | PORT_PCR_IBE(PCR_IBE_ibe1));
+}
+
+/* clang-format off */
+/*
+ * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+DEBUG_GPIO:
+- options: {callFromInitBoot: 'true', coreID: cm33_core0, enableClock: 'true'}
+- pin_list:
+  - {pin_num: N7, peripheral: GPIO4, signal: 'GPIO, 6', pin_signal: PIO4_6/TRIG_OUT4/FC2_P6/CT_INP18/SMARTDMA_PIO30/ADC0_A3/ADC1_A3, direction: OUTPUT}
+  - {pin_num: T8, peripheral: GPIO4, signal: 'GPIO, 15', pin_signal: PIO4_15/WUU0_IN21/TRIG_OUT4/USB1_VBUS_DIG/CT4_MAT3/FLEXIO0_D23/CAN1_RXD/ADC0_A1/CMP0_IN4P, direction: OUTPUT}
+  - {pin_num: R8, peripheral: GPIO4, signal: 'GPIO, 16', pin_signal: PIO4_16/FC2_P2/USB1_OTG_PWR/CT3_MAT0/FLEXIO0_D24/CAN1_TXD/ADC0_A6, direction: OUTPUT}
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
+ */
+/* clang-format on */
+
+/* FUNCTION ************************************************************************************************************
+ *
+ * Function Name : DEBUG_GPIO
+ * Description   : Configures pin routing and optionally pin electrical features.
+ *
+ * END ****************************************************************************************************************/
+void DEBUG_GPIO(void)
+{
+    /* Enables the clock for GPIO4: Enables clock */
+    CLOCK_EnableClock(kCLOCK_Gpio4);
+    /* Enables the clock for PORT4: Enables clock */
+    CLOCK_EnableClock(kCLOCK_Port4);
+
+    gpio_pin_config_t T1_config = {
+        .pinDirection = kGPIO_DigitalOutput,
+        .outputLogic = 0U
+    };
+    /* Initialize GPIO functionality on pin PIO4_6 (pin N7)  */
+    GPIO_PinInit(DEBUG_GPIO_T1_GPIO, DEBUG_GPIO_T1_PIN, &T1_config);
+
+    gpio_pin_config_t T2_config = {
+        .pinDirection = kGPIO_DigitalOutput,
+        .outputLogic = 0U
+    };
+    /* Initialize GPIO functionality on pin PIO4_15 (pin T8)  */
+    GPIO_PinInit(DEBUG_GPIO_T2_GPIO, DEBUG_GPIO_T2_PIN, &T2_config);
+
+    gpio_pin_config_t T3_config = {
+        .pinDirection = kGPIO_DigitalOutput,
+        .outputLogic = 0U
+    };
+    /* Initialize GPIO functionality on pin PIO4_16 (pin R8)  */
+    GPIO_PinInit(DEBUG_GPIO_T3_GPIO, DEBUG_GPIO_T3_PIN, &T3_config);
+
+    /* PORT4_15 (pin T8) is configured as PIO4_15 */
+    PORT_SetPinMux(DEBUG_GPIO_T2_PORT, DEBUG_GPIO_T2_PIN, kPORT_MuxAlt0);
+
+    PORT4->PCR[15] = ((PORT4->PCR[15] &
+                       /* Mask bits to zero which are setting */
+                       (~(PORT_PCR_IBE_MASK)))
+
+                      /* Input Buffer Enable: Enables. */
+                      | PORT_PCR_IBE(PCR_IBE_ibe1));
+
+    /* PORT4_16 (pin R8) is configured as PIO4_16 */
+    PORT_SetPinMux(DEBUG_GPIO_T3_PORT, DEBUG_GPIO_T3_PIN, kPORT_MuxAlt0);
+
+    PORT4->PCR[16] = ((PORT4->PCR[16] &
+                       /* Mask bits to zero which are setting */
+                       (~(PORT_PCR_IBE_MASK)))
+
+                      /* Input Buffer Enable: Enables. */
+                      | PORT_PCR_IBE(PCR_IBE_ibe1));
+
+    /* PORT4_6 (pin N7) is configured as PIO4_6 */
+    PORT_SetPinMux(DEBUG_GPIO_T1_PORT, DEBUG_GPIO_T1_PIN, kPORT_MuxAlt0);
+
+    PORT4->PCR[6] = ((PORT4->PCR[6] &
+                      /* Mask bits to zero which are setting */
+                      (~(PORT_PCR_IBE_MASK)))
+
+                     /* Input Buffer Enable: Enables. */
+                     | PORT_PCR_IBE(PCR_IBE_ibe1));
 }
 /***********************************************************************************************************************
  * EOF

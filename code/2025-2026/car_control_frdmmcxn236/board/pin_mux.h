@@ -314,6 +314,59 @@ void SmartDMACameraPins(void);
  */
 void PWM1_SERVO(void);
 
+#define PCR_IBE_ibe1 0x01u /*!<@brief Input Buffer Enable: Enables */
+
+/*! @name PORT4_6 (coord N7), T1
+  @{ */
+
+/* Symbols to be used with GPIO driver */
+#define DEBUG_GPIO_T1_GPIO GPIO4               /*!<@brief GPIO peripheral base pointer */
+#define DEBUG_GPIO_T1_INIT_GPIO_VALUE 0U       /*!<@brief GPIO output initial state */
+#define DEBUG_GPIO_T1_GPIO_PIN 6U              /*!<@brief GPIO pin number */
+#define DEBUG_GPIO_T1_GPIO_PIN_MASK (1U << 6U) /*!<@brief GPIO pin mask */
+
+/* Symbols to be used with PORT driver */
+#define DEBUG_GPIO_T1_PORT PORT4               /*!<@brief PORT peripheral base pointer */
+#define DEBUG_GPIO_T1_PIN 6U                   /*!<@brief PORT pin number */
+#define DEBUG_GPIO_T1_PIN_MASK (1U << 6U)      /*!<@brief PORT pin mask */
+                                               /* @} */
+
+/*! @name PORT4_15 (coord T8), T2
+  @{ */
+
+/* Symbols to be used with GPIO driver */
+#define DEBUG_GPIO_T2_GPIO GPIO4                /*!<@brief GPIO peripheral base pointer */
+#define DEBUG_GPIO_T2_INIT_GPIO_VALUE 0U        /*!<@brief GPIO output initial state */
+#define DEBUG_GPIO_T2_GPIO_PIN 15U              /*!<@brief GPIO pin number */
+#define DEBUG_GPIO_T2_GPIO_PIN_MASK (1U << 15U) /*!<@brief GPIO pin mask */
+
+/* Symbols to be used with PORT driver */
+#define DEBUG_GPIO_T2_PORT PORT4                /*!<@brief PORT peripheral base pointer */
+#define DEBUG_GPIO_T2_PIN 15U                   /*!<@brief PORT pin number */
+#define DEBUG_GPIO_T2_PIN_MASK (1U << 15U)      /*!<@brief PORT pin mask */
+                                                /* @} */
+
+/*! @name PORT4_16 (coord R8), T3
+  @{ */
+
+/* Symbols to be used with GPIO driver */
+#define DEBUG_GPIO_T3_GPIO GPIO4                /*!<@brief GPIO peripheral base pointer */
+#define DEBUG_GPIO_T3_INIT_GPIO_VALUE 0U        /*!<@brief GPIO output initial state */
+#define DEBUG_GPIO_T3_GPIO_PIN 16U              /*!<@brief GPIO pin number */
+#define DEBUG_GPIO_T3_GPIO_PIN_MASK (1U << 16U) /*!<@brief GPIO pin mask */
+
+/* Symbols to be used with PORT driver */
+#define DEBUG_GPIO_T3_PORT PORT4                /*!<@brief PORT peripheral base pointer */
+#define DEBUG_GPIO_T3_PIN 16U                   /*!<@brief PORT pin number */
+#define DEBUG_GPIO_T3_PIN_MASK (1U << 16U)      /*!<@brief PORT pin mask */
+                                                /* @} */
+
+/*!
+ * @brief Configures pin routing and optionally pin electrical features.
+ *
+ */
+void DEBUG_GPIO(void);
+
 #if defined(__cplusplus)
 }
 #endif

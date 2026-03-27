@@ -38,6 +38,9 @@ void DEBUG_PrintPeriodicInfo(void);
  */
 void DEBUG_Panic(uint8_t *file, uint32_t line);
 
+#define DEBUG_EnterSection(x) GPIO_PinWrite(DEBUG_GPIO_##x##_GPIO, DEBUG_GPIO_##x##_PIN, 1)
+#define DEBUG_LeaveSection(x) GPIO_PinWrite(DEBUG_GPIO_##x##_GPIO, DEBUG_GPIO_##x##_PIN, 0)
+
 /**
  * @brief Run time counter overflow handler.
  * This function handles the overflow of the run time counter used by FREERTOS for task statistics.

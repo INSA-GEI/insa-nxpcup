@@ -44,6 +44,9 @@
                <pin_label pin_num="B6" pin_signal="PIO0_24/FC1_P0/CT0_MAT0/ADC0_B16" label="RS" identifier="RS_rev4;RS_revc;RS_revC;RS"/>
                <pin_label pin_num="G16" pin_signal="PIO3_12/FC7_P4/FC6_P4/CT1_MAT2/PWM1_A0/FLEXIO0_D20/SMARTDMA_PIO12/SAI0_RXD1" label="A0" identifier="A0"/>
                <pin_label pin_num="H16" pin_signal="PIO3_13/FC7_P5/FC6_P5/CT1_MAT3/PWM1_B0/FLEXIO0_D21/SMARTDMA_PIO13/SAI0_TXD1" label="B0" identifier="B0"/>
+               <pin_label pin_num="N7" pin_signal="PIO4_6/TRIG_OUT4/FC2_P6/CT_INP18/SMARTDMA_PIO30/ADC0_A3/ADC1_A3" label="T1" identifier="T1"/>
+               <pin_label pin_num="T8" pin_signal="PIO4_15/WUU0_IN21/TRIG_OUT4/USB1_VBUS_DIG/CT4_MAT3/FLEXIO0_D23/CAN1_RXD/ADC0_A1/CMP0_IN4P" label="T2" identifier="T2"/>
+               <pin_label pin_num="R8" pin_signal="PIO4_16/FC2_P2/USB1_OTG_PWR/CT3_MAT0/FLEXIO0_D24/CAN1_TXD/ADC0_A6" label="T3" identifier="T3"/>
             </pin_labels>
          </pins_profile>
          <functions_list>
@@ -308,6 +311,48 @@
                      </pin_features>
                   </pin>
                   <pin peripheral="PWM1" signal="B, 1" pin_num="H15" pin_signal="PIO3_15/CT_INP7/PWM1_B1/FLEXIO0_D23/SMARTDMA_PIO15/SAI0_RX_FS">
+                     <pin_features>
+                        <pin_feature name="direction" value="OUTPUT"/>
+                     </pin_features>
+                  </pin>
+               </pins>
+            </function>
+            <function name="DEBUG_GPIO">
+               <description>Configures pin routing and optionally pin electrical features.</description>
+               <options>
+                  <callFromInitBoot>true</callFromInitBoot>
+                  <coreID>cm33_core0</coreID>
+                  <enableClock>true</enableClock>
+               </options>
+               <dependencies>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Pins initialization requires the COMMON Driver in the project." problem_level="2" source="Pins:DEBUG_GPIO">
+                     <feature name="enabled" evaluation="equal" configuration="cm33_core0">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.port" description="Pins initialization requires the PORT Driver in the project." problem_level="2" source="Pins:DEBUG_GPIO">
+                     <feature name="enabled" evaluation="equal" configuration="cm33_core0">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.gpio" description="Pins initialization requires the GPIO Driver in the project." problem_level="2" source="Pins:DEBUG_GPIO">
+                     <feature name="enabled" evaluation="equal" configuration="cm33_core0">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+               </dependencies>
+               <pins>
+                  <pin peripheral="GPIO4" signal="GPIO, 6" pin_num="N7" pin_signal="PIO4_6/TRIG_OUT4/FC2_P6/CT_INP18/SMARTDMA_PIO30/ADC0_A3/ADC1_A3">
+                     <pin_features>
+                        <pin_feature name="direction" value="OUTPUT"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="GPIO4" signal="GPIO, 15" pin_num="T8" pin_signal="PIO4_15/WUU0_IN21/TRIG_OUT4/USB1_VBUS_DIG/CT4_MAT3/FLEXIO0_D23/CAN1_RXD/ADC0_A1/CMP0_IN4P">
+                     <pin_features>
+                        <pin_feature name="direction" value="OUTPUT"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="GPIO4" signal="GPIO, 16" pin_num="R8" pin_signal="PIO4_16/FC2_P2/USB1_OTG_PWR/CT3_MAT0/FLEXIO0_D24/CAN1_TXD/ADC0_A6">
                      <pin_features>
                         <pin_feature name="direction" value="OUTPUT"/>
                      </pin_features>

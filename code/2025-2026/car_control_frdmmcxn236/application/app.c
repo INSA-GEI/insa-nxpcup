@@ -34,12 +34,24 @@
 /* Taille de l'ecran */
 #define WIDTH  320
 #define HEIGHT 240
+#define SLICE_WIDTH 16
 
 /* Variables liées à la camera et au smartdma */
 smartdma_camera_param_t smartdmaParam;                  /*!< SMARTDMA function parameters. */
-volatile uint8_t g_camera_buffer[WIDTH*HEIGHT*2];
-volatile uint8_t middle_slice [HEIGHT*16*2];
 volatile uint8_t g_smartdma_stack[32];
+
+/* Buffer pour l'image et les bandes */
+//volatile uint8_t g_camera_buffer[WIDTH*HEIGHT*2];
+//volatile uint8_t middle_slice [HEIGHT*16*2];
+uint16_t g_camera_buffer[WIDTH*HEIGHT] __attribute__ ((aligned (4)));		// 32bit aligned
+
+uint16_t middle_slice [SLICE_WIDTH*HEIGHT] __attribute__ ((aligned (4)));	// 32bit aligned
+uint16_t bottom_slice [SLICE_WIDTH*HEIGHT] __attribute__ ((aligned (4)));	// 32bit aligned
+uint16_t top_slice [SLICE_WIDTH*HEIGHT] __attribute__ ((aligned (4)));	// 32bit aligned
+
+uint16_t middle_slice_Y [SLICE_WIDTH*HEIGHT] __attribute__ ((aligned (4)));	// 32bit aligned
+uint16_t bottom_slice_Y [SLICE_WIDTH*HEIGHT] __attribute__ ((aligned (4)));	// 32bit aligned
+uint16_t top_slice_Y [SLICE_WIDTH*HEIGHT] __attribute__ ((aligned (4)));	// 32bit aligned
 
 /* Variables liées à l'ecran et au flexio */
 static lcd_impl_flexio_t s_lcd_impl;
@@ -129,9 +141,11 @@ void APP_Init(void) {
 	INPUTMUX_Deinit(INPUTMUX0);
 
 	/* A revoir */
-	for(uint32_t i=0;i<320*240;i++){
-		g_camera_buffer[2*i]= 0x00;
-	}
+	//for(uint32_t i=0;i<320*240;i++){
+	//	g_camera_buffer[2*i]= 0x00;
+	//}
+
+	memset(g_camera_buffer, 0, sizeof(g_camera_buffer));
 
 	/* Init LCD support */
 	lcd_impl_init(&s_lcd_impl);
@@ -155,35 +169,130 @@ void APP_Init(void) {
 }
 
 /*!
- * @brief Function responsible for sending reveived image to display and
+ * @brief Function responsible for sending image to display and
  * save 3 slices (buffer) of incoming image for line detection.
  *
  * Called by task TASKS_CameraFrameReceived
  */
 void APP_CameraFrameReceived(void)
 {
-	uint16_t *input_buffer=(uint16_t *)g_camera_buffer;
-	uint16_t *output_buffer=(uint16_t *)middle_slice;
-
-	for (;;)
+	// Attend qu'une image soit reçue
+	if (xSemaphoreTake(xCameraFrameReceivedSemaphore, portMAX_DELAY) == pdTRUE)
 	{
-		// Attend qu'une image soit reçue
-		if (xSemaphoreTake(xCameraFrameReceivedSemaphore, portMAX_DELAY) == pdTRUE)
-		{
-			// Sending to screen
-			st7796_lcd_load(&s_lcd, (uint8_t *)g_camera_buffer, 0, 320-1, 0, 240-1);
+		DEBUG_EnterSection(T1);
 
-			// Recuperation d'une bande de 16 pixels de haut, au centre de l'ecran
-			for (int y = 0; y < HEIGHT; y++) {
-				for (int x = 0; x < 16; x++) {
-					//output_buffer[y * WIDTH + x] = input_buffer[y * WIDTH + x];
-					output_buffer[y * 16 + x] = input_buffer[y * WIDTH + x+((WIDTH/2)-8)];
-				}
+		// Envoi de l'image complete sur l'ecran (à gauche)
+		st7796_lcd_load(&s_lcd, (uint8_t *)g_camera_buffer, 0, 320-1, 0, 240-1);
+
+		DEBUG_EnterSection(T3);
+		// Recuperation d'une bande de SLICE_WIDTH pixels de haut, en bas de l'ecran
+		for (int y = 0; y < HEIGHT; y++) {
+			for (int x = 0; x < SLICE_WIDTH; x++) {
+				//output_buffer[y * WIDTH + x] = input_buffer[y * WIDTH + x];
+				bottom_slice[y * SLICE_WIDTH + x] = g_camera_buffer[y * WIDTH + x];
 			}
-
-			xSemaphoreGive(xComputelinesSemaphore);
 		}
+
+		// Recuperation d'une bande de SLICE_WIDTH pixels de haut, au centre de l'ecran
+		for (int y = 0; y < HEIGHT; y++) {
+			for (int x = 0; x < SLICE_WIDTH; x++) {
+				middle_slice[y * SLICE_WIDTH + x] = g_camera_buffer[y * WIDTH + x+((WIDTH/2)-(SLICE_WIDTH/2))];
+			}
+		}
+
+		// Recuperation d'une bande de SLICE_WIDTH pixels de haut, en haut de l'ecran
+		for (int y = 0; y < HEIGHT; y++) {
+			for (int x = 0; x < SLICE_WIDTH; x++) {
+				top_slice[y * SLICE_WIDTH + x] = g_camera_buffer[y * WIDTH + x+(WIDTH-SLICE_WIDTH)];
+			}
+		}
+
+		xSemaphoreGive(xComputelinesSemaphore);
+		DEBUG_LeaveSection(T3);
+		DEBUG_LeaveSection(T1);
 	}
+}
+
+#include <stdint.h>
+
+void APP_rotate_and_luma (
+    uint16_t *src,
+    uint16_t *dst,
+    int width,
+    int height
+) {
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+
+            uint16_t pixel = src[y * width + x];
+
+            // Extraction RGB565
+            uint16_t r = (pixel >> 11) & 0x1F;
+            uint16_t g = (pixel >> 5)  & 0x3F;
+            uint16_t b =  pixel        & 0x1F;
+
+            // Mise à l’échelle vers 8 bits
+            r = (r << 3) | (r >> 2);
+            g = (g << 2) | (g >> 4);
+            b = (b << 3) | (b >> 2);
+
+            // Luminance
+            uint16_t Y = (77 * r + 150 * g + 29 * b) >> 8;
+
+            // Stockée sur 16 bits (simple extension)
+            uint16_t Y16 = Y << 8; // ou Y * 257 pour full scale
+
+            // Rotation 90° horaire
+            dst[x * height + (height - 1 - y)] = Y16;
+        }
+    }
+}
+
+#include <stdint.h>
+
+void APP_binarize_per_line(
+    uint16_t *img,
+    int width,
+    int height
+) {
+    for (int y = 0; y < height; y++) {
+
+        uint16_t min = 0xFFFF;
+        uint16_t max = 0x0000;
+
+        // 1. trouver min / max
+        for (int x = 0; x < width; x++) {
+            uint16_t v = img[y * width + x];
+            if (v < min) min = v;
+            if (v > max) max = v;
+        }
+
+        // 2. seuil
+        uint16_t threshold = (min + max) >> 1;
+
+        // 3. seuillage
+        for (int x = 0; x < width; x++) {
+            uint16_t *p = &img[y * width + x];
+            *p = (*p >= threshold) ? 0xFFFF : 0x0000;
+        }
+    }
+}
+
+void APP_rotate_back (
+    uint16_t *src,
+    uint16_t *dst,
+    int width,
+    int height
+) {
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+
+            uint16_t pixel = src[y * width + x];
+
+            // Rotation 90° horaire
+            dst[x * height + (height - 1 - y)] = pixel;
+        }
+    }
 }
 
 /*!
@@ -193,13 +302,38 @@ void APP_CameraFrameReceived(void)
  */
 void APP_Computelines (void)
 {
-	for (;;)
+
+	if (xSemaphoreTake(xComputelinesSemaphore, portMAX_DELAY) == pdTRUE)
 	{
-		if (xSemaphoreTake(xComputelinesSemaphore, portMAX_DELAY) == pdTRUE)
-		{
-			// Envoi de la bande sur l'ecran
-			st7796_lcd_load(&s_lcd, (uint8_t *)middle_slice, WIDTH/2-8 , WIDTH/2+8-1, 240, 480-1);
-		}
+		DEBUG_EnterSection(T2);
+		DEBUG_EnterSection(T3);
+
+		APP_rotate_and_luma(top_slice, top_slice_Y, SLICE_WIDTH, HEIGHT);
+		APP_rotate_and_luma(middle_slice, middle_slice_Y, SLICE_WIDTH, HEIGHT);
+		APP_rotate_and_luma(bottom_slice, bottom_slice_Y, SLICE_WIDTH, HEIGHT);
+
+		APP_binarize_per_line(top_slice_Y, SLICE_WIDTH, HEIGHT);
+		APP_binarize_per_line(middle_slice_Y, SLICE_WIDTH, HEIGHT);
+		APP_binarize_per_line(bottom_slice_Y, SLICE_WIDTH, HEIGHT);
+
+		APP_rotate_back(top_slice_Y, top_slice, SLICE_WIDTH, HEIGHT);
+		APP_rotate_back(middle_slice_Y, middle_slice, SLICE_WIDTH, HEIGHT);
+		APP_rotate_back(bottom_slice_Y, bottom_slice, SLICE_WIDTH, HEIGHT);
+		DEBUG_LeaveSection(T3);
+
+		// Envoi de la bande du bas sur l'ecran
+		st7796_lcd_load(&s_lcd, (uint8_t *)bottom_slice, 0 , SLICE_WIDTH-1, 240, 480-1);
+		st7796_lcd_load(&s_lcd, (uint8_t *)bottom_slice, SLICE_WIDTH , 2*SLICE_WIDTH-1, 240, 480-1);
+
+		// Envoi de la bande du milieu sur l'ecran
+		st7796_lcd_load(&s_lcd, (uint8_t *)middle_slice, WIDTH/2-8 , WIDTH/2+8-1, 240, 480-1);
+		st7796_lcd_load(&s_lcd, (uint8_t *)middle_slice, WIDTH/2-8-SLICE_WIDTH , WIDTH/2+8-1-SLICE_WIDTH, 240, 480-1);
+
+		// Envoi de la bande du haut sur l'ecran
+		st7796_lcd_load(&s_lcd, (uint8_t *)top_slice, WIDTH-SLICE_WIDTH , WIDTH-1, 240, 480-1);
+		st7796_lcd_load(&s_lcd, (uint8_t *)top_slice, WIDTH-2*SLICE_WIDTH , WIDTH-SLICE_WIDTH-1, 240, 480-1);
+
+		DEBUG_LeaveSection(T2);
 	}
 }
 
