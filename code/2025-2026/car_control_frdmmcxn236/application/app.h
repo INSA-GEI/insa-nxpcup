@@ -8,6 +8,11 @@
 #ifndef APP_H_
 #define APP_H_
 
+#include "board.h"
+#include "pin_mux.h"
+#include "clock_config.h"
+#include "peripherals.h"
+
 void APP_Init(void);
 
 void APP_Run(void);

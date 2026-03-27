@@ -7,6 +7,9 @@
 
 #include "app.h"
 
+#include "configuration.h"
+#include "debug.h"
+
 // include pour ecran et camera
 #include "fsl_device_registers.h"
 #include "fsl_debug_console.h"
@@ -18,11 +21,6 @@
 #include "ov7670.h"
 #include "string.h"
 
-#include "board.h"
-#include "peripherals.h"
-#include "pin_mux.h"
-#include "clock_config.h"
-
 /* FreeRTOS kernel includes. */
 #include "FreeRTOS.h"
 #include "task.h"
@@ -30,15 +28,17 @@
 #include "timers.h"
 #include "semphr.h"
 
+/* Taille de l'ecran */
 #define WIDTH  320
 #define HEIGHT 240
 
+/* Variables liées à la camera et au smartdma */
 smartdma_camera_param_t smartdmaParam;                  /*!< SMARTDMA function parameters. */
 volatile uint8_t g_camera_buffer[WIDTH*HEIGHT*2];
 volatile uint8_t middle_slice [HEIGHT*16*2];
-volatile uint8_t middle_slice_rot [HEIGHT*16*2];
-volatile uint8_t g_samrtdma_stack[32];
-volatile uint32_t g_camera_complete_flag=0;
+volatile uint8_t g_smartdma_stack[32];
+
+/* Variables liées à l'ecran et au flexio */
 static lcd_impl_flexio_t s_lcd_impl;
 static st7796_lcd_t s_lcd = {
 		.config =
@@ -58,13 +58,12 @@ static st7796_lcd_t s_lcd = {
 		.user_data = &s_lcd_impl,
 };
 
-/* semaphores */
+/*******************************************************************************
+ * Semaphores
+ ******************************************************************************/
 SemaphoreHandle_t APP_Sem_CameraFrameReceived;
 SemaphoreHandle_t APP_Sem_SlicesCopied;
 
-/* Task priorities. */
-#define APP_Task_CameraFrameReceived_PRIORITY (configMAX_PRIORITIES - 1)
-#define APP_Task_Computelines_PRIORITY (configMAX_PRIORITIES - 1)
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -106,7 +105,8 @@ void APP_Init(void) {
 	SmartDMA_camera_pin_init();
 	Ov7670_Init();
 
-	g_camera_complete_flag=0;
+	DEBUG_Init();
+
 	INPUTMUX_Init(INPUTMUX0);
 	INPUTMUX_AttachSignal(INPUTMUX0, 0, kINPUTMUX_GpioPort0Pin4ToSmartDma);//P0_10/EZH_CAMERA_VSYNC
 	INPUTMUX_AttachSignal(INPUTMUX0, 1, kINPUTMUX_GpioPort0Pin5ToSmartDma);//P0_5/EZH_CAMERA_HSYNC
@@ -114,9 +114,11 @@ void APP_Init(void) {
 	/* Turn off clock to inputmux to save power. Clock is only needed to make changes */
 	INPUTMUX_Deinit(INPUTMUX0);
 
+	/* A revoir */
 	for(uint32_t i=0;i<320*240;i++){
 		g_camera_buffer[2*i]= 0x00;
 	}
+
 	lcd_impl_init(&s_lcd_impl);
 	st7796_lcd_init(&s_lcd);
 	st7796_lcd_load(&s_lcd, (uint8_t *)g_camera_buffer, 0, 	 320-1, 0,   240-1);
@@ -129,9 +131,8 @@ void APP_Init(void) {
 	NVIC_EnableIRQ(SMARTDMA_IRQn);
 	NVIC_SetPriority(SMARTDMA_IRQn, 3);
 
-	smartdmaParam.smartdma_stack = (uint32_t*)g_samrtdma_stack;
+	smartdmaParam.smartdma_stack = (uint32_t*)g_smartdma_stack;
 	smartdmaParam.p_buffer  		 = (uint32_t*)g_camera_buffer;
-	//SMARTDMA_Boot(kEZH_Camera_320240_Whole_Buf, &smartdmaParam, 0x2);
 	SMARTDMA_Boot(kSMARTDMA_FlexIO_CameraWholeFrame, &smartdmaParam, 0x2);
 
 	// Creation des semaphores
@@ -141,28 +142,33 @@ void APP_Init(void) {
 	// Creation des taches freertos
 	if (xTaskCreate(APP_Task_CameraFrameReceived,
 			"Frame RX",
-			configMINIMAL_STACK_SIZE + 100,
+			CAMERA_FRAME_RECEIVED_TASK_STACK_SIZE,
 			NULL,
-			APP_Task_CameraFrameReceived_PRIORITY,
+			CAMERA_FRAME_RECEIVED_TASK_PRIORITY,
 			NULL) != pdPASS)
 	{
-		PRINTF("Task creation failed!.\r\n");
-		while (1)
-			;
+		//PRINTF("Task creation failed!.\r\n");
+		DEBUG_Print ("Task creation failed!.\r\n");
+		DEBUG_Panic((uint8_t*)__FILE__, __LINE__);
 	}
 
 	// Creation des taches freertos
 	if (xTaskCreate(APP_Task_Computelines,
 			"Frame RX",
-			configMINIMAL_STACK_SIZE + 100,
+			COMPUTE_LINES_TASK_STACK_SIZE,
 			NULL,
-			APP_Task_Computelines_PRIORITY,
+			COMPUTE_LINES_TASK_PRIORITY,
 			NULL) != pdPASS)
 	{
-		PRINTF("Task creation failed!.\r\n");
-		while (1)
-			;
+		DEBUG_Print ("Task creation failed!.\r\n");
+		DEBUG_Panic((uint8_t*)__FILE__, __LINE__);
 	}
+
+	vQueueAddToRegistry(APP_Sem_CameraFrameReceived, "CameraFrameSem");
+	vQueueAddToRegistry(APP_Sem_SlicesCopied, "ImagesSliceSem");
+
+	DEBUG_Print("Rock'n'Roll, baby !");
+
 	// Lancement de freertos, pas de retour après ça !
 	vTaskStartScheduler();
 
@@ -210,6 +216,7 @@ void APP_Task_Computelines (void *pvParameters)
 		}
 	}
 }
+
 void APP_ConfigRuntimeTimer(void) {
 
 }

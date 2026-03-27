@@ -61,7 +61,6 @@
 // #define configUSE_MALLOC_FAILED_HOOK 0
 // #define configUSE_DAEMON_TASK_STARTUP_HOOK 0
 // #define configUSE_SB_COMPLETED_CALLBACK 0
-// #define configUSE_STATS_FORMATTING_FUNCTIONS 0
 // #define configUSE_CO_ROUTINES 0
 #define configMAX_CO_ROUTINE_PRIORITIES 2
 #define configASSERT(x) if(( x) == 0) {taskDISABLE_INTERRUPTS(); for (;;);}
@@ -97,11 +96,15 @@
 // #define configUSE_APPLICATION_TASK_TAG 0
 
 // Trace and debug
-#define configCHECK_FOR_STACK_OVERFLOW 0
-#define configGENERATE_RUN_TIME_STATS 0
-//#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS APP_ConfigRuntimeTimer
-//#define portGET_RUN_TIME_COUNTER_VALUE APP_GetRuntimeTimer
-#define configUSE_TRACE_FACILITY 0
+#define configCHECK_FOR_STACK_OVERFLOW 1
+#define configGENERATE_RUN_TIME_STATS 1
+#define configUSE_TRACE_FACILITY 1
+#define configUSE_STATS_FORMATTING_FUNCTIONS 1
+
+extern void configureTimerForRunTimeStats(void);
+extern unsigned long getRunTimeCounterValue(void);
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS configureTimerForRunTimeStats
+#define portGET_RUN_TIME_COUNTER_VALUE getRunTimeCounterValue
 
 #define INCLUDE_vTaskPrioritySet 1
 #define INCLUDE_uxTaskPriorityGet 1
