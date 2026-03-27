@@ -26,12 +26,14 @@
 // Tasks, semaphores, queues constants
 
 // Tasks stack sizes
+#define INITSYSTEM_TASK_STACK_SIZE 				configMINIMAL_STACK_SIZE + 100   // en mots de 32 bits
 #define CAMERA_FRAME_RECEIVED_TASK_STACK_SIZE 	configMINIMAL_STACK_SIZE + 100   // en mots de 32 bits
 #define COMPUTE_LINES_TASK_STACK_SIZE  			configMINIMAL_STACK_SIZE + 100	 // en mots de 32 bits. Pas besoin d'une stack énorme
 #define MOTORS_CONTROL_TASK_STACK_SIZE 			configMINIMAL_STACK_SIZE + 100   // en mots de 32 bits. Pour les calculs de la boussole
 #define DEBUGLOOP_TASK_STACK_SIZE 				configMINIMAL_STACK_SIZE + 300 	 // en mots de 32 bits. Besoin de pas mal d'espace pour la fonction sprintf
 
 // Tasks priorities
+#define INITSYSTEM_TASK_PRIORITY 				(configMAX_PRIORITIES-1)
 #define CAMERA_FRAME_RECEIVED_TASK_PRIORITY 	(tskIDLE_PRIORITY + 6)
 #define COMPUTE_LINES_TASK_PRIORITY 			(tskIDLE_PRIORITY + 5)
 #define MOTORS_CONTROL_TASK_PRIORITY			(tskIDLE_PRIORITY + 4)

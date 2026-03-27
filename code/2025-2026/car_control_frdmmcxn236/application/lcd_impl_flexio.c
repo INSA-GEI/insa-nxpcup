@@ -15,6 +15,9 @@
 
 #include "../board/pin_mux.h"
 
+/* Freertos support and definition of xLCDTransfertSemaphore semaphore */
+#include "app_tasks.h"
+
 #ifdef LCD_IMPL_FLEXIO
 
 #ifndef LCD_IMPL_FLEXIO_EDMA
@@ -34,6 +37,9 @@
 static void lcd_impl_set_cs_pin(bool set);
 static void lcd_impl_set_rs_pin(bool set);
 #if LCD_IMPL_FLEXIO_EDMA
+flexio_mculcd_edma_handle_t dma_hdl;
+edma_handle_t               tx_handle;
+
 static void lcd_impl_dma_callback(FLEXIO_MCULCD_Type *base, flexio_mculcd_edma_handle_t *handle, status_t status,
                                   void *userData);
 #endif
@@ -57,6 +63,8 @@ void lcd_impl_init(void) {
 
     EDMA_EnableChannelRequest(DMA0, 0);
     EDMA_SetChannelMux(DMA0, 0, kDma0RequestMuxFlexIO0ShiftRegister0Request);
+    NVIC_EnableIRQ(EDMA_0_CH0_IRQn);
+    NVIC_SetPriority(EDMA_0_CH0_IRQn, 3);
 #endif
 
     CLOCK_AttachClk(kPLL0_to_FLEXIO);
@@ -99,10 +107,22 @@ st7796_ret_t lcd_impl_reset(void *handle) {
 
 st7796_ret_t lcd_impl_write_cmd(void *handle, uint8_t *cmd, uint8_t len) {
 #if LCD_IMPL_FLEXIO_EDMA
-    while (s_dma_flag == 0U) {
-        /* Wait for transfer done */
-    }
+    //while (s_dma_flag == 0U) {
+    //    /* Wait for transfer done */
+    //}
+
+	// Wait for previous transfer to be done and semaphore xLCDTransfertSemaphore to be freed
+	// if xSemaphoreTake doesn't return pdTRUE, it means a problem (timeout) when taking semaphore => exit
+	if (xSemaphoreTake(xLCDTransfertSemaphore, portMAX_DELAY) != pdTRUE) return ST7796_ERROR;
 #endif
+
+	/**
+	 *
+	 * This function does no use dma for transfering commands
+	 * So, semaphore taken at start of this function will not be freed in dma callabck
+	 * Must be freed manually at the end
+	 *
+	 */
 
     FLEXIO_MCULCD_StartTransfer(&s_lcd_dev);
 
@@ -116,29 +136,39 @@ st7796_ret_t lcd_impl_write_cmd(void *handle, uint8_t *cmd, uint8_t len) {
     }
 
     FLEXIO_MCULCD_StopTransfer(&s_lcd_dev);
+
+#if LCD_IMPL_FLEXIO_EDMA
+    // no dma IT -> no dma callback -> no semaphore freeing
+    // Must be done manually here
+    xSemaphoreGive(xLCDTransfertSemaphore);
+#endif
     return ST7796_OK;
 }
 flexio_mculcd_transfer_t *xfer;
 
 st7796_ret_t lcd_impl_write_data(void *handle, uint8_t *data, uint32_t len) {
 #if LCD_IMPL_FLEXIO_EDMA
-    flexio_mculcd_edma_handle_t dma_hdl;
-    edma_handle_t               tx_handle;
+    //flexio_mculcd_edma_handle_t dma_hdl;
+    //edma_handle_t               tx_handle;
 
-    while (s_dma_flag == 0U) {
-        /* Wait for transfer done */
-    }
+    //while (s_dma_flag == 0U) {
+    //    /* Wait for transfer done */
+    //}
+
+	// Wait for previous transfer to be done and semaphore xLCDTransfertSemaphore to be freed
+	// if xSemaphoreTake doesn't return pdTRUE, it means a problem (timeout) when taking semaphore => exit
+	if (xSemaphoreTake(xLCDTransfertSemaphore, portMAX_DELAY) != pdTRUE) return ST7796_ERROR;
 
     EDMA_CreateHandle(&tx_handle, DMA0, 0);
     FLEXIO_MCULCD_TransferCreateHandleEDMA(&s_lcd_dev, &dma_hdl, lcd_impl_dma_callback, NULL, &tx_handle, NULL);
 #endif
 
 #if LCD_IMPL_FLEXIO_EDMA
-    s_dma_flag = 0;
+//    s_dma_flag = 0;
     FLEXIO_MCULCD_WriteDataEDMA(&s_lcd_dev, &dma_hdl, data, len);
-    while (s_dma_flag == 0U) {
-        /* Wait for transfer done */
-    }
+//    while (s_dma_flag == 0U) {
+//        /* Wait for transfer done */
+//    }
 
 #else
     FLEXIO_MCULCD_StartTransfer(&s_lcd_dev);
@@ -146,6 +176,9 @@ st7796_ret_t lcd_impl_write_data(void *handle, uint8_t *data, uint32_t len) {
     FLEXIO_MCULCD_StopTransfer(&s_lcd_dev);
 #endif
 
+#if LCD_IMPL_FLEXIO_EDMA
+    // Nothing to do: semaphore is freed ins dma callback
+#endif
     return ST7796_OK;
 }
 
@@ -168,7 +201,14 @@ static void lcd_impl_set_rs_pin(bool set) {
 #if LCD_IMPL_FLEXIO_EDMA
 static void lcd_impl_dma_callback(FLEXIO_MCULCD_Type *base, flexio_mculcd_edma_handle_t *handle, status_t status,
                                   void *userData) {
-    s_dma_flag = 1;
+    //s_dma_flag = 1;
+
+	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+	xSemaphoreGiveFromISR(xLCDTransfertSemaphore, &xHigherPriorityTaskWoken);
+	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+
+	//xSemaphoreGive(xLCDTransfertSemaphore);
 }
 #endif
 

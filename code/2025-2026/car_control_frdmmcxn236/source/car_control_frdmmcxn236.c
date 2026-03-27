@@ -38,7 +38,7 @@ int main(void) {
 
 	PRINTF("Hello World\r\n");
 
-	APP_Init();
+	APP_Start();
 	// aucun retour apres ça, la suite est dans APP_Run, appelée par la tache xxxx
 	for (;;);
 }

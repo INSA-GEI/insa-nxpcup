@@ -25,6 +25,14 @@
 #endif /* __TESTS__ */
 
 /* -------------------------------------------------------------------------
+ * Déclaration de la tâche TASKS_InitSystem
+ * ------------------------------------------------------------------------- */
+void TASKS_InitSystem(void *argument);
+
+/* Handle vers la tâche */
+static TaskHandle_t xInitSystemTaskHandle = NULL;
+
+/* -------------------------------------------------------------------------
  * Déclaration de la tâche TASKS_CameraFrameReceived
  * ------------------------------------------------------------------------- */
 void TASKS_CameraFrameReceived(void *argument);
@@ -144,6 +152,27 @@ void TASKS_Init(void) {
 		Error_Handler();
 	}
 
+	/* Création de la tâche TASKS_InitSystem*/
+	xTaskCreate(
+			TASKS_InitSystem,          // fonction de la tâche
+			"Init",             // nom (debug)
+			INITSYSTEM_TASK_STACK_SIZE,   // taille pile (en mots de 32 bits)
+			NULL,                  // paramètre d’entrée
+			INITSYSTEM_TASK_PRIORITY,     // priorité
+			&xInitSystemTaskHandle
+	);
+
+	if (xCameraFrameReceivedTaskHandle == NULL) {
+		// Erreur : pas de mémoire ?
+		Error_Handler();
+	}
+
+	/*****************************************************
+	 *
+	 * SEMAPHORES
+	 *
+	 *****************************************************/
+
 	/* Création du sémaphore de reception d'une image */
 	xCameraFrameReceivedSemaphore = xSemaphoreCreateBinary();
 	if (xCameraFrameReceivedSemaphore == NULL) {
@@ -179,20 +208,32 @@ void TASKS_Init(void) {
 	vQueueAddToRegistry(xLCDTransfertSemaphore, "LCDTransfertSem");
 
 	/* Timer batterie */
-//	xBatteryTimer = xTimerCreateStatic(
-//			"BatteryTimer",
-//			pdMS_TO_TICKS(BATTERY_TIMER_PERIOD_MS),
-//			pdTRUE,
-//			(void*)0,
-//			BatteryTimerCallback,
-//			&xBatteryTimerBuffer
-//	);
-//	configASSERT(xBatteryTimer != NULL);
+	//	xBatteryTimer = xTimerCreateStatic(
+	//			"BatteryTimer",
+	//			pdMS_TO_TICKS(BATTERY_TIMER_PERIOD_MS),
+	//			pdTRUE,
+	//			(void*)0,
+	//			BatteryTimerCallback,
+	//			&xBatteryTimerBuffer
+	//	);
+	//	configASSERT(xBatteryTimer != NULL);
 
-//	if (xTimerStart(xBatteryTimer, 0) != pdPASS) {
-//		// Erreur : pas de mémoire statique ?
-//		Error_Handler();
-//	}
+	//	if (xTimerStart(xBatteryTimer, 0) != pdPASS) {
+	//		// Erreur : pas de mémoire statique ?
+	//		Error_Handler();
+	//	}
+}
+
+/**
+ * @brief  Task function for initializing system.
+ * This function is in charge of initializing systeme
+ * returns and ends
+ * @param  argument: Not used
+ */
+void TASKS_InitSystem(void *argument ) {
+	APP_Init();
+
+	vTaskDelete(NULL); // Destroy current task
 }
 
 /**

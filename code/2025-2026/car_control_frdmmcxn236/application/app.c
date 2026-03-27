@@ -84,7 +84,11 @@ static void SmartDMA_camera_pin_init(void){
 	SMARTDMACAMERAPINS_CAM_D0_PORT->PCR[SMARTDMACAMERAPINS_CAM_D0_PIN] = (1<<12)|(7 << 8);
 }
 
-void APP_Init(void) {
+/**
+ * Application startup
+ * Never call it in a task !!!
+ */
+void APP_Start(void) {
 	/* Init board hardware. */
 	/* attach FRO 12M to FLEXCOMM4 (debug console) */
 	CLOCK_SetClkDiv(kCLOCK_DivFlexcom4Clk, 1u);
@@ -101,6 +105,17 @@ void APP_Init(void) {
 
 	/* Init debug support */
 	DEBUG_Init();
+
+	// Lancement de freertos, pas de retour après ça !
+	vTaskStartScheduler();
+
+	for (;;);
+}
+
+/**
+ * Application init, to be called in a task
+ */
+void APP_Init(void) {
 
 	/* Init Camera support */
 	SmartDMA_camera_pin_init();
@@ -137,11 +152,6 @@ void APP_Init(void) {
 
 	// All good, let's start
 	DEBUG_Print("Rock'n'Roll, baby !");
-
-	// Lancement de freertos, pas de retour après ça !
-	vTaskStartScheduler();
-
-	for (;;);
 }
 
 /*!

@@ -13,8 +13,11 @@
 #include "clock_config.h"
 #include "peripherals.h"
 
-void APP_Init(void);
+/* Startup of application, to be call first */
+void APP_Start(void);
 
+/* Functions to call in a task */
+void APP_Init(void);
 void APP_CameraFrameReceived(void);
 void APP_Computelines(void);
 void APP_CarControl(void);

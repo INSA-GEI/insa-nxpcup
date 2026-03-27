@@ -17,6 +17,7 @@ extern "C" {
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
+#include "semphr.h"
 
 /* -------------------------------------------------------------------------
  * Déclaration du sémaphore de reception d'une image (statique)
