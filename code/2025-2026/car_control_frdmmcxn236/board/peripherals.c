@@ -14,9 +14,6 @@ processor_version: 25.06.10
 functionalGroups:
 - name: BOARD_InitPeripherals
   UUID: e5bab1fb-8795-43b2-852f-6abc10ba3780
-  selectedCore: cm33_core0
-- name: BOARD_InitPWM1
-  UUID: dcf11862-cd7e-47d5-8617-519de2a001bf
   called_from_default_init: true
   selectedCore: cm33_core0
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
@@ -81,44 +78,17 @@ static void NVIC_init(void) {
 } */
 
 /***********************************************************************************************************************
- * BOARD_InitPWM1 functional group
- **********************************************************************************************************************/
-/***********************************************************************************************************************
- * NVIC_2 initialization code
+ * PWM1 initialization code
  **********************************************************************************************************************/
 /* clang-format off */
 /* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 instance:
-- name: 'NVIC_2'
-- type: 'nvic'
-- mode: 'general'
-- custom_name_enabled: 'false'
-- type_id: 'nvic'
-- functional_group: 'BOARD_InitPWM1'
-- peripheral: 'NVIC'
-- config_sets:
-  - nvic:
-    - interrupt_table: []
-    - interrupts: []
- * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
-/* clang-format on */
-
-/* Empty initialization function (commented out)
-static void NVIC_2_init(void) {
-} */
-
-/***********************************************************************************************************************
- * PWM1_2 initialization code
- **********************************************************************************************************************/
-/* clang-format off */
-/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
-instance:
-- name: 'PWM1_2'
+- name: 'PWM1'
 - type: 'pwm'
 - mode: 'general'
 - custom_name_enabled: 'false'
 - type_id: 'pwm_2.6.0'
-- functional_group: 'BOARD_InitPWM1'
+- functional_group: 'BOARD_InitPeripherals'
 - peripheral: 'PWM1'
 - config_sets:
   - fsl_pwm:
@@ -130,10 +100,10 @@ instance:
         - sm_id: 'SM0'
         - config:
           - clockSource: 'kPWM_BusClock'
-          - prescale: 'kPWM_Prescale_Divide_1'
-          - pwmFreq: '16 kHz'
+          - prescale: 'kPWM_Prescale_Divide_128'
+          - pwmFreq: '50hz'
           - pairOperation: 'kPWM_Independent'
-          - operationMode: 'kPWM_SignedCenterAligned'
+          - operationMode: 'kPWM_EdgeAligned'
           - initializationControl: 'kPWM_Initialize_LocalSync'
           - reloadLogic: 'kPWM_ReloadImmediate'
           - reloadSelect: 'kPWM_LocalReload'
@@ -185,71 +155,6 @@ instance:
         - common_interruptEn: 'false'
         - common_interrupt:
           - IRQn: 'FLEXPWM1_SUBMODULE0_IRQn'
-          - enable_interrrupt: 'enabled'
-          - enable_priority: 'false'
-          - priority: '0'
-          - enable_custom_name: 'false'
-      - 1:
-        - sm: 'kPWM_Module_1'
-        - sm_id: 'SM1'
-        - config:
-          - clockSource: 'kPWM_BusClock'
-          - prescale: 'kPWM_Prescale_Divide_128'
-          - pwmFreq: '50 Hz'
-          - pairOperation: 'kPWM_Independent'
-          - operationMode: 'kPWM_EdgeAligned'
-          - initializationControl: 'kPWM_Initialize_LocalSync'
-          - phaseDly: '0'
-          - reloadLogic: 'kPWM_ReloadImmediate'
-          - reloadSelect: 'kPWM_LocalReload'
-          - reloadFrequency: 'kPWM_LoadEveryOportunity'
-          - forceTrigger: 'kPWM_Force_Local'
-          - enableDebugMode: 'false'
-          - outputTrigger_sel: ''
-          - loadOK: 'false'
-          - startCounter: 'false'
-          - interrupt_sel: ''
-          - dma_used: 'false'
-          - dma:
-            - pwmDMA_activate: 'false'
-            - captureDMA_enable: ''
-            - captureDMA_source: 'kPWM_DMARequestDisable'
-            - captureDMA_watermark_control: 'kPWM_FIFOWatermarksOR'
-        - channels:
-          - 0:
-            - channel_id: 'A'
-            - functionSel: 'pwmOutput'
-            - pwm:
-              - dutyCyclePercent: '0'
-              - level: 'kPWM_HighTrue'
-              - fault_channel0:
-                - dismap: ''
-              - faultState: 'kPWM_PwmFaultState0'
-              - pwmchannelenable: 'false'
-              - deadtime_input_by_force: 'kPWM_UsePwm'
-              - clockSource: 'kPWM_BusClock'
-              - deadtimeValue: '0'
-              - interrupt_sel: ''
-          - 1:
-            - channel_id: 'B'
-            - functionSel: 'pwmOutput'
-            - pwm:
-              - dutyCyclePercent: '0'
-              - level: 'kPWM_HighTrue'
-              - fault_channel0:
-                - dismap: ''
-              - faultState: 'kPWM_PwmFaultState0'
-              - pwmchannelenable: 'false'
-              - deadtime_input_by_force: 'kPWM_UsePwm'
-              - clockSource: 'kPWM_BusClock'
-              - deadtimeValue: '0'
-              - interrupt_sel: ''
-          - 2:
-            - channel_id: 'X'
-            - functionSel: 'notUsed'
-        - common_interruptEn: 'false'
-        - common_interrupt:
-          - IRQn: 'FLEXPWM1_SUBMODULE1_IRQn'
           - enable_interrrupt: 'enabled'
           - enable_priority: 'false'
           - priority: '0'
@@ -307,38 +212,7 @@ instance:
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
 /* PWM main configuration */
-pwm_config_t PWM1_2_SM0_config = {
-  .clockSource = kPWM_BusClock,
-  .prescale = kPWM_Prescale_Divide_1,
-  .pairOperation = kPWM_Independent,
-  .initializationControl = kPWM_Initialize_LocalSync,
-  .reloadLogic = kPWM_ReloadImmediate,
-  .reloadSelect = kPWM_LocalReload,
-  .reloadFrequency = kPWM_LoadEveryOportunity,
-  .forceTrigger = kPWM_Force_Local,
-  .enableDebugMode = false,
-};
-
-pwm_signal_param_t PWM1_2_SM0_pwm_function_config[2]= {
-  {
-    .pwmChannel = kPWM_PwmA,
-    .dutyCyclePercent = 0U,
-    .level = kPWM_HighTrue,
-    .faultState = kPWM_PwmFaultState0,
-    .pwmchannelenable = false,
-    .deadtimeValue = 0U
-  },
-  {
-    .pwmChannel = kPWM_PwmB,
-    .dutyCyclePercent = 0U,
-    .level = kPWM_HighTrue,
-    .faultState = kPWM_PwmFaultState0,
-    .pwmchannelenable = false,
-    .deadtimeValue = 0U
-  },
-};
-
-pwm_config_t PWM1_2_SM1_config = {
+pwm_config_t PWM1_SM0_config = {
   .clockSource = kPWM_BusClock,
   .prescale = kPWM_Prescale_Divide_128,
   .pairOperation = kPWM_Independent,
@@ -350,7 +224,7 @@ pwm_config_t PWM1_2_SM1_config = {
   .enableDebugMode = false,
 };
 
-pwm_signal_param_t PWM1_2_SM1_pwm_function_config[2]= {
+pwm_signal_param_t PWM1_SM0_pwm_function_config[2]= {
   {
     .pwmChannel = kPWM_PwmA,
     .dutyCyclePercent = 0U,
@@ -369,63 +243,97 @@ pwm_signal_param_t PWM1_2_SM1_pwm_function_config[2]= {
   },
 };
 
-const pwm_fault_input_filter_param_t PWM1_2_faultInputFilter_config = {
+const pwm_fault_input_filter_param_t PWM1_faultInputFilter_config = {
   .faultFilterPeriod = 1U,
   .faultFilterCount = 3U,
   .faultGlitchStretch = false
 };
-const pwm_fault_param_t PWM1_2_Fault0_fault_config = {
+const pwm_fault_param_t PWM1_Fault0_fault_config = {
   .faultClearingMode = kPWM_Automatic,
   .faultLevel = false,
   .enableCombinationalPath = true,
   .recoverMode = kPWM_NoRecovery
 };
-const pwm_fault_param_t PWM1_2_Fault1_fault_config = {
+const pwm_fault_param_t PWM1_Fault1_fault_config = {
   .faultClearingMode = kPWM_Automatic,
   .faultLevel = false,
   .enableCombinationalPath = true,
   .recoverMode = kPWM_NoRecovery
 };
-const pwm_fault_param_t PWM1_2_Fault2_fault_config = {
+const pwm_fault_param_t PWM1_Fault2_fault_config = {
   .faultClearingMode = kPWM_Automatic,
   .faultLevel = false,
   .enableCombinationalPath = true,
   .recoverMode = kPWM_NoRecovery
 };
-const pwm_fault_param_t PWM1_2_Fault3_fault_config = {
+const pwm_fault_param_t PWM1_Fault3_fault_config = {
   .faultClearingMode = kPWM_Automatic,
   .faultLevel = false,
   .enableCombinationalPath = true,
   .recoverMode = kPWM_NoRecovery
 };
 
-static void PWM1_2_init(void) {
+static void PWM1_init(void) {
   /* Initialize PWM submodule SM0 main configuration */
-  PWM_Init(PWM1_2_PERIPHERAL, PWM1_2_SM0, &PWM1_2_SM0_config);
-  /* Initialize PWM submodule SM1 main configuration */
-  PWM_Init(PWM1_2_PERIPHERAL, PWM1_2_SM1, &PWM1_2_SM1_config);
+  PWM_Init(PWM1_PERIPHERAL, PWM1_SM0, &PWM1_SM0_config);
   /* Initialize fault input filter configuration */
-  PWM_SetupFaultInputFilter(PWM1_2_PERIPHERAL, &PWM1_2_faultInputFilter_config);
+  PWM_SetupFaultInputFilter(PWM1_PERIPHERAL, &PWM1_faultInputFilter_config);
   /* Initialize fault channel 0 fault Fault0 configuration */
-  PWM_SetupFaults(PWM1_2_PERIPHERAL, PWM1_2_F0_FAULT0, &PWM1_2_Fault0_fault_config);
+  PWM_SetupFaults(PWM1_PERIPHERAL, PWM1_F0_FAULT0, &PWM1_Fault0_fault_config);
   /* Initialize fault channel 0 fault Fault1 configuration */
-  PWM_SetupFaults(PWM1_2_PERIPHERAL, PWM1_2_F0_FAULT1, &PWM1_2_Fault1_fault_config);
+  PWM_SetupFaults(PWM1_PERIPHERAL, PWM1_F0_FAULT1, &PWM1_Fault1_fault_config);
   /* Initialize fault channel 0 fault Fault2 configuration */
-  PWM_SetupFaults(PWM1_2_PERIPHERAL, PWM1_2_F0_FAULT2, &PWM1_2_Fault2_fault_config);
+  PWM_SetupFaults(PWM1_PERIPHERAL, PWM1_F0_FAULT2, &PWM1_Fault2_fault_config);
   /* Initialize fault channel 0 fault Fault3 configuration */
-  PWM_SetupFaults(PWM1_2_PERIPHERAL, PWM1_2_F0_FAULT3, &PWM1_2_Fault3_fault_config);
+  PWM_SetupFaults(PWM1_PERIPHERAL, PWM1_F0_FAULT3, &PWM1_Fault3_fault_config);
   /* Initialize deadtime logic input for the channel A */
-  PWM_SetupForceSignal(PWM1_2_PERIPHERAL, PWM1_2_SM0, PWM1_2_SM0_A, kPWM_UsePwm);
+  PWM_SetupForceSignal(PWM1_PERIPHERAL, PWM1_SM0, PWM1_SM0_A, kPWM_UsePwm);
   /* Initialize deadtime logic input for the channel B */
-  PWM_SetupForceSignal(PWM1_2_PERIPHERAL, PWM1_2_SM0, PWM1_2_SM0_B, kPWM_UsePwm);
-  /* Initialize deadtime logic input for the channel A */
-  PWM_SetupForceSignal(PWM1_2_PERIPHERAL, PWM1_2_SM1, PWM1_2_SM1_A, kPWM_UsePwm);
-  /* Initialize deadtime logic input for the channel B */
-  PWM_SetupForceSignal(PWM1_2_PERIPHERAL, PWM1_2_SM1, PWM1_2_SM1_B, kPWM_UsePwm);
+  PWM_SetupForceSignal(PWM1_PERIPHERAL, PWM1_SM0, PWM1_SM0_B, kPWM_UsePwm);
   /* Setup PWM output setting for submodule SM0 */
-  PWM_SetupPwm(PWM1_2_PERIPHERAL, PWM1_2_SM0, PWM1_2_SM0_pwm_function_config, 2U, kPWM_SignedCenterAligned, PWM1_2_SM0_COUNTER_FREQ_HZ, PWM1_2_SM0_SM_CLK_SOURCE_FREQ_HZ);
-  /* Setup PWM output setting for submodule SM1 */
-  PWM_SetupPwm(PWM1_2_PERIPHERAL, PWM1_2_SM1, PWM1_2_SM1_pwm_function_config, 2U, kPWM_EdgeAligned, PWM1_2_SM1_COUNTER_FREQ_HZ, PWM1_2_SM1_SM_CLK_SOURCE_FREQ_HZ);
+  PWM_SetupPwm(PWM1_PERIPHERAL, PWM1_SM0, PWM1_SM0_pwm_function_config, 2U, kPWM_EdgeAligned, PWM1_SM0_COUNTER_FREQ_HZ, PWM1_SM0_SM_CLK_SOURCE_FREQ_HZ);
+}
+
+/***********************************************************************************************************************
+ * CTIMER0 initialization code
+ **********************************************************************************************************************/
+/* clang-format off */
+/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+instance:
+- name: 'CTIMER0'
+- type: 'ctimer'
+- mode: 'Capture_Match'
+- custom_name_enabled: 'false'
+- type_id: 'ctimer_2.2.2'
+- functional_group: 'BOARD_InitPeripherals'
+- peripheral: 'CTIMER0'
+- config_sets:
+  - fsl_ctimer:
+    - ctimerConfig:
+      - mode: 'kCTIMER_TimerMode'
+      - clockSource: 'FunctionClock'
+      - clockSourceFreq: 'ClocksTool_DefaultInit'
+      - timerPrescaler: '1'
+    - EnableTimerInInit: 'false'
+    - matchChannels: []
+    - captureChannels: []
+    - interruptCallbackConfig:
+      - interrupt:
+        - IRQn: 'CTIMER0_IRQn'
+        - enable_priority: 'false'
+        - priority: '0'
+      - callback: 'kCTIMER_NoCallback'
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
+/* clang-format on */
+const ctimer_config_t CTIMER0_config = {
+  .mode = kCTIMER_TimerMode,
+  .input = kCTIMER_Capture_0,
+  .prescale = 0
+};
+
+static void CTIMER0_init(void) {
+  /* CTIMER0 peripheral initialization */
+  CTIMER_Init(CTIMER0_PERIPHERAL, &CTIMER0_config);
 }
 
 /***********************************************************************************************************************
@@ -434,12 +342,8 @@ static void PWM1_2_init(void) {
 void BOARD_InitPeripherals(void)
 {
   /* Initialize components */
-}
-
-void BOARD_InitPWM1(void)
-{
-  /* Initialize components */
-  PWM1_2_init();
+  PWM1_init();
+  CTIMER0_init();
 }
 
 /***********************************************************************************************************************
@@ -447,5 +351,5 @@ void BOARD_InitPWM1(void)
  **********************************************************************************************************************/
 void BOARD_InitBootPeripherals(void)
 {
-  BOARD_InitPWM1();
+  BOARD_InitPeripherals();
 }
