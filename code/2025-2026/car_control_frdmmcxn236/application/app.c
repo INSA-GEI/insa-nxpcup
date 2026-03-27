@@ -28,6 +28,9 @@
 #include "timers.h"
 #include "semphr.h"
 
+/* Taches applicatives */
+#include "app_tasks.h"
+
 /* Taille de l'ecran */
 #define WIDTH  320
 #define HEIGHT 240
@@ -59,21 +62,12 @@ static st7796_lcd_t s_lcd = {
 };
 
 /*******************************************************************************
- * Semaphores
- ******************************************************************************/
-SemaphoreHandle_t APP_Sem_CameraFrameReceived;
-SemaphoreHandle_t APP_Sem_SlicesCopied;
-
-/*******************************************************************************
  * Prototypes
  ******************************************************************************/
-void APP_Task_CameraFrameReceived(void *pvParameters);
-void APP_Task_Computelines(void *pvParameters);
-
 void SmartDMA_camera_callback(void *param){
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
-	xSemaphoreGiveFromISR(APP_Sem_CameraFrameReceived, &xHigherPriorityTaskWoken);
+	xSemaphoreGiveFromISR(xCameraFrameReceivedSemaphore, &xHigherPriorityTaskWoken);
 
 	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
@@ -102,10 +96,15 @@ void APP_Init(void) {
 	CLOCK_EnableClock(kCLOCK_LPI2c2);
 	CLOCK_SetClkDiv(kCLOCK_DivFlexcom2Clk, 1u);
 
+	/* Init task, queues and semaphores */
+	TASKS_Init();
+
+	/* Init debug support */
+	DEBUG_Init();
+
+	/* Init Camera support */
 	SmartDMA_camera_pin_init();
 	Ov7670_Init();
-
-	DEBUG_Init();
 
 	INPUTMUX_Init(INPUTMUX0);
 	INPUTMUX_AttachSignal(INPUTMUX0, 0, kINPUTMUX_GpioPort0Pin4ToSmartDma);//P0_10/EZH_CAMERA_VSYNC
@@ -119,6 +118,7 @@ void APP_Init(void) {
 		g_camera_buffer[2*i]= 0x00;
 	}
 
+	/* Init LCD support */
 	lcd_impl_init(&s_lcd_impl);
 	st7796_lcd_init(&s_lcd);
 	st7796_lcd_load(&s_lcd, (uint8_t *)g_camera_buffer, 0, 	 320-1, 0,   240-1);
@@ -135,38 +135,7 @@ void APP_Init(void) {
 	smartdmaParam.p_buffer  		 = (uint32_t*)g_camera_buffer;
 	SMARTDMA_Boot(kSMARTDMA_FlexIO_CameraWholeFrame, &smartdmaParam, 0x2);
 
-	// Creation des semaphores
-	APP_Sem_CameraFrameReceived = xSemaphoreCreateBinary();
-	APP_Sem_SlicesCopied = xSemaphoreCreateBinary();
-
-	// Creation des taches freertos
-	if (xTaskCreate(APP_Task_CameraFrameReceived,
-			"Frame RX",
-			CAMERA_FRAME_RECEIVED_TASK_STACK_SIZE,
-			NULL,
-			CAMERA_FRAME_RECEIVED_TASK_PRIORITY,
-			NULL) != pdPASS)
-	{
-		//PRINTF("Task creation failed!.\r\n");
-		DEBUG_Print ("Task creation failed!.\r\n");
-		DEBUG_Panic((uint8_t*)__FILE__, __LINE__);
-	}
-
-	// Creation des taches freertos
-	if (xTaskCreate(APP_Task_Computelines,
-			"Frame RX",
-			COMPUTE_LINES_TASK_STACK_SIZE,
-			NULL,
-			COMPUTE_LINES_TASK_PRIORITY,
-			NULL) != pdPASS)
-	{
-		DEBUG_Print ("Task creation failed!.\r\n");
-		DEBUG_Panic((uint8_t*)__FILE__, __LINE__);
-	}
-
-	vQueueAddToRegistry(APP_Sem_CameraFrameReceived, "CameraFrameSem");
-	vQueueAddToRegistry(APP_Sem_SlicesCopied, "ImagesSliceSem");
-
+	// All good, let's start
 	DEBUG_Print("Rock'n'Roll, baby !");
 
 	// Lancement de freertos, pas de retour après ça !
@@ -176,10 +145,12 @@ void APP_Init(void) {
 }
 
 /*!
- * @brief Task responsible for sending reveived image to display and
+ * @brief Function responsible for sending reveived image to display and
  * save 3 slices (buffer) of incoming image for line detection.
+ *
+ * Called by task TASKS_CameraFrameReceived
  */
-void APP_Task_CameraFrameReceived(void *pvParameters)
+void APP_CameraFrameReceived(void)
 {
 	uint16_t *input_buffer=(uint16_t *)g_camera_buffer;
 	uint16_t *output_buffer=(uint16_t *)middle_slice;
@@ -187,7 +158,7 @@ void APP_Task_CameraFrameReceived(void *pvParameters)
 	for (;;)
 	{
 		// Attend qu'une image soit reçue
-		if (xSemaphoreTake(APP_Sem_CameraFrameReceived, portMAX_DELAY) == pdTRUE)
+		if (xSemaphoreTake(xCameraFrameReceivedSemaphore, portMAX_DELAY) == pdTRUE)
 		{
 			// Sending to screen
 			st7796_lcd_load(&s_lcd, (uint8_t *)g_camera_buffer, 0, 320-1, 0, 240-1);
@@ -200,16 +171,21 @@ void APP_Task_CameraFrameReceived(void *pvParameters)
 				}
 			}
 
-			xSemaphoreGive(APP_Sem_SlicesCopied);
+			xSemaphoreGive(xComputelinesSemaphore);
 		}
 	}
 }
 
-void APP_Task_Computelines (void *pvParameters)
+/*!
+ * @brief Function responsible for searching for line in image slices.
+ *
+ * Called by task TASKS_Computelines
+ */
+void APP_Computelines (void)
 {
 	for (;;)
 	{
-		if (xSemaphoreTake(APP_Sem_SlicesCopied, portMAX_DELAY) == pdTRUE)
+		if (xSemaphoreTake(xComputelinesSemaphore, portMAX_DELAY) == pdTRUE)
 		{
 			// Envoi de la bande sur l'ecran
 			st7796_lcd_load(&s_lcd, (uint8_t *)middle_slice, WIDTH/2-8 , WIDTH/2+8-1, 240, 480-1);
@@ -217,11 +193,12 @@ void APP_Task_Computelines (void *pvParameters)
 	}
 }
 
-void APP_ConfigRuntimeTimer(void) {
-
-}
-
-uint32_t APP_GetRuntimeTimer (void) {
-	return 0;
+/*!
+ * @brief Function responsible for motor control
+ *
+ * Called by task TASKS_MotorsControlLoop
+ */
+void APP_CarControl (void) {
+	// Todo
 }
 

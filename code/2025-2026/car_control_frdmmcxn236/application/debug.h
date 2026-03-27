@@ -44,4 +44,6 @@ void DEBUG_Panic(uint8_t *file, uint32_t line);
  */
 void runTimeCounterOverflowHandler(void);
 
+void Error_Handler(void);
+
 #endif /* DEBUG_H_ */

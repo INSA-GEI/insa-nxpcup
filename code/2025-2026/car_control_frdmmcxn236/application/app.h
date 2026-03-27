@@ -15,6 +15,8 @@
 
 void APP_Init(void);
 
-void APP_Run(void);
+void APP_CameraFrameReceived(void);
+void APP_Computelines(void);
+void APP_CarControl(void);
 
 #endif /* APP_H_ */
