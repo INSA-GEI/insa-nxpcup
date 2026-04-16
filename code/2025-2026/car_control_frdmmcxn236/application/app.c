@@ -31,6 +31,13 @@
 /* Taches applicatives */
 #include "app_tasks.h"
 
+/* Lib image */
+#include "image_lib/all.h"
+#include "image_processing.h"
+
+/* moteurs */
+#include "motor_control.h"
+
 /* Taille de l'ecran */
 #define WIDTH  320
 #define HEIGHT 240
@@ -43,15 +50,16 @@ volatile uint8_t g_smartdma_stack[32];
 /* Buffer pour l'image et les bandes */
 //volatile uint8_t g_camera_buffer[WIDTH*HEIGHT*2];
 //volatile uint8_t middle_slice [HEIGHT*16*2];
-uint16_t g_camera_buffer[WIDTH*HEIGHT] __attribute__ ((aligned (4)));		// 32bit aligned
+//uint16_t g_camera_buffer[WIDTH*HEIGHT] __attribute__ ((aligned (4)));		// 32bit aligned
+CAMERA_BUFFER_DECLARE(g_camera_buffer, CAMERA_WIDTH * CAMERA_HEIGHT);
 
-uint16_t middle_slice [SLICE_WIDTH*HEIGHT] __attribute__ ((aligned (4)));	// 32bit aligned
-uint16_t bottom_slice [SLICE_WIDTH*HEIGHT] __attribute__ ((aligned (4)));	// 32bit aligned
-uint16_t top_slice [SLICE_WIDTH*HEIGHT] __attribute__ ((aligned (4)));	// 32bit aligned
-
-uint16_t middle_slice_Y [SLICE_WIDTH*HEIGHT] __attribute__ ((aligned (4)));	// 32bit aligned
-uint16_t bottom_slice_Y [SLICE_WIDTH*HEIGHT] __attribute__ ((aligned (4)));	// 32bit aligned
-uint16_t top_slice_Y [SLICE_WIDTH*HEIGHT] __attribute__ ((aligned (4)));	// 32bit aligned
+//uint16_t middle_slice [SLICE_WIDTH*HEIGHT] __attribute__ ((aligned (4)));	// 32bit aligned
+//uint16_t bottom_slice [SLICE_WIDTH*HEIGHT] __attribute__ ((aligned (4)));	// 32bit aligned
+//uint16_t top_slice [SLICE_WIDTH*HEIGHT] __attribute__ ((aligned (4)));	// 32bit aligned
+//
+//uint16_t middle_slice_Y [SLICE_WIDTH*HEIGHT] __attribute__ ((aligned (4)));	// 32bit aligned
+//uint16_t bottom_slice_Y [SLICE_WIDTH*HEIGHT] __attribute__ ((aligned (4)));	// 32bit aligned
+//uint16_t top_slice_Y [SLICE_WIDTH*HEIGHT] __attribute__ ((aligned (4)));	// 32bit aligned
 
 /* Variables liées à l'ecran et au flexio */
 static lcd_impl_flexio_t s_lcd_impl;
@@ -73,6 +81,16 @@ static st7796_lcd_t s_lcd = {
 		.user_data = &s_lcd_impl,
 };
 
+CAMERA_BUFFER_DECLARE(g_debug_buffer, CAMERA_HEIGHT * DEBUG_BUFFER_HEIGHT);
+// Modifiable in debug mode without recompilation
+//uint16_t x_center = CAMERA_DIMENSIONS_VERTICAL.x / 2;
+uint16_t x_center = CAMERA_HEIGHT / 2;
+uint16_t y_count = 3;
+uint8_t gradient_threshold128 = 55;
+uint8_t value_threshold128 = 40;
+
+uint16_t gradient_bounds[2] = { UINT16_MAX, UINT16_MAX };
+uint16_t value_bounds[2] = { UINT16_MAX, UINT16_MAX };
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -145,7 +163,8 @@ void APP_Init(void) {
 	//	g_camera_buffer[2*i]= 0x00;
 	//}
 
-	memset(g_camera_buffer, 0, sizeof(g_camera_buffer));
+	//memset(g_camera_buffer, 0, sizeof(g_camera_buffer));
+	image_clear(g_camera_buffer, CAMERA_DIMENSIONS_HORIZONTAL);
 
 	/* Init LCD support */
 	lcd_impl_init(&s_lcd_impl);
@@ -164,8 +183,52 @@ void APP_Init(void) {
 	smartdmaParam.p_buffer  		 = (uint32_t*)g_camera_buffer;
 	SMARTDMA_Boot(kSMARTDMA_FlexIO_CameraWholeFrame, &smartdmaParam, 0x2);
 
+	g_image_processing_debug_buffer = g_debug_buffer;
+	g_image_processing_debug_buffer_dimensions = DEBUG_BUFFER_DIMENSIONS;
+
+	// Initialisation et séquence de démarrage du moteur PWM
+	Init_pwm_motor();
+
 	// All good, let's start
 	DEBUG_Print("Rock'n'Roll, baby !");
+}
+
+void detect_and_draw_edges(
+		ImageConstBuffer image_buffer, Vector2Int dimensions,
+		uint16_t x_center, uint16_t y_start, uint16_t y_count,
+		uint8_t gradient_threshold128, uint8_t value_threshold128)
+{
+
+
+	image_detect_dark_from_center(image_buffer, dimensions,
+			x_center, y_start, y_count,
+			gradient_threshold128, value_threshold128,
+			gradient_bounds, value_bounds
+	);
+
+	for (uint16_t i = 0; i < ARRAY_SIZE(gradient_bounds); i++)
+	{
+		Vector2Int rectangle_dimensions = vector2int_new(1, DEBUG_BUFFER_DIMENSIONS.y / 2);
+		if (gradient_bounds[i] != UINT16_MAX)
+		{
+			Vector2Int location = vector2int_new(gradient_bounds[i], 0);
+			image_fill_rectangle(g_debug_buffer, DEBUG_BUFFER_DIMENSIONS, location, rectangle_dimensions,
+					(i == 0) ? COLOR_RGB_ORANGE : COLOR_RGB_CYAN
+			);
+		}
+		/* else */ if (value_bounds[i] != UINT16_MAX)
+		{
+			Vector2Int location = vector2int_new(value_bounds[i], DEBUG_BUFFER_DIMENSIONS.y / 2);
+			image_fill_rectangle(g_debug_buffer, DEBUG_BUFFER_DIMENSIONS, location, rectangle_dimensions,
+					(i == 0) ? color16_rgb_from_float(0, 0.8F, 0) : COLOR_RGB_MAGENTA
+			);
+		}
+	}
+
+	lcd_utility_load_ranges(&s_lcd, g_debug_buffer, DEBUG_BUFFER_DIMENSIONS,
+			index_range_with_length(LCD_WIDTH / 2, DEBUG_BUFFER_DIMENSIONS.x),
+			index_range_with_length(y_start, DEBUG_BUFFER_DIMENSIONS.y)
+	);
 }
 
 /*!
@@ -179,121 +242,121 @@ void APP_CameraFrameReceived(void)
 	// Attend qu'une image soit reçue
 	if (xSemaphoreTake(xCameraFrameReceivedSemaphore, portMAX_DELAY) == pdTRUE)
 	{
-		DEBUG_EnterSection(T1);
+		//		DEBUG_EnterSection(T1);
 
 		// Envoi de l'image complete sur l'ecran (à gauche)
 		st7796_lcd_load(&s_lcd, (uint8_t *)g_camera_buffer, 0, 320-1, 0, 240-1);
 
-		DEBUG_EnterSection(T3);
-		// Recuperation d'une bande de SLICE_WIDTH pixels de haut, en bas de l'ecran
-		for (int y = 0; y < HEIGHT; y++) {
-			for (int x = 0; x < SLICE_WIDTH; x++) {
-				//output_buffer[y * WIDTH + x] = input_buffer[y * WIDTH + x];
-				bottom_slice[y * SLICE_WIDTH + x] = g_camera_buffer[y * WIDTH + x];
-			}
-		}
-
-		// Recuperation d'une bande de SLICE_WIDTH pixels de haut, au centre de l'ecran
-		for (int y = 0; y < HEIGHT; y++) {
-			for (int x = 0; x < SLICE_WIDTH; x++) {
-				middle_slice[y * SLICE_WIDTH + x] = g_camera_buffer[y * WIDTH + x+((WIDTH/2)-(SLICE_WIDTH/2))];
-			}
-		}
-
-		// Recuperation d'une bande de SLICE_WIDTH pixels de haut, en haut de l'ecran
-		for (int y = 0; y < HEIGHT; y++) {
-			for (int x = 0; x < SLICE_WIDTH; x++) {
-				top_slice[y * SLICE_WIDTH + x] = g_camera_buffer[y * WIDTH + x+(WIDTH-SLICE_WIDTH)];
-			}
-		}
+		//		DEBUG_EnterSection(T3);
+		//		// Recuperation d'une bande de SLICE_WIDTH pixels de haut, en bas de l'ecran
+		//		for (int y = 0; y < HEIGHT; y++) {
+		//			for (int x = 0; x < SLICE_WIDTH; x++) {
+		//				//output_buffer[y * WIDTH + x] = input_buffer[y * WIDTH + x];
+		//				bottom_slice[y * SLICE_WIDTH + x] = g_camera_buffer[y * WIDTH + x];
+		//			}
+		//		}
+		//
+		//		// Recuperation d'une bande de SLICE_WIDTH pixels de haut, au centre de l'ecran
+		//		for (int y = 0; y < HEIGHT; y++) {
+		//			for (int x = 0; x < SLICE_WIDTH; x++) {
+		//				middle_slice[y * SLICE_WIDTH + x] = g_camera_buffer[y * WIDTH + x+((WIDTH/2)-(SLICE_WIDTH/2))];
+		//			}
+		//		}
+		//
+		//		// Recuperation d'une bande de SLICE_WIDTH pixels de haut, en haut de l'ecran
+		//		for (int y = 0; y < HEIGHT; y++) {
+		//			for (int x = 0; x < SLICE_WIDTH; x++) {
+		//				top_slice[y * SLICE_WIDTH + x] = g_camera_buffer[y * WIDTH + x+(WIDTH-SLICE_WIDTH)];
+		//			}
+		//		}
 
 		xSemaphoreGive(xComputelinesSemaphore);
-		DEBUG_LeaveSection(T3);
-		DEBUG_LeaveSection(T1);
+		//		DEBUG_LeaveSection(T3);
+		//		DEBUG_LeaveSection(T1);
 	}
 }
 
-#include <stdint.h>
-
-void APP_rotate_and_luma (
-    uint16_t *src,
-    uint16_t *dst,
-    int width,
-    int height
-) {
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-
-            uint16_t pixel = src[y * width + x];
-
-            // Extraction RGB565
-            uint16_t r = (pixel >> 11) & 0x1F;
-            uint16_t g = (pixel >> 5)  & 0x3F;
-            uint16_t b =  pixel        & 0x1F;
-
-            // Mise à l’échelle vers 8 bits
-            r = (r << 3) | (r >> 2);
-            g = (g << 2) | (g >> 4);
-            b = (b << 3) | (b >> 2);
-
-            // Luminance
-            uint16_t Y = (77 * r + 150 * g + 29 * b) >> 8;
-
-            // Stockée sur 16 bits (simple extension)
-            uint16_t Y16 = Y << 8; // ou Y * 257 pour full scale
-
-            // Rotation 90° horaire
-            dst[x * height + (height - 1 - y)] = Y16;
-        }
-    }
-}
-
-#include <stdint.h>
-
-void APP_binarize_per_line(
-    uint16_t *img,
-    int width,
-    int height
-) {
-    for (int y = 0; y < height; y++) {
-
-        uint16_t min = 0xFFFF;
-        uint16_t max = 0x0000;
-
-        // 1. trouver min / max
-        for (int x = 0; x < width; x++) {
-            uint16_t v = img[y * width + x];
-            if (v < min) min = v;
-            if (v > max) max = v;
-        }
-
-        // 2. seuil
-        uint16_t threshold = (min + max) >> 1;
-
-        // 3. seuillage
-        for (int x = 0; x < width; x++) {
-            uint16_t *p = &img[y * width + x];
-            *p = (*p >= threshold) ? 0xFFFF : 0x0000;
-        }
-    }
-}
-
-void APP_rotate_back (
-    uint16_t *src,
-    uint16_t *dst,
-    int width,
-    int height
-) {
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-
-            uint16_t pixel = src[y * width + x];
-
-            // Rotation 90° horaire
-            dst[x * height + (height - 1 - y)] = pixel;
-        }
-    }
-}
+//#include <stdint.h>
+//
+//void APP_rotate_and_luma (
+//    uint16_t *src,
+//    uint16_t *dst,
+//    int width,
+//    int height
+//) {
+//    for (int y = 0; y < height; y++) {
+//        for (int x = 0; x < width; x++) {
+//
+//            uint16_t pixel = src[y * width + x];
+//
+//            // Extraction RGB565
+//            uint16_t r = (pixel >> 11) & 0x1F;
+//            uint16_t g = (pixel >> 5)  & 0x3F;
+//            uint16_t b =  pixel        & 0x1F;
+//
+//            // Mise à l’échelle vers 8 bits
+//            r = (r << 3) | (r >> 2);
+//            g = (g << 2) | (g >> 4);
+//            b = (b << 3) | (b >> 2);
+//
+//            // Luminance
+//            uint16_t Y = (77 * r + 150 * g + 29 * b) >> 8;
+//
+//            // Stockée sur 16 bits (simple extension)
+//            uint16_t Y16 = Y << 8; // ou Y * 257 pour full scale
+//
+//            // Rotation 90° horaire
+//            dst[x * height + (height - 1 - y)] = Y16;
+//        }
+//    }
+//}
+//
+//#include <stdint.h>
+//
+//void APP_binarize_per_line(
+//    uint16_t *img,
+//    int width,
+//    int height
+//) {
+//    for (int y = 0; y < height; y++) {
+//
+//        uint16_t min = 0xFFFF;
+//        uint16_t max = 0x0000;
+//
+//        // 1. trouver min / max
+//        for (int x = 0; x < width; x++) {
+//            uint16_t v = img[y * width + x];
+//            if (v < min) min = v;
+//            if (v > max) max = v;
+//        }
+//
+//        // 2. seuil
+//        uint16_t threshold = (min + max) >> 1;
+//
+//        // 3. seuillage
+//        for (int x = 0; x < width; x++) {
+//            uint16_t *p = &img[y * width + x];
+//            *p = (*p >= threshold) ? 0xFFFF : 0x0000;
+//        }
+//    }
+//}
+//
+//void APP_rotate_back (
+//    uint16_t *src,
+//    uint16_t *dst,
+//    int width,
+//    int height
+//) {
+//    for (int y = 0; y < height; y++) {
+//        for (int x = 0; x < width; x++) {
+//
+//            uint16_t pixel = src[y * width + x];
+//
+//            // Rotation 90° horaire
+//            dst[x * height + (height - 1 - y)] = pixel;
+//        }
+//    }
+//}
 
 /*!
  * @brief Function responsible for searching for line in image slices.
@@ -305,35 +368,44 @@ void APP_Computelines (void)
 
 	if (xSemaphoreTake(xComputelinesSemaphore, portMAX_DELAY) == pdTRUE)
 	{
-		DEBUG_EnterSection(T2);
-		DEBUG_EnterSection(T3);
+		//		DEBUG_EnterSection(T2);
+		//		DEBUG_EnterSection(T3);
 
-		APP_rotate_and_luma(top_slice, top_slice_Y, SLICE_WIDTH, HEIGHT);
-		APP_rotate_and_luma(middle_slice, middle_slice_Y, SLICE_WIDTH, HEIGHT);
-		APP_rotate_and_luma(bottom_slice, bottom_slice_Y, SLICE_WIDTH, HEIGHT);
+		for (uint16_t y_start = DEBUG_BUFFER_HEIGHT; y_start < CAMERA_DIMENSIONS_VERTICAL.y; y_start += 4 * DEBUG_BUFFER_HEIGHT)
+		{
+			detect_and_draw_edges(
+					g_camera_buffer, CAMERA_DIMENSIONS_VERTICAL,
+					x_center, y_start, y_count,
+					gradient_threshold128, value_threshold128
+			);
+		}
 
-		APP_binarize_per_line(top_slice_Y, SLICE_WIDTH, HEIGHT);
-		APP_binarize_per_line(middle_slice_Y, SLICE_WIDTH, HEIGHT);
-		APP_binarize_per_line(bottom_slice_Y, SLICE_WIDTH, HEIGHT);
-
-		APP_rotate_back(top_slice_Y, top_slice, SLICE_WIDTH, HEIGHT);
-		APP_rotate_back(middle_slice_Y, middle_slice, SLICE_WIDTH, HEIGHT);
-		APP_rotate_back(bottom_slice_Y, bottom_slice, SLICE_WIDTH, HEIGHT);
-		DEBUG_LeaveSection(T3);
-
-		// Envoi de la bande du bas sur l'ecran
-		st7796_lcd_load(&s_lcd, (uint8_t *)bottom_slice, 0 , SLICE_WIDTH-1, 240, 480-1);
-		st7796_lcd_load(&s_lcd, (uint8_t *)bottom_slice, SLICE_WIDTH , 2*SLICE_WIDTH-1, 240, 480-1);
-
-		// Envoi de la bande du milieu sur l'ecran
-		st7796_lcd_load(&s_lcd, (uint8_t *)middle_slice, WIDTH/2-8 , WIDTH/2+8-1, 240, 480-1);
-		st7796_lcd_load(&s_lcd, (uint8_t *)middle_slice, WIDTH/2-8-SLICE_WIDTH , WIDTH/2+8-1-SLICE_WIDTH, 240, 480-1);
-
-		// Envoi de la bande du haut sur l'ecran
-		st7796_lcd_load(&s_lcd, (uint8_t *)top_slice, WIDTH-SLICE_WIDTH , WIDTH-1, 240, 480-1);
-		st7796_lcd_load(&s_lcd, (uint8_t *)top_slice, WIDTH-2*SLICE_WIDTH , WIDTH-SLICE_WIDTH-1, 240, 480-1);
-
-		DEBUG_LeaveSection(T2);
+		//		APP_rotate_and_luma(top_slice, top_slice_Y, SLICE_WIDTH, HEIGHT);
+		//		APP_rotate_and_luma(middle_slice, middle_slice_Y, SLICE_WIDTH, HEIGHT);
+		//		APP_rotate_and_luma(bottom_slice, bottom_slice_Y, SLICE_WIDTH, HEIGHT);
+		//
+		//		APP_binarize_per_line(top_slice_Y, SLICE_WIDTH, HEIGHT);
+		//		APP_binarize_per_line(middle_slice_Y, SLICE_WIDTH, HEIGHT);
+		//		APP_binarize_per_line(bottom_slice_Y, SLICE_WIDTH, HEIGHT);
+		//
+		//		APP_rotate_back(top_slice_Y, top_slice, SLICE_WIDTH, HEIGHT);
+		//		APP_rotate_back(middle_slice_Y, middle_slice, SLICE_WIDTH, HEIGHT);
+		//		APP_rotate_back(bottom_slice_Y, bottom_slice, SLICE_WIDTH, HEIGHT);
+		//		DEBUG_LeaveSection(T3);
+		//
+		//		// Envoi de la bande du bas sur l'ecran
+		//		st7796_lcd_load(&s_lcd, (uint8_t *)bottom_slice, 0 , SLICE_WIDTH-1, 240, 480-1);
+		//		st7796_lcd_load(&s_lcd, (uint8_t *)bottom_slice, SLICE_WIDTH , 2*SLICE_WIDTH-1, 240, 480-1);
+		//
+		//		// Envoi de la bande du milieu sur l'ecran
+		//		st7796_lcd_load(&s_lcd, (uint8_t *)middle_slice, WIDTH/2-8 , WIDTH/2+8-1, 240, 480-1);
+		//		st7796_lcd_load(&s_lcd, (uint8_t *)middle_slice, WIDTH/2-8-SLICE_WIDTH , WIDTH/2+8-1-SLICE_WIDTH, 240, 480-1);
+		//
+		//		// Envoi de la bande du haut sur l'ecran
+		//		st7796_lcd_load(&s_lcd, (uint8_t *)top_slice, WIDTH-SLICE_WIDTH , WIDTH-1, 240, 480-1);
+		//		st7796_lcd_load(&s_lcd, (uint8_t *)top_slice, WIDTH-2*SLICE_WIDTH , WIDTH-SLICE_WIDTH-1, 240, 480-1);
+		//
+		//		DEBUG_LeaveSection(T2);
 	}
 }
 
@@ -343,6 +415,9 @@ void APP_Computelines (void)
  * Called by task TASKS_MotorsControlLoop
  */
 void APP_CarControl (void) {
-	// Todo
+	if ((gradient_bounds[0]!= UINT16_MAX) && (gradient_bounds[1]!= UINT16_MAX)) {
+
+	}
+	motor_update(0, 50);
 }
 

@@ -86,6 +86,9 @@ SemaphoreHandle_t xLCDTransfertSemaphore = NULL;
 //static StaticTimer_t xBatteryTimerBuffer;
 //static TimerHandle_t xBatteryTimer   = NULL;
 
+void PWMTimerCallback(TimerHandle_t xTimer);
+TimerHandle_t xPwm   = NULL;
+
 /*
  * @brief  Initialize tasks, queues, semaphores and timers.
  * This function creates the necessary FreeRTOS components for the application.
@@ -222,6 +225,13 @@ void TASKS_Init(void) {
 	//		// Erreur : pas de mémoire statique ?
 	//		Error_Handler();
 	//	}
+
+	xPwm = xTimerCreate(
+			"PWM",
+			pdMS_TO_TICKS(1000),
+			pdTRUE,
+			(void*)0,
+			PWMTimerCallback);
 }
 
 /**
@@ -316,5 +326,9 @@ void TASKS_MotorsControlLoop(void *argument) {
 //	/* Send battery level to application main loop, for CAN formating */
 //	MEASURES_SendBatteryLevel();
 //}
+
+void PWMTimerCallback(TimerHandle_t xTimer) {
+	//APP_PWMDemo();
+}
 
 

@@ -30,11 +30,17 @@ pin_labels:
 - {pin_num: G5, pin_signal: PIO1_19/WUU0_IN15/FREQME_CLK_IN1/FC5_P3/CT3_MAT1/FLEXIO0_D27/SMARTDMA_PIO15/CAN0_RXD/ADC1_A19, label: CAM_RST, identifier: CAM_RST}
 - {pin_num: G4, pin_signal: PIO1_18/FREQME_CLK_IN0/FC5_P2/FC3_P6/CT3_MAT0/FLEXIO0_D26/SMARTDMA_PIO14/CAN0_TXD/ADC1_A18, label: CAM_PDWN, identifier: CAM_PDWN}
 - {pin_num: B6, pin_signal: PIO0_24/FC1_P0/CT0_MAT0/ADC0_B16, label: RS, identifier: RS_rev4;RS_revc;RS_revC;RS}
-- {pin_num: G16, pin_signal: PIO3_12/FC7_P4/FC6_P4/CT1_MAT2/PWM1_A0/FLEXIO0_D20/SMARTDMA_PIO12/SAI0_RXD1, label: A0, identifier: A0}
+- {pin_num: G16, pin_signal: PIO3_12/FC7_P4/FC6_P4/CT1_MAT2/PWM1_A0/FLEXIO0_D20/SMARTDMA_PIO12/SAI0_RXD1, label: PWM2, identifier: A0;PWM2}
 - {pin_num: H16, pin_signal: PIO3_13/FC7_P5/FC6_P5/CT1_MAT3/PWM1_B0/FLEXIO0_D21/SMARTDMA_PIO13/SAI0_TXD1, label: B0, identifier: B0}
 - {pin_num: N7, pin_signal: PIO4_6/TRIG_OUT4/FC2_P6/CT_INP18/SMARTDMA_PIO30/ADC0_A3/ADC1_A3, label: T1, identifier: T1}
 - {pin_num: T8, pin_signal: PIO4_15/WUU0_IN21/TRIG_OUT4/USB1_VBUS_DIG/CT4_MAT3/FLEXIO0_D23/CAN1_RXD/ADC0_A1/CMP0_IN4P, label: T2, identifier: T2}
 - {pin_num: R8, pin_signal: PIO4_16/FC2_P2/USB1_OTG_PWR/CT3_MAT0/FLEXIO0_D24/CAN1_TXD/ADC0_A6, label: T3, identifier: T3}
+- {pin_num: H17, pin_signal: PIO3_14/WUU0_IN25/CT_INP6/PWM1_A1/FLEXIO0_D22/SMARTDMA_PIO14/SAI0_RX_BCLK, label: A1, identifier: A1}
+- {pin_num: H15, pin_signal: PIO3_15/CT_INP7/PWM1_B1/FLEXIO0_D23/SMARTDMA_PIO15/SAI0_RX_FS, label: B1, identifier: B1}
+- {pin_num: U12, pin_signal: PIO4_23/TRIG_OUT5/FC2_P6/CT2_MAT3/FLEXIO0_D31/ADC0_A2/ADC0_B2/ADC1_B3, label: U12, identifier: U12}
+- {pin_num: B7, pin_signal: PIO0_23/WUU0_IN5/EWM0_OUT_b/FC1_P3/CT_INP3/FLEXIO0_D7/ADC0_A15, label: B7, identifier: B7}
+- {pin_num: L2, pin_signal: PIO2_7/TRIG_IN5/PWM1_B0/FLEXIO0_D15/SMARTDMA_PIO27/SAI0_TX_FS, label: B0, identifier: B0}
+- {pin_num: B4, pin_signal: PIO1_3/WUU0_IN7/TRIG_OUT1/FC3_P3/CT1_MAT1/FLEXIO0_D11/SAI1_RXD0/CAN0_RXD/ADC0_A19/CMP0_IN1, label: PWM1, identifier: PWM1}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -162,12 +168,12 @@ void LCDFXIOPins_LCD(void)
     /* Enables the clock for PORT4: Enables clock */
     CLOCK_EnableClock(kCLOCK_Port4);
 
-    gpio_pin_config_t gpio0_pinB7_config = {
+    gpio_pin_config_t B7_config = {
         .pinDirection = kGPIO_DigitalInput,
         .outputLogic = 0U
     };
     /* Initialize GPIO functionality on pin PIO0_23 (pin B7)  */
-    GPIO_PinInit(GPIO0, 23U, &gpio0_pinB7_config);
+    GPIO_PinInit(LCDFXIOPINS_LCD_B7_GPIO, LCDFXIOPINS_LCD_B7_PIN, &B7_config);
 
     gpio_pin_config_t RS_config = {
         .pinDirection = kGPIO_DigitalOutput,
@@ -190,12 +196,12 @@ void LCDFXIOPins_LCD(void)
     /* Initialize GPIO functionality on pin PIO4_14 (pin N8)  */
     GPIO_PinInit(LCDFXIOPINS_LCD_CS_GPIO, LCDFXIOPINS_LCD_CS_PIN, &CS_config);
 
-    gpio_pin_config_t gpio4_pinU12_config = {
+    gpio_pin_config_t U12_config = {
         .pinDirection = kGPIO_DigitalInput,
         .outputLogic = 0U
     };
     /* Initialize GPIO functionality on pin PIO4_23 (pin U12)  */
-    GPIO_PinInit(GPIO4, 23U, &gpio4_pinU12_config);
+    GPIO_PinInit(LCDFXIOPINS_LCD_U12_GPIO, LCDFXIOPINS_LCD_U12_PIN, &U12_config);
 
     /* PORT0_14 (pin E11) is configured as FLEXIO0_D6 */
     PORT_SetPinMux(PORT0, 14U, kPORT_MuxAlt6);
@@ -241,7 +247,7 @@ void LCDFXIOPins_LCD(void)
                       | PORT_PCR_IBE(PCR_IBE_ibe1));
 
     /* PORT0_23 (pin B7) is configured as PIO0_23 */
-    PORT_SetPinMux(PORT0, 23U, kPORT_MuxAlt0);
+    PORT_SetPinMux(LCDFXIOPINS_LCD_B7_PORT, LCDFXIOPINS_LCD_B7_PIN, kPORT_MuxAlt0);
 
     PORT0->PCR[23] = ((PORT0->PCR[23] &
                        /* Mask bits to zero which are setting */
@@ -431,7 +437,7 @@ void LCDFXIOPins_LCD(void)
                       | PORT_PCR_IBE(PCR_IBE_ibe1));
 
     /* PORT4_23 (pin U12) is configured as PIO4_23 */
-    PORT_SetPinMux(PORT4, 23U, kPORT_MuxAlt0);
+    PORT_SetPinMux(LCDFXIOPINS_LCD_U12_PORT, LCDFXIOPINS_LCD_U12_PIN, kPORT_MuxAlt0);
 
     PORT4->PCR[23] = ((PORT4->PCR[23] &
                        /* Mask bits to zero which are setting */
@@ -668,10 +674,8 @@ void SmartDMACameraPins(void)
 PWM1_SERVO:
 - options: {callFromInitBoot: 'true', coreID: cm33_core0, enableClock: 'true'}
 - pin_list:
-  - {pin_num: G16, peripheral: PWM1, signal: 'A, 0', pin_signal: PIO3_12/FC7_P4/FC6_P4/CT1_MAT2/PWM1_A0/FLEXIO0_D20/SMARTDMA_PIO12/SAI0_RXD1, direction: OUTPUT}
-  - {pin_num: H16, peripheral: PWM1, signal: 'B, 0', pin_signal: PIO3_13/FC7_P5/FC6_P5/CT1_MAT3/PWM1_B0/FLEXIO0_D21/SMARTDMA_PIO13/SAI0_TXD1, direction: OUTPUT}
-  - {pin_num: H17, peripheral: PWM1, signal: 'A, 1', pin_signal: PIO3_14/WUU0_IN25/CT_INP6/PWM1_A1/FLEXIO0_D22/SMARTDMA_PIO14/SAI0_RX_BCLK, direction: OUTPUT}
-  - {pin_num: H15, peripheral: PWM1, signal: 'B, 1', pin_signal: PIO3_15/CT_INP7/PWM1_B1/FLEXIO0_D23/SMARTDMA_PIO15/SAI0_RX_FS, direction: OUTPUT}
+  - {pin_num: B4, peripheral: CTIMER1, signal: 'MATCH, 1', pin_signal: PIO1_3/WUU0_IN7/TRIG_OUT1/FC3_P3/CT1_MAT1/FLEXIO0_D11/SAI1_RXD0/CAN0_RXD/ADC0_A19/CMP0_IN1}
+  - {pin_num: G16, peripheral: CTIMER1, signal: 'MATCH, 2', pin_signal: PIO3_12/FC7_P4/FC6_P4/CT1_MAT2/PWM1_A0/FLEXIO0_D20/SMARTDMA_PIO12/SAI0_RXD1, identifier: PWM2}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -684,43 +688,25 @@ PWM1_SERVO:
  * END ****************************************************************************************************************/
 void PWM1_SERVO(void)
 {
+    /* Enables the clock for PORT1: Enables clock */
+    CLOCK_EnableClock(kCLOCK_Port1);
     /* Enables the clock for PORT3: Enables clock */
     CLOCK_EnableClock(kCLOCK_Port3);
 
-    /* PORT3_12 (pin G16) is configured as PWM1_A0 */
-    PORT_SetPinMux(PWM1_SERVO_A0_PORT, PWM1_SERVO_A0_PIN, kPORT_MuxAlt5);
+    /* PORT1_3 (pin B4) is configured as CT1_MAT1 */
+    PORT_SetPinMux(PWM1_SERVO_PWM1_PORT, PWM1_SERVO_PWM1_PIN, kPORT_MuxAlt4);
+
+    PORT1->PCR[3] = ((PORT1->PCR[3] &
+                      /* Mask bits to zero which are setting */
+                      (~(PORT_PCR_IBE_MASK)))
+
+                     /* Input Buffer Enable: Enables. */
+                     | PORT_PCR_IBE(PCR_IBE_ibe1));
+
+    /* PORT3_12 (pin G16) is configured as CT1_MAT2 */
+    PORT_SetPinMux(PWM1_SERVO_PWM2_PORT, PWM1_SERVO_PWM2_PIN, kPORT_MuxAlt4);
 
     PORT3->PCR[12] = ((PORT3->PCR[12] &
-                       /* Mask bits to zero which are setting */
-                       (~(PORT_PCR_IBE_MASK)))
-
-                      /* Input Buffer Enable: Enables. */
-                      | PORT_PCR_IBE(PCR_IBE_ibe1));
-
-    /* PORT3_13 (pin H16) is configured as PWM1_B0 */
-    PORT_SetPinMux(PWM1_SERVO_B0_PORT, PWM1_SERVO_B0_PIN, kPORT_MuxAlt5);
-
-    PORT3->PCR[13] = ((PORT3->PCR[13] &
-                       /* Mask bits to zero which are setting */
-                       (~(PORT_PCR_IBE_MASK)))
-
-                      /* Input Buffer Enable: Enables. */
-                      | PORT_PCR_IBE(PCR_IBE_ibe1));
-
-    /* PORT3_14 (pin H17) is configured as PWM1_A1 */
-    PORT_SetPinMux(PORT3, 14U, kPORT_MuxAlt5);
-
-    PORT3->PCR[14] = ((PORT3->PCR[14] &
-                       /* Mask bits to zero which are setting */
-                       (~(PORT_PCR_IBE_MASK)))
-
-                      /* Input Buffer Enable: Enables. */
-                      | PORT_PCR_IBE(PCR_IBE_ibe1));
-
-    /* PORT3_15 (pin H15) is configured as PWM1_B1 */
-    PORT_SetPinMux(PORT3, 15U, kPORT_MuxAlt5);
-
-    PORT3->PCR[15] = ((PORT3->PCR[15] &
                        /* Mask bits to zero which are setting */
                        (~(PORT_PCR_IBE_MASK)))
 

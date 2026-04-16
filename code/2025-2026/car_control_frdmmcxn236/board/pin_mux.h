@@ -79,6 +79,34 @@ void BOARD_InitPins(void);
 #define LCDFXIOPINS_LCD_RST_PIN_MASK (1U << 7U)      /*!<@brief PORT pin mask */
                                                      /* @} */
 
+/*! @name PORT4_23 (coord U12), U12
+  @{ */
+
+/* Symbols to be used with GPIO driver */
+#define LCDFXIOPINS_LCD_U12_GPIO GPIO4                /*!<@brief GPIO peripheral base pointer */
+#define LCDFXIOPINS_LCD_U12_GPIO_PIN 23U              /*!<@brief GPIO pin number */
+#define LCDFXIOPINS_LCD_U12_GPIO_PIN_MASK (1U << 23U) /*!<@brief GPIO pin mask */
+
+/* Symbols to be used with PORT driver */
+#define LCDFXIOPINS_LCD_U12_PORT PORT4                /*!<@brief PORT peripheral base pointer */
+#define LCDFXIOPINS_LCD_U12_PIN 23U                   /*!<@brief PORT pin number */
+#define LCDFXIOPINS_LCD_U12_PIN_MASK (1U << 23U)      /*!<@brief PORT pin mask */
+                                                      /* @} */
+
+/*! @name PORT0_23 (coord B7), B7
+  @{ */
+
+/* Symbols to be used with GPIO driver */
+#define LCDFXIOPINS_LCD_B7_GPIO GPIO0                /*!<@brief GPIO peripheral base pointer */
+#define LCDFXIOPINS_LCD_B7_GPIO_PIN 23U              /*!<@brief GPIO pin number */
+#define LCDFXIOPINS_LCD_B7_GPIO_PIN_MASK (1U << 23U) /*!<@brief GPIO pin mask */
+
+/* Symbols to be used with PORT driver */
+#define LCDFXIOPINS_LCD_B7_PORT PORT0                /*!<@brief PORT peripheral base pointer */
+#define LCDFXIOPINS_LCD_B7_PIN 23U                   /*!<@brief PORT pin number */
+#define LCDFXIOPINS_LCD_B7_PIN_MASK (1U << 23U)      /*!<@brief PORT pin mask */
+                                                     /* @} */
+
 /*!
  * @brief Configures pin routing and optionally pin electrical features.
  *
@@ -290,23 +318,23 @@ void SmartDMACameraPins(void);
 
 #define PCR_IBE_ibe1 0x01u /*!<@brief Input Buffer Enable: Enables */
 
-/*! @name PORT3_12 (coord G16), A0
+/*! @name PORT1_3 (coord B4), PWM1
   @{ */
 
 /* Symbols to be used with PORT driver */
-#define PWM1_SERVO_A0_PORT PORT3                /*!<@brief PORT peripheral base pointer */
-#define PWM1_SERVO_A0_PIN 12U                   /*!<@brief PORT pin number */
-#define PWM1_SERVO_A0_PIN_MASK (1U << 12U)      /*!<@brief PORT pin mask */
-                                                /* @} */
+#define PWM1_SERVO_PWM1_PORT PORT1               /*!<@brief PORT peripheral base pointer */
+#define PWM1_SERVO_PWM1_PIN 3U                   /*!<@brief PORT pin number */
+#define PWM1_SERVO_PWM1_PIN_MASK (1U << 3U)      /*!<@brief PORT pin mask */
+                                                 /* @} */
 
-/*! @name PORT3_13 (coord H16), B0
+/*! @name PORT3_12 (coord G16), PWM2
   @{ */
 
 /* Symbols to be used with PORT driver */
-#define PWM1_SERVO_B0_PORT PORT3                /*!<@brief PORT peripheral base pointer */
-#define PWM1_SERVO_B0_PIN 13U                   /*!<@brief PORT pin number */
-#define PWM1_SERVO_B0_PIN_MASK (1U << 13U)      /*!<@brief PORT pin mask */
-                                                /* @} */
+#define PWM1_SERVO_PWM2_PORT PORT3                /*!<@brief PORT peripheral base pointer */
+#define PWM1_SERVO_PWM2_PIN 12U                   /*!<@brief PORT pin number */
+#define PWM1_SERVO_PWM2_PIN_MASK (1U << 12U)      /*!<@brief PORT pin mask */
+                                                  /* @} */
 
 /*!
  * @brief Configures pin routing and optionally pin electrical features.

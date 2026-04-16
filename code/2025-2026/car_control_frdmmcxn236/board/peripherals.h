@@ -10,7 +10,6 @@
  * Included files
  **********************************************************************************************************************/
 #include "fsl_common.h"
-#include "fsl_pwm.h"
 #include "fsl_ctimer.h"
 #include "fsl_clock.h"
 
@@ -23,30 +22,6 @@ extern "C" {
  **********************************************************************************************************************/
 /* Definitions for BOARD_InitPeripherals functional group */
 /* Definition of peripheral ID */
-#define PWM1_PERIPHERAL PWM1
-/* Definition of submodule 0 ID */
-#define PWM1_SM0 kPWM_Module_0
-/* Definition of clock source of submodule 0 frequency in Hertz */
-#define PWM1_SM0_SM_CLK_SOURCE_FREQ_HZ 150000000U
-/* Definition of submodule 0 counter clock source frequency in Hertz - PWM1_SM0_SM_CLK_SOURCE_FREQ_HZ divided by prescaler */
-#define PWM1_SM0_COUNTER_CLK_SOURCE_FREQ_HZ 1171875U
-/* Definition of submodule 0 counter (PWM) frequency in Hertz */
-#define PWM1_SM0_COUNTER_FREQ_HZ 50U
-/* Definition of submodule 0 channel A ID */
-#define PWM1_SM0_A kPWM_PwmA
-/* Definition of submodule 0 channel B ID */
-#define PWM1_SM0_B kPWM_PwmB
-/* Definition of submodule 0 channel X ID */
-#define PWM1_SM0_X kPWM_PwmX
-/* Definition of fault Fault0 ID */
-#define PWM1_F0_FAULT0 kPWM_Fault_0
-/* Definition of fault Fault1 ID */
-#define PWM1_F0_FAULT1 kPWM_Fault_1
-/* Definition of fault Fault2 ID */
-#define PWM1_F0_FAULT2 kPWM_Fault_2
-/* Definition of fault Fault3 ID */
-#define PWM1_F0_FAULT3 kPWM_Fault_3
-/* Definition of peripheral ID */
 #define CTIMER0_PERIPHERAL CTIMER0
 /* Timer tick frequency in Hz (input frequency of the timer) */
 #define CTIMER0_TICK_FREQ 150000000UL
@@ -54,19 +29,30 @@ extern "C" {
 #define CTIMER0_TICK_PERIOD 7UL
 /* Definition of PWM period channel. */
 #define CTIMER0_PWM_PERIOD_CH kCTIMER_Match_0
+/* Definition of peripheral ID */
+#define CTIMER1_PERIPHERAL CTIMER1
+/* Timer tick frequency in Hz (input frequency of the timer) */
+#define CTIMER1_TICK_FREQ 150000000UL
+/* Timer tick period in ns (input period of the timer) */
+#define CTIMER1_TICK_PERIOD 7UL
+/* Definition of PWM period channel. */
+#define CTIMER1_PWM_PERIOD_CH kCTIMER_Match_0
+/* Definition of PWM period */
+#define CTIMER1_PWM_PERIOD 2999999
+/* Definition of channel 1 ID */
+#define CTIMER1_PWM_0_CHANNEL kCTIMER_Match_1
+/* Definition of channel 1 duty */
+#define CTIMER1_PWM_0_DUTY 2850000
+/* Definition of channel 2 ID */
+#define CTIMER1_PWM_1_CHANNEL kCTIMER_Match_2
+/* Definition of channel 2 duty */
+#define CTIMER1_PWM_1_DUTY 2850000
 
 /***********************************************************************************************************************
  * Global variables
  **********************************************************************************************************************/
-extern pwm_config_t PWM1_SM0_config;
-
-extern pwm_signal_param_t PWM1_SM0_pwm_function_config[2];
-extern const pwm_fault_input_filter_param_t PWM1_faultInputFilter_config;
-extern const pwm_fault_param_t PWM1_Fault0_fault_config;
-extern const pwm_fault_param_t PWM1_Fault1_fault_config;
-extern const pwm_fault_param_t PWM1_Fault2_fault_config;
-extern const pwm_fault_param_t PWM1_Fault3_fault_config;
 extern const ctimer_config_t CTIMER0_config;
+extern const ctimer_config_t CTIMER1_config;
 
 /***********************************************************************************************************************
  * Initialization functions

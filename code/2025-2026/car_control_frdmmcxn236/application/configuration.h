@@ -44,4 +44,7 @@
 // Taille du buffer de debug
 #define DEBUG_BUFFER_SIZE 	1024
 
+#define DEBUG_BUFFER_HEIGHT 20
+#define DEBUG_BUFFER_DIMENSIONS (vector2int_new(CAMERA_HEIGHT, DEBUG_BUFFER_HEIGHT))
+
 #endif /* CONFIGURATION_H_ */

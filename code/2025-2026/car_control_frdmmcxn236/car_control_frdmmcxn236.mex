@@ -42,11 +42,17 @@
                <pin_label pin_num="G5" pin_signal="PIO1_19/WUU0_IN15/FREQME_CLK_IN1/FC5_P3/CT3_MAT1/FLEXIO0_D27/SMARTDMA_PIO15/CAN0_RXD/ADC1_A19" label="CAM_RST" identifier="CAM_RST"/>
                <pin_label pin_num="G4" pin_signal="PIO1_18/FREQME_CLK_IN0/FC5_P2/FC3_P6/CT3_MAT0/FLEXIO0_D26/SMARTDMA_PIO14/CAN0_TXD/ADC1_A18" label="CAM_PDWN" identifier="CAM_PDWN"/>
                <pin_label pin_num="B6" pin_signal="PIO0_24/FC1_P0/CT0_MAT0/ADC0_B16" label="RS" identifier="RS_rev4;RS_revc;RS_revC;RS"/>
-               <pin_label pin_num="G16" pin_signal="PIO3_12/FC7_P4/FC6_P4/CT1_MAT2/PWM1_A0/FLEXIO0_D20/SMARTDMA_PIO12/SAI0_RXD1" label="A0" identifier="A0"/>
+               <pin_label pin_num="G16" pin_signal="PIO3_12/FC7_P4/FC6_P4/CT1_MAT2/PWM1_A0/FLEXIO0_D20/SMARTDMA_PIO12/SAI0_RXD1" label="PWM2" identifier="A0;PWM2"/>
                <pin_label pin_num="H16" pin_signal="PIO3_13/FC7_P5/FC6_P5/CT1_MAT3/PWM1_B0/FLEXIO0_D21/SMARTDMA_PIO13/SAI0_TXD1" label="B0" identifier="B0"/>
                <pin_label pin_num="N7" pin_signal="PIO4_6/TRIG_OUT4/FC2_P6/CT_INP18/SMARTDMA_PIO30/ADC0_A3/ADC1_A3" label="T1" identifier="T1"/>
                <pin_label pin_num="T8" pin_signal="PIO4_15/WUU0_IN21/TRIG_OUT4/USB1_VBUS_DIG/CT4_MAT3/FLEXIO0_D23/CAN1_RXD/ADC0_A1/CMP0_IN4P" label="T2" identifier="T2"/>
                <pin_label pin_num="R8" pin_signal="PIO4_16/FC2_P2/USB1_OTG_PWR/CT3_MAT0/FLEXIO0_D24/CAN1_TXD/ADC0_A6" label="T3" identifier="T3"/>
+               <pin_label pin_num="H17" pin_signal="PIO3_14/WUU0_IN25/CT_INP6/PWM1_A1/FLEXIO0_D22/SMARTDMA_PIO14/SAI0_RX_BCLK" label="A1" identifier="A1"/>
+               <pin_label pin_num="H15" pin_signal="PIO3_15/CT_INP7/PWM1_B1/FLEXIO0_D23/SMARTDMA_PIO15/SAI0_RX_FS" label="B1" identifier="B1"/>
+               <pin_label pin_num="U12" pin_signal="PIO4_23/TRIG_OUT5/FC2_P6/CT2_MAT3/FLEXIO0_D31/ADC0_A2/ADC0_B2/ADC1_B3" label="U12" identifier="U12"/>
+               <pin_label pin_num="B7" pin_signal="PIO0_23/WUU0_IN5/EWM0_OUT_b/FC1_P3/CT_INP3/FLEXIO0_D7/ADC0_A15" label="B7" identifier="B7"/>
+               <pin_label pin_num="L2" pin_signal="PIO2_7/TRIG_IN5/PWM1_B0/FLEXIO0_D15/SMARTDMA_PIO27/SAI0_TX_FS" label="B0" identifier="B0"/>
+               <pin_label pin_num="B4" pin_signal="PIO1_3/WUU0_IN7/TRIG_OUT1/FC3_P3/CT1_MAT1/FLEXIO0_D11/SAI1_RXD0/CAN0_RXD/ADC0_A19/CMP0_IN1" label="PWM1" identifier="PWM1"/>
             </pin_labels>
          </pins_profile>
          <functions_list>
@@ -278,7 +284,7 @@
                   <enableClock>true</enableClock>
                </options>
                <dependencies>
-                  <dependency resourceType="Peripheral" resourceId="PWM1" description="Peripheral PWM1 signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:PWM1_SERVO">
+                  <dependency resourceType="Peripheral" resourceId="CTIMER1" description="Peripheral CTIMER1 signals are routed in the Pins Tool, but the peripheral is not initialized in the Peripherals Tool." problem_level="1" source="Pins:PWM1_SERVO">
                      <feature name="initialized" evaluation="equal">
                         <data>true</data>
                      </feature>
@@ -295,24 +301,10 @@
                   </dependency>
                </dependencies>
                <pins>
-                  <pin peripheral="PWM1" signal="A, 0" pin_num="G16" pin_signal="PIO3_12/FC7_P4/FC6_P4/CT1_MAT2/PWM1_A0/FLEXIO0_D20/SMARTDMA_PIO12/SAI0_RXD1">
+                  <pin peripheral="CTIMER1" signal="MATCH, 1" pin_num="B4" pin_signal="PIO1_3/WUU0_IN7/TRIG_OUT1/FC3_P3/CT1_MAT1/FLEXIO0_D11/SAI1_RXD0/CAN0_RXD/ADC0_A19/CMP0_IN1"/>
+                  <pin peripheral="CTIMER1" signal="MATCH, 2" pin_num="G16" pin_signal="PIO3_12/FC7_P4/FC6_P4/CT1_MAT2/PWM1_A0/FLEXIO0_D20/SMARTDMA_PIO12/SAI0_RXD1">
                      <pin_features>
-                        <pin_feature name="direction" value="OUTPUT"/>
-                     </pin_features>
-                  </pin>
-                  <pin peripheral="PWM1" signal="B, 0" pin_num="H16" pin_signal="PIO3_13/FC7_P5/FC6_P5/CT1_MAT3/PWM1_B0/FLEXIO0_D21/SMARTDMA_PIO13/SAI0_TXD1">
-                     <pin_features>
-                        <pin_feature name="direction" value="OUTPUT"/>
-                     </pin_features>
-                  </pin>
-                  <pin peripheral="PWM1" signal="A, 1" pin_num="H17" pin_signal="PIO3_14/WUU0_IN25/CT_INP6/PWM1_A1/FLEXIO0_D22/SMARTDMA_PIO14/SAI0_RX_BCLK">
-                     <pin_features>
-                        <pin_feature name="direction" value="OUTPUT"/>
-                     </pin_features>
-                  </pin>
-                  <pin peripheral="PWM1" signal="B, 1" pin_num="H15" pin_signal="PIO3_15/CT_INP7/PWM1_B1/FLEXIO0_D23/SMARTDMA_PIO15/SAI0_RX_FS">
-                     <pin_features>
-                        <pin_feature name="direction" value="OUTPUT"/>
+                        <pin_feature name="identifier" value="PWM2"/>
                      </pin_features>
                   </pin>
                </pins>
@@ -518,6 +510,7 @@
                   <clock_output id="CLK_144M_clock.outFreq" value="144 MHz" locked="false" accuracy=""/>
                   <clock_output id="CLK_48M_clock.outFreq" value="48 MHz" locked="false" accuracy=""/>
                   <clock_output id="CTIMER0_clock.outFreq" value="150 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CTIMER1_clock.outFreq" value="150 MHz" locked="false" accuracy=""/>
                   <clock_output id="FRO_12M_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
                   <clock_output id="FRO_HF_clock.outFreq" value="48 MHz" locked="false" accuracy=""/>
                   <clock_output id="MAIN_clock.outFreq" value="150 MHz" locked="false" accuracy=""/>
@@ -533,6 +526,7 @@
                   <setting id="SCGMode" value="PLL0" locked="false"/>
                   <setting id="CLKOUTDIV_HALT" value="Enable" locked="false"/>
                   <setting id="CTIMER0CLKDIV_HALT" value="Enable" locked="false"/>
+                  <setting id="CTIMER1CLKDIV_HALT" value="Enable" locked="false"/>
                   <setting id="SCG.PLL0M_MULT.scale" value="50" locked="true"/>
                   <setting id="SCG.PLL0SRCSEL.sel" value="SCG.FIRC_48M" locked="false"/>
                   <setting id="SCG.PLL0_NDIV.scale" value="8" locked="true"/>
@@ -540,6 +534,7 @@
                   <setting id="SYSCON.CLKOUTDIV.scale" value="12" locked="true"/>
                   <setting id="SYSCON.CLKOUTSEL.sel" value="SCG.MAIN_CLOCK" locked="false"/>
                   <setting id="SYSCON.CTIMERCLKSEL0.sel" value="SCG.PLL0_CLK" locked="false"/>
+                  <setting id="SYSCON.CTIMERCLKSEL1.sel" value="SCG.PLL0_CLK" locked="false"/>
                   <setting id="SYSCON.FREQMEREFCLKSEL.sel" value="SYSCON.evtg_out0a" locked="false"/>
                   <setting id="SYSCON.FREQMETARGETCLKSEL.sel" value="SYSCON.evtg_out0a" locked="false"/>
                </clock_settings>
@@ -611,16 +606,6 @@
       </dcdx>
       <periphs name="Peripherals" version="15.0" enabled="true" update_project_code="true">
          <dependencies>
-            <dependency resourceType="SWComponent" resourceId="platform.drivers.pwm" description="PWM Driver is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
-               <feature name="enabled" evaluation="equal">
-                  <data type="Boolean">true</data>
-               </feature>
-            </dependency>
-            <dependency resourceType="SWComponent" resourceId="platform.drivers.pwm" description="An unsupported version of the PWM Driver in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
-               <feature name="version" evaluation="greaterOrEqual">
-                  <data type="Version" maxValue="2.9.9">2.6.0</data>
-               </feature>
-            </dependency>
             <dependency resourceType="SWComponent" resourceId="platform.drivers.ctimer" description="CTimer Driver is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
                <feature name="enabled" evaluation="equal">
                   <data type="Boolean">true</data>
@@ -649,49 +634,24 @@
                <description></description>
                <options/>
                <dependencies>
-                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="PWM1.pwm_a.0" description="PWM1.PWM_A, 0 pin needs to be routed" problem_level="1" source="Peripherals:BOARD_InitPeripherals">
-                     <feature name="routed" evaluation="equal">
-                        <data type="Boolean">true</data>
-                     </feature>
-                  </dependency>
-                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="PWM1.pwm_a.0" description="PWM1.PWM_A, 0 pin needs to be routed as output" problem_level="1" source="Peripherals:BOARD_InitPeripherals">
-                     <feature name="direction" evaluation="equal">
-                        <data type="String">OUTPUT</data>
-                     </feature>
-                  </dependency>
-                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="PWM1.pwm_b.0" description="PWM1.PWM_B, 0 pin needs to be routed" problem_level="1" source="Peripherals:BOARD_InitPeripherals">
-                     <feature name="routed" evaluation="equal">
-                        <data type="Boolean">true</data>
-                     </feature>
-                  </dependency>
-                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="PWM1.pwm_b.0" description="PWM1.PWM_B, 0 pin needs to be routed as output" problem_level="1" source="Peripherals:BOARD_InitPeripherals">
-                     <feature name="direction" evaluation="equal">
-                        <data type="String">OUTPUT</data>
-                     </feature>
-                  </dependency>
-                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="PWM1.pwm_fault.0" description="PWM1.FAULT, 0 pin needs to be routed" problem_level="1" source="Peripherals:BOARD_InitPeripherals">
-                     <feature name="routed" evaluation="equal">
-                        <data type="Boolean">true</data>
-                     </feature>
-                  </dependency>
-                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="PWM1.pwm_fault.1" description="PWM1.FAULT, 1 pin needs to be routed" problem_level="1" source="Peripherals:BOARD_InitPeripherals">
-                     <feature name="routed" evaluation="equal">
-                        <data type="Boolean">true</data>
-                     </feature>
-                  </dependency>
-                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="PWM1.pwm_fault.2" description="PWM1.FAULT, 2 pin needs to be routed" problem_level="1" source="Peripherals:BOARD_InitPeripherals">
-                     <feature name="routed" evaluation="equal">
-                        <data type="Boolean">true</data>
-                     </feature>
-                  </dependency>
-                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="PWM1.pwm_fault.3" description="PWM1.FAULT, 3 pin needs to be routed" problem_level="1" source="Peripherals:BOARD_InitPeripherals">
-                     <feature name="routed" evaluation="equal">
-                        <data type="Boolean">true</data>
-                     </feature>
-                  </dependency>
                   <dependency resourceType="ClockOutput" resourceId="CTIMER0_clock" description="CTIMER0_clock is inactive." problem_level="2" source="Peripherals:BOARD_InitPeripherals">
                      <feature name="frequency" evaluation="greaterThan">
                         <data type="Frequency" unit="Hz">0</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="ClockOutput" resourceId="CTIMER1_clock" description="CTIMER1_clock is inactive." problem_level="2" source="Peripherals:BOARD_InitPeripherals">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data type="Frequency" unit="Hz">0</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="CTIMER1.ctimer_match.1" description="PWM output of the match 1 channel of peripheral CTIMER1 is not routed." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
+                     <feature name="routed" evaluation="equal">
+                        <data type="Boolean">true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="CTIMER1.ctimer_match.2" description="PWM output of the match 2 channel of peripheral CTIMER1 is not routed." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
+                     <feature name="routed" evaluation="equal">
+                        <data type="Boolean">true</data>
                      </feature>
                   </dependency>
                </dependencies>
@@ -702,7 +662,7 @@
                         <array name="interrupts"/>
                      </config_set>
                   </instance>
-                  <instance name="PWM1" uuid="4264ae96-3d3b-4c3b-a20e-a8d95c83733f" type="pwm" type_id="pwm_2.6.0" mode="general" peripheral="PWM1" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
+                  <instance name="PWM1" uuid="4264ae96-3d3b-4c3b-a20e-a8d95c83733f" type="pwm" type_id="pwm_2.6.0" mode="general" peripheral="PWM1" enabled="false" comment="" custom_name_enabled="false" editing_lock="false">
                      <config_set name="fsl_pwm">
                         <setting name="clockSource" value="SystemClock"/>
                         <setting name="clockSourceFreq" value="ClocksTool_DefaultInit"/>
@@ -725,8 +685,8 @@
                                  <set name="outputTrigger_sel">
                                     <selected/>
                                  </set>
-                                 <setting name="loadOK" value="false"/>
-                                 <setting name="startCounter" value="false"/>
+                                 <setting name="loadOK" value="true"/>
+                                 <setting name="startCounter" value="true"/>
                                  <set name="interrupt_sel">
                                     <selected/>
                                  </set>
@@ -753,7 +713,7 @@
                                           </set>
                                        </struct>
                                        <setting name="faultState" value="kPWM_PwmFaultState0"/>
-                                       <setting name="pwmchannelenable" value="false"/>
+                                       <setting name="pwmchannelenable" value="true"/>
                                        <setting name="deadtime_input_by_force" value="kPWM_UsePwm"/>
                                        <setting name="clockSource" value="kPWM_BusClock"/>
                                        <setting name="deadtimeValue" value="0"/>
@@ -774,7 +734,7 @@
                                           </set>
                                        </struct>
                                        <setting name="faultState" value="kPWM_PwmFaultState0"/>
-                                       <setting name="pwmchannelenable" value="false"/>
+                                       <setting name="pwmchannelenable" value="true"/>
                                        <setting name="deadtime_input_by_force" value="kPWM_UsePwm"/>
                                        <setting name="clockSource" value="kPWM_BusClock"/>
                                        <setting name="deadtimeValue" value="0"/>
@@ -802,41 +762,41 @@
                            <struct name="0">
                               <struct name="commonFaultSetting">
                                  <setting name="clockSource" value="kPWM_BusClock"/>
-                                 <setting name="faultFilterPeriod" value="1"/>
-                                 <setting name="faultFilterCount" value="3"/>
+                                 <setting name="faultFilterPeriod" value="255"/>
+                                 <setting name="faultFilterCount" value="10"/>
                                  <setting name="faultGlitchStretch" value="false"/>
                               </struct>
                               <array name="faults">
                                  <struct name="0">
                                     <setting name="fault_id" value="Fault0"/>
-                                    <setting name="faultClearingMode" value="kPWM_Automatic"/>
-                                    <setting name="faultLevelR" value="low"/>
+                                    <setting name="faultClearingMode" value="kPWM_ManualNormal"/>
+                                    <setting name="faultLevelR" value="high"/>
                                     <setting name="enableCombinationalPathR" value="filtered"/>
-                                    <setting name="recoverMode" value="kPWM_NoRecovery"/>
+                                    <setting name="recoverMode" value="kPWM_RecoverHalfCycle"/>
                                     <setting name="fault_int_source" value="false"/>
                                  </struct>
                                  <struct name="1">
                                     <setting name="fault_id" value="Fault1"/>
-                                    <setting name="faultClearingMode" value="kPWM_Automatic"/>
-                                    <setting name="faultLevelR" value="low"/>
+                                    <setting name="faultClearingMode" value="kPWM_ManualNormal"/>
+                                    <setting name="faultLevelR" value="high"/>
                                     <setting name="enableCombinationalPathR" value="filtered"/>
-                                    <setting name="recoverMode" value="kPWM_NoRecovery"/>
+                                    <setting name="recoverMode" value="kPWM_RecoverHalfCycle"/>
                                     <setting name="fault_int_source" value="false"/>
                                  </struct>
                                  <struct name="2">
                                     <setting name="fault_id" value="Fault2"/>
-                                    <setting name="faultClearingMode" value="kPWM_Automatic"/>
-                                    <setting name="faultLevelR" value="low"/>
+                                    <setting name="faultClearingMode" value="kPWM_ManualNormal"/>
+                                    <setting name="faultLevelR" value="high"/>
                                     <setting name="enableCombinationalPathR" value="filtered"/>
-                                    <setting name="recoverMode" value="kPWM_NoRecovery"/>
+                                    <setting name="recoverMode" value="kPWM_RecoverHalfCycle"/>
                                     <setting name="fault_int_source" value="false"/>
                                  </struct>
                                  <struct name="3">
                                     <setting name="fault_id" value="Fault3"/>
-                                    <setting name="faultClearingMode" value="kPWM_Automatic"/>
-                                    <setting name="faultLevelR" value="low"/>
+                                    <setting name="faultClearingMode" value="kPWM_ManualNormal"/>
+                                    <setting name="faultLevelR" value="high"/>
                                     <setting name="enableCombinationalPathR" value="filtered"/>
-                                    <setting name="recoverMode" value="kPWM_NoRecovery"/>
+                                    <setting name="recoverMode" value="kPWM_RecoverHalfCycle"/>
                                     <setting name="fault_int_source" value="false"/>
                                  </struct>
                               </array>
@@ -874,6 +834,44 @@
                         <struct name="interruptCallbackConfig">
                            <struct name="interrupt">
                               <setting name="IRQn" value="CTIMER0_IRQn"/>
+                              <setting name="enable_priority" value="false"/>
+                              <setting name="priority" value="0"/>
+                           </struct>
+                           <setting name="callback" value="kCTIMER_NoCallback"/>
+                        </struct>
+                     </config_set>
+                  </instance>
+                  <instance name="CTIMER1" uuid="2878d07a-18b9-4162-a8a3-95215bb06513" type="ctimer" type_id="ctimer_2.2.2" mode="PWM" peripheral="CTIMER1" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
+                     <config_set name="fsl_ctimer">
+                        <struct name="ctimerConfig">
+                           <setting name="mode" value="kCTIMER_TimerMode"/>
+                           <setting name="clockSource" value="FunctionClock"/>
+                           <setting name="clockSourceFreq" value="ClocksTool_DefaultInit"/>
+                           <setting name="timerPrescaler" value="1"/>
+                        </struct>
+                        <setting name="EnableTimerInInit" value="true"/>
+                        <struct name="pwmConfig">
+                           <setting name="pwmPeriodChannel" value="kCTIMER_Match_0"/>
+                           <setting name="pwmPeriodValueStr" value="50hz"/>
+                           <setting name="enableInterrupt" value="false"/>
+                           <array name="pwmChannels">
+                              <struct name="0">
+                                 <setting name="pwmChannelPrefixId" value="PWM_0"/>
+                                 <setting name="pwmChannel" value="kCTIMER_Match_1"/>
+                                 <setting name="pwmDutyValueStr" value="1ms"/>
+                                 <setting name="enableInterrupt" value="false"/>
+                              </struct>
+                              <struct name="1">
+                                 <setting name="pwmChannelPrefixId" value="PWM_1"/>
+                                 <setting name="pwmChannel" value="kCTIMER_Match_2"/>
+                                 <setting name="pwmDutyValueStr" value="1ms"/>
+                                 <setting name="enableInterrupt" value="false"/>
+                              </struct>
+                           </array>
+                        </struct>
+                        <struct name="interruptCallbackConfig">
+                           <struct name="interrupt">
+                              <setting name="IRQn" value="CTIMER1_IRQn"/>
                               <setting name="enable_priority" value="false"/>
                               <setting name="priority" value="0"/>
                            </struct>
