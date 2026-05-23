@@ -1,0 +1,9 @@
+../application/FreescaleIAP.cpp:54:9:IAPCode erase_sector(int)	16	static
+../application/FreescaleIAP.cpp:72:9:IAPCode program_flash(int, char*, int)	40	static
+../application/FreescaleIAP.cpp:100:10:uint32_t flash_size()	16	static
+../application/FreescaleIAP.cpp:107:9:IAPCode program_word(int, char*)	16	static
+../application/FreescaleIAP.cpp:146:13:void run_command()	8	static
+../application/FreescaleIAP.cpp:159:6:bool check_boundary(int, unsigned int)	24	static
+../application/FreescaleIAP.cpp:172:6:bool check_align(int)	24	static
+../application/FreescaleIAP.cpp:183:9:IAPCode verify_erased(int, unsigned int)	32	static
+../application/FreescaleIAP.cpp:223:9:IAPCode check_error()	8	static

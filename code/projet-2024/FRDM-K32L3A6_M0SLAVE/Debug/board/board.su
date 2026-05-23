@@ -1,0 +1,3 @@
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/drivers/fsl_clock.h:766:20:CLOCK_SetIpSrc	24	static
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/utilities/fsl_debug_console.h:154:24:DbgConsole_Init	24	static
+../board/board.c:23:6:BOARD_InitDebugConsole	16	static

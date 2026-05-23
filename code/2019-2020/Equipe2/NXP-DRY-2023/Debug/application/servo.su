@@ -1,0 +1,2 @@
+../application/servo.c:11:6:servo_init	8	static
+../application/servo.c:28:6:servo_setPos	32	static

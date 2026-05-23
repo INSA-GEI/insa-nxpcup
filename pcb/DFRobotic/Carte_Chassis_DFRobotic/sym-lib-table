@@ -1,3 +1,0 @@
-(sym_lib_table
-  (lib (name Carte_Capteurs-cache)(type Legacy)(uri ${KIPRJMOD}/Carte_Chassis_DFRobotic-cache.lib)(options "")(descr ""))
-)

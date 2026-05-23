@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "Carte ecran")(type "KiCad")(uri "${KIPRJMOD}/Carte ecran.kicad_sym")(options "")(descr ""))
+)

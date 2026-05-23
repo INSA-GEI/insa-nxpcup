@@ -1,0 +1,2 @@
+../rpmsg_lite/common/llist.c:57:6:add_to_list	16	static
+../rpmsg_lite/common/llist.c:90:6:remove_from_list	16	static

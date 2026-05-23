@@ -1,0 +1,3 @@
+../device/system_K32L3A60_cm0plus.c:61:6:SystemInit	8	static
+../device/system_K32L3A60_cm0plus.c:100:6:SystemCoreClockUpdate	16	static
+../device/system_K32L3A60_cm0plus.c:134:29:SystemInitHook	8	static

@@ -1,0 +1,5 @@
+../fatfs/source/fsl_sd_disk/fsl_sd_disk.c:38:9:sd_disk_write	24	static
+../fatfs/source/fsl_sd_disk/fsl_sd_disk.c:53:9:sd_disk_read	24	static
+../fatfs/source/fsl_sd_disk/fsl_sd_disk.c:68:9:sd_disk_ioctl	24	static
+../fatfs/source/fsl_sd_disk/fsl_sd_disk.c:120:9:sd_disk_status	16	static
+../fatfs/source/fsl_sd_disk/fsl_sd_disk.c:130:9:sd_disk_initialize	16	static

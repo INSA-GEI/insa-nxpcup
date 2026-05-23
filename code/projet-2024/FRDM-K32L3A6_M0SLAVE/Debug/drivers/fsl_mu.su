@@ -1,0 +1,13 @@
+../drivers/fsl_clock.h:723:20:CLOCK_EnableClock	16	static
+../drivers/fsl_clock.h:735:20:CLOCK_DisableClock	16	static
+../drivers/fsl_mu.h:288:20:MU_SetFlagsNonBlocking	24	static
+../drivers/fsl_mu.c:29:17:MU_GetInstance	24	static
+../drivers/fsl_mu.c:54:6:MU_Init	16	static
+../drivers/fsl_mu.c:68:6:MU_Deinit	16	static
+../drivers/fsl_mu.c:84:6:MU_SendMsg	24	static
+../drivers/fsl_mu.c:106:10:MU_ReceiveMsg	16	static
+../drivers/fsl_mu.c:132:6:MU_SetFlags	16	static
+../drivers/fsl_mu.c:165:10:MU_TriggerInterrupts	24	static
+../drivers/fsl_mu.c:197:6:MU_BootCoreB	24	static
+../drivers/fsl_mu.c:228:6:MU_BootOtherCore	16	static
+../drivers/fsl_mu.c:277:6:MU_HardwareResetOtherCore	32	static

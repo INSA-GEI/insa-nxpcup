@@ -1,0 +1,6 @@
+../drivers/fsl_clock.h:723:20:CLOCK_EnableClock	16	static
+../drivers/fsl_clock.h:735:20:CLOCK_DisableClock	16	static
+../drivers/fsl_flexbus.c:45:17:FLEXBUS_GetInstance	24	static
+../drivers/fsl_flexbus.c:85:6:FLEXBUS_Init	24	static
+../drivers/fsl_flexbus.c:194:6:FLEXBUS_Deinit	16	static
+../drivers/fsl_flexbus.c:230:6:FLEXBUS_GetDefaultConfig	16	static

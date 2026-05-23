@@ -1,0 +1,17 @@
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A60_MASTER/drivers/fsl_common_arm.h:717:24:DisableGlobalIRQ	16	static
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A60_MASTER/drivers/fsl_common_arm.h:743:20:EnableGlobalIRQ	24	static
+../component/serial_manager/fsl_component_serial_manager.c:398:32:SerialManager_StartWriting	32	static
+../component/serial_manager/fsl_component_serial_manager.c:453:32:SerialManager_StartReading	32	static
+../component/serial_manager/fsl_component_serial_manager.c:1185:32:SerialManager_Write	32	static
+../component/serial_manager/fsl_component_serial_manager.c:1202:32:SerialManager_Read	32	static
+../component/serial_manager/fsl_component_serial_manager.c:1220:25:SerialManager_Init	24	static
+../component/serial_manager/fsl_component_serial_manager.c:1407:25:SerialManager_Deinit	32	static
+../component/serial_manager/fsl_component_serial_manager.c:1485:25:SerialManager_OpenWriteHandle	32	static
+../component/serial_manager/fsl_component_serial_manager.c:1522:25:SerialManager_CloseWriteHandle	32	static
+../component/serial_manager/fsl_component_serial_manager.c:1553:25:SerialManager_OpenReadHandle	32	static
+../component/serial_manager/fsl_component_serial_manager.c:1593:25:SerialManager_CloseReadHandle	32	static
+../component/serial_manager/fsl_component_serial_manager.c:1622:25:SerialManager_WriteBlocking	24	static
+../component/serial_manager/fsl_component_serial_manager.c:1631:25:SerialManager_ReadBlocking	24	static
+../component/serial_manager/fsl_component_serial_manager.c:1872:25:SerialManager_EnterLowpower	24	static
+../component/serial_manager/fsl_component_serial_manager.c:1919:25:SerialManager_ExitLowpower	24	static
+../component/serial_manager/fsl_component_serial_manager.c:1973:6:SerialManager_SetLowpowerCriticalCb	16	static

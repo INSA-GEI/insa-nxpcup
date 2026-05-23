@@ -1,0 +1,8 @@
+/home/dimercur/Travail/git/insa-nxpcup/code/2019-2020/Equipe2/NXP-DRY-2023/drivers/fsl_clock.h:745:20:CLOCK_SetSimSafeDivs	8	static
+/home/dimercur/Travail/git/insa-nxpcup/code/2019-2020/Equipe2/NXP-DRY-2023/drivers/fsl_clock.h:1076:20:CLOCK_SetXtal0Freq	16	static
+/home/dimercur/Travail/git/insa-nxpcup/code/2019-2020/Equipe2/NXP-DRY-2023/drivers/fsl_smc.h:283:20:SMC_SetPowerModeProtection	16	static
+/home/dimercur/Travail/git/insa-nxpcup/code/2019-2020/Equipe2/NXP-DRY-2023/drivers/fsl_smc.h:302:33:SMC_GetPowerModeState	16	static
+../board/clock_config.c:95:6:BOARD_InitBootClocks	8	static
+../board/clock_config.c:107:13:CLOCK_CONFIG_SetFllExtRefDiv	16	static
+../board/clock_config.c:192:6:BOARD_BootClockRUN	8	static
+../board/clock_config.c:285:6:BOARD_BootClockVLPR	8	static

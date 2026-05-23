@@ -1,0 +1,120 @@
+/*
+ * driver_mouvement.h
+ *
+ *  Created on: 25 janv. 2024
+ *      Author: TANG Huong Cam
+ */
+
+#ifndef MOVEMENT_DRIVER_MOVEMENT_H_
+#define MOVEMENT_DRIVER_MOVEMENT_H_
+
+#if defined(__cplusplus)
+extern "C" {
+#endif /* __cplusplus */
+
+/***********************************************************************************************************************
+ * Included files
+ **********************************************************************************************************************/
+#include "motor/dc_motor.h"
+#include "encoder/driver_encoder.h"
+#include "servo/driver_servo.h"
+#include "math.h"
+
+/***********************************************************************************************************************
+ * Definitions
+ **********************************************************************************************************************/
+#define V_START 		1500
+#define V_TARGET 		1700
+#define V_TURN			1000
+
+#define DIFF_LIMIT_PERCENT_SPEED_DROITE     0.60
+#define DIFF_LIMIT_PERCENT_SPEED			0.45
+#define MOVEMENT_DIFF_GAIN_STRAIGHT 		0.0		// 0.0037	// Distance between 2 wheels E=15cm
+#define MOVEMENT_DIFF_GAIN_TURN 			0.012      //0.015
+#define MOVEMENT_DIFF_GAIN_TURN_DROITE	    0.025      // 0.035
+
+
+// Correcteur 
+#define MOVEMENT_CORR_THRESHOLD 	60 		// correct the speed only when we are more than 60 mm/s off target speed
+#define MOVEMENT_CORR_KP 			4			// amount of error to correct each iteration
+#define MOVEMENT_CORR_KI			0.0025
+
+#define MOVEMENT_SPEED_LIMIT_MM_S 	10000.0		// mm/s ~ 50% PWM
+#define MOVEMENT_SPEED_LIMIT_PWM	90.0		// 4500 mm/s
+
+
+/***********************************************************************************************************************
+ * Exported functions
+ **********************************************************************************************************************/
+extern void TPM1_IRQHandler();
+extern void TPM2_IRQHandler();
+
+
+/**
+ * @fn void movement_init(void)
+ * @brief initialize the necessary peripherals for the movement
+ */
+void movement_init();
+
+
+/**
+ * @fn void movement_set(float speed, float angle)
+ * @brief set the speed and angle target for the command
+ * @param speed : float in mm/s
+ * 		  angle : float in degree
+ */
+void movement_set(float speed, float angle);
+
+/**
+ * @fn void movement_setSpeed(float speed)
+ * @brief set the speed target for the command
+ * @param speed in mm/s
+ */
+void movement_setSpeed(float speed);
+
+/**
+ * @fn void movement_stop(void)
+ * @brief enable motor
+ */
+void mouvement_start(void);
+
+/**
+ * @fn void movement_stop(void)
+ * @brief stop the movement
+ */
+void movement_stop(void);
+
+/**
+ * @fn void movement_regulate(void)
+ * @brief regulate the movement to adapt the command
+ */
+void movement_regulate(void);
+
+/**
+ * @fn float movement_getServoAngle(void)
+ * @brief get the current servo angle
+ * @return float : angle in degree
+ */
+float movement_getServoAngle(void);
+
+/**
+ * @fn float movement_getSpeedLeft(void)
+ * @brief get the speed current of the left motor
+ * @return float : speed in mm/s
+ */
+float movement_getSpeedLeft(void);
+
+/**
+ * @fn float movement_getSpeedRight(void)
+ * @brief get the speed current of the right motor
+ * @return float : speed in mm/s
+ */
+float movement_getSpeedRight(void);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* MOVEMENT_DRIVER_MOVEMENT_H_ */
+
+

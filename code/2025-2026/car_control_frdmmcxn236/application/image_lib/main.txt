@@ -1,0 +1,283 @@
+/*
+ * Copyright 2024 NXP
+ * All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#include "fsl_device_registers.h"
+#include "fsl_debug_console.h"
+#include "pin_mux.h"
+#include "fsl_inputmux.h"
+#include "clock_config.h"
+#include "board.h"
+#include "lcd_impl_flexio.h"
+#include "st7796_lcd.h"
+#include "fsl_clock.h"
+#include "fsl_smartdma.h"
+#include "ov7670.h"
+
+#include <assert.h>
+#include <string.h>
+#include <stdbool.h>
+
+#include "image_lib/all.h"
+
+#define CAMERA_WIDTH 320
+#define CAMERA_HEIGHT 240
+#define CAMERA_DIMENSIONS_HORIZONTAL ((Vector2Int){ .x = CAMERA_WIDTH, .y = CAMERA_HEIGHT })
+#define CAMERA_DIMENSIONS_VERTICAL ((Vector2Int){ .x = CAMERA_HEIGHT, .y = CAMERA_WIDTH })
+#define CAMERA_BUFFER_SIZE (CAMERA_WIDTH * CAMERA_HEIGHT)
+
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+/*******************************************************************************
+ * Variables
+ ******************************************************************************/
+smartdma_camera_param_t smartdmaParam;                  /*!< SMARTDMA function parameters. */
+CAMERA_BUFFER_ARRAY_PREFIX g_camera_buffer[CAMERA_BUFFER_SIZE];
+volatile uint8_t g_samrtdma_stack[32];
+volatile uint32_t g_camera_complete_flag = 0;
+static lcd_impl_flexio_t s_lcd_impl;
+static st7796_lcd_t s_lcd = {
+    .config =
+        {
+            .direction = ST7796_DIR_0,
+            .pix_fmt   = ST7796_RGB565,
+            .bgr_mode  = 1,
+            .inversion = 0,
+            .mirrored  = 1,
+        },
+    .cb =
+        {
+            .reset_cb      = lcd_impl_reset,
+            .write_cmd_cb  = lcd_impl_write_cmd,
+            .write_data_cb = lcd_impl_write_data,
+        },
+    .user_data = &s_lcd_impl,
+};
+
+/*******************************************************************************
+ * Prototypes
+ ******************************************************************************/
+
+/*******************************************************************************
+ * Code
+ ******************************************************************************/
+static void SmartDMA_camera_callback(void *param){
+    g_camera_complete_flag = 1;
+}
+static void SmartDMA_camera_pin_init(void){
+
+	SMARTDMACAMERAPINS_CAM_D7_PORT->PCR[SMARTDMACAMERAPINS_CAM_D7_PIN] = (1<<12)|(7 << 8);
+	SMARTDMACAMERAPINS_CAM_D6_PORT->PCR[SMARTDMACAMERAPINS_CAM_D6_PIN] = (1<<12)|(7 << 8);
+	SMARTDMACAMERAPINS_CAM_D5_PORT->PCR[SMARTDMACAMERAPINS_CAM_D5_PIN] = (1<<12)|(7 << 8);
+	SMARTDMACAMERAPINS_CAM_D4_PORT->PCR[SMARTDMACAMERAPINS_CAM_D4_PIN] = (1<<12)|(7 << 8);
+	SMARTDMACAMERAPINS_CAM_D3_PORT->PCR[SMARTDMACAMERAPINS_CAM_D3_PIN] = (1<<12)|(7 << 8);
+	SMARTDMACAMERAPINS_CAM_D2_PORT->PCR[SMARTDMACAMERAPINS_CAM_D2_PIN] = (1<<12)|(7 << 8);
+	SMARTDMACAMERAPINS_CAM_D1_PORT->PCR[SMARTDMACAMERAPINS_CAM_D1_PIN] = (1<<12)|(7 << 8);
+	SMARTDMACAMERAPINS_CAM_D0_PORT->PCR[SMARTDMACAMERAPINS_CAM_D0_PIN] = (1<<12)|(7 << 8);
+}
+
+#define BOUNCING_COUNTER_MAX 15
+#define BOUNCING_COUNTER_MIN (-BOUNCING_COUNTER_MAX)
+int16_t bouncing_counter = 0;
+bool bouncing_counter_increasing = false;
+float bouncing_factor = 0.0F;
+
+// Update `bouncing_counter`: a value going from a min to a max
+// and back repeatedly to create a value that varries in time
+bool update_bouncing_counter(void)
+{
+    bool changed_direction = false;
+
+    if (bouncing_counter_increasing)
+    {
+        if (bouncing_counter < BOUNCING_COUNTER_MAX)
+            bouncing_counter++;
+        else
+        {
+            bouncing_counter = BOUNCING_COUNTER_MAX - 1;
+            bouncing_counter_increasing = false;
+            changed_direction = true;
+        }
+    }
+    else
+    {
+        if (BOUNCING_COUNTER_MIN < bouncing_counter)
+            bouncing_counter--;
+        else
+        {
+            bouncing_counter = BOUNCING_COUNTER_MIN + 1;
+            bouncing_counter_increasing = true;
+            changed_direction = true;
+        }
+    }
+
+    bouncing_factor = ((float)bouncing_counter / BOUNCING_COUNTER_MAX) * 0.5F + 0.5F;
+    return changed_direction;
+}
+
+// Draw black rectangle on `camera_buffer` with size depending on `bouncing_factor`
+void draw_obstruction(ImageBuffer camera_buffer, Vector2Int dimensions)
+{
+    Vector2Int obstructionSize = { .x = 60 * bouncing_factor, .y = 60 * bouncing_factor };
+    Vector2Int offset = { 30, 80 };
+    Vector2Int centerMax = vector2int_add(offset, vector2int_integer_divide(vector2int_add(dimensions, obstructionSize), 2));
+    Vector2Int centerMin = vector2int_add(offset, vector2int_integer_divide(vector2int_sub(dimensions, obstructionSize), 2));
+
+    for (Vector2Int location = centerMin; location.y < centerMax.y; location.y++)
+    {
+        for (location.x = centerMin.x; location.x < centerMax.x; location.x++)
+        {
+            image_set_pixel(camera_buffer, dimensions, location, COLOR_RGB_BLACK);
+        }
+    }
+}
+
+#define COLORS_COUNT 7
+CAMERA_BUFFER_ARRAY_PREFIX colors[COLORS_COUNT] = { 0 };
+size_t color_index = 0;
+
+void ensure_colors_initialized(void)
+{
+    if (color_rgb_equal(colors[0], COLOR_RGB_BLACK))
+    {
+        colors[0] = COLOR_RGB_WHITE;
+        colors[1] = COLOR_RGB_BLACK;
+        colors[2] = COLOR_RGB_RED;
+        colors[3] = COLOR_RGB_GREEN;
+        colors[4] = COLOR_RGB_BLUE;
+        colors[5] = color_rgb_from_float(1, 0.5F, 0);
+        colors[6] = color_rgb_from_float(0, 0.5F, 1);
+    }
+}
+
+void mutate_camera_buffer(ImageBuffer camera_buffer, Vector2Int dimensions)
+{
+    // Draw a 5 by 5 rectangle on `camera_buffer` at location {x: 30, y: 0} (landscape layout)
+    // of color in `colors` changing every `2*BOUNCING_COUNTER_MAX` calls to this function
+
+    bool changed_direction = update_bouncing_counter();
+    if (changed_direction)
+    {
+        color_index = (color_index + 1) % COLORS_COUNT;
+    }
+
+    ensure_colors_initialized();
+
+    const ColorRGB color = colors[color_index];
+    image_fill_rectangle(camera_buffer, dimensions, vector2int_new(30, 0), vector2int_new(5, 5), color);
+}
+
+#define BLACK_FILLER_DIMENSIONS_HORIZONTAL ((Vector2Int){ .x = LCD_UTILITY_WIDTH / 2, .y = 40 })
+#define BLACK_FILLER_DIMENSIONS_VERTICAL ((Vector2Int){ .x = 40, .y = LCD_UTILITY_WIDTH / 2 })
+CAMERA_BUFFER_ARRAY_PREFIX black_filler[40 * (LCD_UTILITY_WIDTH / 2)] = {0};
+
+// Fill empty space surrounding an image of 240*240 in the middle of the lcd screen with black
+void fill_surrounding_in_black(void)
+{
+    // Bottom line
+    lcd_utility_load_ranges(&s_lcd, black_filler, BLACK_FILLER_DIMENSIONS_HORIZONTAL,
+        index_range_with_length(LCD_UTILITY_WIDTH / 4, LCD_UTILITY_WIDTH / 2),
+        index_range_with_length(0, 40)
+    );
+
+    // Top line
+    lcd_utility_load_ranges(&s_lcd, black_filler, BLACK_FILLER_DIMENSIONS_HORIZONTAL,
+        index_range_with_length(LCD_UTILITY_WIDTH / 4, LCD_UTILITY_WIDTH / 2),
+        index_range_with_length(LCD_UTILITY_HEIGHT - 40, 40)
+    );
+
+    // Latteral lines
+    for (uint16_t i = 0; i < 2; i++)
+    {
+        uint16_t x_side_offset = i * LCD_UTILITY_WIDTH * 3 / 4;
+        for (uint16_t x = 0; x < 3; x++)
+        {
+            for (uint16_t y = 0; y < 2; y++)
+            {
+                uint16_t x_width = BLACK_FILLER_DIMENSIONS_VERTICAL.x;
+                lcd_utility_load_ranges(&s_lcd, black_filler, BLACK_FILLER_DIMENSIONS_VERTICAL,
+                    index_range_with_length(x_side_offset + x * x_width, x_width),
+                    index_range_with_length(y * LCD_UTILITY_HEIGHT / 2, LCD_UTILITY_HEIGHT / 2)
+                );
+            }
+        }
+    }
+}
+
+/*!
+ * @brief Main function
+ */
+int main(void)
+{
+    /* Init board hardware. */
+    /* attach FRO 12M to FLEXCOMM4 (debug console) */
+    CLOCK_SetClkDiv(kCLOCK_DivFlexcom4Clk, 1u);
+    CLOCK_AttachClk(BOARD_DEBUG_UART_CLK_ATTACH);
+
+    /* init I2C2*/
+    CLOCK_AttachClk(kFRO12M_to_FLEXCOMM2);
+    CLOCK_EnableClock(kCLOCK_LPFlexComm2);
+    CLOCK_EnableClock(kCLOCK_LPI2c2);
+    CLOCK_SetClkDiv(kCLOCK_DivFlexcom2Clk, 1u);
+
+    BOARD_InitBootPins();
+    BOARD_InitBootClocks();
+    BOARD_InitDebugConsole();
+    SmartDMA_camera_pin_init();
+    Ov7670_Init();
+
+    g_camera_complete_flag = 0;
+	INPUTMUX_Init(INPUTMUX0);
+	INPUTMUX_AttachSignal(INPUTMUX0, 0, kINPUTMUX_GpioPort0Pin4ToSmartDma);//P0_10/EZH_CAMERA_VSYNC
+	INPUTMUX_AttachSignal(INPUTMUX0, 1, kINPUTMUX_GpioPort0Pin5ToSmartDma);//P0_5/EZH_CAMERA_HSYNC
+	INPUTMUX_AttachSignal(INPUTMUX0, 2, kINPUTMUX_GpioPort0Pin7ToSmartDma);//P0_7/EZH_CAMERA_PCLK
+	/* Turn off clock to inputmux to save power. Clock is only needed to make changes */
+	INPUTMUX_Deinit(INPUTMUX0);
+
+    image_clear(g_camera_buffer, CAMERA_DIMENSIONS_HORIZONTAL);
+
+	lcd_impl_init(&s_lcd_impl);
+	st7796_lcd_init(&s_lcd);
+
+    lcd_utility_load_ranges(&s_lcd, g_camera_buffer, CAMERA_DIMENSIONS_VERTICAL, index_range_new(0, LCD_UTILITY_WIDTH / 2), LCD_UTILITY_VERTICAL_INDEX_RANGE);
+    lcd_utility_load_ranges(&s_lcd, g_camera_buffer, CAMERA_DIMENSIONS_VERTICAL, index_range_new(LCD_UTILITY_WIDTH / 2, LCD_UTILITY_WIDTH), LCD_UTILITY_VERTICAL_INDEX_RANGE);
+
+	SMARTDMA_InitWithoutFirmware();
+	SMARTDMA_InstallFirmware(SMARTDMA_CAMERA_MEM_ADDR,s_smartdmaCameraFirmware,
+						 SMARTDMA_CAMERA_FIRMWARE_SIZE);
+	SMARTDMA_InstallCallback(SmartDMA_camera_callback, NULL);
+	NVIC_EnableIRQ(SMARTDMA_IRQn);
+	NVIC_SetPriority(SMARTDMA_IRQn, 3);
+
+	smartdmaParam.smartdma_stack = (uint32_t*)g_samrtdma_stack;
+	smartdmaParam.p_buffer  		 = (uint32_t*)g_camera_buffer;
+	SMARTDMA_Boot(kEZH_Camera_320240_Whole_Buf, &smartdmaParam, 0x2);
+
+    // Render target_image_buffer on LCD in the middle of the screen
+    // st7796_lcd_load(&s_lcd, (uint8_t *)target_image_buffer,
+    //     /* x: */ 0 + 40, 240 + 40 - 1,
+    //     /* y: */ 0 + 120, (240 - 1) + 120
+    // );
+
+    while (1)
+    {
+        while (g_camera_complete_flag == 0);
+
+        mutate_camera_buffer(g_camera_buffer, CAMERA_DIMENSIONS_VERTICAL);
+
+        // Render g_camera_buffer on LCD in the middle of the screen
+        lcd_utility_load_ranges(&s_lcd, g_camera_buffer, CAMERA_DIMENSIONS_VERTICAL,
+            index_range_with_length(LCD_UTILITY_WIDTH / 2 - CAMERA_DIMENSIONS_VERTICAL.x / 2, CAMERA_DIMENSIONS_VERTICAL.x),
+            index_range_with_length(LCD_UTILITY_HEIGHT / 2 - CAMERA_DIMENSIONS_VERTICAL.y / 2, CAMERA_DIMENSIONS_VERTICAL.y)
+        );
+  	    // st7796_lcd_load(&s_lcd, (uint8_t*)g_camera_buffer,
+        //     /* x: */ 0, 320 - 1,
+        //     /* y: */ 0 + 120, (240 - 1) + 120
+        // );
+  	    g_camera_complete_flag = 0;
+    }
+}

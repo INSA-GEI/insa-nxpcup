@@ -1,0 +1,14 @@
+../freertos/freertos-kernel/portable/GCC/ARM_CM0/port.c:144:15:pxPortInitialiseStack	24	static
+../freertos/freertos-kernel/portable/GCC/ARM_CM0/port.c:164:13:prvTaskExitError	16	static
+../freertos/freertos-kernel/portable/GCC/ARM_CM0/port.c:190:6:SVC_Handler	8	static
+../freertos/freertos-kernel/portable/GCC/ARM_CM0/port.c:197:6:vPortStartFirstTask	0	static
+../freertos/freertos-kernel/portable/GCC/ARM_CM0/port.c:228:12:xPortStartScheduler	8	static
+../freertos/freertos-kernel/portable/GCC/ARM_CM0/port.c:258:6:vPortEndScheduler	8	static
+../freertos/freertos-kernel/portable/GCC/ARM_CM0/port.c:266:6:vPortYield	8	static
+../freertos/freertos-kernel/portable/GCC/ARM_CM0/port.c:278:6:vPortEnterCritical	8	static
+../freertos/freertos-kernel/portable/GCC/ARM_CM0/port.c:287:6:vPortExitCritical	8	static
+../freertos/freertos-kernel/portable/GCC/ARM_CM0/port.c:299:10:ulSetInterruptMaskFromISR	0	static
+../freertos/freertos-kernel/portable/GCC/ARM_CM0/port.c:310:6:vClearInterruptMaskFromISR	0	static
+../freertos/freertos-kernel/portable/GCC/ARM_CM0/port.c:320:6:PendSV_Handler	0	static
+../freertos/freertos-kernel/portable/GCC/ARM_CM0/port.c:369:6:SysTick_Handler	16	static
+../freertos/freertos-kernel/portable/GCC/ARM_CM0/port.c:390:32:vPortSetupTimerInterrupt	8	static

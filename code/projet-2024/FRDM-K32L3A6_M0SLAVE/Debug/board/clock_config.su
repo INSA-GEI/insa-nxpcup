@@ -1,0 +1,10 @@
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/drivers/fsl_clock.h:766:20:CLOCK_SetIpSrc	24	static
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/drivers/fsl_clock.h:950:20:CLOCK_SetVlprModeSysClkConfig	16	static
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/drivers/fsl_clock.h:964:20:CLOCK_SetRunModeSysClkConfig	16	static
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/drivers/fsl_clock.h:978:20:CLOCK_SetHsrunModeSysClkConfig	16	static
+/home/dimercur/Travail/git/insa-nxpcup/code/projet-2024/FRDM-K32L3A6_M0SLAVE/drivers/fsl_clock.h:992:20:CLOCK_GetCurSysClkConfig	16	static
+../board/clock_config.c:70:13:CLOCK_CONFIG_FircSafeConfig	40	static
+../board/clock_config.c:100:6:BOARD_InitBootClocks	8	static
+../board/clock_config.c:175:6:BOARD_BootClockRUN	16	static
+../board/clock_config.c:274:6:BOARD_BootClockHSRUN	16	static
+../board/clock_config.c:378:6:BOARD_BootClockVLPR	16	static

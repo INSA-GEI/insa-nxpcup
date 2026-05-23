@@ -1,0 +1,15 @@
+/home/dimercur/Travail/git/insa-nxpcup/code/2019-2020/Equipe2/NXP-DRY-2023/drivers/fsl_uart.h:500:20:UART_EnableTx	16	static
+/home/dimercur/Travail/git/insa-nxpcup/code/2019-2020/Equipe2/NXP-DRY-2023/drivers/fsl_uart.h:520:20:UART_EnableRx	16	static
+/home/dimercur/Travail/git/insa-nxpcup/code/2019-2020/Equipe2/NXP-DRY-2023/drivers/fsl_lpsci.h:461:20:LPSCI_EnableTx	16	static
+/home/dimercur/Travail/git/insa-nxpcup/code/2019-2020/Equipe2/NXP-DRY-2023/drivers/fsl_lpsci.h:481:20:LPSCI_EnableRx	16	static
+../utilities/fsl_debug_console.c:232:10:DbgConsole_Init	48	static
+../utilities/fsl_debug_console.c:334:10:DbgConsole_Deinit	8	static
+../utilities/fsl_debug_console.c:393:5:DbgConsole_Printf	16	static
+../utilities/fsl_debug_console.c:411:5:DbgConsole_Putchar	24	static
+../utilities/fsl_debug_console.c:424:5:DbgConsole_Scanf	40	static
+../utilities/fsl_debug_console.c:474:5:DbgConsole_Getchar	24	static
+../utilities/fsl_debug_console.c:497:17:DbgConsole_ScanIgnoreWhiteSpace	24	static
+../utilities/fsl_debug_console.c:521:13:DbgConsole_PrintfPaddingCharacter	32	static
+../utilities/fsl_debug_console.c:544:16:DbgConsole_ConvertRadixNumToString	56	static
+../utilities/fsl_debug_console.c:775:12:DbgConsole_PrintfFormattedData	128	static
+../utilities/fsl_debug_console.c:1316:12:DbgConsole_ScanfFormattedData	64	static

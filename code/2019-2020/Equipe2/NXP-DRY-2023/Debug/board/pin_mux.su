@@ -1,0 +1,4 @@
+/home/dimercur/Travail/git/insa-nxpcup/code/2019-2020/Equipe2/NXP-DRY-2023/drivers/fsl_clock.h:584:20:CLOCK_EnableClock	24	static
+/home/dimercur/Travail/git/insa-nxpcup/code/2019-2020/Equipe2/NXP-DRY-2023/drivers/fsl_port.h:321:20:PORT_SetPinMux	24	static
+../board/pin_mux.c:67:6:BOARD_InitBootPins	8	static
+../board/pin_mux.c:78:6:BOARD_InitPins	8	static
